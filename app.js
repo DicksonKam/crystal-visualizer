@@ -119,7 +119,8 @@ let settings = {
     showAxes: true,
     showCell: true,
     periodic: { a: 1, b: 1, c: 1 }, // Periodic images in each direction
-    ghostOpacity: 0.75 // Opacity of ghost atoms (default 75%)
+    ghostOpacity: 0.75, // Opacity of ghost atoms (default 75%)
+    showFixedIndicators: true // Show visual indicators for fixed atoms
 };
 
 // Measurement state
@@ -132,6 +133,7 @@ let atomMeshes = []; // All atom meshes for raycasting
 let currentMode = 'measure';
 let deletedAtomsHistory = []; // For undo functionality
 let moveHistory = []; // For undo atom moves
+let lastZThreshold = null; // Remember user's z-threshold setting
 
 // Drag state for moving atoms
 let isDragging = false;
@@ -464,7 +466,15 @@ function parsePOSCAR(content) {
         elementLine = 6;
     }
     
-    // Coordinate type
+    // Check for "Selective Dynamics" line (optional, starts with 'S' or 's')
+    let hasSelectiveDynamics = false;
+    const possibleSelectiveLine = lines[elementLine].toLowerCase();
+    if (possibleSelectiveLine.startsWith('s')) {
+        hasSelectiveDynamics = true;
+        elementLine++; // Move past the "Selective Dynamics" line
+    }
+    
+    // Coordinate type (Direct/Cartesian)
     const coordType = lines[elementLine].toLowerCase();
     const isDirect = coordType.startsWith('d') || coordType.startsWith('f');
     
@@ -477,11 +487,26 @@ function parsePOSCAR(content) {
             const posLine = lines[atomIndex];
             // Handle comments at end of line
             const cleanLine = posLine.split('!')[0].split('#')[0];
-            const parts = cleanLine.split(/\s+/).filter(p => p && !isNaN(parseFloat(p)));
+            const allParts = cleanLine.split(/\s+/).filter(p => p);
             
-            let x = parseFloat(parts[0]);
-            let y = parseFloat(parts[1]);
-            let z = parseFloat(parts[2]);
+            // First 3 parts are coordinates
+            let x = parseFloat(allParts[0]);
+            let y = parseFloat(allParts[1]);
+            let z = parseFloat(allParts[2]);
+            
+            // Parse selective dynamics flags (T/F for x, y, z)
+            // Default to all active (true) if no selective dynamics
+            let selectiveDynamics = [true, true, true];
+            if (hasSelectiveDynamics && allParts.length >= 6) {
+                selectiveDynamics = [
+                    allParts[3].toUpperCase() === 'T',
+                    allParts[4].toUpperCase() === 'T',
+                    allParts[5].toUpperCase() === 'T'
+                ];
+            }
+            
+            // Store original fractional coordinates before conversion
+            const originalFractional = isDirect ? [x, y, z] : null;
             
             // Convert to Cartesian if in direct/fractional coordinates
             if (isDirect) {
@@ -496,7 +521,8 @@ function parsePOSCAR(content) {
             atoms.push({
                 element: elements[i],
                 position: new THREE.Vector3(x, y, z),
-                fractional: isDirect ? [parseFloat(parts[0]), parseFloat(parts[1]), parseFloat(parts[2])] : null
+                fractional: originalFractional,
+                selectiveDynamics: selectiveDynamics // [xActive, yActive, zActive]
             });
             
             atomIndex++;
@@ -510,14 +536,20 @@ function parsePOSCAR(content) {
         elements,
         counts,
         atoms,
-        isDirect
+        isDirect,
+        hasSelectiveDynamics
     };
 }
 
 // Create atom sphere
-function createAtom(element, position, atomIndex) {
+// selectiveDynamics: [xActive, yActive, zActive] - true means movable, false means fixed
+function createAtom(element, position, atomIndex, selectiveDynamics = [true, true, true]) {
     const elemData = ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT;
     const radius = elemData.radius * 0.4 * settings.atomScale;
+    
+    // Check if any axis is fixed
+    const isFullyFixed = selectiveDynamics.every(v => v === false);
+    const isPartiallyFixed = selectiveDynamics.some(v => v === false) && !isFullyFixed;
     
     const geometry = new THREE.SphereGeometry(radius, 32, 32);
     const material = new THREE.MeshPhysicalMaterial({
@@ -533,9 +565,84 @@ function createAtom(element, position, atomIndex) {
     mesh.position.copy(position);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    mesh.userData = { element, atomIndex, isAtom: true };
+    mesh.userData = { 
+        element, 
+        atomIndex, 
+        isAtom: true,
+        selectiveDynamics: selectiveDynamics
+    };
     
     return mesh;
+}
+
+// Create visual indicator for fixed atoms (wireframe octahedron cage)
+function createFixedAtomIndicator(position, radius, selectiveDynamics) {
+    const group = new THREE.Group();
+    group.position.copy(position);
+    group.userData = { isFixedIndicator: true };
+    
+    const isFullyFixed = selectiveDynamics.every(v => v === false);
+    const indicatorRadius = radius * 1.6;
+    
+    if (isFullyFixed) {
+        // Fully fixed: octahedron wireframe (cage)
+        const octaGeometry = new THREE.OctahedronGeometry(indicatorRadius, 0);
+        const wireframe = new THREE.WireframeGeometry(octaGeometry);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: 0xff6b6b, // Red-ish color for fixed
+            transparent: true,
+            opacity: 0.7,
+            linewidth: 1
+        });
+        const cage = new THREE.LineSegments(wireframe, lineMaterial);
+        group.add(cage);
+    } else {
+        // Partially fixed: show rings for fixed axes
+        const ringMaterial = new THREE.LineBasicMaterial({ 
+            color: 0xffaa00, // Orange for partially fixed
+            transparent: true,
+            opacity: 0.6
+        });
+        
+        // X-axis fixed: YZ ring (perpendicular to X)
+        if (!selectiveDynamics[0]) {
+            const ringGeom = new THREE.RingGeometry(indicatorRadius * 0.9, indicatorRadius, 24);
+            const ring = new THREE.LineLoop(
+                new THREE.BufferGeometry().setFromPoints(
+                    new THREE.Path().absarc(0, 0, indicatorRadius, 0, Math.PI * 2).getPoints(24)
+                ),
+                ringMaterial
+            );
+            ring.rotation.y = Math.PI / 2; // Perpendicular to X
+            group.add(ring);
+        }
+        
+        // Y-axis fixed: XZ ring (perpendicular to Y)
+        if (!selectiveDynamics[1]) {
+            const ring = new THREE.LineLoop(
+                new THREE.BufferGeometry().setFromPoints(
+                    new THREE.Path().absarc(0, 0, indicatorRadius, 0, Math.PI * 2).getPoints(24)
+                ),
+                ringMaterial
+            );
+            ring.rotation.x = Math.PI / 2; // Perpendicular to Y
+            group.add(ring);
+        }
+        
+        // Z-axis fixed: XY ring (perpendicular to Z)
+        if (!selectiveDynamics[2]) {
+            const ring = new THREE.LineLoop(
+                new THREE.BufferGeometry().setFromPoints(
+                    new THREE.Path().absarc(0, 0, indicatorRadius, 0, Math.PI * 2).getPoints(24)
+                ),
+                ringMaterial
+            );
+            // Default orientation is already perpendicular to Z
+            group.add(ring);
+        }
+    }
+    
+    return group;
 }
 
 // Create ghost atom (semi-transparent periodic image)
@@ -1340,16 +1447,30 @@ function updateEditUI() {
             
             html += '<div class="selected-atoms edit-mode">';
             selectedAtoms.forEach((atom, i) => {
+                // Get selective dynamics status
+                const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
+                const isFixed = sd.every(v => v === false);
+                const statusIcon = isFixed ? '🔒' : '🔓';
+                
                 html += `
                     <div class="selected-atom edit">
                         <div class="color-strip" style="background: #ff5050"></div>
                         <span class="sel-num" style="background: #ff5050">✕</span>
                         <span class="sel-elem">${atom.element}</span>
                         <span class="sel-idx">#${atom.index + 1}</span>
+                        <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>
                     </div>
                 `;
             });
             html += '</div>';
+            
+            // Selective dynamics buttons for selected atoms
+            html += `
+                <div class="sd-buttons">
+                    <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms (F F F)">🔒 Fix</button>
+                    <button id="unfixSelectedBtn" class="btn btn-unfix" title="Make selected atoms active (T T T)">🔓 Active</button>
+                </div>
+            `;
             
             html += `
                 <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete Selected</button>
@@ -1368,6 +1489,25 @@ function updateEditUI() {
             }
             html += '</div>';
         }
+    }
+    
+    // Selective Dynamics batch controls (always show when structure loaded)
+    if (currentStructure) {
+        html += `
+            <div class="sd-batch-section">
+                <div class="sd-batch-title">Selective Dynamics</div>
+                <div class="sd-batch-row">
+                    <label>Fix atoms with z &lt;</label>
+                    <input type="number" id="fixZThreshold" step="0.5" value="${lastZThreshold !== null ? lastZThreshold : getDefaultZThreshold()}" class="z-threshold-input">
+                    <span>Å</span>
+                </div>
+                <div class="sd-batch-buttons">
+                    <button id="fixByZBtn" class="btn btn-sm btn-fix">Apply</button>
+                    <button id="unfixAllBtn" class="btn btn-sm btn-unfix">Unfix All</button>
+                </div>
+                <div class="sd-stats" id="sdStats">${getSelectiveDynamicsStats()}</div>
+            </div>
+        `;
     }
     
     panel.innerHTML = html;
@@ -1389,6 +1529,27 @@ function updateEditUI() {
     const undoMoveBtn = document.getElementById('undoMoveBtn');
     if (undoMoveBtn) {
         undoMoveBtn.addEventListener('click', undoMove);
+    }
+    
+    // Selective dynamics buttons
+    const fixSelectedBtn = document.getElementById('fixSelectedBtn');
+    if (fixSelectedBtn) {
+        fixSelectedBtn.addEventListener('click', () => setSelectedAtomsFixed(true));
+    }
+    
+    const unfixSelectedBtn = document.getElementById('unfixSelectedBtn');
+    if (unfixSelectedBtn) {
+        unfixSelectedBtn.addEventListener('click', () => setSelectedAtomsFixed(false));
+    }
+    
+    const fixByZBtn = document.getElementById('fixByZBtn');
+    if (fixByZBtn) {
+        fixByZBtn.addEventListener('click', fixAtomsByZThreshold);
+    }
+    
+    const unfixAllBtn = document.getElementById('unfixAllBtn');
+    if (unfixAllBtn) {
+        unfixAllBtn.addEventListener('click', unfixAllAtoms);
     }
     
     const undoDeleteBtn = document.getElementById('undoDeleteBtn');
@@ -1493,7 +1654,8 @@ function undoDelete() {
                 item.atom.position.y,
                 item.atom.position.z
             ),
-            fractional: item.atom.fractional
+            fractional: item.atom.fractional,
+            selectiveDynamics: item.atom.selectiveDynamics || [true, true, true]
         });
     });
     
@@ -1507,6 +1669,109 @@ function undoDelete() {
     
     statusText.textContent = `Restored ${lastDeleted.length} atom(s)`;
     statusText.className = 'success';
+}
+
+// Set selected atoms as fixed or active
+function setSelectedAtomsFixed(isFixed) {
+    if (selectedAtoms.length === 0 || !currentStructure) return;
+    
+    const newValue = isFixed ? [false, false, false] : [true, true, true];
+    
+    selectedAtoms.forEach(atom => {
+        if (currentStructure.atoms[atom.index]) {
+            currentStructure.atoms[atom.index].selectiveDynamics = [...newValue];
+        }
+    });
+    
+    // Mark that structure has selective dynamics
+    currentStructure.hasSelectiveDynamics = true;
+    
+    // Re-render to update indicators
+    renderStructure(currentStructure, true);
+    updateEditUI();
+    
+    const action = isFixed ? 'Fixed' : 'Unfixed';
+    statusText.textContent = `${action} ${selectedAtoms.length} atom(s)`;
+    statusText.className = 'success';
+}
+
+// Fix atoms below z threshold (common for surface slabs)
+function fixAtomsByZThreshold() {
+    if (!currentStructure) return;
+    
+    const thresholdInput = document.getElementById('fixZThreshold');
+    const threshold = parseFloat(thresholdInput?.value || 0);
+    
+    // Remember the user's threshold value
+    lastZThreshold = threshold;
+    
+    let fixedCount = 0;
+    currentStructure.atoms.forEach(atom => {
+        if (atom.position.z < threshold) {
+            atom.selectiveDynamics = [false, false, false];
+            fixedCount++;
+        } else {
+            atom.selectiveDynamics = [true, true, true];
+        }
+    });
+    
+    // Mark that structure has selective dynamics
+    currentStructure.hasSelectiveDynamics = true;
+    
+    // Re-render
+    renderStructure(currentStructure, true);
+    updateEditUI();
+    
+    statusText.textContent = `Fixed ${fixedCount} atoms below z = ${threshold.toFixed(2)} Å`;
+    statusText.className = 'success';
+}
+
+// Unfix all atoms
+function unfixAllAtoms() {
+    if (!currentStructure) return;
+    
+    currentStructure.atoms.forEach(atom => {
+        atom.selectiveDynamics = [true, true, true];
+    });
+    
+    currentStructure.hasSelectiveDynamics = false;
+    
+    // Re-render
+    renderStructure(currentStructure, true);
+    updateEditUI();
+    
+    statusText.textContent = 'All atoms set to active';
+    statusText.className = 'success';
+}
+
+// Get default z threshold (midpoint of z-range)
+function getDefaultZThreshold() {
+    if (!currentStructure || currentStructure.atoms.length === 0) return 0;
+    
+    const zValues = currentStructure.atoms.map(a => a.position.z);
+    const minZ = Math.min(...zValues);
+    const maxZ = Math.max(...zValues);
+    
+    return ((minZ + maxZ) / 2).toFixed(2);
+}
+
+// Get selective dynamics statistics
+function getSelectiveDynamicsStats() {
+    if (!currentStructure || currentStructure.atoms.length === 0) return '';
+    
+    let fixedCount = 0;
+    let activeCount = 0;
+    
+    currentStructure.atoms.forEach(atom => {
+        const sd = atom.selectiveDynamics || [true, true, true];
+        if (sd.every(v => v === false)) {
+            fixedCount++;
+        } else {
+            activeCount++;
+        }
+    });
+    
+    return `🔒 ${fixedCount} fixed • 🔓 ${activeCount} active`;
 }
 
 // Recalculate element counts after deletion
@@ -2184,9 +2449,18 @@ function renderStructure(structure, preserveState = false) {
     
     // Add atoms
     structure.atoms.forEach((atom, index) => {
-        const mesh = createAtom(atom.element, atom.position, index);
+        const selectiveDynamics = atom.selectiveDynamics || [true, true, true];
+        const mesh = createAtom(atom.element, atom.position, index, selectiveDynamics);
         structureGroup.add(mesh);
         atomMeshes.push(mesh);
+        
+        // Add fixed atom indicator if any axis is fixed and setting is enabled
+        if (settings.showFixedIndicators && selectiveDynamics.some(v => v === false)) {
+            const elemData = ELEMENT_DATA[atom.element] || ELEMENT_DATA.DEFAULT;
+            const radius = elemData.radius * 0.4 * settings.atomScale;
+            const indicator = createFixedAtomIndicator(atom.position, radius, selectiveDynamics);
+            structureGroup.add(indicator);
+        }
     });
     
     // Add bonds
@@ -2276,24 +2550,52 @@ function updateUI(structure) {
     const latticeB = Math.sqrt(structure.lattice[1].reduce((s, v) => s + v * v, 0)).toFixed(4);
     const latticeC = Math.sqrt(structure.lattice[2].reduce((s, v) => s + v * v, 0)).toFixed(4);
     
+    // Count fixed/active atoms
+    let fixedCount = 0;
+    structure.atoms.forEach(atom => {
+        const sd = atom.selectiveDynamics || [true, true, true];
+        if (sd.every(v => v === false)) fixedCount++;
+    });
+    const activeCount = structure.atoms.length - fixedCount;
+    
+    // Show selective dynamics info if any atoms are fixed
+    const sdInfo = fixedCount > 0 
+        ? `<div class="info-item"><span class="info-label">Fixed/Active</span><span class="info-value sd-info">🔒${fixedCount} / 🔓${activeCount}</span></div>`
+        : '';
+    
     structureInfo.innerHTML = `
         <div class="info-item"><span class="info-label">Title</span><span class="info-value">${structure.comment.substring(0, 20)}</span></div>
         <div class="info-item"><span class="info-label">Total Atoms</span><span class="info-value">${structure.atoms.length}</span></div>
         <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
         <div class="info-item"><span class="info-label">b</span><span class="info-value">${latticeB} Å</span></div>
         <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>
+        ${sdInfo}
     `;
     
-    // Atom list
+    // Atom list - count fixed per element
     let atomHTML = '';
     structure.elements.forEach((elem, i) => {
         const elemData = ELEMENT_DATA[elem] || ELEMENT_DATA.DEFAULT;
         const colorHex = '#' + elemData.color.toString(16).padStart(6, '0');
+        
+        // Count fixed atoms of this element
+        let elemFixedCount = 0;
+        structure.atoms.forEach(atom => {
+            if (atom.element === elem) {
+                const sd = atom.selectiveDynamics || [true, true, true];
+                if (sd.every(v => v === false)) elemFixedCount++;
+            }
+        });
+        
+        const fixedBadge = elemFixedCount > 0 
+            ? `<span class="fixed-badge" title="${elemFixedCount} fixed">🔒${elemFixedCount}</span>` 
+            : '';
+        
         atomHTML += `
             <div class="atom-entry fade-in" style="animation-delay: ${i * 0.05}s">
                 <div class="atom-sphere" style="background: radial-gradient(circle at 30% 30%, ${lightenColor(colorHex, 40)}, ${colorHex})"></div>
                 <div class="atom-info">
-                    <div class="atom-symbol">${elem}</div>
+                    <div class="atom-symbol">${elem} ${fixedBadge}</div>
                     <div class="atom-count">${structure.counts[i]} atom${structure.counts[i] > 1 ? 's' : ''}</div>
                 </div>
             </div>
@@ -2486,6 +2788,14 @@ function setupControls() {
         // Labels would be implemented with CSS2DRenderer
     });
     
+    // Show fixed atom indicators
+    document.getElementById('showFixedIndicators').addEventListener('change', (e) => {
+        settings.showFixedIndicators = e.target.checked;
+        if (currentStructure) {
+            renderStructure(currentStructure, true); // Preserve state
+        }
+    });
+    
     // Ghost opacity slider removed - using default 75%
     // Keeping the settings.ghostOpacity for future use
     
@@ -2627,7 +2937,8 @@ function convertToSupercell() {
                     newAtoms.push({
                         element: atom.element,
                         position: newPos,
-                        fractional: null // Will need recalculation if needed
+                        fractional: null, // Will need recalculation if needed
+                        selectiveDynamics: atom.selectiveDynamics ? [...atom.selectiveDynamics] : [true, true, true]
                     });
                 });
             }
@@ -2739,23 +3050,46 @@ function generatePOSCAR() {
     // Line 7: Number of atoms per element
     lines.push(currentStructure.counts.join(' '));
     
-    // Line 8: Coordinate type (Cartesian)
+    // Check if any atoms have selective dynamics (any fixed axes)
+    const hasSelectiveDynamics = currentStructure.hasSelectiveDynamics || 
+        currentStructure.atoms.some(atom => 
+            atom.selectiveDynamics && atom.selectiveDynamics.some(v => v === false)
+        );
+    
+    // Line 8: Selective Dynamics (optional)
+    if (hasSelectiveDynamics) {
+        lines.push('Selective Dynamics');
+    }
+    
+    // Line 9 (or 8): Coordinate type (Cartesian)
     lines.push('Cartesian');
     
-    // Atom positions - group by element
+    // Atom positions - group by element, preserving selective dynamics
     const atomsByElement = {};
     currentStructure.elements.forEach(elem => {
         atomsByElement[elem] = [];
     });
     
     currentStructure.atoms.forEach(atom => {
-        atomsByElement[atom.element].push(atom.position);
+        atomsByElement[atom.element].push({
+            position: atom.position,
+            selectiveDynamics: atom.selectiveDynamics || [true, true, true]
+        });
     });
     
     // Write positions in element order
     currentStructure.elements.forEach(elem => {
-        atomsByElement[elem].forEach(pos => {
-            lines.push(`  ${pos.x.toFixed(9)}  ${pos.y.toFixed(9)}  ${pos.z.toFixed(9)}`);
+        atomsByElement[elem].forEach(atomData => {
+            const pos = atomData.position;
+            let line = `  ${pos.x.toFixed(9)}  ${pos.y.toFixed(9)}  ${pos.z.toFixed(9)}`;
+            
+            // Add selective dynamics flags if enabled
+            if (hasSelectiveDynamics) {
+                const sd = atomData.selectiveDynamics;
+                line += `  ${sd[0] ? 'T' : 'F'} ${sd[1] ? 'T' : 'F'} ${sd[2] ? 'T' : 'F'}`;
+            }
+            
+            lines.push(line);
         });
     });
     

@@ -893,3 +893,121 @@ body.edit-mode-active .panel-title {
     }
 }
 
+/* === Selective Dynamics UI === */
+.sel-status {
+    margin-left: auto;
+    font-size: 0.8rem;
+}
+
+.sd-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.sd-buttons .btn {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.btn-fix {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    color: #ff6b6b;
+}
+
+.btn-fix:hover {
+    background: rgba(255, 107, 107, 0.25);
+    border-color: #ff6b6b;
+}
+
+.btn-unfix {
+    background: rgba(0, 245, 212, 0.15);
+    border: 1px solid rgba(0, 245, 212, 0.4);
+    color: var(--accent-cyan);
+}
+
+.btn-unfix:hover {
+    background: rgba(0, 245, 212, 0.25);
+    border-color: var(--accent-cyan);
+}
+
+.sd-batch-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.sd-batch-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.sd-batch-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.z-threshold-input {
+    width: 70px;
+    padding: 0.35rem 0.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.z-threshold-input:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 245, 212, 0.15);
+}
+
+.sd-batch-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.sd-stats {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0.5rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+}
+
+/* Fixed atom badges in atom list */
+.fixed-badge {
+    font-size: 0.7rem;
+    margin-left: 0.25rem;
+    opacity: 0.8;
+}
+
+.sd-info {
+    font-size: 0.85rem;
+}
+
+/* Info value for selective dynamics */
+.info-value.sd-info {
+    color: var(--text-secondary);
+}
+

@@ -135,6 +135,11 @@ let deletedAtomsHistory = []; // For undo functionality
 let moveHistory = []; // For undo atom moves
 let lastZThreshold = null; // Remember user's z-threshold setting
 
+// Remember Add Atom form values
+let lastAddAtomElement = null;
+let lastAddAtomCoords = { x: 0, y: 0, z: 0 };
+let lastAddAtomCoordType = 'cartesian';
+
 // Drag state for moving atoms
 let isDragging = false;
 let wasDragging = false; // Flag to prevent click after drag
@@ -684,6 +689,42 @@ function getCellOffsetLabel(cellOffset) {
     if (cellOffset.b > 0) label += 'b';
     if (cellOffset.c > 0) label += 'c';
     return label ? `[+${label}]` : '';
+}
+
+// Get original POSCAR coordinates for an atom (not display coordinates)
+function getOriginalAtomPosition(selectedAtom) {
+    if (!currentStructure) return { x: 0, y: 0, z: 0 };
+    
+    // For regular atoms, use the stored position in currentStructure
+    const atomIndex = selectedAtom.isGhost ? selectedAtom.originalIndex : selectedAtom.index;
+    const originalAtom = currentStructure.atoms[atomIndex];
+    
+    if (!originalAtom) return { x: 0, y: 0, z: 0 };
+    
+    // Get the base position
+    const basePos = originalAtom.position;
+    
+    if (selectedAtom.isGhost && selectedAtom.cellOffset) {
+        // For ghost atoms, add the periodic translation
+        const lattice = currentStructure.lattice;
+        const aVec = new THREE.Vector3(...lattice[0]);
+        const bVec = new THREE.Vector3(...lattice[1]);
+        const cVec = new THREE.Vector3(...lattice[2]);
+        
+        const translation = new THREE.Vector3()
+            .addScaledVector(aVec, selectedAtom.cellOffset.a)
+            .addScaledVector(bVec, selectedAtom.cellOffset.b)
+            .addScaledVector(cVec, selectedAtom.cellOffset.c);
+        
+        return {
+            x: basePos.x + translation.x,
+            y: basePos.y + translation.y,
+            z: basePos.z + translation.z
+        };
+    }
+    
+    // Regular atom - return original position
+    return { x: basePos.x, y: basePos.y, z: basePos.z };
 }
 
 // Create ghost bond (semi-transparent)
@@ -1253,8 +1294,8 @@ function onMouseUp(event) {
             // Update structure data
             currentStructure.atoms[draggedAtom.index].position.copy(newPos);
             
-            // Rebuild bonds to reflect new position
-            rebuildBonds();
+            // Rebuild all display options (bonds, fixed indicators, etc.)
+            rebuildDisplayOptions();
             
             // Update status
             statusText.textContent = `Moved atom #${draggedAtom.index + 1}`;
@@ -1452,6 +1493,10 @@ function updateEditUI() {
                 const isFixed = sd.every(v => v === false);
                 const statusIcon = isFixed ? '🔒' : '🔓';
                 
+                // Get ORIGINAL coordinates from structure (not display coordinates)
+                const originalPos = getOriginalAtomPosition(atom);
+                const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
+                
                 html += `
                     <div class="selected-atom edit">
                         <div class="color-strip" style="background: #ff5050"></div>
@@ -1459,6 +1504,7 @@ function updateEditUI() {
                         <span class="sel-elem">${atom.element}</span>
                         <span class="sel-idx">#${atom.index + 1}</span>
                         <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>
+                        <div class="sel-coords" title="Cartesian coordinates (Å)">${coordStr}</div>
                     </div>
                 `;
             });
@@ -1491,8 +1537,61 @@ function updateEditUI() {
         }
     }
     
-    // Selective Dynamics batch controls (always show when structure loaded)
+    // Add Atom section (always show when structure loaded)
     if (currentStructure) {
+        // Get available elements from current structure + common elements
+        const existingElements = currentStructure.elements || [];
+        const commonElements = ['H', 'C', 'N', 'O', 'S', 'Si', 'Fe', 'Cu', 'Zn', 'W', 'Ti', 'Pt', 'Au', 'Ag'];
+        const allElements = [...new Set([...existingElements, ...commonElements])].sort();
+        
+        // Use last selected element or default to first in list
+        const selectedElement = lastAddAtomElement || allElements[0];
+        const elementOptions = allElements.map(e => 
+            `<option value="${e}"${e === selectedElement ? ' selected' : ''}>${e}</option>`
+        ).join('');
+        
+        // Use last coordinate type
+        const isCartesian = lastAddAtomCoordType === 'cartesian';
+        const step = isCartesian ? '0.1' : '0.01';
+        
+        html += `
+            <div class="add-atom-section">
+                <div class="sd-batch-title">Add Atom</div>
+                <div class="add-atom-row">
+                    <label>Element</label>
+                    <select id="addAtomElement" class="element-select">
+                        ${elementOptions}
+                    </select>
+                </div>
+                <div class="add-atom-coord-type">
+                    <label class="coord-type-label">
+                        <input type="radio" name="coordType" value="cartesian"${isCartesian ? ' checked' : ''}>
+                        <span>Cartesian (Å)</span>
+                    </label>
+                    <label class="coord-type-label">
+                        <input type="radio" name="coordType" value="fractional"${!isCartesian ? ' checked' : ''}>
+                        <span>Fractional</span>
+                    </label>
+                </div>
+                <div class="add-atom-coords">
+                    <div class="coord-input-group">
+                        <label>x</label>
+                        <input type="number" id="addAtomX" step="${step}" value="${lastAddAtomCoords.x}" class="coord-input">
+                    </div>
+                    <div class="coord-input-group">
+                        <label>y</label>
+                        <input type="number" id="addAtomY" step="${step}" value="${lastAddAtomCoords.y}" class="coord-input">
+                    </div>
+                    <div class="coord-input-group">
+                        <label>z</label>
+                        <input type="number" id="addAtomZ" step="${step}" value="${lastAddAtomCoords.z}" class="coord-input">
+                    </div>
+                </div>
+                <div id="addAtomError" class="add-atom-error"></div>
+                <button id="addAtomBtn" class="btn btn-add-atom">+ Add Atom</button>
+            </div>
+        `;
+        
         html += `
             <div class="sd-batch-section">
                 <div class="sd-batch-title">Selective Dynamics</div>
@@ -1552,6 +1651,38 @@ function updateEditUI() {
         unfixAllBtn.addEventListener('click', unfixAllAtoms);
     }
     
+    // Add Atom button
+    const addAtomBtn = document.getElementById('addAtomBtn');
+    if (addAtomBtn) {
+        addAtomBtn.addEventListener('click', addAtomFromInput);
+    }
+    
+    // Element select - remember choice
+    const addAtomElement = document.getElementById('addAtomElement');
+    if (addAtomElement) {
+        addAtomElement.addEventListener('change', (e) => {
+            lastAddAtomElement = e.target.value;
+        });
+    }
+    
+    // Coordinate type radio buttons - update step values and remember choice
+    const coordTypeRadios = document.querySelectorAll('input[name="coordType"]');
+    coordTypeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const isFractional = e.target.value === 'fractional';
+            const step = isFractional ? '0.01' : '0.1';
+            document.getElementById('addAtomX').step = step;
+            document.getElementById('addAtomY').step = step;
+            document.getElementById('addAtomZ').step = step;
+            
+            // Remember coordinate type
+            lastAddAtomCoordType = e.target.value;
+            
+            // Clear error when switching modes
+            document.getElementById('addAtomError').textContent = '';
+        });
+    });
+    
     const undoDeleteBtn = document.getElementById('undoDeleteBtn');
     if (undoDeleteBtn) {
         undoDeleteBtn.addEventListener('click', undoDelete);
@@ -1568,8 +1699,8 @@ function undoMove() {
     currentStructure.atoms[lastMove.index].position.copy(lastMove.oldPosition);
     atomMeshes[lastMove.index].position.copy(lastMove.oldPosition);
     
-    // Rebuild bonds
-    rebuildBonds();
+    // Rebuild all display options (bonds, fixed indicators, etc.)
+    rebuildDisplayOptions();
     
     statusText.textContent = `Undid move of atom #${lastMove.index + 1}`;
     statusText.className = 'success';
@@ -1578,14 +1709,32 @@ function undoMove() {
 }
 
 // Rebuild bonds based on current atom positions
+// ============================================
+// Display Options Rebuild Functions
+// ============================================
+// These functions update visual elements when atoms are moved or settings change.
+// To add a new display feature (e.g., labels), add a rebuild function here
+// and call it from rebuildDisplayOptions().
+
+// Master function to rebuild ALL display options
+// Call this whenever atom positions change (drag, undo, etc.)
+function rebuildDisplayOptions() {
+    if (!currentStructure) return;
+    
+    rebuildBonds();
+    rebuildFixedIndicators();
+    rebuildLabels();
+}
+
+// Rebuild bonds between atoms
 function rebuildBonds() {
     if (!currentStructure) return;
     
-    // Remove existing bonds (keep atoms and unit cell)
+    // Remove existing bonds
     const toRemove = [];
     structureGroup.children.forEach(child => {
-        // Bonds are cylinders, atoms are spheres, unit cell is a group
-        if (child.geometry && child.geometry.type === 'CylinderGeometry') {
+        // Bonds are cylinders (but not ghost bonds which have isGhostBond flag)
+        if (child.geometry && child.geometry.type === 'CylinderGeometry' && !child.userData.isGhostBond) {
             toRemove.push(child);
         }
     });
@@ -1606,6 +1755,109 @@ function rebuildBonds() {
             }
         }
     }
+}
+
+// Rebuild fixed atom indicators (octahedrons/rings)
+function rebuildFixedIndicators() {
+    if (!currentStructure) return;
+    
+    // Remove existing fixed indicators
+    const toRemove = [];
+    structureGroup.children.forEach(child => {
+        if (child.userData && child.userData.isFixedIndicator) {
+            toRemove.push(child);
+        }
+    });
+    toRemove.forEach(indicator => structureGroup.remove(indicator));
+    
+    // Rebuild fixed indicators if enabled
+    if (settings.showFixedIndicators) {
+        currentStructure.atoms.forEach((atom, index) => {
+            const selectiveDynamics = atom.selectiveDynamics || [true, true, true];
+            if (selectiveDynamics.some(v => v === false)) {
+                const elemData = ELEMENT_DATA[atom.element] || ELEMENT_DATA.DEFAULT;
+                const radius = elemData.radius * 0.4 * settings.atomScale;
+                // Use the mesh position (which is updated during drag)
+                const indicator = createFixedAtomIndicator(atomMeshes[index].position, radius, selectiveDynamics);
+                structureGroup.add(indicator);
+            }
+        });
+    }
+}
+
+// Rebuild atom index labels (subtle, camera-facing)
+function rebuildLabels() {
+    if (!currentStructure) return;
+    
+    // Remove existing labels
+    const toRemove = [];
+    structureGroup.children.forEach(child => {
+        if (child.userData && child.userData.isAtomLabel) {
+            toRemove.push(child);
+        }
+    });
+    toRemove.forEach(label => structureGroup.remove(label));
+    
+    // Rebuild if enabled
+    if (settings.showLabels) {
+        atomMeshes.forEach((mesh, index) => {
+            // Skip ghost atoms - only label real atoms
+            if (mesh.userData.isGhost) return;
+            
+            const label = createAtomLabel(index + 1, mesh.position);
+            structureGroup.add(label);
+        });
+    }
+}
+
+// Create a subtle, camera-facing label sprite for an atom
+function createAtomLabel(indexNumber, position) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    
+    // Clear canvas (transparent)
+    ctx.clearRect(0, 0, 128, 128);
+    
+    // Subtle text - no background, just the number
+    ctx.font = 'bold 72px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Subtle dark outline for visibility against light atoms
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.lineWidth = 4;
+    ctx.strokeText(indexNumber.toString(), 64, 64);
+    
+    // Semi-transparent light text - visible but not distracting
+    ctx.fillStyle = 'rgba(220, 220, 240, 0.6)';
+    ctx.fillText(indexNumber.toString(), 64, 64);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    
+    const spriteMaterial = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: false,  // Always visible, even behind atoms
+        depthWrite: false,
+        sizeAttenuation: true
+    });
+    
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.position.copy(position);
+    
+    // Scale based on smallest atom radius for consistency
+    const smallestRadius = getSmallestAtomRadius();
+    sprite.scale.set(smallestRadius * 2.5, smallestRadius * 2.5, 1);
+    
+    // Lower render order so selection markers appear on top
+    sprite.renderOrder = -10;
+    
+    sprite.userData = { isAtomLabel: true, atomIndex: indexNumber - 1 };
+    
+    return sprite;
 }
 
 // Delete selected atoms
@@ -1772,6 +2024,173 @@ function getSelectiveDynamicsStats() {
     });
     
     return `🔒 ${fixedCount} fixed • 🔓 ${activeCount} active`;
+}
+
+// Add atom from input form
+function addAtomFromInput() {
+    if (!currentStructure) return;
+    
+    const errorDiv = document.getElementById('addAtomError');
+    errorDiv.textContent = '';
+    errorDiv.className = 'add-atom-error';
+    
+    // Get input values
+    const element = document.getElementById('addAtomElement').value;
+    const xInput = document.getElementById('addAtomX').value;
+    const yInput = document.getElementById('addAtomY').value;
+    const zInput = document.getElementById('addAtomZ').value;
+    const coordType = document.querySelector('input[name="coordType"]:checked').value;
+    
+    // Validate element
+    if (!element || element.trim() === '') {
+        errorDiv.textContent = 'Please select an element';
+        return;
+    }
+    
+    // Validate coordinates are numbers
+    const x = parseFloat(xInput);
+    const y = parseFloat(yInput);
+    const z = parseFloat(zInput);
+    
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+        errorDiv.textContent = 'Invalid coordinates';
+        return;
+    }
+    
+    // Check for unreasonable values
+    if (Math.abs(x) > 1000 || Math.abs(y) > 1000 || Math.abs(z) > 1000) {
+        errorDiv.textContent = 'Coordinates too large';
+        return;
+    }
+    
+    let cartesianPos;
+    let fractionalPos;
+    
+    if (coordType === 'fractional') {
+        // Validate fractional coordinates are in [0, 1]
+        if (x < 0 || x > 1 || y < 0 || y > 1 || z < 0 || z > 1) {
+            errorDiv.textContent = 'Fractional coords must be in [0, 1]';
+            return;
+        }
+        
+        fractionalPos = [x, y, z];
+        cartesianPos = fractionalToCartesian(fractionalPos, currentStructure.lattice);
+    } else {
+        // Cartesian coordinates - validate within cell
+        cartesianPos = new THREE.Vector3(x, y, z);
+        
+        const validation = isPositionInCell(cartesianPos, currentStructure.lattice);
+        if (!validation.valid) {
+            errorDiv.textContent = validation.message;
+            return;
+        }
+        
+        fractionalPos = validation.fractional;
+    }
+    
+    // Remember form values for next time
+    lastAddAtomElement = element;
+    lastAddAtomCoords = { x, y, z };
+    lastAddAtomCoordType = coordType;
+    
+    // Add the atom
+    const newAtom = {
+        element: element,
+        position: cartesianPos instanceof THREE.Vector3 ? cartesianPos : new THREE.Vector3(cartesianPos.x, cartesianPos.y, cartesianPos.z),
+        fractional: fractionalPos,
+        selectiveDynamics: [true, true, true] // New atoms are active by default
+    };
+    
+    currentStructure.atoms.push(newAtom);
+    
+    // Recalculate element counts
+    recalculateElementCounts();
+    
+    // Re-render
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    
+    // Show success message
+    errorDiv.textContent = `Added ${element} at (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`;
+    errorDiv.className = 'add-atom-error success';
+    
+    statusText.textContent = `Added ${element} atom`;
+    statusText.className = 'success';
+}
+
+// Convert fractional coordinates to Cartesian
+function fractionalToCartesian(frac, lattice) {
+    const x = frac[0] * lattice[0][0] + frac[1] * lattice[1][0] + frac[2] * lattice[2][0];
+    const y = frac[0] * lattice[0][1] + frac[1] * lattice[1][1] + frac[2] * lattice[2][1];
+    const z = frac[0] * lattice[0][2] + frac[1] * lattice[1][2] + frac[2] * lattice[2][2];
+    return new THREE.Vector3(x, y, z);
+}
+
+// Convert Cartesian coordinates to fractional
+function cartesianToFractional(pos, lattice) {
+    // Solve: pos = f[0]*a + f[1]*b + f[2]*c
+    // Using matrix inversion
+    const a = lattice[0];
+    const b = lattice[1];
+    const c = lattice[2];
+    
+    // Create 3x3 matrix from lattice vectors (column vectors)
+    const det = a[0] * (b[1] * c[2] - b[2] * c[1])
+              - a[1] * (b[0] * c[2] - b[2] * c[0])
+              + a[2] * (b[0] * c[1] - b[1] * c[0]);
+    
+    if (Math.abs(det) < 1e-10) {
+        return null; // Degenerate lattice
+    }
+    
+    // Inverse matrix elements (transposed cofactor matrix / det)
+    const invDet = 1.0 / det;
+    
+    const inv = [
+        [(b[1] * c[2] - b[2] * c[1]) * invDet, (a[2] * c[1] - a[1] * c[2]) * invDet, (a[1] * b[2] - a[2] * b[1]) * invDet],
+        [(b[2] * c[0] - b[0] * c[2]) * invDet, (a[0] * c[2] - a[2] * c[0]) * invDet, (a[2] * b[0] - a[0] * b[2]) * invDet],
+        [(b[0] * c[1] - b[1] * c[0]) * invDet, (a[1] * c[0] - a[0] * c[1]) * invDet, (a[0] * b[1] - a[1] * b[0]) * invDet]
+    ];
+    
+    // Multiply inverse by position
+    const fx = inv[0][0] * pos.x + inv[0][1] * pos.y + inv[0][2] * pos.z;
+    const fy = inv[1][0] * pos.x + inv[1][1] * pos.y + inv[1][2] * pos.z;
+    const fz = inv[2][0] * pos.x + inv[2][1] * pos.y + inv[2][2] * pos.z;
+    
+    return [fx, fy, fz];
+}
+
+// Check if Cartesian position is within unit cell (fractional coords in [0, 1])
+function isPositionInCell(pos, lattice) {
+    const frac = cartesianToFractional(pos, lattice);
+    
+    if (!frac) {
+        return { valid: false, message: 'Invalid lattice' };
+    }
+    
+    const tolerance = 1e-6; // Small tolerance for boundary
+    const [fx, fy, fz] = frac;
+    
+    // Check if fractional coordinates are in [0, 1] with small tolerance
+    if (fx < -tolerance || fx > 1 + tolerance) {
+        return { valid: false, message: `Outside cell: x (frac=${fx.toFixed(3)})` };
+    }
+    if (fy < -tolerance || fy > 1 + tolerance) {
+        return { valid: false, message: `Outside cell: y (frac=${fy.toFixed(3)})` };
+    }
+    if (fz < -tolerance || fz > 1 + tolerance) {
+        return { valid: false, message: `Outside cell: z (frac=${fz.toFixed(3)})` };
+    }
+    
+    // Clamp to [0, 1] for atoms exactly on boundary
+    const clampedFrac = [
+        Math.max(0, Math.min(1, fx)),
+        Math.max(0, Math.min(1, fy)),
+        Math.max(0, Math.min(1, fz))
+    ];
+    
+    return { valid: true, fractional: clampedFrac };
 }
 
 // Recalculate element counts after deletion
@@ -2240,12 +2659,17 @@ function updateMeasurementUI() {
             const ghostClass = atom.isGhost ? ' ghost' : '';
             const displayIndex = atom.isGhost ? atom.originalIndex + 1 : atom.index + 1;
             
+            // Get ORIGINAL coordinates from structure (not display coordinates)
+            const originalPos = getOriginalAtomPosition(atom);
+            const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
+            
             html += `
                 <div class="selected-atom${ghostClass}">
                     <div class="color-strip" style="background: ${colors[i]}${atom.isGhost ? '; border-style: dashed' : ''}"></div>
                     <span class="sel-num${ghostClass}" style="background: ${atom.isGhost ? 'transparent; border: 2px dashed ' + colors[i] + '; color: ' + colors[i] : colors[i]}">${i + 1}${atom.isGhost ? "'" : ''}</span>
                     <span class="sel-elem">${atom.element}</span>
                     <span class="sel-idx">#${displayIndex}${offsetLabel ? ' ' + offsetLabel : ''}</span>
+                    <div class="sel-coords" title="Cartesian coordinates (Å)">${coordStr}</div>
                 </div>
             `;
         });
@@ -2460,6 +2884,12 @@ function renderStructure(structure, preserveState = false) {
             const radius = elemData.radius * 0.4 * settings.atomScale;
             const indicator = createFixedAtomIndicator(atom.position, radius, selectiveDynamics);
             structureGroup.add(indicator);
+        }
+        
+        // Add atom label if enabled
+        if (settings.showLabels) {
+            const label = createAtomLabel(index + 1, atom.position);
+            structureGroup.add(label);
         }
     });
     
@@ -2785,7 +3215,9 @@ function setupControls() {
     // Show labels (placeholder for future)
     document.getElementById('showLabels').addEventListener('change', (e) => {
         settings.showLabels = e.target.checked;
-        // Labels would be implemented with CSS2DRenderer
+        if (currentStructure) {
+            rebuildLabels();
+        }
     });
     
     // Show fixed atom indicators

@@ -138,7 +138,14 @@ let lastZThreshold = null; // Remember user's z-threshold setting
 // Remember Add Atom form values
 let lastAddAtomElement = null;
 let lastAddAtomCoords = { x: 0, y: 0, z: 0 };
-let lastAddAtomCoordType = 'cartesian';
+let lastAddAtomCoordType = 'fractional'; // Default to fractional
+
+// Remember Global Shift form values
+let lastShiftCoords = { a: 0, b: 0, c: 0 };
+let lastShiftCoordType = 'fractional'; // Default to fractional for shifts
+
+// Selected atom coordinate display mode ('fractional' or 'cartesian')
+let selectedAtomCoordMode = 'fractional'; // Default to fractional
 
 // Drag state for moving atoms
 let isDragging = false;
@@ -725,6 +732,42 @@ function getOriginalAtomPosition(selectedAtom) {
     
     // Regular atom - return original position
     return { x: basePos.x, y: basePos.y, z: basePos.z };
+}
+
+// Format coordinates for display based on current mode (fractional or cartesian)
+// Returns HTML string with clickable coordinates
+function formatAtomCoordinates(selectedAtom, atomIndex) {
+    const originalPos = getOriginalAtomPosition(selectedAtom);
+    
+    if (selectedAtomCoordMode === 'fractional') {
+        // Get fractional coordinates
+        const frac = cartesianToFractional(
+            new THREE.Vector3(originalPos.x, originalPos.y, originalPos.z),
+            currentStructure.lattice
+        );
+        
+        if (frac) {
+            // Fractional: yellow/gold with square brackets
+            const coordStr = `[${frac[0].toFixed(3)}, ${frac[1].toFixed(3)}, ${frac[2].toFixed(3)}]`;
+            return `<div class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Click to show Cartesian">${coordStr}</div>`;
+        }
+    }
+    
+    // Cartesian: cyan with parentheses (default fallback)
+    const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
+    return `<div class="sel-coords sel-coords-cart clickable-coords" data-atom-idx="${atomIndex}" title="Click to show Fractional">${coordStr}</div>`;
+}
+
+// Toggle coordinate display mode and refresh UI
+function toggleCoordinateDisplayMode() {
+    selectedAtomCoordMode = selectedAtomCoordMode === 'fractional' ? 'cartesian' : 'fractional';
+    
+    // Refresh the appropriate UI based on current mode
+    if (currentMode === 'measure') {
+        updateMeasurementUI();
+    } else {
+        updateEditUI();
+    }
 }
 
 // Create ghost bond (semi-transparent)
@@ -1493,9 +1536,8 @@ function updateEditUI() {
                 const isFixed = sd.every(v => v === false);
                 const statusIcon = isFixed ? '🔒' : '🔓';
                 
-                // Get ORIGINAL coordinates from structure (not display coordinates)
-                const originalPos = getOriginalAtomPosition(atom);
-                const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
+                // Get formatted coordinates (clickable to toggle between fractional/cartesian)
+                const coordsHtml = formatAtomCoordinates(atom, i);
                 
                 html += `
                     <div class="selected-atom edit">
@@ -1504,7 +1546,7 @@ function updateEditUI() {
                         <span class="sel-elem">${atom.element}</span>
                         <span class="sel-idx">#${atom.index + 1}</span>
                         <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>
-                        <div class="sel-coords" title="Cartesian coordinates (Å)">${coordStr}</div>
+                        ${coordsHtml}
                     </div>
                 `;
             });
@@ -1592,6 +1634,50 @@ function updateEditUI() {
             </div>
         `;
         
+        // Global Periodic Shift section
+        const shiftIsCartesian = lastShiftCoordType === 'cartesian';
+        const shiftStep = shiftIsCartesian ? '0.1' : '0.01';
+        const shiftLabelX = shiftIsCartesian ? 'Δx' : 'Δa';
+        const shiftLabelY = shiftIsCartesian ? 'Δy' : 'Δb';
+        const shiftLabelZ = shiftIsCartesian ? 'Δz' : 'Δc';
+        
+        html += `
+            <div class="sd-batch-section">
+                <div class="sd-batch-title">Global Periodic Shift</div>
+                <div class="add-atom-coord-type">
+                    <label class="coord-type-label">
+                        <input type="radio" name="shiftCoordType" value="cartesian"${shiftIsCartesian ? ' checked' : ''}>
+                        <span>Cartesian (Å)</span>
+                    </label>
+                    <label class="coord-type-label">
+                        <input type="radio" name="shiftCoordType" value="fractional"${!shiftIsCartesian ? ' checked' : ''}>
+                        <span>Fractional</span>
+                    </label>
+                </div>
+                <div class="shift-coords">
+                    <div class="shift-input-group">
+                        <label id="shiftLabelA">${shiftLabelX}</label>
+                        <input type="number" id="shiftA" step="${shiftStep}" value="${lastShiftCoords.a}" class="shift-input">
+                    </div>
+                    <div class="shift-input-group">
+                        <label id="shiftLabelB">${shiftLabelY}</label>
+                        <input type="number" id="shiftB" step="${shiftStep}" value="${lastShiftCoords.b}" class="shift-input">
+                    </div>
+                    <div class="shift-input-group">
+                        <label id="shiftLabelC">${shiftLabelZ}</label>
+                        <input type="number" id="shiftC" step="${shiftStep}" value="${lastShiftCoords.c}" class="shift-input">
+                    </div>
+                </div>
+                <div id="shiftError" class="add-atom-error"></div>
+                <button id="applyShiftBtn" class="btn btn-shift">Apply Shift</button>
+                <div class="shift-quick-buttons">
+                    <button id="shiftHalfCBtn" class="btn btn-sm btn-quick" title="Shift +0.5 along c-axis (fractional)">+½c</button>
+                    <button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell">Center</button>
+                </div>
+            </div>
+        `;
+        
+        // Selective Dynamics section
         html += `
             <div class="sd-batch-section">
                 <div class="sd-batch-title">Selective Dynamics</div>
@@ -1651,6 +1737,47 @@ function updateEditUI() {
         unfixAllBtn.addEventListener('click', unfixAllAtoms);
     }
     
+    // Global Periodic Shift buttons
+    const applyShiftBtn = document.getElementById('applyShiftBtn');
+    if (applyShiftBtn) {
+        applyShiftBtn.addEventListener('click', applyGlobalPeriodicShift);
+    }
+    
+    const shiftHalfCBtn = document.getElementById('shiftHalfCBtn');
+    if (shiftHalfCBtn) {
+        shiftHalfCBtn.addEventListener('click', () => {
+            applyPeriodicShiftByFractional(0, 0, 0.5);
+        });
+    }
+    
+    const shiftCenterBtn = document.getElementById('shiftCenterBtn');
+    if (shiftCenterBtn) {
+        shiftCenterBtn.addEventListener('click', centerStructureInCell);
+    }
+    
+    // Shift coordinate type radio buttons
+    const shiftCoordTypeRadios = document.querySelectorAll('input[name="shiftCoordType"]');
+    shiftCoordTypeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const isCartesian = e.target.value === 'cartesian';
+            const step = isCartesian ? '0.1' : '0.01';
+            document.getElementById('shiftA').step = step;
+            document.getElementById('shiftB').step = step;
+            document.getElementById('shiftC').step = step;
+            
+            // Update labels
+            document.getElementById('shiftLabelA').textContent = isCartesian ? 'Δx' : 'Δa';
+            document.getElementById('shiftLabelB').textContent = isCartesian ? 'Δy' : 'Δb';
+            document.getElementById('shiftLabelC').textContent = isCartesian ? 'Δz' : 'Δc';
+            
+            // Remember coordinate type
+            lastShiftCoordType = e.target.value;
+            
+            // Clear error
+            document.getElementById('shiftError').textContent = '';
+        });
+    });
+    
     // Add Atom button
     const addAtomBtn = document.getElementById('addAtomBtn');
     if (addAtomBtn) {
@@ -1687,6 +1814,12 @@ function updateEditUI() {
     if (undoDeleteBtn) {
         undoDeleteBtn.addEventListener('click', undoDelete);
     }
+    
+    // Clickable coordinates toggle
+    const clickableCoords = document.querySelectorAll('.clickable-coords');
+    clickableCoords.forEach(coord => {
+        coord.addEventListener('click', toggleCoordinateDisplayMode);
+    });
 }
 
 // Undo last atom move
@@ -2024,6 +2157,160 @@ function getSelectiveDynamicsStats() {
     });
     
     return `🔒 ${fixedCount} fixed • 🔓 ${activeCount} active`;
+}
+
+// ============================================
+// Global Periodic Shift Functions
+// ============================================
+
+// Apply global periodic shift from UI inputs
+function applyGlobalPeriodicShift() {
+    if (!currentStructure) return;
+    
+    const errorDiv = document.getElementById('shiftError');
+    errorDiv.textContent = '';
+    errorDiv.className = 'add-atom-error';
+    
+    const val1 = parseFloat(document.getElementById('shiftA').value) || 0;
+    const val2 = parseFloat(document.getElementById('shiftB').value) || 0;
+    const val3 = parseFloat(document.getElementById('shiftC').value) || 0;
+    const coordType = document.querySelector('input[name="shiftCoordType"]:checked').value;
+    
+    if (val1 === 0 && val2 === 0 && val3 === 0) {
+        errorDiv.textContent = 'Enter a non-zero shift';
+        return;
+    }
+    
+    // Remember values
+    lastShiftCoords = { a: val1, b: val2, c: val3 };
+    lastShiftCoordType = coordType;
+    
+    if (coordType === 'fractional') {
+        applyPeriodicShiftByFractional(val1, val2, val3);
+        errorDiv.textContent = `Shifted by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) frac`;
+    } else {
+        applyPeriodicShiftByCartesian(val1, val2, val3);
+        errorDiv.textContent = `Shifted by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) Å`;
+    }
+    errorDiv.className = 'add-atom-error success';
+}
+
+// Apply periodic shift by Cartesian coordinates (Å)
+function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ) {
+    if (!currentStructure) return;
+    
+    const lattice = currentStructure.lattice;
+    const shiftCartesian = new THREE.Vector3(deltaX, deltaY, deltaZ);
+    
+    // Apply shift to all atoms and wrap periodically
+    currentStructure.atoms.forEach(atom => {
+        // Shift in Cartesian
+        atom.position.add(shiftCartesian);
+        
+        // Convert to fractional for wrapping
+        const frac = cartesianToFractional(atom.position, lattice);
+        
+        if (frac) {
+            // Wrap to [0, 1) range
+            frac[0] = ((frac[0] % 1) + 1) % 1;
+            frac[1] = ((frac[1] % 1) + 1) % 1;
+            frac[2] = ((frac[2] % 1) + 1) % 1;
+            
+            // Convert back to Cartesian
+            const newPos = fractionalToCartesian(frac, lattice);
+            atom.position.copy(newPos);
+            atom.fractional = frac;
+        }
+    });
+    
+    // Re-render structure
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    
+    statusText.textContent = `Applied periodic shift`;
+    statusText.className = 'success';
+}
+
+// Apply periodic shift by fractional coordinates
+function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC) {
+    if (!currentStructure) return;
+    
+    const lattice = currentStructure.lattice;
+    
+    // Convert fractional shift to Cartesian
+    const shiftCartesian = new THREE.Vector3(
+        deltaA * lattice[0][0] + deltaB * lattice[1][0] + deltaC * lattice[2][0],
+        deltaA * lattice[0][1] + deltaB * lattice[1][1] + deltaC * lattice[2][1],
+        deltaA * lattice[0][2] + deltaB * lattice[1][2] + deltaC * lattice[2][2]
+    );
+    
+    // Apply shift to all atoms and wrap periodically
+    currentStructure.atoms.forEach(atom => {
+        // Shift in Cartesian
+        atom.position.add(shiftCartesian);
+        
+        // Convert to fractional for wrapping
+        const frac = cartesianToFractional(atom.position, lattice);
+        
+        if (frac) {
+            // Wrap to [0, 1) range
+            frac[0] = ((frac[0] % 1) + 1) % 1;
+            frac[1] = ((frac[1] % 1) + 1) % 1;
+            frac[2] = ((frac[2] % 1) + 1) % 1;
+            
+            // Convert back to Cartesian
+            const newPos = fractionalToCartesian(frac, lattice);
+            atom.position.copy(newPos);
+            atom.fractional = frac;
+        }
+    });
+    
+    // Re-render structure
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    
+    statusText.textContent = `Applied periodic shift`;
+    statusText.className = 'success';
+}
+
+// Center structure in the unit cell
+function centerStructureInCell() {
+    if (!currentStructure) return;
+    
+    const lattice = currentStructure.lattice;
+    
+    // Calculate current center of mass in fractional coordinates
+    let sumFracA = 0, sumFracB = 0, sumFracC = 0;
+    
+    currentStructure.atoms.forEach(atom => {
+        const frac = cartesianToFractional(atom.position, lattice);
+        if (frac) {
+            // Wrap to [0, 1) first
+            sumFracA += ((frac[0] % 1) + 1) % 1;
+            sumFracB += ((frac[1] % 1) + 1) % 1;
+            sumFracC += ((frac[2] % 1) + 1) % 1;
+        }
+    });
+    
+    const n = currentStructure.atoms.length;
+    const centerFracA = sumFracA / n;
+    const centerFracB = sumFracB / n;
+    const centerFracC = sumFracC / n;
+    
+    // Calculate shift to move center to (0.5, 0.5, 0.5)
+    const deltaA = 0.5 - centerFracA;
+    const deltaB = 0.5 - centerFracB;
+    const deltaC = 0.5 - centerFracC;
+    
+    applyPeriodicShiftByFractional(deltaA, deltaB, deltaC);
+    
+    const errorDiv = document.getElementById('shiftError');
+    if (errorDiv) {
+        errorDiv.textContent = 'Structure centered in cell';
+        errorDiv.className = 'add-atom-error success';
+    }
 }
 
 // Add atom from input form
@@ -2659,9 +2946,8 @@ function updateMeasurementUI() {
             const ghostClass = atom.isGhost ? ' ghost' : '';
             const displayIndex = atom.isGhost ? atom.originalIndex + 1 : atom.index + 1;
             
-            // Get ORIGINAL coordinates from structure (not display coordinates)
-            const originalPos = getOriginalAtomPosition(atom);
-            const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
+            // Get formatted coordinates (clickable to toggle between fractional/cartesian)
+            const coordsHtml = formatAtomCoordinates(atom, i);
             
             html += `
                 <div class="selected-atom${ghostClass}">
@@ -2669,7 +2955,7 @@ function updateMeasurementUI() {
                     <span class="sel-num${ghostClass}" style="background: ${atom.isGhost ? 'transparent; border: 2px dashed ' + colors[i] + '; color: ' + colors[i] : colors[i]}">${i + 1}${atom.isGhost ? "'" : ''}</span>
                     <span class="sel-elem">${atom.element}</span>
                     <span class="sel-idx">#${displayIndex}${offsetLabel ? ' ' + offsetLabel : ''}</span>
-                    <div class="sel-coords" title="Cartesian coordinates (Å)">${coordStr}</div>
+                    ${coordsHtml}
                 </div>
             `;
         });
@@ -2751,6 +3037,12 @@ function updateMeasurementUI() {
     if (clearBtn) {
         clearBtn.addEventListener('click', clearSelection);
     }
+    
+    // Clickable coordinates toggle
+    const clickableCoords = document.querySelectorAll('.clickable-coords');
+    clickableCoords.forEach(coord => {
+        coord.addEventListener('click', toggleCoordinateDisplayMode);
+    });
 }
 
 // Create bond between two atoms

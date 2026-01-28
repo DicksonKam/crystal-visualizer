@@ -335,7 +335,7 @@ body {
     font-size: 0.75rem;
     color: var(--accent-cyan);
     float: right;
-    margin-top: -1.5rem;
+    margin-top: -2rem;
 }
 
 .checkbox-group label {
@@ -417,10 +417,29 @@ body {
     width: 100%;
     font-family: var(--font-mono);
     font-size: 0.7rem;
-    color: var(--text-muted);
     margin-top: 0.25rem;
     padding-left: 2.5rem;
     opacity: 0.85;
+}
+
+/* Clickable coordinates - toggle between fractional/cartesian */
+.clickable-coords {
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.clickable-coords:hover {
+    opacity: 1;
+}
+
+/* Fractional coordinates - gold/yellow with square brackets */
+.sel-coords-frac {
+    color: var(--accent-yellow);
+}
+
+/* Cartesian coordinates - cyan with parentheses */
+.sel-coords-cart {
+    color: var(--accent-cyan);
 }
 
 .measurement-result {
@@ -1141,4 +1160,81 @@ body.edit-mode-active .panel-title {
 .btn-add-atom:hover {
     background: rgba(155, 93, 229, 0.25);
     border-color: var(--accent-purple);
+}
+
+/* === Global Periodic Shift === */
+.shift-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.shift-coords {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.shift-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.shift-input-group label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: var(--font-mono);
+}
+
+.shift-input {
+    width: 100%;
+    padding: 0.4rem 0.35rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.shift-input:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 245, 212, 0.15);
+}
+
+.btn-shift {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 245, 212, 0.15);
+    border: 1px solid rgba(0, 245, 212, 0.4);
+    color: var(--accent-cyan);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.btn-shift:hover {
+    background: rgba(0, 245, 212, 0.25);
+    border-color: var(--accent-cyan);
+}
+
+.shift-quick-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-quick {
+    flex: 1;
+    background: rgba(254, 228, 64, 0.1);
+    border: 1px solid rgba(254, 228, 64, 0.3);
+    color: var(--accent-yellow);
+}
+
+.btn-quick:hover {
+    background: rgba(254, 228, 64, 0.2);
+    border-color: var(--accent-yellow);
 }

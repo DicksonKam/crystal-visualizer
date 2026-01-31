@@ -1634,16 +1634,26 @@ function updateEditUI() {
             </div>
         `;
         
-        // Global Periodic Shift section
+        // Periodic Shift section (context-aware: selected atoms or all)
         const shiftIsCartesian = lastShiftCoordType === 'cartesian';
         const shiftStep = shiftIsCartesian ? '0.1' : '0.01';
         const shiftLabelX = shiftIsCartesian ? 'Δx' : 'Δa';
         const shiftLabelY = shiftIsCartesian ? 'Δy' : 'Δb';
         const shiftLabelZ = shiftIsCartesian ? 'Δz' : 'Δc';
         
+        // Context-aware hint and button text
+        const hasSelection = selectedAtoms.length > 0;
+        const shiftTargetHint = hasSelection 
+            ? `Will shift ${selectedAtoms.length} selected atom${selectedAtoms.length > 1 ? 's' : ''}`
+            : `Will shift all ${currentStructure.atoms.length} atoms`;
+        const shiftBtnText = hasSelection 
+            ? `Shift ${selectedAtoms.length} Selected`
+            : 'Shift All';
+        
         html += `
             <div class="sd-batch-section">
-                <div class="sd-batch-title">Global Periodic Shift</div>
+                <div class="sd-batch-title">Periodic Shift</div>
+                <div class="shift-target-hint">${shiftTargetHint}</div>
                 <div class="add-atom-coord-type">
                     <label class="coord-type-label">
                         <input type="radio" name="shiftCoordType" value="cartesian"${shiftIsCartesian ? ' checked' : ''}>
@@ -1669,11 +1679,8 @@ function updateEditUI() {
                     </div>
                 </div>
                 <div id="shiftError" class="add-atom-error"></div>
-                <button id="applyShiftBtn" class="btn btn-shift">Apply Shift</button>
-                <div class="shift-quick-buttons">
-                    <button id="shiftHalfCBtn" class="btn btn-sm btn-quick" title="Shift +0.5 along c-axis (fractional)">+½c</button>
-                    <button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell">Center</button>
-                </div>
+                <button id="applyShiftBtn" class="btn btn-shift">${shiftBtnText}</button>
+                ${!hasSelection ? '<button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell" style="width: 100%; margin-top: 0.5rem;">Center in Cell</button>' : ''}
             </div>
         `;
         
@@ -1741,13 +1748,6 @@ function updateEditUI() {
     const applyShiftBtn = document.getElementById('applyShiftBtn');
     if (applyShiftBtn) {
         applyShiftBtn.addEventListener('click', applyGlobalPeriodicShift);
-    }
-    
-    const shiftHalfCBtn = document.getElementById('shiftHalfCBtn');
-    if (shiftHalfCBtn) {
-        shiftHalfCBtn.addEventListener('click', () => {
-            applyPeriodicShiftByFractional(0, 0, 0.5);
-        });
     }
     
     const shiftCenterBtn = document.getElementById('shiftCenterBtn');
@@ -2167,6 +2167,7 @@ function getSelectiveDynamicsStats() {
 // ============================================
 
 // Apply global periodic shift from UI inputs
+// Context-aware periodic shift: shifts selected atoms if any, otherwise all atoms
 function applyGlobalPeriodicShift() {
     if (!currentStructure) return;
     
@@ -2188,25 +2189,41 @@ function applyGlobalPeriodicShift() {
     lastShiftCoords = { a: val1, b: val2, c: val3 };
     lastShiftCoordType = coordType;
     
+    // Determine which atoms to shift (selected or all)
+    const atomIndicesToShift = selectedAtoms.length > 0 
+        ? selectedAtoms.map(a => a.index)
+        : null; // null means shift all
+    
+    const targetDesc = selectedAtoms.length > 0 
+        ? `${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''}`
+        : 'all atoms';
+    
     if (coordType === 'fractional') {
-        applyPeriodicShiftByFractional(val1, val2, val3);
-        errorDiv.textContent = `Shifted by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) frac`;
+        applyPeriodicShiftByFractional(val1, val2, val3, atomIndicesToShift);
+        errorDiv.textContent = `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) frac`;
     } else {
-        applyPeriodicShiftByCartesian(val1, val2, val3);
-        errorDiv.textContent = `Shifted by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) Å`;
+        applyPeriodicShiftByCartesian(val1, val2, val3, atomIndicesToShift);
+        errorDiv.textContent = `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) Å`;
     }
     errorDiv.className = 'add-atom-error success';
 }
 
 // Apply periodic shift by Cartesian coordinates (Å)
-function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ) {
+// atomIndices: optional array of indices to shift (null = shift all)
+function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ, atomIndices = null) {
     if (!currentStructure) return;
     
     const lattice = currentStructure.lattice;
     const shiftCartesian = new THREE.Vector3(deltaX, deltaY, deltaZ);
     
-    // Apply shift to all atoms and wrap periodically
-    currentStructure.atoms.forEach(atom => {
+    // Determine which atoms to shift
+    const indicesToShift = atomIndices || currentStructure.atoms.map((_, i) => i);
+    
+    // Apply shift to specified atoms and wrap periodically
+    indicesToShift.forEach(index => {
+        const atom = currentStructure.atoms[index];
+        if (!atom) return;
+        
         // Shift in Cartesian
         atom.position.add(shiftCartesian);
         
@@ -2231,12 +2248,14 @@ function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ) {
     updateUI(currentStructure);
     updateEditUI();
     
-    statusText.textContent = `Applied periodic shift`;
+    const targetDesc = atomIndices ? `${atomIndices.length} atom${atomIndices.length > 1 ? 's' : ''}` : 'all atoms';
+    statusText.textContent = `Shifted ${targetDesc}`;
     statusText.className = 'success';
 }
 
 // Apply periodic shift by fractional coordinates
-function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC) {
+// atomIndices: optional array of indices to shift (null = shift all)
+function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = null) {
     if (!currentStructure) return;
     
     const lattice = currentStructure.lattice;
@@ -2248,8 +2267,14 @@ function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC) {
         deltaA * lattice[0][2] + deltaB * lattice[1][2] + deltaC * lattice[2][2]
     );
     
-    // Apply shift to all atoms and wrap periodically
-    currentStructure.atoms.forEach(atom => {
+    // Determine which atoms to shift
+    const indicesToShift = atomIndices || currentStructure.atoms.map((_, i) => i);
+    
+    // Apply shift to specified atoms and wrap periodically
+    indicesToShift.forEach(index => {
+        const atom = currentStructure.atoms[index];
+        if (!atom) return;
+        
         // Shift in Cartesian
         atom.position.add(shiftCartesian);
         
@@ -2274,7 +2299,8 @@ function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC) {
     updateUI(currentStructure);
     updateEditUI();
     
-    statusText.textContent = `Applied periodic shift`;
+    const targetDesc = atomIndices ? `${atomIndices.length} atom${atomIndices.length > 1 ? 's' : ''}` : 'all atoms';
+    statusText.textContent = `Shifted ${targetDesc}`;
     statusText.className = 'success';
 }
 
@@ -2524,8 +2550,27 @@ function selectAtom(mesh, atomIndex) {
         cellOffset: cellOffset
     });
     
+    // Highlight the selected atom (lighten it)
+    highlightAtomMesh(mesh);
+    
     // Create appropriate visual based on current mode
     createSelectionVisual(mesh, selectedAtoms.length, isGhost);
+}
+
+// Highlight an atom mesh (lighten it with emissive glow)
+function highlightAtomMesh(mesh) {
+    if (mesh && mesh.material) {
+        mesh.material.emissive = new THREE.Color(0xffffff);
+        mesh.material.emissiveIntensity = 0.35;
+    }
+}
+
+// Remove highlight from an atom mesh
+function unhighlightAtomMesh(mesh) {
+    if (mesh && mesh.material) {
+        mesh.material.emissive = new THREE.Color(0x000000);
+        mesh.material.emissiveIntensity = 0;
+    }
 }
 
 // Create selection visual based on current mode
@@ -2541,6 +2586,8 @@ function createSelectionVisual(mesh, selectionNumber, isGhost = false) {
 function rebuildSelectionVisuals() {
     clearMeasurementVisuals();
     selectedAtoms.forEach((atom, i) => {
+        // Reapply highlight to selected atoms
+        highlightAtomMesh(atom.mesh);
         createSelectionVisual(atom.mesh, i + 1, atom.isGhost);
     });
     
@@ -2552,12 +2599,25 @@ function rebuildSelectionVisuals() {
 
 // Deselect an atom by its index in selectedAtoms array
 function deselectAtom(selectedIndex) {
+    // Remove highlight from deselected atom
+    const atom = selectedAtoms[selectedIndex];
+    if (atom && atom.mesh) {
+        unhighlightAtomMesh(atom.mesh);
+    }
+    
     selectedAtoms.splice(selectedIndex, 1);
     rebuildSelectionVisuals();
 }
 
 // Clear all selections
 function clearSelection() {
+    // Remove highlight from all selected atoms
+    selectedAtoms.forEach(atom => {
+        if (atom && atom.mesh) {
+            unhighlightAtomMesh(atom.mesh);
+        }
+    });
+    
     selectedAtoms = [];
     clearMeasurementVisuals();
     updateUI_forCurrentMode();

@@ -1169,6 +1169,16 @@ body.edit-mode-active .panel-title {
     margin-bottom: 0.5rem;
 }
 
+.shift-target-hint {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 245, 212, 0.1);
+    border-radius: var(--radius-sm);
+    text-align: center;
+}
+
 .shift-coords {
     display: flex;
     gap: 0.5rem;

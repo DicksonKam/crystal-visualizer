@@ -1462,7 +1462,7 @@ function selectAtomForEdit(mesh, atomIndex) {
     selectAtom(mesh, atomIndex);
 }
 
-// Create red X marker for edit mode selection
+// Create selection marker for edit mode (cyan checkmark)
 function createEditSelectionMarker(atomMesh, selectionNumber) {
     const worldPos = new THREE.Vector3();
     atomMesh.getWorldPosition(worldPos);
@@ -1472,24 +1472,24 @@ function createEditSelectionMarker(atomMesh, selectionNumber) {
     canvas.height = 64;
     const ctx = canvas.getContext('2d');
     
-    // Red circle with X
+    // Cyan circle with checkmark
     ctx.beginPath();
     ctx.arc(32, 32, 24, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 80, 80, 0.95)';
+    ctx.fillStyle = 'rgba(0, 245, 212, 0.95)';
     ctx.fill();
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 2;
     ctx.stroke();
     
-    // Draw X
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 4;
+    // Draw checkmark
+    ctx.strokeStyle = '#0d1117';
+    ctx.lineWidth = 5;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    ctx.moveTo(20, 20);
-    ctx.lineTo(44, 44);
-    ctx.moveTo(44, 20);
-    ctx.lineTo(20, 44);
+    ctx.moveTo(18, 32);
+    ctx.lineTo(28, 42);
+    ctx.lineTo(46, 22);
     ctx.stroke();
     
     const texture = new THREE.CanvasTexture(canvas);
@@ -1527,7 +1527,7 @@ function updateEditUI() {
         html += '<p class="placeholder-text">No edits yet</p>';
     } else {
         if (selectedAtoms.length > 0) {
-            html += `<div class="edit-warning">⚠️ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
+            html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
             
             html += '<div class="selected-atoms edit-mode">';
             selectedAtoms.forEach((atom, i) => {
@@ -1541,8 +1541,8 @@ function updateEditUI() {
                 
                 html += `
                     <div class="selected-atom edit">
-                        <div class="color-strip" style="background: #ff5050"></div>
-                        <span class="sel-num" style="background: #ff5050">✕</span>
+                        <div class="color-strip" style="background: #00f5d4"></div>
+                        <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
                         <span class="sel-elem">${atom.element}</span>
                         <span class="sel-idx">#${atom.index + 1}</span>
                         <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>

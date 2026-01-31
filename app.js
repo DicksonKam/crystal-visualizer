@@ -2073,6 +2073,7 @@ function setSelectedAtomsFixed(isFixed) {
     
     // Re-render to update indicators
     renderStructure(currentStructure, true);
+    updateUI(currentStructure); // Update Structure Info and Atoms panels
     updateEditUI();
     
     const action = isFixed ? 'Fixed' : 'Unfixed';
@@ -2105,6 +2106,7 @@ function fixAtomsByZThreshold() {
     
     // Re-render
     renderStructure(currentStructure, true);
+    updateUI(currentStructure); // Update Structure Info and Atoms panels
     updateEditUI();
     
     statusText.textContent = `Fixed ${fixedCount} atoms below z = ${threshold.toFixed(2)} Å`;
@@ -2123,6 +2125,7 @@ function unfixAllAtoms() {
     
     // Re-render
     renderStructure(currentStructure, true);
+    updateUI(currentStructure); // Update Structure Info and Atoms panels
     updateEditUI();
     
     statusText.textContent = 'All atoms set to active';
@@ -3774,14 +3777,14 @@ function generatePOSCAR() {
     // Line 7: Number of atoms per element
     lines.push(currentStructure.counts.join(' '));
     
-    // Check if any atoms have selective dynamics (any fixed axes)
-    const hasSelectiveDynamics = currentStructure.hasSelectiveDynamics || 
-        currentStructure.atoms.some(atom => 
-            atom.selectiveDynamics && atom.selectiveDynamics.some(v => v === false)
-        );
+    // Check if any atoms actually have fixed axes (not just if original had Selective Dynamics)
+    // Only output Selective Dynamics if at least one atom has a fixed axis
+    const hasAnyFixedAtoms = currentStructure.atoms.some(atom => 
+        atom.selectiveDynamics && atom.selectiveDynamics.some(v => v === false)
+    );
     
-    // Line 8: Selective Dynamics (optional)
-    if (hasSelectiveDynamics) {
+    // Line 8: Selective Dynamics (optional) - only if there are actually fixed atoms
+    if (hasAnyFixedAtoms) {
         lines.push('Selective Dynamics');
     }
     
@@ -3807,8 +3810,8 @@ function generatePOSCAR() {
             const pos = atomData.position;
             let line = `  ${pos.x.toFixed(9)}  ${pos.y.toFixed(9)}  ${pos.z.toFixed(9)}`;
             
-            // Add selective dynamics flags if enabled
-            if (hasSelectiveDynamics) {
+            // Add selective dynamics flags only if there are fixed atoms
+            if (hasAnyFixedAtoms) {
                 const sd = atomData.selectiveDynamics;
                 line += `  ${sd[0] ? 'T' : 'F'} ${sd[1] ? 'T' : 'F'} ${sd[2] ? 'T' : 'F'}`;
             }

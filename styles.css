@@ -520,6 +520,44 @@ body {
     text-align: center;
 }
 
+/* Preserved measurement display in edit mode */
+.preserved-measurement {
+    background: rgba(241, 91, 181, 0.1);
+    border: 1px solid rgba(241, 91, 181, 0.3);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.preserved-measurement-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-pink);
+    margin-bottom: 0.25rem;
+}
+
+.preserved-measurement-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.preserved-measurement-value {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preserved-measurement-value:last-of-type {
+    border-bottom: none;
+}
+
+.preserved-measurement-value strong {
+    color: var(--accent-pink);
+}
+
 .selected-atom.edit .color-strip {
     background: #ff5050 !important;
 }

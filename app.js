@@ -147,6 +147,9 @@ let lastShiftCoordType = 'fractional'; // Default to fractional for shifts
 // Selected atom coordinate display mode ('fractional' or 'cartesian')
 let selectedAtomCoordMode = 'fractional'; // Default to fractional
 
+// Track if current selection is a preserved measurement (from Measure mode)
+let isMeasurementSelection = false;
+
 // Drag state for moving atoms
 let isDragging = false;
 let wasDragging = false; // Flag to prevent click after drag
@@ -1255,12 +1258,8 @@ function onMouseMove(event) {
             isDragging = true;
             controls.enabled = false;
             
-            // If atom was selected for deletion, deselect it immediately when dragging starts
-            const selectedIndex = selectedAtoms.findIndex(a => a.index === draggedAtom.index);
-            if (selectedIndex !== -1) {
-                deselectAtom(selectedIndex);
-                updateEditUI();
-            }
+            // Keep selection during drag - don't deselect
+            // Selection visuals will move with the atom during drag
             
             // Visual feedback - highlight dragged atom
             if (draggedAtom.mesh.material) {
@@ -1289,6 +1288,24 @@ function onMouseMove(event) {
             
             // Update atom position
             draggedAtom.mesh.position.copy(newLocalPos);
+            
+            // Update selection visuals in real-time
+            if (selectedAtoms.length > 0) {
+                // Update the position in selectedAtoms for the dragged atom
+                const selectedIdx = selectedAtoms.findIndex(a => a.index === draggedAtom.index);
+                if (selectedIdx !== -1) {
+                    selectedAtoms[selectedIdx].position.copy(newWorldPos);
+                }
+                
+                // Update selection label positions (rings/checkmarks move with atoms)
+                updateSelectionVisualPositions();
+                
+                // Update measurement lines/arcs if preserving measurement
+                if (isMeasurementSelection) {
+                    updateMeasurements();
+                    updateEditUI(); // Update panel with new values
+                }
+            }
         }
     }
 }
@@ -1442,7 +1459,14 @@ function onClickFallback(event) {
                 return;
             }
             
-            // Handle edit mode click - select/deselect for deletion
+            // If there's a preserved measurement selection, clear it first
+            // This starts a fresh edit selection
+            if (isMeasurementSelection) {
+                clearSelection();
+                isMeasurementSelection = false;
+            }
+            
+            // Handle edit mode click - select/deselect for editing
             const existingIndex = selectedAtoms.findIndex(a => a.index === atomIndex);
             
             if (existingIndex !== -1) {
@@ -1527,43 +1551,71 @@ function updateEditUI() {
         html += '<p class="placeholder-text">No edits yet</p>';
     } else {
         if (selectedAtoms.length > 0) {
-            html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
-            
-            html += '<div class="selected-atoms edit-mode">';
-            selectedAtoms.forEach((atom, i) => {
-                // Get selective dynamics status
-                const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
-                const isFixed = sd.every(v => v === false);
-                const statusIcon = isFixed ? '🔒' : '🔓';
+            // Check if this is a preserved measurement from Measure mode
+            if (isMeasurementSelection) {
+                // Show compact measurement display (read-only)
+                html += '<div class="preserved-measurement">';
+                html += '<div class="preserved-measurement-header">📐 Measurement Preserved</div>';
+                html += '<div class="preserved-measurement-hint">Click atom to start editing</div>';
                 
-                // Get formatted coordinates (clickable to toggle between fractional/cartesian)
-                const coordsHtml = formatAtomCoordinates(atom, i);
+                // Show measurement values
+                if (selectedAtoms.length >= 2) {
+                    const dist = selectedAtoms[0].position.distanceTo(selectedAtoms[1].position);
+                    html += `<div class="preserved-measurement-value">Distance (1—2): <strong>${dist.toFixed(4)} Å</strong></div>`;
+                }
+                if (selectedAtoms.length === 3) {
+                    const dist23 = selectedAtoms[1].position.distanceTo(selectedAtoms[2].position);
+                    html += `<div class="preserved-measurement-value">Distance (2—3): <strong>${dist23.toFixed(4)} Å</strong></div>`;
+                    
+                    const v1 = new THREE.Vector3().subVectors(selectedAtoms[0].position, selectedAtoms[1].position).normalize();
+                    const v2 = new THREE.Vector3().subVectors(selectedAtoms[2].position, selectedAtoms[1].position).normalize();
+                    const angle = Math.acos(Math.max(-1, Math.min(1, v1.dot(v2))));
+                    const angleDeg = THREE.MathUtils.radToDeg(angle);
+                    html += `<div class="preserved-measurement-value">Angle (1—2—3): <strong>${angleDeg.toFixed(2)}°</strong></div>`;
+                }
                 
+                html += `<button id="clearSelectionBtn" class="btn btn-clear" style="margin-top: 0.5rem;">Clear Measurement</button>`;
+                html += '</div>';
+            } else {
+                // Normal edit selection UI
+                html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
+                
+                html += '<div class="selected-atoms edit-mode">';
+                selectedAtoms.forEach((atom, i) => {
+                    // Get selective dynamics status
+                    const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
+                    const isFixed = sd.every(v => v === false);
+                    const statusIcon = isFixed ? '🔒' : '🔓';
+                    
+                    // Get formatted coordinates (clickable to toggle between fractional/cartesian)
+                    const coordsHtml = formatAtomCoordinates(atom, i);
+                    
+                    html += `
+                        <div class="selected-atom edit">
+                            <div class="color-strip" style="background: #00f5d4"></div>
+                            <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
+                            <span class="sel-elem">${atom.element}</span>
+                            <span class="sel-idx">#${atom.index + 1}</span>
+                            <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>
+                            ${coordsHtml}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                // Selective dynamics buttons for selected atoms
                 html += `
-                    <div class="selected-atom edit">
-                        <div class="color-strip" style="background: #00f5d4"></div>
-                        <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
-                        <span class="sel-elem">${atom.element}</span>
-                        <span class="sel-idx">#${atom.index + 1}</span>
-                        <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>
-                        ${coordsHtml}
+                    <div class="sd-buttons">
+                        <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms (F F F)">🔒 Fix</button>
+                        <button id="unfixSelectedBtn" class="btn btn-unfix" title="Make selected atoms active (T T T)">🔓 Active</button>
                     </div>
                 `;
-            });
-            html += '</div>';
-            
-            // Selective dynamics buttons for selected atoms
-            html += `
-                <div class="sd-buttons">
-                    <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms (F F F)">🔒 Fix</button>
-                    <button id="unfixSelectedBtn" class="btn btn-unfix" title="Make selected atoms active (T T T)">🔓 Active</button>
-                </div>
-            `;
-            
-            html += `
-                <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete Selected</button>
-                <button id="clearSelectionBtn" class="btn btn-clear">Cancel Selection</button>
-            `;
+                
+                html += `
+                    <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete Selected</button>
+                    <button id="clearSelectionBtn" class="btn btn-clear">Cancel Selection</button>
+                `;
+            }
         }
         
         // Undo buttons
@@ -2550,6 +2602,11 @@ function selectAtom(mesh, atomIndex) {
         cellOffset: cellOffset
     });
     
+    // Track whether this is a measurement selection
+    if (currentMode === 'measure') {
+        isMeasurementSelection = true;
+    }
+    
     // Highlight the selected atom (lighten it)
     highlightAtomMesh(mesh);
     
@@ -2575,7 +2632,8 @@ function unhighlightAtomMesh(mesh) {
 
 // Create selection visual based on current mode
 function createSelectionVisual(mesh, selectionNumber, isGhost = false) {
-    if (currentMode === 'measure') {
+    // Use measurement visuals if in measure mode OR if preserving a measurement in edit mode
+    if (currentMode === 'measure' || isMeasurementSelection) {
         createSelectionRing(mesh, selectionNumber, isGhost);
     } else {
         createEditSelectionMarker(mesh, selectionNumber);
@@ -2588,13 +2646,32 @@ function rebuildSelectionVisuals() {
     selectedAtoms.forEach((atom, i) => {
         // Reapply highlight to selected atoms
         highlightAtomMesh(atom.mesh);
-        createSelectionVisual(atom.mesh, i + 1, atom.isGhost);
+        // Use measurement visuals if this is a preserved measurement, otherwise mode-appropriate
+        if (isMeasurementSelection || currentMode === 'measure') {
+            createSelectionRing(atom.mesh, i + 1, atom.isGhost);
+        } else {
+            createEditSelectionMarker(atom.mesh, i + 1);
+        }
     });
     
-    // Also rebuild measurement lines/arcs if in measure mode
-    if (currentMode === 'measure') {
+    // Show measurement lines/arcs if in measure mode OR if preserving measurement in edit mode
+    if (currentMode === 'measure' || isMeasurementSelection) {
         updateMeasurements();
     }
+}
+
+// Update selection visual positions (called during atom drag to move labels with atoms)
+function updateSelectionVisualPositions() {
+    // Update each selection ring/marker position to match its atom
+    selectionRings.forEach((sprite, i) => {
+        if (i < selectedAtoms.length && selectedAtoms[i].mesh) {
+            const worldPos = new THREE.Vector3();
+            selectedAtoms[i].mesh.getWorldPosition(worldPos);
+            sprite.position.copy(worldPos);
+            // Also update the stored position in selectedAtoms
+            selectedAtoms[i].position.copy(worldPos);
+        }
+    });
 }
 
 // Deselect an atom by its index in selectedAtoms array
@@ -2619,6 +2696,7 @@ function clearSelection() {
     });
     
     selectedAtoms = [];
+    isMeasurementSelection = false; // Reset measurement state
     clearMeasurementVisuals();
     updateUI_forCurrentMode();
 }
@@ -3206,8 +3284,14 @@ function createUnitCell(lattice) {
 // Render the structure
 // preserveState: if true, keeps selections and camera position (for display option changes)
 function renderStructure(structure, preserveState = false) {
-    // Save current selection indices and camera if preserving state
-    const savedSelectionIndices = preserveState ? selectedAtoms.map(a => a.index) : [];
+    // Save current selection info including ghost atoms
+    const savedSelections = preserveState ? selectedAtoms.map(a => ({
+        index: a.index,
+        originalIndex: a.originalIndex,
+        isGhost: a.isGhost || false,
+        cellOffset: a.cellOffset ? { ...a.cellOffset } : null,
+        element: a.element
+    })) : [];
     const savedCameraPos = preserveState ? camera.position.clone() : null;
     const savedControlsTarget = preserveState ? controls.target.clone() : null;
     
@@ -3285,19 +3369,48 @@ function renderStructure(structure, preserveState = false) {
         controls.update();
         
         // Restore selections with correct mode-aware visuals
-        savedSelectionIndices.forEach(atomIndex => {
-            if (atomIndex < atomMeshes.length) {
-                const atom = currentStructure.atoms[atomIndex];
-                const mesh = atomMeshes[atomIndex];
-                const worldPos = new THREE.Vector3();
-                mesh.getWorldPosition(worldPos);
+        savedSelections.forEach(saved => {
+            if (saved.isGhost && saved.cellOffset) {
+                // Find the ghost atom mesh by matching originalIndex and cellOffset
+                const ghostMesh = atomMeshes.find(m => 
+                    m.userData.isGhost && 
+                    m.userData.originalIndex === saved.originalIndex &&
+                    m.userData.cellOffset &&
+                    m.userData.cellOffset.a === saved.cellOffset.a &&
+                    m.userData.cellOffset.b === saved.cellOffset.b &&
+                    m.userData.cellOffset.c === saved.cellOffset.c
+                );
                 
-                selectedAtoms.push({
-                    mesh: mesh,
-                    index: atomIndex,
-                    element: atom.element,
-                    position: worldPos.clone()
-                });
+                if (ghostMesh) {
+                    const worldPos = new THREE.Vector3();
+                    ghostMesh.getWorldPosition(worldPos);
+                    
+                    selectedAtoms.push({
+                        mesh: ghostMesh,
+                        index: saved.index,
+                        originalIndex: saved.originalIndex,
+                        element: saved.element,
+                        position: worldPos.clone(),
+                        isGhost: true,
+                        cellOffset: saved.cellOffset
+                    });
+                }
+            } else {
+                // Regular atom
+                const atomIndex = saved.index;
+                if (atomIndex < atomMeshes.length && !atomMeshes[atomIndex].userData.isGhost) {
+                    const atom = currentStructure.atoms[atomIndex];
+                    const mesh = atomMeshes[atomIndex];
+                    const worldPos = new THREE.Vector3();
+                    mesh.getWorldPosition(worldPos);
+                    
+                    selectedAtoms.push({
+                        mesh: mesh,
+                        index: atomIndex,
+                        element: atom.element,
+                        position: worldPos.clone()
+                    });
+                }
             }
         });
         
@@ -3617,10 +3730,10 @@ function setupPeriodicControls() {
         const b = parseInt(document.getElementById('periodicB').value) || 1;
         const c = parseInt(document.getElementById('periodicC').value) || 1;
         
-        // Clamp values
-        settings.periodic.a = Math.max(1, Math.min(5, a));
-        settings.periodic.b = Math.max(1, Math.min(5, b));
-        settings.periodic.c = Math.max(1, Math.min(5, c));
+        // Clamp values (minimum 1, reasonable max of 20 for performance)
+        settings.periodic.a = Math.max(1, Math.min(20, a));
+        settings.periodic.b = Math.max(1, Math.min(20, b));
+        settings.periodic.c = Math.max(1, Math.min(20, c));
         
         // Update displays
         document.getElementById('periodicADisplay').textContent = settings.periodic.a;
@@ -3660,7 +3773,7 @@ function setupPeriodicControls() {
             const currentVal = parseInt(input.value) || 1;
             
             if (dir === 'plus') {
-                input.value = Math.min(5, currentVal + 1);
+                input.value = Math.min(20, currentVal + 1);
             } else {
                 input.value = Math.max(1, currentVal - 1);
             }
@@ -3782,8 +3895,23 @@ function setupModeToggle() {
                 panelTitle.textContent = mode === 'measure' ? '📐 Measurements' : '✏️ Edit Actions';
             }
             
-            // Clear selections when switching modes (cleaner UX)
-            clearSelection();
+            // Preserve measurement selection when switching modes
+            // If switching FROM measure mode with a selection, mark it as preserved measurement
+            if (mode === 'edit' && selectedAtoms.length > 0) {
+                isMeasurementSelection = true;
+                // Keep measurement visuals visible - don't clear
+            } else if (mode === 'measure') {
+                // Switching to measure mode - keep selection if it's a preserved measurement
+                if (!isMeasurementSelection) {
+                    // If we had an edit selection (not measurement), clear it
+                    clearSelection();
+                }
+                // Rebuild visuals for measure mode
+                rebuildSelectionVisuals();
+            }
+            
+            // Update UI for the new mode
+            updateUI_forCurrentMode();
             
             // Update body class for CSS styling
             if (mode === 'measure') {
@@ -4435,6 +4563,18 @@ function updateVacuumDrag(event) {
     // Re-render and show drag highlight
     renderStructure(currentStructure, true);
     createDragFaceHighlight(axis, dragHandle);
+    
+    // Update measurements in real-time during vacuum drag
+    if (isMeasurementSelection && selectedAtoms.length > 0) {
+        // Update positions in selectedAtoms from the new mesh positions
+        selectedAtoms.forEach(atom => {
+            if (atom.mesh) {
+                atom.mesh.getWorldPosition(atom.position);
+            }
+        });
+        updateMeasurements();
+        updateEditUI();
+    }
     
     // Update status with current axis length
     const finalLen = getLatticeVector(currentStructure.lattice, axisIdx).length();

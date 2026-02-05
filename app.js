@@ -133,6 +133,14 @@ let atomMeshes = []; // All atom meshes for raycasting
 let currentMode = 'measure';
 let lastZThreshold = null; // Remember user's z-threshold setting
 
+// XDATCAR / Animation state
+let animationState = {
+    isPlaying: false,
+    fps: 10,
+    intervalId: null,
+    loop: false // Default: stop at last frame
+};
+
 // ============================================
 // Unified Undo System (Cmd+Z / Ctrl+Z)
 // ============================================
@@ -856,8 +864,157 @@ function parsePOSCAR(content) {
         counts,
         atoms,
         isDirect,
-        hasSelectiveDynamics
+        hasSelectiveDynamics,
+        isXDATCAR: false
     };
+}
+
+// Parse XDATCAR file format (multi-frame trajectory)
+function parseXDATCAR(content) {
+    const lines = content.trim().split('\n').map(line => line.trim());
+    
+    // Line 0: Comment
+    const comment = lines[0];
+    
+    // Line 1: Universal scaling factor
+    const scale = parseFloat(lines[1]);
+    
+    // Lines 2-4: Lattice vectors (this is the initial/reference lattice)
+    const baseLattice = [];
+    for (let i = 2; i <= 4; i++) {
+        const parts = lines[i].split(/\s+/).filter(p => p).map(parseFloat);
+        baseLattice.push(parts.map(v => v * scale));
+    }
+    
+    // Line 5: Element symbols
+    const elements = lines[5].split(/\s+/).filter(p => p);
+    
+    // Line 6: Number of atoms per element
+    const counts = lines[6].split(/\s+/).filter(p => p).map(p => parseInt(p));
+    const totalAtoms = counts.reduce((a, b) => a + b, 0);
+    
+    // Build element array for each atom
+    const atomElements = [];
+    for (let i = 0; i < elements.length; i++) {
+        for (let j = 0; j < counts[i]; j++) {
+            atomElements.push(elements[i]);
+        }
+    }
+    
+    // Parse all frames
+    const frames = [];
+    let lineIndex = 7;
+    
+    while (lineIndex < lines.length) {
+        const headerLine = lines[lineIndex];
+        
+        // Check for configuration header: "Direct configuration= N" or just "Direct"
+        if (!headerLine.toLowerCase().startsWith('direct')) {
+            lineIndex++;
+            continue;
+        }
+        
+        // Extract frame number if present (for reference, not strictly needed)
+        let frameNumber = frames.length + 1;
+        const configMatch = headerLine.match(/configuration\s*=\s*(\d+)/i);
+        if (configMatch) {
+            frameNumber = parseInt(configMatch[1]);
+        }
+        
+        lineIndex++; // Move past header
+        
+        // Parse atom positions for this frame
+        const positions = [];
+        const fractionalCoords = [];
+        
+        // Use the base lattice for this frame (can be extended for NPT with per-frame lattice)
+        const frameLattice = baseLattice.map(v => [...v]);
+        
+        for (let atomIdx = 0; atomIdx < totalAtoms; atomIdx++) {
+            if (lineIndex >= lines.length) break;
+            
+            const posLine = lines[lineIndex];
+            const parts = posLine.split(/\s+/).filter(p => p).map(parseFloat);
+            
+            if (parts.length < 3) {
+                lineIndex++;
+                continue;
+            }
+            
+            const fx = parts[0];
+            const fy = parts[1];
+            const fz = parts[2];
+            
+            // Store fractional coordinates
+            fractionalCoords.push([fx, fy, fz]);
+            
+            // Convert to Cartesian
+            const cartX = fx * frameLattice[0][0] + fy * frameLattice[1][0] + fz * frameLattice[2][0];
+            const cartY = fx * frameLattice[0][1] + fy * frameLattice[1][1] + fz * frameLattice[2][1];
+            const cartZ = fx * frameLattice[0][2] + fy * frameLattice[1][2] + fz * frameLattice[2][2];
+            
+            positions.push(new THREE.Vector3(cartX, cartY, cartZ));
+            lineIndex++;
+        }
+        
+        // Only add frame if we got all atoms
+        if (positions.length === totalAtoms) {
+            frames.push({
+                lattice: frameLattice,
+                positions: positions,
+                fractional: fractionalCoords
+            });
+        }
+    }
+    
+    if (frames.length === 0) {
+        throw new Error('No valid frames found in XDATCAR file');
+    }
+    
+    // Build initial atoms array from first frame
+    const atoms = [];
+    for (let i = 0; i < totalAtoms; i++) {
+        atoms.push({
+            element: atomElements[i],
+            position: frames[0].positions[i].clone(),
+            fractional: frames[0].fractional[i],
+            selectiveDynamics: [true, true, true] // XDATCAR doesn't have selective dynamics
+        });
+    }
+    
+    return {
+        comment,
+        scale,
+        lattice: frames[0].lattice, // Current lattice (from current frame)
+        elements,
+        counts,
+        atoms,
+        isDirect: true,
+        hasSelectiveDynamics: false,
+        isXDATCAR: true,
+        frames: frames,
+        currentFrameIndex: 0,
+        totalFrames: frames.length
+    };
+}
+
+// Detect if content is XDATCAR format
+function isXDATCARFormat(content) {
+    // XDATCAR has multiple "Direct configuration=" lines or multiple "Direct" lines
+    // after the header
+    const lines = content.trim().split('\n');
+    let directCount = 0;
+    
+    for (let i = 7; i < lines.length; i++) {
+        const line = lines[i].trim().toLowerCase();
+        if (line.startsWith('direct')) {
+            directCount++;
+            if (directCount > 1) return true; // Multiple Direct lines = XDATCAR
+        }
+    }
+    
+    // Also check for "configuration=" which is definitive
+    return content.toLowerCase().includes('configuration=');
 }
 
 // Create atom sphere
@@ -3805,25 +3962,38 @@ function updateUI(structure) {
     const latticeB = Math.sqrt(structure.lattice[1].reduce((s, v) => s + v * v, 0)).toFixed(4);
     const latticeC = Math.sqrt(structure.lattice[2].reduce((s, v) => s + v * v, 0)).toFixed(4);
     
-    // Count fixed/active atoms
+    // File type badge
+    const fileType = structure.isXDATCAR ? 'xdatcar' : 'poscar';
+    const fileTypeBadge = `<span class="file-type-badge ${fileType}">${fileType.toUpperCase()}</span>`;
+    
+    // Frame info for XDATCAR (combined into single row)
+    const frameInfo = structure.isXDATCAR 
+        ? `<div class="info-item"><span class="info-label">Frame</span><span class="info-value" id="sidebarFrameDisplay">${structure.currentFrameIndex + 1} / ${structure.totalFrames}</span></div>`
+        : '';
+    
+    // Count fixed/active atoms (only relevant for POSCAR with selective dynamics)
     let fixedCount = 0;
-    structure.atoms.forEach(atom => {
-        const sd = atom.selectiveDynamics || [true, true, true];
-        if (sd.every(v => v === false)) fixedCount++;
-    });
+    if (!structure.isXDATCAR) {
+        structure.atoms.forEach(atom => {
+            const sd = atom.selectiveDynamics || [true, true, true];
+            if (sd.every(v => v === false)) fixedCount++;
+        });
+    }
     const activeCount = structure.atoms.length - fixedCount;
     
-    // Show selective dynamics info if any atoms are fixed
-    const sdInfo = fixedCount > 0 
+    // Show selective dynamics info if any atoms are fixed (POSCAR only)
+    const sdInfo = (fixedCount > 0 && !structure.isXDATCAR)
         ? `<div class="info-item"><span class="info-label">Fixed/Active</span><span class="info-value sd-info">🔒${fixedCount} / 🔓${activeCount}</span></div>`
         : '';
     
     structureInfo.innerHTML = `
+        <div class="info-item"><span class="info-label">Type</span><span class="info-value">${fileTypeBadge}</span></div>
         <div class="info-item"><span class="info-label">Title</span><span class="info-value">${structure.comment.substring(0, 20)}</span></div>
         <div class="info-item"><span class="info-label">Total Atoms</span><span class="info-value">${structure.atoms.length}</span></div>
         <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
         <div class="info-item"><span class="info-label">b</span><span class="info-value">${latticeB} Å</span></div>
         <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>
+        ${frameInfo}
         ${sdInfo}
     `;
     
@@ -3875,19 +4045,41 @@ function handleFile(file) {
     reader.onload = (e) => {
         try {
             const content = e.target.result;
-            currentStructure = parsePOSCAR(content);
+            
+            // Detect file type and parse accordingly
+            if (isXDATCARFormat(content)) {
+                currentStructure = parseXDATCAR(content);
+                
+                // Switch to measure mode (edit mode disabled for XDATCAR)
+                if (currentMode === 'edit') {
+                    switchToMeasureMode();
+                }
+                
+                // Show timeline controls
+                showTimelinePanel();
+                updateTimelineUI();
+                
+                statusText.textContent = `Loaded XDATCAR: ${file.name} (${currentStructure.totalFrames} frames)`;
+            } else {
+                currentStructure = parsePOSCAR(content);
+                
+                // Hide timeline controls for POSCAR
+                hideTimelinePanel();
+                
+                statusText.textContent = `Loaded: ${file.name}`;
+            }
+            
             renderStructure(currentStructure);
             updateUI(currentStructure);
+            updateModeToggleForFileType();
             
             // Hide drop zone
             dropZone.classList.add('hidden');
             
-            // Update status
-            statusText.textContent = `Loaded: ${file.name}`;
             statusText.className = 'success';
             
         } catch (error) {
-            console.error('Error parsing POSCAR:', error);
+            console.error('Error parsing file:', error);
             statusText.textContent = `Error: ${error.message}`;
             statusText.className = 'error';
         }
@@ -4261,6 +4453,13 @@ function setupModeToggle() {
         btn.addEventListener('click', () => {
             const mode = btn.dataset.mode;
             if (mode === currentMode) return;
+            
+            // Block edit mode for XDATCAR files
+            if (mode === 'edit' && currentStructure && currentStructure.isXDATCAR) {
+                statusText.textContent = 'Edit mode is disabled for trajectory files (XDATCAR)';
+                statusText.className = '';
+                return;
+            }
             
             // Update mode
             currentMode = mode;
@@ -5137,7 +5336,16 @@ function exportPOSCAR() {
         return;
     }
     
-    const content = generatePOSCAR();
+    let content, filename;
+    
+    if (currentStructure.isXDATCAR) {
+        content = generateXDATCAR();
+        filename = 'XDATCAR_exported';
+    } else {
+        content = generatePOSCAR();
+        filename = 'POSCAR_exported';
+    }
+    
     if (!content) return;
     
     // Create blob and download
@@ -5146,14 +5354,348 @@ function exportPOSCAR() {
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'POSCAR_exported';
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    statusText.textContent = 'Exported POSCAR file';
+    const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : 'POSCAR';
+    statusText.textContent = `Exported ${fileType} file`;
     statusText.className = 'success';
+}
+
+// Generate XDATCAR content from current structure
+function generateXDATCAR() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return null;
+    
+    const lines = [];
+    
+    // Line 1: Comment
+    lines.push(currentStructure.comment || 'Exported from Crystal Visualizer');
+    
+    // Line 2: Scale factor (always 1.0 for output)
+    lines.push('           1');
+    
+    // Lines 3-5: Lattice vectors (use first frame's lattice as reference)
+    const refLattice = currentStructure.frames[0].lattice;
+    refLattice.forEach(vec => {
+        lines.push(`     ${vec[0].toFixed(6)}    ${vec[1].toFixed(6)}    ${vec[2].toFixed(6)}`);
+    });
+    
+    // Line 6: Element symbols
+    lines.push('   ' + currentStructure.elements.join('    '));
+    
+    // Line 7: Number of atoms per element
+    lines.push('  ' + currentStructure.counts.join('  '));
+    
+    // Write each frame
+    currentStructure.frames.forEach((frame, frameIdx) => {
+        // Frame header
+        lines.push(`Direct configuration=     ${frameIdx + 1}`);
+        
+        // Atom positions in fractional coordinates
+        frame.fractional.forEach(frac => {
+            lines.push(`   ${frac[0].toFixed(8)}  ${frac[1].toFixed(8)}  ${frac[2].toFixed(8)}`);
+        });
+    });
+    
+    return lines.join('\n');
+}
+
+// ============================================
+// XDATCAR Timeline / Frame Navigation
+// ============================================
+
+// Show timeline panel
+function showTimelinePanel() {
+    const panel = document.getElementById('timelinePanel');
+    if (panel) {
+        panel.classList.remove('hidden');
+    }
+}
+
+// Hide timeline panel
+function hideTimelinePanel() {
+    const panel = document.getElementById('timelinePanel');
+    if (panel) {
+        panel.classList.add('hidden');
+    }
+    // Also stop any playing animation
+    stopAnimation();
+}
+
+// Update timeline UI to reflect current state
+function updateTimelineUI() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    
+    const slider = document.getElementById('frameSlider');
+    const display = document.getElementById('frameDisplay');
+    
+    if (slider) {
+        slider.max = currentStructure.totalFrames - 1;
+        slider.value = currentStructure.currentFrameIndex;
+    }
+    
+    if (display) {
+        display.textContent = `${currentStructure.currentFrameIndex + 1} / ${currentStructure.totalFrames}`;
+    }
+}
+
+// Switch to a specific frame
+function switchToFrame(frameIndex) {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    if (frameIndex < 0 || frameIndex >= currentStructure.totalFrames) return;
+    
+    const frame = currentStructure.frames[frameIndex];
+    currentStructure.currentFrameIndex = frameIndex;
+    
+    // Update lattice (for NPT simulations where lattice may vary)
+    currentStructure.lattice = frame.lattice.map(v => [...v]);
+    
+    // Update atom positions
+    for (let i = 0; i < currentStructure.atoms.length; i++) {
+        currentStructure.atoms[i].position.copy(frame.positions[i]);
+        currentStructure.atoms[i].fractional = frame.fractional[i];
+    }
+    
+    // Re-render structure (preserve camera and selection)
+    renderStructure(currentStructure, true);
+    
+    // Update timeline UI (slider + frame counter)
+    updateTimelineUI();
+    
+    // Update only the frame display in sidebar (not full UI to avoid flicker)
+    updateSidebarFrameDisplay();
+    
+    // Update measurements if atoms are selected
+    if (selectedAtoms.length > 0) {
+        updateMeasurementUI();
+    }
+}
+
+// Update only the frame display in sidebar (avoids full UI rebuild and flicker)
+function updateSidebarFrameDisplay() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    
+    const sidebarDisplay = document.getElementById('sidebarFrameDisplay');
+    if (sidebarDisplay) {
+        sidebarDisplay.textContent = `${currentStructure.currentFrameIndex + 1} / ${currentStructure.totalFrames}`;
+    }
+}
+
+// Frame navigation functions
+function goToFirstFrame() {
+    switchToFrame(0);
+}
+
+function goToLastFrame() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    switchToFrame(currentStructure.totalFrames - 1);
+}
+
+function goToPrevFrame() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    const newIndex = Math.max(0, currentStructure.currentFrameIndex - 1);
+    switchToFrame(newIndex);
+}
+
+function goToNextFrame() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    const newIndex = currentStructure.currentFrameIndex + 1;
+    
+    if (newIndex >= currentStructure.totalFrames) {
+        if (animationState.loop) {
+            switchToFrame(0);
+        } else {
+            // Stop at last frame
+            stopAnimation();
+        }
+    } else {
+        switchToFrame(newIndex);
+    }
+}
+
+// Animation playback
+function playAnimation() {
+    if (!currentStructure || !currentStructure.isXDATCAR) return;
+    if (animationState.isPlaying) return;
+    
+    // If at last frame and not looping, go to first frame before playing
+    if (currentStructure.currentFrameIndex >= currentStructure.totalFrames - 1 && !animationState.loop) {
+        switchToFrame(0);
+    }
+    
+    animationState.isPlaying = true;
+    updatePlayPauseButton();
+    
+    const intervalMs = 1000 / animationState.fps;
+    animationState.intervalId = setInterval(() => {
+        goToNextFrame();
+    }, intervalMs);
+}
+
+function stopAnimation() {
+    if (animationState.intervalId) {
+        clearInterval(animationState.intervalId);
+        animationState.intervalId = null;
+    }
+    animationState.isPlaying = false;
+    updatePlayPauseButton();
+}
+
+function togglePlayPause() {
+    if (animationState.isPlaying) {
+        stopAnimation();
+    } else {
+        playAnimation();
+    }
+}
+
+function updatePlayPauseButton() {
+    const btn = document.getElementById('playPause');
+    if (btn) {
+        btn.classList.toggle('playing', animationState.isPlaying);
+    }
+}
+
+// Update FPS and restart animation if playing
+function setAnimationFPS(fps) {
+    animationState.fps = fps;
+    if (animationState.isPlaying) {
+        stopAnimation();
+        playAnimation();
+    }
+}
+
+// Setup timeline event listeners
+function setupTimelineControls() {
+    // Play/Pause button
+    const playPauseBtn = document.getElementById('playPause');
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', togglePlayPause);
+    }
+    
+    // Frame slider
+    const slider = document.getElementById('frameSlider');
+    if (slider) {
+        slider.addEventListener('input', (e) => {
+            const frameIndex = parseInt(e.target.value);
+            switchToFrame(frameIndex);
+        });
+        
+        // Stop animation when user interacts with slider
+        slider.addEventListener('mousedown', () => {
+            if (animationState.isPlaying) {
+                stopAnimation();
+            }
+        });
+    }
+    
+    // Loop checkbox
+    const loopCheckbox = document.getElementById('loopCheckbox');
+    if (loopCheckbox) {
+        loopCheckbox.checked = animationState.loop;
+        loopCheckbox.addEventListener('change', (e) => {
+            animationState.loop = e.target.checked;
+        });
+    }
+    
+    // FPS select
+    const fpsSelect = document.getElementById('fpsSelect');
+    if (fpsSelect) {
+        fpsSelect.value = animationState.fps;
+        fpsSelect.addEventListener('change', (e) => {
+            setAnimationFPS(parseInt(e.target.value));
+        });
+    }
+    
+    // Keyboard shortcuts for timeline
+    document.addEventListener('keydown', (e) => {
+        // Only handle if XDATCAR is loaded and not in an input field
+        if (!currentStructure || !currentStructure.isXDATCAR) return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        
+        switch (e.key) {
+            case ' ': // Space - play/pause
+                e.preventDefault();
+                togglePlayPause();
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                goToPrevFrame();
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                goToNextFrame();
+                break;
+            case 'Home':
+                e.preventDefault();
+                goToFirstFrame();
+                break;
+            case 'End':
+                e.preventDefault();
+                goToLastFrame();
+                break;
+        }
+    });
+}
+
+// Update mode toggle button state based on file type
+function updateModeToggleForFileType() {
+    const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
+    const exportBtn = document.getElementById('exportPoscar');
+    
+    if (currentStructure && currentStructure.isXDATCAR) {
+        // Disable edit mode for XDATCAR
+        if (editBtn) {
+            editBtn.classList.add('disabled');
+            editBtn.title = 'Edit mode disabled for trajectory files';
+        }
+        // Update export button for XDATCAR
+        if (exportBtn) {
+            exportBtn.title = 'Export as XDATCAR';
+        }
+    } else {
+        // Enable edit mode for POSCAR
+        if (editBtn) {
+            editBtn.classList.remove('disabled');
+            editBtn.title = 'Edit Mode';
+        }
+        // Update export button for POSCAR
+        if (exportBtn) {
+            exportBtn.title = 'Export as POSCAR';
+        }
+    }
+}
+
+// Helper function to switch to measure mode (used when loading XDATCAR)
+function switchToMeasureMode() {
+    if (currentMode === 'measure') return;
+    
+    currentMode = 'measure';
+    
+    // Update button visuals
+    const measureBtn = document.querySelector('.mode-btn[data-mode="measure"]');
+    const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
+    
+    if (measureBtn) measureBtn.classList.add('active');
+    if (editBtn) editBtn.classList.remove('active');
+    
+    // Update body class
+    document.body.classList.remove('edit-mode-active');
+    
+    // Hide edit-only controls
+    const editControls = document.getElementById('editModeControls');
+    if (editControls) editControls.style.display = 'none';
+    
+    // Update panel title
+    const panelTitle = document.getElementById('actionPanelTitle');
+    if (panelTitle) panelTitle.textContent = '📐 Measurements';
+    
+    // Clear selection and update UI
+    clearSelection();
+    updateMeasurementUI();
 }
 
 // Initialize app
@@ -5164,8 +5706,9 @@ function init() {
     setupModeToggle();
     setupPeriodicControls();
     setupUndoKeyboardShortcut();
+    setupTimelineControls();
     
-    statusText.textContent = 'Ready - Drop a POSCAR file to visualize';
+    statusText.textContent = 'Ready - Drop a POSCAR or XDATCAR file to visualize';
 }
 
 // Start the app

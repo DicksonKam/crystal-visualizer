@@ -131,9 +131,313 @@ let atomMeshes = []; // All atom meshes for raycasting
 
 // Mode state: 'measure' or 'edit'
 let currentMode = 'measure';
-let deletedAtomsHistory = []; // For undo functionality
-let moveHistory = []; // For undo atom moves
 let lastZThreshold = null; // Remember user's z-threshold setting
+
+// ============================================
+// Unified Undo System (Cmd+Z / Ctrl+Z)
+// ============================================
+// All reversible operations push to this stack
+let undoStack = [];
+const MAX_UNDO_HISTORY = 50;
+
+// Operation types:
+// - 'move_atom': { index, oldPosition, newPosition }
+// - 'delete_atoms': { deletedAtoms: [{ index, atom }] }
+// - 'add_atom': { index } (the index of the added atom)
+// - 'shift_atoms': { atomIndices, shiftVector, oldPositions }
+// - 'fix_atoms': { changes: [{ index, oldSD, newSD }] }
+// - 'make_supercell': { oldStructure } (deep copy)
+// - 'vacuum_drag': { oldLattice, oldAtomPositions }
+// - 'select_atom': { atomData } (for deselecting)
+// - 'deselect_atom': { atomData, selectionIndex } (for reselecting)
+// - 'clear_selection': { selectedAtoms: [...], isMeasurementSelection }
+
+function pushUndo(operation) {
+    undoStack.push(operation);
+    // Limit stack size
+    if (undoStack.length > MAX_UNDO_HISTORY) {
+        undoStack.shift();
+    }
+}
+
+function performUndo() {
+    if (undoStack.length === 0) {
+        statusText.textContent = 'Nothing to undo';
+        statusText.className = '';
+        return;
+    }
+    
+    const op = undoStack.pop();
+    
+    switch (op.type) {
+        case 'move_atom':
+            undoMoveAtom(op);
+            break;
+        case 'delete_atoms':
+            undoDeleteAtoms(op);
+            break;
+        case 'add_atom':
+            undoAddAtom(op);
+            break;
+        case 'shift_atoms':
+            undoShiftAtoms(op);
+            break;
+        case 'fix_atoms':
+            undoFixAtoms(op);
+            break;
+        case 'make_supercell':
+            undoMakeSupercell(op);
+            break;
+        case 'vacuum_drag':
+            undoVacuumDrag(op);
+            break;
+        case 'select_atom':
+            undoSelectAtom(op);
+            break;
+        case 'deselect_atom':
+            undoDeselectAtom(op);
+            break;
+        case 'clear_selection':
+            undoClearSelection(op);
+            break;
+        default:
+            console.warn('Unknown undo operation type:', op.type);
+    }
+}
+
+// --- Undo handlers for each operation type ---
+
+function undoMoveAtom(op) {
+    currentStructure.atoms[op.index].position.copy(op.oldPosition);
+    atomMeshes[op.index].position.copy(op.oldPosition);
+    rebuildDisplayOptions();
+    updateEditUI();
+    statusText.textContent = `Undid move of atom #${op.index + 1}`;
+    statusText.className = 'success';
+}
+
+function undoDeleteAtoms(op) {
+    // Restore atoms in order (sorted by index ascending)
+    op.deletedAtoms.sort((a, b) => a.index - b.index).forEach(item => {
+        currentStructure.atoms.splice(item.index, 0, {
+            element: item.atom.element,
+            position: new THREE.Vector3(
+                item.atom.position.x,
+                item.atom.position.y,
+                item.atom.position.z
+            ),
+            fractional: item.atom.fractional,
+            selectiveDynamics: item.atom.selectiveDynamics || [true, true, true]
+        });
+    });
+    recalculateElementCounts();
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    statusText.textContent = `Restored ${op.deletedAtoms.length} atom(s)`;
+    statusText.className = 'success';
+}
+
+function undoAddAtom(op) {
+    // Remove the added atom
+    currentStructure.atoms.splice(op.index, 1);
+    recalculateElementCounts();
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    statusText.textContent = `Undid add atom #${op.index + 1}`;
+    statusText.className = 'success';
+}
+
+function undoShiftAtoms(op) {
+    // Restore old positions
+    op.atomIndices.forEach((atomIdx, i) => {
+        if (currentStructure.atoms[atomIdx]) {
+            currentStructure.atoms[atomIdx].position.copy(op.oldPositions[i]);
+        }
+    });
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    const count = op.atomIndices.length;
+    statusText.textContent = `Undid shift of ${count} atom${count > 1 ? 's' : ''}`;
+    statusText.className = 'success';
+}
+
+function undoFixAtoms(op) {
+    // Restore old selective dynamics
+    op.changes.forEach(change => {
+        if (currentStructure.atoms[change.index]) {
+            currentStructure.atoms[change.index].selectiveDynamics = [...change.oldSD];
+        }
+    });
+    // Check if any atoms still have selective dynamics
+    currentStructure.hasSelectiveDynamics = currentStructure.atoms.some(
+        atom => atom.selectiveDynamics && atom.selectiveDynamics.some(v => v === false)
+    );
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    statusText.textContent = `Undid fix/unfix of ${op.changes.length} atom(s)`;
+    statusText.className = 'success';
+}
+
+function undoMakeSupercell(op) {
+    // Restore the old structure completely
+    currentStructure = JSON.parse(JSON.stringify(op.oldStructure));
+    // Restore THREE.Vector3 objects for positions
+    currentStructure.atoms.forEach(atom => {
+        atom.position = new THREE.Vector3(atom.position.x, atom.position.y, atom.position.z);
+    });
+    // Restore periodic settings
+    settings.periodic = { ...op.oldPeriodic };
+    document.getElementById('periodicA').value = settings.periodic.a;
+    document.getElementById('periodicB').value = settings.periodic.b;
+    document.getElementById('periodicC').value = settings.periodic.c;
+    document.getElementById('periodicADisplay').textContent = settings.periodic.a;
+    document.getElementById('periodicBDisplay').textContent = settings.periodic.b;
+    document.getElementById('periodicCDisplay').textContent = settings.periodic.c;
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    updateSupercellButtonState();
+    statusText.textContent = 'Undid supercell conversion';
+    statusText.className = 'success';
+}
+
+function undoVacuumDrag(op) {
+    // Restore lattice and atom positions
+    currentStructure.lattice = op.oldLattice.map(v => [...v]);
+    op.oldAtomPositions.forEach((pos, i) => {
+        if (currentStructure.atoms[i]) {
+            currentStructure.atoms[i].position = new THREE.Vector3(pos.x, pos.y, pos.z);
+        }
+    });
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    statusText.textContent = 'Undid cell resize';
+    statusText.className = 'success';
+}
+
+function undoSelectAtom(op) {
+    // Find and deselect the atom that was selected
+    const idx = selectedAtoms.findIndex(a => 
+        a.index === op.atomData.index && a.isGhost === op.atomData.isGhost
+    );
+    if (idx !== -1) {
+        const atom = selectedAtoms[idx];
+        if (atom && atom.mesh) {
+            unhighlightAtomMesh(atom.mesh);
+        }
+        selectedAtoms.splice(idx, 1);
+        if (selectedAtoms.length === 0) {
+            isMeasurementSelection = false;
+        }
+        rebuildSelectionVisuals();
+        updateMeasurementUI();
+        updateEditUI();
+    }
+    statusText.textContent = 'Undid atom selection';
+    statusText.className = '';
+}
+
+function undoDeselectAtom(op) {
+    // Re-select the atom that was deselected
+    // We need to find the mesh again
+    const atomData = op.atomData;
+    let mesh = null;
+    
+    if (atomData.isGhost) {
+        // Find ghost atom mesh
+        structureGroup.children.forEach(child => {
+            if (child.userData.isGhost && 
+                child.userData.originalIndex === atomData.originalIndex &&
+                child.userData.cellOffset &&
+                child.userData.cellOffset.a === atomData.cellOffset.a &&
+                child.userData.cellOffset.b === atomData.cellOffset.b &&
+                child.userData.cellOffset.c === atomData.cellOffset.c) {
+                mesh = child;
+            }
+        });
+    } else {
+        mesh = atomMeshes[atomData.index];
+    }
+    
+    if (mesh) {
+        // Insert at the original position in the selection
+        const insertIdx = Math.min(op.selectionIndex, selectedAtoms.length);
+        selectedAtoms.splice(insertIdx, 0, {
+            mesh: mesh,
+            index: atomData.index,
+            originalIndex: atomData.originalIndex,
+            element: atomData.element,
+            position: new THREE.Vector3(atomData.position.x, atomData.position.y, atomData.position.z),
+            isGhost: atomData.isGhost,
+            cellOffset: atomData.cellOffset
+        });
+        highlightAtomMesh(mesh);
+        if (currentMode === 'measure') {
+            isMeasurementSelection = true;
+        }
+        rebuildSelectionVisuals();
+        updateMeasurementUI();
+        updateEditUI();
+    }
+    statusText.textContent = 'Undid atom deselection';
+    statusText.className = '';
+}
+
+function undoClearSelection(op) {
+    // Restore the cleared selection
+    op.savedSelection.forEach(atomData => {
+        let mesh = null;
+        if (atomData.isGhost) {
+            structureGroup.children.forEach(child => {
+                if (child.userData.isGhost && 
+                    child.userData.originalIndex === atomData.originalIndex &&
+                    child.userData.cellOffset &&
+                    child.userData.cellOffset.a === atomData.cellOffset.a &&
+                    child.userData.cellOffset.b === atomData.cellOffset.b &&
+                    child.userData.cellOffset.c === atomData.cellOffset.c) {
+                    mesh = child;
+                }
+            });
+        } else {
+            mesh = atomMeshes[atomData.index];
+        }
+        
+        if (mesh) {
+            selectedAtoms.push({
+                mesh: mesh,
+                index: atomData.index,
+                originalIndex: atomData.originalIndex,
+                element: atomData.element,
+                position: new THREE.Vector3(atomData.position.x, atomData.position.y, atomData.position.z),
+                isGhost: atomData.isGhost,
+                cellOffset: atomData.cellOffset
+            });
+            highlightAtomMesh(mesh);
+        }
+    });
+    isMeasurementSelection = op.wasMeasurementSelection;
+    rebuildSelectionVisuals();
+    updateMeasurementUI();
+    updateEditUI();
+    statusText.textContent = `Restored ${op.savedSelection.length} selected atom(s)`;
+    statusText.className = '';
+}
+
+// Setup keyboard listener for Cmd+Z / Ctrl+Z
+function setupUndoKeyboardShortcut() {
+    document.addEventListener('keydown', (e) => {
+        // Check for Cmd+Z (Mac) or Ctrl+Z (Windows/Linux)
+        if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+            e.preventDefault();
+            performUndo();
+        }
+    });
+}
 
 // Remember Add Atom form values
 let lastAddAtomElement = null;
@@ -1341,11 +1645,12 @@ function onMouseUp(event) {
                 draggedAtom.mesh.material.emissiveIntensity = 0;
             }
             
-            // Save move for undo
+            // Save move for undo (unified undo stack)
             const oldPos = draggedAtom.startPosition.clone();
             const newPos = draggedAtom.mesh.position.clone();
             
-            moveHistory.push({
+            pushUndo({
+                type: 'move_atom',
                 index: draggedAtom.index,
                 oldPosition: oldPos,
                 newPosition: newPos.clone()
@@ -1547,7 +1852,7 @@ function updateEditUI() {
     // Instructions
     html += '<div class="edit-instructions">Click to select • Drag to move</div>';
     
-    if (selectedAtoms.length === 0 && moveHistory.length === 0 && deletedAtomsHistory.length === 0) {
+    if (selectedAtoms.length === 0) {
         html += '<p class="placeholder-text">No edits yet</p>';
     } else {
         if (selectedAtoms.length > 0) {
@@ -1618,17 +1923,6 @@ function updateEditUI() {
             }
         }
         
-        // Undo buttons
-        if (moveHistory.length > 0 || deletedAtomsHistory.length > 0) {
-            html += '<div class="undo-section">';
-            if (moveHistory.length > 0) {
-                html += `<button id="undoMoveBtn" class="btn btn-undo">↩️ Undo Move (${moveHistory.length})</button>`;
-            }
-            if (deletedAtomsHistory.length > 0) {
-                html += `<button id="undoDeleteBtn" class="btn btn-undo">↩️ Undo Delete (${deletedAtomsHistory.length})</button>`;
-            }
-            html += '</div>';
-        }
     }
     
     // Add Atom section (always show when structure loaded)
@@ -1770,11 +2064,6 @@ function updateEditUI() {
         });
     }
     
-    const undoMoveBtn = document.getElementById('undoMoveBtn');
-    if (undoMoveBtn) {
-        undoMoveBtn.addEventListener('click', undoMove);
-    }
-    
     // Selective dynamics buttons
     const fixSelectedBtn = document.getElementById('fixSelectedBtn');
     if (fixSelectedBtn) {
@@ -1862,35 +2151,11 @@ function updateEditUI() {
         });
     });
     
-    const undoDeleteBtn = document.getElementById('undoDeleteBtn');
-    if (undoDeleteBtn) {
-        undoDeleteBtn.addEventListener('click', undoDelete);
-    }
-    
     // Clickable coordinates toggle
     const clickableCoords = document.querySelectorAll('.clickable-coords');
     clickableCoords.forEach(coord => {
         coord.addEventListener('click', toggleCoordinateDisplayMode);
     });
-}
-
-// Undo last atom move
-function undoMove() {
-    if (moveHistory.length === 0) return;
-    
-    const lastMove = moveHistory.pop();
-    
-    // Restore position
-    currentStructure.atoms[lastMove.index].position.copy(lastMove.oldPosition);
-    atomMeshes[lastMove.index].position.copy(lastMove.oldPosition);
-    
-    // Rebuild all display options (bonds, fixed indicators, etc.)
-    rebuildDisplayOptions();
-    
-    statusText.textContent = `Undid move of atom #${lastMove.index + 1}`;
-    statusText.className = 'success';
-    
-    updateEditUI();
 }
 
 // Rebuild bonds based on current atom positions
@@ -2049,13 +2314,23 @@ function createAtomLabel(indexNumber, position) {
 function deleteSelectedAtoms() {
     if (selectedAtoms.length === 0) return;
     
-    // Save for undo
+    // Save for undo (unified undo stack)
     const deletedIndices = selectedAtoms.map(a => a.index).sort((a, b) => b - a);
     const deletedAtoms = deletedIndices.map(i => ({
         index: i,
-        atom: { ...currentStructure.atoms[i] }
+        atom: { 
+            ...currentStructure.atoms[i],
+            position: { 
+                x: currentStructure.atoms[i].position.x,
+                y: currentStructure.atoms[i].position.y,
+                z: currentStructure.atoms[i].position.z
+            }
+        }
     }));
-    deletedAtomsHistory.push(deletedAtoms);
+    pushUndo({
+        type: 'delete_atoms',
+        deletedAtoms: deletedAtoms
+    });
     
     // Remove atoms from structure (in reverse order to preserve indices)
     deletedIndices.forEach(index => {
@@ -2065,8 +2340,8 @@ function deleteSelectedAtoms() {
     // Recalculate element counts
     recalculateElementCounts();
     
-    // Clear selection and re-render
-    clearSelection();
+    // Clear selection and re-render (don't track this clear in undo - it's part of delete)
+    clearSelectionWithoutUndo();
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateEditUI();
@@ -2076,43 +2351,22 @@ function deleteSelectedAtoms() {
     statusText.className = 'success';
 }
 
-// Undo last delete
-function undoDelete() {
-    if (deletedAtomsHistory.length === 0) return;
-    
-    const lastDeleted = deletedAtomsHistory.pop();
-    
-    // Restore atoms in order
-    lastDeleted.sort((a, b) => a.index - b.index).forEach(item => {
-        currentStructure.atoms.splice(item.index, 0, {
-            element: item.atom.element,
-            position: new THREE.Vector3(
-                item.atom.position.x,
-                item.atom.position.y,
-                item.atom.position.z
-            ),
-            fractional: item.atom.fractional,
-            selectiveDynamics: item.atom.selectiveDynamics || [true, true, true]
-        });
-    });
-    
-    // Recalculate element counts
-    recalculateElementCounts();
-    
-    // Re-render
-    renderStructure(currentStructure, true);
-    updateUI(currentStructure);
-    updateEditUI();
-    
-    statusText.textContent = `Restored ${lastDeleted.length} atom(s)`;
-    statusText.className = 'success';
-}
-
 // Set selected atoms as fixed or active
 function setSelectedAtomsFixed(isFixed) {
     if (selectedAtoms.length === 0 || !currentStructure) return;
     
     const newValue = isFixed ? [false, false, false] : [true, true, true];
+    
+    // Save old values for undo (unified undo stack)
+    const changes = selectedAtoms.map(atom => ({
+        index: atom.index,
+        oldSD: [...(currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true])],
+        newSD: [...newValue]
+    }));
+    pushUndo({
+        type: 'fix_atoms',
+        changes: changes
+    });
     
     selectedAtoms.forEach(atom => {
         if (currentStructure.atoms[atom.index]) {
@@ -2143,6 +2397,17 @@ function fixAtomsByZThreshold() {
     // Remember the user's threshold value
     lastZThreshold = threshold;
     
+    // Save old values for undo (unified undo stack)
+    const changes = currentStructure.atoms.map((atom, index) => ({
+        index: index,
+        oldSD: [...(atom.selectiveDynamics || [true, true, true])],
+        newSD: atom.position.z < threshold ? [false, false, false] : [true, true, true]
+    }));
+    pushUndo({
+        type: 'fix_atoms',
+        changes: changes
+    });
+    
     let fixedCount = 0;
     currentStructure.atoms.forEach(atom => {
         if (atom.position.z < threshold) {
@@ -2168,6 +2433,17 @@ function fixAtomsByZThreshold() {
 // Unfix all atoms
 function unfixAllAtoms() {
     if (!currentStructure) return;
+    
+    // Save old values for undo (unified undo stack)
+    const changes = currentStructure.atoms.map((atom, index) => ({
+        index: index,
+        oldSD: [...(atom.selectiveDynamics || [true, true, true])],
+        newSD: [true, true, true]
+    }));
+    pushUndo({
+        type: 'fix_atoms',
+        changes: changes
+    });
     
     currentStructure.atoms.forEach(atom => {
         atom.selectiveDynamics = [true, true, true];
@@ -2271,6 +2547,15 @@ function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ, atomIndices = nul
     // Determine which atoms to shift
     const indicesToShift = atomIndices || currentStructure.atoms.map((_, i) => i);
     
+    // Save old positions for undo (unified undo stack)
+    const oldPositions = indicesToShift.map(i => currentStructure.atoms[i].position.clone());
+    pushUndo({
+        type: 'shift_atoms',
+        atomIndices: [...indicesToShift],
+        shiftVector: shiftCartesian.clone(),
+        oldPositions: oldPositions
+    });
+    
     // Apply shift to specified atoms and wrap periodically
     indicesToShift.forEach(index => {
         const atom = currentStructure.atoms[index];
@@ -2321,6 +2606,15 @@ function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = nu
     
     // Determine which atoms to shift
     const indicesToShift = atomIndices || currentStructure.atoms.map((_, i) => i);
+    
+    // Save old positions for undo (unified undo stack)
+    const oldPositions = indicesToShift.map(i => currentStructure.atoms[i].position.clone());
+    pushUndo({
+        type: 'shift_atoms',
+        atomIndices: [...indicesToShift],
+        shiftVector: shiftCartesian.clone(),
+        oldPositions: oldPositions
+    });
     
     // Apply shift to specified atoms and wrap periodically
     indicesToShift.forEach(index => {
@@ -2470,6 +2764,13 @@ function addAtomFromInput() {
     };
     
     currentStructure.atoms.push(newAtom);
+    const newIndex = currentStructure.atoms.length - 1;
+    
+    // Save for undo (unified undo stack)
+    pushUndo({
+        type: 'add_atom',
+        index: newIndex
+    });
     
     // Recalculate element counts
     recalculateElementCounts();
@@ -2574,7 +2875,7 @@ function recalculateElementCounts() {
 
 // Select an atom (mode-aware)
 // For ghost atoms, atomIndex is a string like "ghost_0_100"
-function selectAtom(mesh, atomIndex) {
+function selectAtom(mesh, atomIndex, skipUndo = false) {
     const isGhost = mesh.userData.isGhost;
     let element, originalIndex, cellOffset;
     
@@ -2592,7 +2893,7 @@ function selectAtom(mesh, atomIndex) {
     const worldPos = new THREE.Vector3();
     mesh.getWorldPosition(worldPos);
     
-    selectedAtoms.push({
+    const atomData = {
         mesh: mesh,
         index: atomIndex,
         originalIndex: originalIndex,
@@ -2600,7 +2901,24 @@ function selectAtom(mesh, atomIndex) {
         position: worldPos.clone(),
         isGhost: isGhost,
         cellOffset: cellOffset
-    });
+    };
+    
+    selectedAtoms.push(atomData);
+    
+    // Save for undo (unified undo stack)
+    if (!skipUndo) {
+        pushUndo({
+            type: 'select_atom',
+            atomData: {
+                index: atomIndex,
+                originalIndex: originalIndex,
+                element: element,
+                position: { x: worldPos.x, y: worldPos.y, z: worldPos.z },
+                isGhost: isGhost,
+                cellOffset: cellOffset ? { a: cellOffset.a, b: cellOffset.b, c: cellOffset.c } : null
+            }
+        });
+    }
     
     // Track whether this is a measurement selection
     if (currentMode === 'measure') {
@@ -2675,11 +2993,27 @@ function updateSelectionVisualPositions() {
 }
 
 // Deselect an atom by its index in selectedAtoms array
-function deselectAtom(selectedIndex) {
+function deselectAtom(selectedIndex, skipUndo = false) {
     // Remove highlight from deselected atom
     const atom = selectedAtoms[selectedIndex];
     if (atom && atom.mesh) {
         unhighlightAtomMesh(atom.mesh);
+    }
+    
+    // Save for undo (unified undo stack)
+    if (!skipUndo && atom) {
+        pushUndo({
+            type: 'deselect_atom',
+            atomData: {
+                index: atom.index,
+                originalIndex: atom.originalIndex,
+                element: atom.element,
+                position: { x: atom.position.x, y: atom.position.y, z: atom.position.z },
+                isGhost: atom.isGhost,
+                cellOffset: atom.cellOffset ? { a: atom.cellOffset.a, b: atom.cellOffset.b, c: atom.cellOffset.c } : null
+            },
+            selectionIndex: selectedIndex
+        });
     }
     
     selectedAtoms.splice(selectedIndex, 1);
@@ -2687,7 +3021,25 @@ function deselectAtom(selectedIndex) {
 }
 
 // Clear all selections
-function clearSelection() {
+function clearSelection(skipUndo = false) {
+    // Only save to undo if there's something to clear
+    if (!skipUndo && selectedAtoms.length > 0) {
+        // Save for undo (unified undo stack)
+        const savedSelection = selectedAtoms.map(atom => ({
+            index: atom.index,
+            originalIndex: atom.originalIndex,
+            element: atom.element,
+            position: { x: atom.position.x, y: atom.position.y, z: atom.position.z },
+            isGhost: atom.isGhost,
+            cellOffset: atom.cellOffset ? { a: atom.cellOffset.a, b: atom.cellOffset.b, c: atom.cellOffset.c } : null
+        }));
+        pushUndo({
+            type: 'clear_selection',
+            savedSelection: savedSelection,
+            wasMeasurementSelection: isMeasurementSelection
+        });
+    }
+    
     // Remove highlight from all selected atoms
     selectedAtoms.forEach(atom => {
         if (atom && atom.mesh) {
@@ -2699,6 +3051,11 @@ function clearSelection() {
     isMeasurementSelection = false; // Reset measurement state
     clearMeasurementVisuals();
     updateUI_forCurrentMode();
+}
+
+// Clear selection without adding to undo stack (used when clear is part of another operation)
+function clearSelectionWithoutUndo() {
+    clearSelection(true);
 }
 
 // Update the correct UI based on current mode
@@ -3816,6 +4173,28 @@ function convertToSupercell() {
     // Skip if already 1×1×1
     if (na === 1 && nb === 1 && nc === 1) return false;
     
+    // Save for undo (deep copy of structure) - unified undo stack
+    const oldStructure = {
+        comment: currentStructure.comment,
+        scale: currentStructure.scale,
+        lattice: currentStructure.lattice.map(v => [...v]),
+        coordType: currentStructure.coordType,
+        hasSelectiveDynamics: currentStructure.hasSelectiveDynamics,
+        elements: [...currentStructure.elements],
+        counts: [...currentStructure.counts],
+        atoms: currentStructure.atoms.map(atom => ({
+            element: atom.element,
+            position: { x: atom.position.x, y: atom.position.y, z: atom.position.z },
+            fractional: atom.fractional ? [...atom.fractional] : null,
+            selectiveDynamics: atom.selectiveDynamics ? [...atom.selectiveDynamics] : [true, true, true]
+        }))
+    };
+    pushUndo({
+        type: 'make_supercell',
+        oldStructure: oldStructure,
+        oldPeriodic: { a: na, b: nb, c: nc }
+    });
+    
     const lattice = currentStructure.lattice;
     const aVec = new THREE.Vector3(...lattice[0]);
     const bVec = new THREE.Vector3(...lattice[1]);
@@ -4606,7 +4985,17 @@ function createDragFaceHighlight(extendAxis, handleType) {
 function endVacuumDrag() {
     if (!vacuumDragState.isDragging) return;
     
-    const { dragExtendAxis: axis } = vacuumDragState;
+    const { dragExtendAxis: axis, originalLattice, originalAtomPositions } = vacuumDragState;
+    
+    // Save for undo before clearing (unified undo stack)
+    // Only save if there was an actual change
+    if (originalLattice && originalAtomPositions) {
+        pushUndo({
+            type: 'vacuum_drag',
+            oldLattice: originalLattice.map(v => [...v]),
+            oldAtomPositions: originalAtomPositions.map(p => ({ x: p.x, y: p.y, z: p.z }))
+        });
+    }
     
     // Reset drag state
     Object.assign(vacuumDragState, {
@@ -4774,6 +5163,7 @@ function init() {
     setupControls();
     setupModeToggle();
     setupPeriodicControls();
+    setupUndoKeyboardShortcut();
     
     statusText.textContent = 'Ready - Drop a POSCAR file to visualize';
 }

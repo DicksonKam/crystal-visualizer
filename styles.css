@@ -1599,6 +1599,11 @@ body.edit-mode-active .panel-title {
     color: var(--accent-purple);
 }
 
+.file-type-badge.xyz {
+    background: rgba(254, 228, 64, 0.2);
+    color: #fee440;
+}
+
 /* Responsive timeline */
 @media (max-width: 768px) {
     .timeline-controls {

@@ -1017,6 +1017,135 @@ function isXDATCARFormat(content) {
     return content.toLowerCase().includes('configuration=');
 }
 
+// Detect standard / extended XYZ (first line = atom count, later lines = Element x y z)
+function isXYZFormat(content) {
+    const lines = content.trim().split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    if (lines.length < 3) return false;
+    if (!/^\d+$/.test(lines[0])) return false;
+    const nAtoms = parseInt(lines[0], 10);
+    if (nAtoms < 1 || lines.length < nAtoms + 1) return false;
+    // Comment is line 1; first atom line is 2 (or 1 if comment was empty and filtered — still ok)
+    const atomLine = lines[2] || lines[1];
+    return /^[A-Za-z]{1,3}(\d+)?\s+[+-]?\d/.test(atomLine);
+}
+
+function parseExtendedXYZLattice(comment) {
+    if (!comment) return null;
+    const match = comment.match(/Lattice\s*=\s*"([^"]+)"/i);
+    if (!match) return null;
+    const nums = match[1].trim().split(/\s+/).map(parseFloat);
+    if (nums.length < 9 || nums.some(n => Number.isNaN(n))) return null;
+    return [
+        [nums[0], nums[1], nums[2]],
+        [nums[3], nums[4], nums[5]],
+        [nums[6], nums[7], nums[8]]
+    ];
+}
+
+function latticeFromCartesianAtoms(positions, vacuum = 5) {
+    let minX = Infinity, minY = Infinity, minZ = Infinity;
+    let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+    positions.forEach(p => {
+        minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+        minZ = Math.min(minZ, p.z); maxZ = Math.max(maxZ, p.z);
+    });
+    const origin = new THREE.Vector3(minX - vacuum, minY - vacuum, minZ - vacuum);
+    const lx = Math.max(maxX - minX + 2 * vacuum, 1);
+    const ly = Math.max(maxY - minY + 2 * vacuum, 1);
+    const lz = Math.max(maxZ - minZ + 2 * vacuum, 1);
+    return {
+        origin,
+        lattice: [
+            [lx, 0, 0],
+            [0, ly, 0],
+            [0, 0, lz]
+        ]
+    };
+}
+
+function parseXYZ(content) {
+    const rawLines = content.split('\n').map(line => line.trim());
+    const nonEmpty = rawLines.filter(line => line.length > 0);
+    if (nonEmpty.length < 3) {
+        throw new Error('Invalid XYZ file: not enough lines');
+    }
+
+    const nAtoms = parseInt(nonEmpty[0], 10);
+    if (!Number.isFinite(nAtoms) || nAtoms < 1) {
+        throw new Error('Invalid XYZ file: first line must be the number of atoms');
+    }
+
+    // Keep the comment even if blank: second raw line after the count
+    const countIndex = rawLines.findIndex(line => line.length > 0);
+    const comment = (rawLines[countIndex + 1] || '').trim() || 'XYZ structure';
+
+    const atoms = [];
+    let parsed = 0;
+    for (let i = countIndex + 2; i < rawLines.length && parsed < nAtoms; i++) {
+        const line = rawLines[i];
+        if (!line) continue;
+        const parts = line.split(/\s+/).filter(p => p);
+        if (parts.length < 4) {
+            throw new Error(`Invalid XYZ atom line ${parsed + 1}: expected Element x y z`);
+        }
+        const element = parts[0].replace(/\d+$/, '');
+        const x = parseFloat(parts[1]);
+        const y = parseFloat(parts[2]);
+        const z = parseFloat(parts[3]);
+        if ([x, y, z].some(n => Number.isNaN(n))) {
+            throw new Error(`Invalid XYZ coordinates on atom line ${parsed + 1}`);
+        }
+        atoms.push({
+            element,
+            position: new THREE.Vector3(x, y, z),
+            fractional: null,
+            selectiveDynamics: [true, true, true]
+        });
+        parsed++;
+    }
+
+    if (parsed !== nAtoms) {
+        throw new Error(`XYZ file declared ${nAtoms} atoms but found ${parsed}`);
+    }
+
+    let lattice = parseExtendedXYZLattice(comment);
+    if (!lattice) {
+        const box = latticeFromCartesianAtoms(atoms.map(a => a.position));
+        lattice = box.lattice;
+        atoms.forEach(atom => {
+            atom.position.sub(box.origin);
+        });
+    }
+
+    atoms.forEach(atom => {
+        atom.fractional = cartesianToFractional(atom.position, lattice);
+    });
+
+    const order = [];
+    const countsMap = {};
+    atoms.forEach(atom => {
+        if (!(atom.element in countsMap)) {
+            order.push(atom.element);
+            countsMap[atom.element] = 0;
+        }
+        countsMap[atom.element]++;
+    });
+
+    return {
+        comment,
+        scale: 1,
+        lattice,
+        elements: order,
+        counts: order.map(el => countsMap[el]),
+        atoms,
+        isDirect: false,
+        hasSelectiveDynamics: false,
+        isXDATCAR: false,
+        isXYZ: true
+    };
+}
+
 // Create atom sphere
 // selectiveDynamics: [xActive, yActive, zActive] - true means movable, false means fixed
 function createAtom(element, position, atomIndex, selectiveDynamics = [true, true, true]) {
@@ -4037,7 +4166,7 @@ function updateUI(structure) {
     const latticeC = Math.sqrt(structure.lattice[2].reduce((s, v) => s + v * v, 0)).toFixed(4);
     
     // File type badge
-    const fileType = structure.isXDATCAR ? 'xdatcar' : 'poscar';
+    const fileType = structure.isXDATCAR ? 'xdatcar' : (structure.isXYZ ? 'xyz' : 'poscar');
     const fileTypeBadge = `<span class="file-type-badge ${fileType}">${fileType.toUpperCase()}</span>`;
     
     // Frame info for XDATCAR (combined into single row)
@@ -4121,6 +4250,7 @@ function handleFile(file) {
             const content = e.target.result;
             
             // Detect file type and parse accordingly
+            const nameLower = (file.name || '').toLowerCase();
             if (isXDATCARFormat(content)) {
                 currentStructure = parseXDATCAR(content);
                 
@@ -4134,6 +4264,10 @@ function handleFile(file) {
                 updateTimelineUI();
                 
                 statusText.textContent = `Loaded XDATCAR: ${file.name} (${currentStructure.totalFrames} frames)`;
+            } else if (nameLower.endsWith('.xyz') || isXYZFormat(content)) {
+                currentStructure = parseXYZ(content);
+                hideTimelinePanel();
+                statusText.textContent = `Loaded XYZ: ${file.name} (${currentStructure.atoms.length} atoms)`;
             } else {
                 currentStructure = parsePOSCAR(content);
                 

@@ -1222,6 +1222,71 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
     return `<div class="sel-coords sel-coords-cart clickable-coords" data-atom-idx="${atomIndex}" title="Click to show Fractional">${coordStr}</div>`;
 }
 
+// Compute fractional displacement between two selected atoms and return HTML
+// Compute displacement between two atoms along crystal axes a, b, c
+// In fractional mode: shows fractional differences (unitless, 3dp)
+// In cartesian mode: shows Å displacement along each axis (2dp)
+// Always uses Δa, Δb, Δc labels (crystal axes, never x/y/z)
+function computeDeltas(atomA, atomB) {
+    if (!currentStructure || !currentStructure.lattice) return null;
+    
+    const posA = getOriginalAtomPosition(atomA);
+    const posB = getOriginalAtomPosition(atomB);
+    
+    const fracA = cartesianToFractional(
+        new THREE.Vector3(posA.x, posA.y, posA.z),
+        currentStructure.lattice
+    );
+    const fracB = cartesianToFractional(
+        new THREE.Vector3(posB.x, posB.y, posB.z),
+        currentStructure.lattice
+    );
+    if (!fracA || !fracB) return null;
+    
+    const dfa = fracB[0] - fracA[0];
+    const dfb = fracB[1] - fracA[1];
+    const dfc = fracB[2] - fracA[2];
+    
+    if (selectedAtomCoordMode === 'fractional') {
+        return { da: dfa, db: dfb, dc: dfc, dp: 3, unit: '' };
+    } else {
+        // Cartesian: project fractional deltas onto lattice vector lengths
+        const aLen = Math.sqrt(currentStructure.lattice[0].reduce((s, v) => s + v * v, 0));
+        const bLen = Math.sqrt(currentStructure.lattice[1].reduce((s, v) => s + v * v, 0));
+        const cLen = Math.sqrt(currentStructure.lattice[2].reduce((s, v) => s + v * v, 0));
+        return { da: dfa * aLen, db: dfb * bLen, dc: dfc * cLen, dp: 2, unit: '' };
+    }
+}
+
+// Format delta display for measurement panel (used in both measure and edit modes)
+// Clickable to toggle coordinate mode, colored to match atom coordinate display
+function formatDelta(atomA, atomB) {
+    const d = computeDeltas(atomA, atomB);
+    if (!d) return '';
+    
+    // Avoid -0.000: treat values that round to zero as positive
+    const fmt = (v) => {
+        const rounded = parseFloat(v.toFixed(d.dp));
+        const val = Object.is(rounded, -0) ? 0 : rounded;
+        return (val >= 0 ? '+' : '') + val.toFixed(d.dp);
+    };
+    const colorClass = selectedAtomCoordMode === 'fractional' ? 'delta-frac' : 'delta-cart';
+    const title = selectedAtomCoordMode === 'fractional' 
+        ? 'Fractional — click for Cartesian' 
+        : 'Cartesian (Å) — click for Fractional';
+    
+    return `<div class="meas-delta clickable-delta ${colorClass}" title="${title}">` +
+        `<span class="delta-item"><span class="delta-label delta-a">Δa</span> ${fmt(d.da)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-b">Δb</span> ${fmt(d.db)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-c">Δc</span> ${fmt(d.dc)}</span>` +
+        `</div>`;
+}
+
+// Format delta for preserved measurement in edit mode (same style as formatDelta)
+function formatDeltaCompact(atomA, atomB) {
+    return formatDelta(atomA, atomB);
+}
+
 // Toggle coordinate display mode and refresh UI
 function toggleCoordinateDisplayMode() {
     selectedAtomCoordMode = selectedAtomCoordMode === 'fractional' ? 'cartesian' : 'fractional';
@@ -1747,8 +1812,9 @@ function onMouseMove(event) {
             // Convert to local position
             const newLocalPos = newWorldPos.clone().sub(structureGroup.position);
             
-            // Update atom position
+            // Update atom position (both mesh and structure data for live readouts)
             draggedAtom.mesh.position.copy(newLocalPos);
+            currentStructure.atoms[draggedAtom.index].position.copy(newLocalPos);
             
             // Update selection visuals in real-time
             if (selectedAtoms.length > 0) {
@@ -2024,10 +2090,12 @@ function updateEditUI() {
                 if (selectedAtoms.length >= 2) {
                     const dist = selectedAtoms[0].position.distanceTo(selectedAtoms[1].position);
                     html += `<div class="preserved-measurement-value">Distance (1—2): <strong>${dist.toFixed(4)} Å</strong></div>`;
+                    html += formatDeltaCompact(selectedAtoms[0], selectedAtoms[1]);
                 }
                 if (selectedAtoms.length === 3) {
                     const dist23 = selectedAtoms[1].position.distanceTo(selectedAtoms[2].position);
                     html += `<div class="preserved-measurement-value">Distance (2—3): <strong>${dist23.toFixed(4)} Å</strong></div>`;
+                    html += formatDeltaCompact(selectedAtoms[1], selectedAtoms[2]);
                     
                     const v1 = new THREE.Vector3().subVectors(selectedAtoms[0].position, selectedAtoms[1].position).normalize();
                     const v2 = new THREE.Vector3().subVectors(selectedAtoms[2].position, selectedAtoms[1].position).normalize();
@@ -2308,10 +2376,9 @@ function updateEditUI() {
         });
     });
     
-    // Clickable coordinates toggle
-    const clickableCoords = document.querySelectorAll('.clickable-coords');
-    clickableCoords.forEach(coord => {
-        coord.addEventListener('click', toggleCoordinateDisplayMode);
+    // Clickable coordinates toggle (atom coords and delta rows)
+    document.querySelectorAll('.clickable-coords, .clickable-delta').forEach(el => {
+        el.addEventListener('click', toggleCoordinateDisplayMode);
     });
 }
 
@@ -3623,6 +3690,9 @@ function updateMeasurementUI() {
             const label1 = selectedAtoms[0].isGhost ? "1'" : '1';
             const label2 = selectedAtoms[1].isGhost ? "2'" : '2';
             
+            // Fractional delta for distance 1-2
+            const deltaHtml12 = formatDelta(selectedAtoms[0], selectedAtoms[1]);
+            
             // Distance 1-2: two color strips (cyan + pink)
             html += `
                 <div class="measurement-result">
@@ -3633,6 +3703,7 @@ function updateMeasurementUI() {
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label1}—${label2})</span>
                         <span class="meas-value">${dist.toFixed(4)} Å</span>
+                        ${deltaHtml12}
                     </div>
                 </div>
             `;
@@ -3652,6 +3723,9 @@ function updateMeasurementUI() {
             // Distance 2-3: two color strips (pink + yellow)
             const dist23 = selectedAtoms[1].position.distanceTo(selectedAtoms[2].position);
             
+            // Fractional delta for distance 2-3
+            const deltaHtml23 = formatDelta(selectedAtoms[1], selectedAtoms[2]);
+            
             html += `
                 <div class="measurement-result">
                     <div class="multi-color-strip">
@@ -3661,6 +3735,7 @@ function updateMeasurementUI() {
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label2}—${label3})</span>
                         <span class="meas-value">${dist23.toFixed(4)} Å</span>
+                        ${deltaHtml23}
                     </div>
                 </div>
             `;
@@ -3693,10 +3768,9 @@ function updateMeasurementUI() {
         clearBtn.addEventListener('click', clearSelection);
     }
     
-    // Clickable coordinates toggle
-    const clickableCoords = document.querySelectorAll('.clickable-coords');
-    clickableCoords.forEach(coord => {
-        coord.addEventListener('click', toggleCoordinateDisplayMode);
+    // Clickable coordinates toggle (atom coords and delta rows)
+    document.querySelectorAll('.clickable-coords, .clickable-delta').forEach(el => {
+        el.addEventListener('click', toggleCoordinateDisplayMode);
     });
 }
 
@@ -5412,6 +5486,8 @@ function showTimelinePanel() {
     const panel = document.getElementById('timelinePanel');
     if (panel) {
         panel.classList.remove('hidden');
+        // Timeline changes layout height - renderer must resize to match
+        requestAnimationFrame(() => onWindowResize());
     }
 }
 
@@ -5420,6 +5496,8 @@ function hideTimelinePanel() {
     const panel = document.getElementById('timelinePanel');
     if (panel) {
         panel.classList.add('hidden');
+        // Restore full viewport height
+        requestAnimationFrame(() => onWindowResize());
     }
     // Also stop any playing animation
     stopAnimation();

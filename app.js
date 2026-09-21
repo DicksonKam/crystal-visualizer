@@ -1,4 +1,4 @@
-// === POSCAR Visualizer App ===
+// === Crystal Visualizer ===
 // A VESTA-like crystal structure visualizer
 
 // Element data: colors (CPK-like) and covalent radii
@@ -4242,50 +4242,73 @@ function lightenColor(hex, percent) {
     return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
 }
 
-// Handle file load
+const EXAMPLE_CATALOG = [
+    {
+        group: 'POSCAR',
+        items: [
+            { title: 'Si diamond', meta: 'Direct · cubic', path: 'examples/poscar/Si_diamond.poscar' },
+            { title: 'Al FCC', meta: 'Cartesian', path: 'examples/poscar/Al_fcc_cartesian.poscar' },
+            { title: 'NaCl rocksalt', meta: 'binary crystal', path: 'examples/poscar/NaCl_rocksalt.poscar' },
+            { title: 'Graphene sheet', meta: 'hexagonal + vacuum', path: 'examples/poscar/graphene_sheet.poscar' },
+            { title: 'Al slab', meta: 'selective dynamics', path: 'examples/poscar/Al_slab_selective.poscar' },
+            { title: 'SrTiO₃', meta: '.vasp perovskite', path: 'examples/poscar/SrTiO3_perovskite.vasp' },
+            { title: 'Si scaled', meta: 'scale factor', path: 'examples/poscar/Si_diamond_scaled.poscar' }
+        ]
+    },
+    {
+        group: 'XYZ',
+        items: [
+            { title: 'Water', meta: 'H₂O molecule', path: 'examples/xyz/H2O.xyz' },
+            { title: 'Methane', meta: 'CH₄ tetrahedral', path: 'examples/xyz/CH4.xyz' },
+            { title: 'Benzene', meta: 'C₆H₆ ring', path: 'examples/xyz/benzene.xyz' },
+            { title: 'Si diamond', meta: 'extended XYZ lattice', path: 'examples/xyz/Si_diamond_extended.xyz' }
+        ]
+    },
+    {
+        group: 'XDATCAR',
+        items: [
+            { title: 'H₂ vibration', meta: '16-frame animation', path: 'examples/xdatcar/H2_vibration.xdatcar' },
+            { title: 'H₂O wobble', meta: '24-frame animation', path: 'examples/xdatcar/H2O_wobble.xdatcar' }
+        ]
+    }
+];
+
+function loadStructureFromText(content, filename) {
+    const nameLower = (filename || '').toLowerCase();
+    if (isXDATCARFormat(content)) {
+        currentStructure = parseXDATCAR(content);
+
+        if (currentMode === 'edit') {
+            switchToMeasureMode();
+        }
+
+        showTimelinePanel();
+        updateTimelineUI();
+
+        statusText.textContent = `Loaded XDATCAR: ${filename} (${currentStructure.totalFrames} frames)`;
+    } else if (nameLower.endsWith('.xyz') || isXYZFormat(content)) {
+        currentStructure = parseXYZ(content);
+        hideTimelinePanel();
+        statusText.textContent = `Loaded XYZ: ${filename} (${currentStructure.atoms.length} atoms)`;
+    } else {
+        currentStructure = parsePOSCAR(content);
+        hideTimelinePanel();
+        statusText.textContent = `Loaded: ${filename}`;
+    }
+
+    renderStructure(currentStructure);
+    updateUI(currentStructure);
+    updateModeToggleForFileType();
+
+    dropZone.classList.add('hidden');
+    statusText.className = 'success';
+}
+
 function handleFile(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
-            const content = e.target.result;
-            
-            // Detect file type and parse accordingly
-            const nameLower = (file.name || '').toLowerCase();
-            if (isXDATCARFormat(content)) {
-                currentStructure = parseXDATCAR(content);
-                
-                // Switch to measure mode (edit mode disabled for XDATCAR)
-                if (currentMode === 'edit') {
-                    switchToMeasureMode();
-                }
-                
-                // Show timeline controls
-                showTimelinePanel();
-                updateTimelineUI();
-                
-                statusText.textContent = `Loaded XDATCAR: ${file.name} (${currentStructure.totalFrames} frames)`;
-            } else if (nameLower.endsWith('.xyz') || isXYZFormat(content)) {
-                currentStructure = parseXYZ(content);
-                hideTimelinePanel();
-                statusText.textContent = `Loaded XYZ: ${file.name} (${currentStructure.atoms.length} atoms)`;
-            } else {
-                currentStructure = parsePOSCAR(content);
-                
-                // Hide timeline controls for POSCAR
-                hideTimelinePanel();
-                
-                statusText.textContent = `Loaded: ${file.name}`;
-            }
-            
-            renderStructure(currentStructure);
-            updateUI(currentStructure);
-            updateModeToggleForFileType();
-            
-            // Hide drop zone
-            dropZone.classList.add('hidden');
-            
-            statusText.className = 'success';
-            
+            loadStructureFromText(e.target.result, file.name);
         } catch (error) {
             console.error('Error parsing file:', error);
             statusText.textContent = `Error: ${error.message}`;
@@ -4293,6 +4316,80 @@ function handleFile(file) {
         }
     };
     reader.readAsText(file);
+}
+
+async function loadExampleFile(path) {
+    const filename = path.split('/').pop();
+    statusText.textContent = `Loading ${filename}...`;
+    statusText.className = '';
+    try {
+        const response = await fetch(path);
+        if (!response.ok) {
+            throw new Error(`Could not fetch ${filename} (${response.status})`);
+        }
+        const content = await response.text();
+        loadStructureFromText(content, filename);
+    } catch (error) {
+        console.error('Error loading example:', error);
+        statusText.textContent = `Error loading ${filename}. Open this app over http (GitHub Pages or a local server), not as a raw file.`;
+        statusText.className = 'error';
+    }
+}
+
+function setupExamplePicker() {
+    const list = document.getElementById('exampleList');
+    if (!list) return;
+
+    list.innerHTML = EXAMPLE_CATALOG.map(group => {
+        const buttons = group.items.map(item => `
+            <button type="button" class="example-chip" data-example-path="${item.path}">
+                <span class="example-chip-title">${item.title}</span>
+                <span class="example-chip-meta">${item.meta}</span>
+            </button>
+        `).join('');
+        return `
+            <div class="example-group">
+                <div class="example-group-label">${group.group}</div>
+                <div class="example-group-buttons">${buttons}</div>
+            </div>
+        `;
+    }).join('');
+
+    list.addEventListener('click', (e) => {
+        const chip = e.target.closest('[data-example-path]');
+        if (!chip) return;
+        e.preventDefault();
+        e.stopPropagation();
+        loadExampleFile(chip.dataset.examplePath);
+    });
+
+    const openBtn = document.getElementById('openFileBtn');
+    if (openBtn) {
+        openBtn.addEventListener('click', () => fileInput.click());
+    }
+
+    const examplesBtn = document.getElementById('examplesBtn');
+    const closeDropZone = document.getElementById('closeDropZone');
+
+    function showExampleOverlay() {
+        dropZone.classList.remove('hidden');
+        if (closeDropZone) {
+            closeDropZone.classList.toggle('hidden', !currentStructure);
+        }
+    }
+
+    if (examplesBtn) {
+        examplesBtn.addEventListener('click', showExampleOverlay);
+    }
+    if (closeDropZone) {
+        closeDropZone.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (currentStructure) {
+                dropZone.classList.add('hidden');
+            }
+        });
+    }
 }
 
 // Setup drag and drop
@@ -5919,8 +6016,9 @@ function init() {
     setupPeriodicControls();
     setupUndoKeyboardShortcut();
     setupTimelineControls();
+    setupExamplePicker();
     
-    statusText.textContent = 'Ready - Drop a POSCAR or XDATCAR file to visualize';
+    statusText.textContent = 'Ready — drop a file or try a public example';
 }
 
 // Start the app

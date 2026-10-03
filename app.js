@@ -1176,14 +1176,19 @@ function isXDATCARFormat(content) {
 
 // Detect standard / extended XYZ (first line = atom count, later lines = Element x y z)
 function isXYZFormat(content) {
-    const lines = content.trim().split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    if (lines.length < 3) return false;
-    if (!/^\d+$/.test(lines[0])) return false;
-    const nAtoms = parseInt(lines[0], 10);
-    if (nAtoms < 1 || lines.length < nAtoms + 1) return false;
-    // Comment is line 1; first atom line is 2 (or 1 if comment was empty and filtered — still ok)
-    const atomLine = lines[2] || lines[1];
-    return /^[A-Za-z]{1,3}(\d+)?\s+[+-]?\d/.test(atomLine);
+    const lines = content.trimStart().split('\n').map(line => line.trim());
+    if (lines.length < 3 || !/^\d+$/.test(lines[0])) return false;
+    const nAtoms = Number(lines[0]);
+    if (!Number.isSafeInteger(nAtoms) || nAtoms < 1) return false;
+    const atomLines = lines.slice(2).filter(Boolean);
+    if (atomLines.length < nAtoms) return false;
+    try {
+        const properties = parseExtendedXYZProperties(lines[1]);
+        const parts = atomLines[0].split(/\s+/);
+        return parts.length >= properties.columns && /^[A-Za-z][A-Za-z0-9]*$/.test(parts[properties.species]);
+    } catch {
+        return false;
+    }
 }
 
 function parseExtendedXYZLattice(comment) {
@@ -1202,6 +1207,36 @@ function parseExtendedXYZLattice(comment) {
         [nums[3], nums[4], nums[5]],
         [nums[6], nums[7], nums[8]]
     ];
+}
+
+function parseExtendedXYZProperties(comment) {
+    const match = comment.match(/Properties\s*=\s*(?:"([^"]+)"|(\S+))/i);
+    if (!match) {
+        if (/Properties\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed Properties field');
+        return { species: 0, position: [1, 2, 3], columns: 4 };
+    }
+    const tokens = (match[1] || match[2]).split(':');
+    if (tokens.length % 3 !== 0) throw new Error('Invalid extended XYZ: Properties must use name:type:count triples');
+    let columns = 0;
+    let species = null;
+    let position = null;
+    const coordinates = {};
+    for (let i = 0; i < tokens.length; i += 3) {
+        const name = tokens[i].toLowerCase();
+        const count = Number(tokens[i + 2]);
+        if (!Number.isSafeInteger(count) || count < 1) throw new Error('Invalid extended XYZ: invalid Properties column count');
+        if ((name === 'species' || name === 'element') && count === 1) species = columns;
+        if (name === 'pos' && count === 3) position = [columns, columns + 1, columns + 2];
+        if (['x', 'y', 'z'].includes(name) && count === 1) coordinates[name] = columns;
+        columns += count;
+    }
+    if (!position && ['x', 'y', 'z'].every(axis => coordinates[axis] !== undefined)) {
+        position = ['x', 'y', 'z'].map(axis => coordinates[axis]);
+    }
+    if (species === null || !position) {
+        throw new Error('Invalid extended XYZ: Properties must include species and three position columns');
+    }
+    return { species, position, columns };
 }
 
 function latticeFromCartesianAtoms(positions, vacuum = 5) {
@@ -1228,19 +1263,20 @@ function latticeFromCartesianAtoms(positions, vacuum = 5) {
 
 function parseXYZ(content) {
     const rawLines = content.split('\n').map(line => line.trim());
-    const nonEmpty = rawLines.filter(line => line.length > 0);
-    if (nonEmpty.length < 3) {
+    const countIndex = rawLines.findIndex(line => line.length > 0);
+    if (countIndex < 0 || rawLines.length < countIndex + 3) {
         throw new Error('Invalid XYZ file: not enough lines');
     }
 
-    const nAtoms = parseInt(nonEmpty[0], 10);
-    if (!Number.isFinite(nAtoms) || nAtoms < 1) {
+    if (!/^\d+$/.test(rawLines[countIndex])) {
         throw new Error('Invalid XYZ file: first line must be the number of atoms');
     }
+    const nAtoms = Number(rawLines[countIndex]);
+    if (!Number.isSafeInteger(nAtoms) || nAtoms < 1) throw new Error('Invalid XYZ file: atom count is invalid');
 
     // Keep the comment even if blank: second raw line after the count
-    const countIndex = rawLines.findIndex(line => line.length > 0);
     const comment = (rawLines[countIndex + 1] || '').trim() || 'XYZ structure';
+    const properties = parseExtendedXYZProperties(comment);
 
     const atoms = [];
     let parsed = 0;
@@ -1248,16 +1284,14 @@ function parseXYZ(content) {
         const line = rawLines[i];
         if (!line) continue;
         const parts = line.split(/\s+/).filter(p => p);
-        if (parts.length < 4) {
-            throw new Error(`Invalid XYZ atom line ${parsed + 1}: expected Element x y z`);
+        if (parts.length < properties.columns) {
+            throw new Error(`Invalid XYZ atom line ${parsed + 1}: expected ${properties.columns} columns`);
         }
-        if (!/^[A-Za-z][A-Za-z0-9]*$/.test(parts[0])) {
+        if (!/^[A-Za-z][A-Za-z0-9]*$/.test(parts[properties.species])) {
             throw new Error(`Invalid XYZ element on atom line ${parsed + 1}`);
         }
-        const element = parts[0].replace(/\d+$/, '');
-        const x = Number(parts[1]);
-        const y = Number(parts[2]);
-        const z = Number(parts[3]);
+        const element = parts[properties.species].replace(/\d+$/, '');
+        const [x, y, z] = properties.position.map(index => Number(parts[index]));
         if ([x, y, z].some(n => !Number.isFinite(n))) {
             throw new Error(`Invalid XYZ coordinates on atom line ${parsed + 1}`);
         }
@@ -6203,7 +6237,7 @@ function generateXDATCAR() {
     // Lines 3-5: Lattice vectors (use first frame's lattice as reference)
     const refLattice = currentStructure.frames[0].lattice;
     refLattice.forEach(vec => {
-        lines.push(`     ${vec[0].toFixed(6)}    ${vec[1].toFixed(6)}    ${vec[2].toFixed(6)}`);
+        lines.push(`     ${vec[0].toFixed(12)}    ${vec[1].toFixed(12)}    ${vec[2].toFixed(12)}`);
     });
     
     // Line 6: Element symbols
@@ -6219,7 +6253,7 @@ function generateXDATCAR() {
         
         // Atom positions in fractional coordinates
         frame.fractional.forEach(frac => {
-            lines.push(`   ${frac[0].toFixed(8)}  ${frac[1].toFixed(8)}  ${frac[2].toFixed(8)}`);
+            lines.push(`   ${frac[0].toFixed(12)}  ${frac[1].toFixed(12)}  ${frac[2].toFixed(12)}`);
         });
     });
     

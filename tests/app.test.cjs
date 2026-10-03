@@ -134,6 +134,41 @@ test('plain XYZ keeps molecule coordinates and exports XYZ', () => {
     assert.equal(context.isPeriodicStructure(crystal), true);
 });
 
+test('extended XYZ honors declared property order and blank comments', () => {
+    const context = app();
+    const extended = [
+        '2',
+        'Lattice="4 0 0 0 4 0 0 0 4" Properties=charge:R:1:pos:R:3:species:S:1',
+        '0.4 1.25 2.5 3.75 C',
+        '-0.1 0.5 0.75 1.25 O'
+    ].join('\n');
+    assert.equal(context.isXYZFormat(extended), true);
+    const structure = context.parseXYZ(extended);
+    assert.equal(structure.atoms[0].element, 'C');
+    assert.deepEqual([structure.atoms[0].position.x, structure.atoms[0].position.y, structure.atoms[0].position.z], [1.25, 2.5, 3.75]);
+    assert.equal(structure.hasExplicitLattice, true);
+
+    const oneAtom = '1\n\nHe 0 0 0\n';
+    assert.equal(context.isXYZFormat(oneAtom), true);
+    assert.equal(context.parseXYZ(oneAtom).atoms[0].element, 'He');
+    assert.throws(() => context.parseXYZ('1garbage\ncomment\nH 0 0 0'), /first line/);
+    assert.throws(() => context.parseXYZ('1\nProperties=charge:R:1:species:S:1\n0.2 H'), /three position columns/);
+});
+
+test('XDATCAR export preserves every frame and its fractional coordinates', () => {
+    const context = app();
+    for (const file of fs.readdirSync(path.join(root, 'examples/xdatcar'))) {
+        const original = context.parseXDATCAR(example(`examples/xdatcar/${file}`));
+        context.structure = original;
+        const exported = vm.runInContext('currentStructure = structure; generateXDATCAR()', context);
+        const reparsed = context.parseXDATCAR(exported);
+        assert.equal(reparsed.totalFrames, original.totalFrames, file);
+        reparsed.frames.forEach((frame, index) => {
+            assert.deepEqual(frame.fractional, original.frames[index].fractional, `${file} frame ${index + 1}`);
+        });
+    }
+});
+
 test('a successful replacement clears undo history; a failed parse preserves it', () => {
     const context = app();
     vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);

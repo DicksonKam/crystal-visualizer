@@ -138,6 +138,7 @@ let sharedAtomGeometry = null;
 let sharedBondGeometry = null;
 let sharedSolidBondMaterial = null;
 let sharedGhostBondMaterial = null;
+const sharedAtomMaterials = new Map();
 let smallestAtomRadiusCache = null;
 
 function getSharedAtomGeometry() {
@@ -154,6 +155,37 @@ function getSharedBondGeometry() {
         sharedRenderResources.add(sharedBondGeometry);
     }
     return sharedBondGeometry;
+}
+
+function getAtomMaterial(element, isGhost = false) {
+    const key = `${element}:${isGhost ? 'ghost' : 'solid'}`;
+    if (!sharedAtomMaterials.has(key)) {
+        const elemData = ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT;
+        const material = new THREE.MeshPhysicalMaterial({
+            color: elemData.color,
+            metalness: 0.1,
+            roughness: 0.3,
+            ...(isGhost ? { transparent: true, opacity: settings.ghostOpacity, depthWrite: false }
+                : { clearcoat: 0.3, clearcoatRoughness: 0.2, envMapIntensity: 0.5 })
+        });
+        sharedAtomMaterials.set(key, material);
+        sharedRenderResources.add(material);
+    }
+    return sharedAtomMaterials.get(key);
+}
+
+function setAtomGlow(mesh, color, intensity) {
+    if (!mesh || !mesh.material) return;
+    const base = getAtomMaterial(mesh.userData.element, Boolean(mesh.userData.isGhost));
+    if (intensity > 0) {
+        if (mesh.material === base) mesh.material = base.clone();
+        mesh.material.emissive.setHex(color);
+        mesh.material.emissiveIntensity = intensity;
+    } else if (mesh.material !== base) {
+        const oldMaterial = mesh.material;
+        mesh.material = base;
+        oldMaterial.dispose();
+    }
 }
 
 // Mode state: 'measure' or 'edit'
@@ -891,21 +923,7 @@ function createAtom(element, position, atomIndex, selectiveDynamics = [true, tru
     const elemData = ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT;
     const radius = elemData.radius * 0.4 * settings.atomScale;
     
-    // Check if any axis is fixed
-    const isFullyFixed = selectiveDynamics.every(v => v === false);
-    const isPartiallyFixed = selectiveDynamics.some(v => v === false) && !isFullyFixed;
-    
-    const geometry = getSharedAtomGeometry();
-    const material = new THREE.MeshPhysicalMaterial({
-        color: elemData.color,
-        metalness: 0.1,
-        roughness: 0.3,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.2,
-        envMapIntensity: 0.5
-    });
-    
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(getSharedAtomGeometry(), getAtomMaterial(element));
     mesh.position.copy(position);
     mesh.scale.setScalar(radius);
     mesh.castShadow = true;
@@ -997,17 +1015,7 @@ function createGhostAtom(element, position, originalIndex, cellOffset) {
     const elemData = ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT;
     const radius = elemData.radius * 0.4 * settings.atomScale;
     
-    const geometry = getSharedAtomGeometry();
-    const material = new THREE.MeshPhysicalMaterial({
-        color: elemData.color,
-        metalness: 0.1,
-        roughness: 0.3,
-        transparent: true,
-        opacity: settings.ghostOpacity,
-        depthWrite: false
-    });
-    
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(getSharedAtomGeometry(), getAtomMaterial(element, true));
     mesh.position.copy(position);
     mesh.scale.setScalar(radius);
     mesh.userData = { 
@@ -1683,10 +1691,7 @@ function onMouseMove(event) {
             // Selection visuals will move with the atom during drag
             
             // Visual feedback - highlight dragged atom
-            if (draggedAtom.mesh.material) {
-                draggedAtom.mesh.material.emissive = new THREE.Color(0x00f5d4);
-                draggedAtom.mesh.material.emissiveIntensity = 0.3;
-            }
+            setAtomGlow(draggedAtom.mesh, 0x00f5d4, 0.3);
             
             // Show guide plane (camera-facing, bounded by cell)
             createDragGuidePlane();
@@ -1757,11 +1762,9 @@ function onMouseUp(event) {
             // Remove guide plane
             removeDragGuidePlane();
             
-            // Remove highlight
-            if (draggedAtom.mesh.material) {
-                draggedAtom.mesh.material.emissive = new THREE.Color(0x000000);
-                draggedAtom.mesh.material.emissiveIntensity = 0;
-            }
+            // Restore the selection glow if this atom was selected before dragging.
+            if (selectedAtoms.some(atom => atom.mesh === draggedAtom.mesh)) highlightAtomMesh(draggedAtom.mesh);
+            else unhighlightAtomMesh(draggedAtom.mesh);
             
             // Save move for undo (unified undo stack)
             const oldPos = draggedAtom.startPosition.clone();
@@ -3215,18 +3218,12 @@ function selectAtom(mesh, atomIndex, skipUndo = false) {
 
 // Highlight an atom mesh (lighten it with emissive glow)
 function highlightAtomMesh(mesh) {
-    if (mesh && mesh.material) {
-        mesh.material.emissive = new THREE.Color(0xffffff);
-        mesh.material.emissiveIntensity = 0.35;
-    }
+    setAtomGlow(mesh, 0xffffff, 0.35);
 }
 
 // Remove highlight from an atom mesh
 function unhighlightAtomMesh(mesh) {
-    if (mesh && mesh.material) {
-        mesh.material.emissive = new THREE.Color(0x000000);
-        mesh.material.emissiveIntensity = 0;
-    }
+    setAtomGlow(mesh, 0, 0);
 }
 
 // Create selection visual based on current mode

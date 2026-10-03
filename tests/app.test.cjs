@@ -54,6 +54,39 @@ test('all supplied structures parse', () => {
     }
 });
 
+test('atom materials are reused without sharing selection glow', () => {
+    const context = app();
+    let created = 0;
+    class Material {
+        constructor(options) {
+            this.options = options;
+            this.emissive = { value: 0, setHex(value) { this.value = value; } };
+            this.emissiveIntensity = 0;
+            created++;
+        }
+        clone() { return new Material(this.options); }
+        dispose() { this.disposed = true; }
+    }
+    context.THREE.MeshPhysicalMaterial = Material;
+    const first = { userData: { element: 'Si' } };
+    const second = { userData: { element: 'Si' } };
+    first.material = context.getAtomMaterial('Si');
+    second.material = context.getAtomMaterial('Si');
+    assert.equal(first.material, second.material);
+    assert.equal(created, 1);
+    context.highlightAtomMesh(first);
+    assert.notEqual(first.material, second.material);
+    assert.equal(first.material.emissive.value, 0xffffff);
+    assert.equal(second.material.emissive.value, 0);
+    const selectedMaterial = first.material;
+    context.unhighlightAtomMesh(first);
+    assert.equal(first.material, second.material);
+    assert.equal(selectedMaterial.disposed, true);
+    const ghost = context.getAtomMaterial('Si', true);
+    assert.notEqual(ghost, first.material);
+    assert.equal(ghost.options.transparent, true);
+});
+
 test('POSCAR examples preserve coordinates and constraints after export', () => {
     const context = app();
     for (const file of fs.readdirSync(path.join(root, 'examples/poscar'))) {

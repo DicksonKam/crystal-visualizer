@@ -24,6 +24,8 @@ For periodic structures, bonds crossing a cell face are shown as faint segments 
 
 Editing has Undo and Redo buttons, with ⌘Z/Ctrl+Z and ⌘⇧Z/Ctrl+Y shortcuts. The header marks unsaved structure edits. Exporting clears that marker, while opening a different file or leaving the page asks before discarding unsaved edits. Selection changes alone do not mark the structure as edited.
 
+Use **Find atom by number** in the Atoms panel to select and center an atom that is hard to click. In Edit mode, selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
+
 ## Code and tests
 
 `index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains testable periodic geometry, and `app.js` contains parsing, structure operations, Three.js rendering, and event handling. The code currently uses shared state in one JavaScript file, so new features should keep format and coordinate behavior consistent across loading, rendering, editing, undo, and export.

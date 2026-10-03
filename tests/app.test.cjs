@@ -214,6 +214,34 @@ test('supercell undo and redo preserve lattice-bearing XYZ metadata', () => {
     assert.equal(vm.runInContext('currentStructure.isXYZ && currentStructure.hasExplicitLattice', context), true);
 });
 
+test('exact fractional coordinates update one atom and round-trip through undo', () => {
+    const context = app();
+    context.structure = context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));
+    const oldPosition = context.structure.atoms[0].position.clone();
+    vm.runInContext(`
+        currentStructure = structure;
+        selectedAtoms = [{ index: 0, isGhost: false, element: 'Si' }];
+        selectedAtomCoordMode = 'fractional';
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = () => {};
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+    `, context);
+    [0.125, 0.25, 0.375].forEach((value, axis) => {
+        context.document.getElementById(`editAtom${axis}`).value = String(value);
+    });
+    assert.equal(context.applyExactAtomCoordinates(), true);
+    const expected = context.fractionalToCartesian([0.125, 0.25, 0.375], context.structure.lattice);
+    assert.ok(context.structure.atoms[0].position.distanceTo(expected) < 1e-10);
+    assert.equal(context.hasUnsavedEdits(), true);
+    context.performUndo();
+    assert.ok(context.structure.atoms[0].position.distanceTo(oldPosition) < 1e-10);
+    context.performRedo();
+    context.expected = expected;
+    assert.ok(vm.runInContext('currentStructure.atoms[0].position.distanceTo(expected)', context) < 1e-10);
+});
+
 test('bond rebuild uses one policy for normal and periodic atoms', () => {
     const context = app();
     const positions = [0, 1, 2].map(x => new Vector3(x, 0, 0));

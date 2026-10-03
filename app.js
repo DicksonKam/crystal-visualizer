@@ -110,6 +110,7 @@ let isPerspective = false; // Default to orthographic
 let structureGroup, measurementGroup;
 let currentStructure = null;
 let currentFilename = null;
+let lastJumpAtomNumber = null;
 
 // Axes HUD (separate scene rendered in corner)
 let axesScene, axesCamera, axesGroup;
@@ -2423,6 +2424,31 @@ function updateEditUI() {
                     `;
                 });
                 html += '</div>';
+
+                if (selectedAtoms.length === 1 && !selectedAtoms[0].isGhost) {
+                    const atom = currentStructure.atoms[selectedAtoms[0].index];
+                    const fractional = isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional';
+                    const values = fractional ? cartesianToFractional(atom.position, currentStructure.lattice)
+                        : [atom.position.x, atom.position.y, atom.position.z];
+                    if (values) html += `
+                        <div class="exact-atom-section">
+                            <div class="sd-batch-title">Set atom #${selectedAtoms[0].index + 1} coordinates</div>
+                            <label for="editAtomCoordMode">Coordinate system</label>
+                            <select id="editAtomCoordMode" class="element-select">
+                                <option value="cartesian"${fractional ? '' : ' selected'}>Cartesian (Å)</option>
+                                ${isPeriodicStructure(currentStructure) ? `<option value="fractional"${fractional ? ' selected' : ''}>Fractional</option>` : ''}
+                            </select>
+                            <div class="add-atom-coords">
+                                ${values.map((value, axis) => `<div class="coord-input-group">
+                                    <label for="editAtom${axis}">${fractional ? ['a', 'b', 'c'][axis] : ['x', 'y', 'z'][axis]}</label>
+                                    <input id="editAtom${axis}" type="number" step="any" value="${Number(value.toFixed(9))}" class="coord-input" required>
+                                </div>`).join('')}
+                            </div>
+                            <div id="editAtomError" class="add-atom-error" role="alert"></div>
+                            <button id="saveAtomCoordinates" type="button" class="btn btn-add-atom">Apply Coordinates</button>
+                        </div>
+                    `;
+                }
                 
                 // Selective dynamics buttons for selected atoms
                 if (isPeriodicStructure(currentStructure)) html += `
@@ -2566,6 +2592,13 @@ function updateEditUI() {
     
     panel.innerHTML = html;
     setupMeasurementModeToggle();
+    const coordinateMode = document.getElementById('editAtomCoordMode');
+    if (coordinateMode) coordinateMode.addEventListener('change', event => {
+        selectedAtomCoordMode = event.target.value;
+        updateEditUI();
+    });
+    const saveCoordinates = document.getElementById('saveAtomCoordinates');
+    if (saveCoordinates) saveCoordinates.addEventListener('click', applyExactAtomCoordinates);
     
     // Add button listeners
     const deleteBtn = document.getElementById('deleteSelectedBtn');
@@ -2672,6 +2705,34 @@ function updateEditUI() {
     document.querySelectorAll('.clickable-coords, .clickable-delta').forEach(el => {
         el.addEventListener('click', toggleCoordinateDisplayMode);
     });
+}
+
+function applyExactAtomCoordinates() {
+    if (!currentStructure || selectedAtoms.length !== 1 || selectedAtoms[0].isGhost) return false;
+    const index = selectedAtoms[0].index;
+    const fields = [0, 1, 2].map(axis => document.getElementById(`editAtom${axis}`));
+    const error = document.getElementById('editAtomError');
+    const values = fields.map(field => field && field.value.trim() !== '' ? Number(field.value) : NaN);
+    if (values.some(value => !Number.isFinite(value))) {
+        error.textContent = 'Enter three finite coordinates';
+        return false;
+    }
+    const fractionalInput = isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional';
+    const position = fractionalInput ? fractionalToCartesian(values, currentStructure.lattice)
+        : new THREE.Vector3(...values);
+    const atom = currentStructure.atoms[index];
+    if (atom.position.distanceTo(position) < 1e-10) return false;
+    const oldPosition = atom.position.clone();
+    pushUndo({ type: 'move_atom', index, oldPosition, newPosition: position.clone() });
+    atom.position.copy(position);
+    atom.fractional = isPeriodicStructure(currentStructure)
+        ? (fractionalInput ? values : cartesianToFractional(position, currentStructure.lattice)) : null;
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    statusText.textContent = `Set coordinates for atom #${index + 1}`;
+    statusText.className = 'success';
+    return true;
 }
 
 // Rebuild bonds based on current atom positions
@@ -4510,7 +4571,54 @@ function updateUI(structure) {
             </div>
         `;
     });
+    atomHTML += `
+        <form id="atomJumpForm" class="atom-jump-form">
+            <label for="atomJumpInput">Find atom by number</label>
+            <div class="atom-jump-row">
+                <input id="atomJumpInput" type="number" min="1" max="${structure.atoms.length}" step="1" placeholder="1–${structure.atoms.length}" value="${lastJumpAtomNumber <= structure.atoms.length ? lastJumpAtomNumber || '' : ''}" required>
+                <button type="submit" class="btn btn-secondary">Select</button>
+            </div>
+        </form>
+    `;
     atomList.innerHTML = atomHTML;
+}
+
+function jumpToAtom(number) {
+    const index = Number(number) - 1;
+    if (!currentStructure || !Number.isInteger(index) || index < 0 || index >= currentStructure.atoms.length) {
+        statusText.textContent = 'Enter an atom number shown in the structure';
+        statusText.className = 'error';
+        return false;
+    }
+    const mesh = atomMeshes[index];
+    if (!mesh) return false;
+    lastJumpAtomNumber = index + 1;
+    if (currentMode === 'edit') {
+        if (selectedAtoms.length > 0) clearSelection();
+        isMeasurementSelection = false;
+        selectAtomForEdit(mesh, index);
+    } else if (!selectedAtoms.some(atom => atom.index === index)) {
+        if (selectedAtoms.length >= 3) clearSelection();
+        selectAtom(mesh, index);
+    }
+    const target = new THREE.Vector3();
+    mesh.getWorldPosition(target);
+    camera.position.add(target.clone().sub(controls.target));
+    controls.target.copy(target);
+    controls.update();
+    if (currentMode === 'measure' || isMeasurementSelection) updateMeasurements();
+    updateUI_forCurrentMode();
+    statusText.textContent = `Selected atom #${index + 1} (${currentStructure.atoms[index].element})`;
+    statusText.className = '';
+    return true;
+}
+
+function setupAtomJump() {
+    atomList.addEventListener('submit', event => {
+        if (event.target.id !== 'atomJumpForm') return;
+        event.preventDefault();
+        jumpToAtom(document.getElementById('atomJumpInput').value);
+    });
 }
 
 // Helper: Lighten a hex color
@@ -4585,6 +4693,7 @@ function loadStructureFromText(content, filename) {
         document.getElementById(`periodic${axis}Display`).textContent = 1;
     });
     currentStructure = nextStructure;
+    lastJumpAtomNumber = null;
     measurementMode = 'nearest';
     currentFilename = filename || 'Untitled';
     selectedAtomCoordMode = isPeriodicStructure(currentStructure) ? 'fractional' : 'cartesian';
@@ -6380,6 +6489,7 @@ function init() {
     setupUndoKeyboardShortcut();
     setupTimelineControls();
     setupExamplePicker();
+    setupAtomJump();
     window.addEventListener('beforeunload', event => {
         if (!hasUnsavedEdits()) return;
         event.preventDefault();

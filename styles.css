@@ -296,6 +296,56 @@ body {
     font-family: var(--font-mono);
 }
 
+.atom-jump-form {
+    padding: 0.75rem 0.5rem 0.2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.atom-jump-form label,
+.exact-atom-section > label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.atom-jump-row {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.atom-jump-row input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.4rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+.atom-jump-row input:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+}
+
+.exact-atom-section {
+    margin: 0.8rem 0;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+}
+
+.exact-atom-section .element-select {
+    width: 100%;
+    margin-bottom: 0.65rem;
+}
+
+.exact-atom-section .btn {
+    width: 100%;
+}
+
 /* === Controls Panel === */
 .control-group {
     margin-bottom: 1rem;

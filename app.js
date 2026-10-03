@@ -1275,8 +1275,8 @@ function parseXYZ(content) {
     if (!Number.isSafeInteger(nAtoms) || nAtoms < 1) throw new Error('Invalid XYZ file: atom count is invalid');
 
     // Keep the comment even if blank: second raw line after the count
-    const comment = (rawLines[countIndex + 1] || '').trim() || 'XYZ structure';
-    const properties = parseExtendedXYZProperties(comment);
+    const rawComment = (rawLines[countIndex + 1] || '').trim();
+    const properties = parseExtendedXYZProperties(rawComment);
 
     const atoms = [];
     let parsed = 0;
@@ -1308,7 +1308,7 @@ function parseXYZ(content) {
         throw new Error(`XYZ file declared ${nAtoms} atoms but found ${parsed}`);
     }
 
-    let lattice = parseExtendedXYZLattice(comment);
+    let lattice = parseExtendedXYZLattice(rawComment);
     const hasExplicitLattice = Boolean(lattice);
     if (!lattice) {
         const box = latticeFromCartesianAtoms(atoms.map(a => a.position));
@@ -1322,6 +1322,13 @@ function parseXYZ(content) {
             atom.fractional = cartesianToFractional(atom.position, lattice);
         });
     }
+
+    // Show the human description rather than metadata tokens in the sidebar
+    // and in POSCAR exports converted from extended XYZ.
+    const comment = rawComment
+        .replace(/Lattice\s*=\s*"[^"]*"/gi, '')
+        .replace(/Properties\s*=\s*(?:"[^"]*"|\S+)/gi, '')
+        .trim() || 'XYZ structure';
 
     const order = [];
     const countsMap = Object.create(null);

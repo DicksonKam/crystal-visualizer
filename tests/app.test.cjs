@@ -132,6 +132,7 @@ test('plain XYZ keeps molecule coordinates and exports XYZ', () => {
     }
     const crystal = context.parseXYZ(example('examples/xyz/Si_diamond_extended.xyz'));
     assert.equal(context.isPeriodicStructure(crystal), true);
+    assert.equal(crystal.comment, 'silicon diamond cubic');
 });
 
 test('extended XYZ honors declared property order and blank comments', () => {

@@ -101,6 +101,7 @@ const ELEMENT_DATA = {
     Cm: { color: 0x785ce3, radius: 1.69, name: 'Curium' },
     DEFAULT: { color: 0xff69b4, radius: 1.50, name: 'Unknown' }
 };
+Object.setPrototypeOf(ELEMENT_DATA, null);
 
 // Global state
 let scene, camera, renderer, controls;
@@ -108,6 +109,7 @@ let perspectiveCamera, orthographicCamera;
 let isPerspective = false; // Default to orthographic
 let structureGroup, measurementGroup;
 let currentStructure = null;
+let currentFilename = null;
 
 // Axes HUD (separate scene rendered in corner)
 let axesScene, axesCamera, axesGroup;
@@ -115,6 +117,7 @@ let settings = {
     atomScale: 0.8,
     bondThreshold: 2.5,
     showBonds: true,
+    useElementRadii: true,
     showLabels: false,
     showAxes: true,
     showCell: true,
@@ -166,6 +169,12 @@ function pushUndo(operation) {
     if (undoStack.length > MAX_UNDO_HISTORY) {
         undoStack.shift();
     }
+    updateUndoButton();
+}
+
+function updateUndoButton() {
+    const button = document.getElementById('undoBtn');
+    if (button) button.disabled = undoStack.length === 0;
 }
 
 function performUndo() {
@@ -176,6 +185,7 @@ function performUndo() {
     }
     
     const op = undoStack.pop();
+    updateUndoButton();
     
     switch (op.type) {
         case 'move_atom':
@@ -439,6 +449,9 @@ function undoClearSelection(op) {
 // Setup keyboard listener for Cmd+Z / Ctrl+Z
 function setupUndoKeyboardShortcut() {
     document.addEventListener('keydown', (e) => {
+        // Leave text editing to the browser (including contenteditable fields).
+        const target = e.target;
+        if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) return;
         // Check for Cmd+Z (Mac) or Ctrl+Z (Windows/Linux)
         if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
             e.preventDefault();
@@ -619,7 +632,7 @@ function animate() {
     renderer.render(scene, camera);
     
     // Render axes HUD in bottom-left corner
-    if (settings.showAxes && axesScene && axesCamera && axesGroup) {
+    if (settings.showAxes && isPeriodicStructure(currentStructure) && axesScene && axesCamera && axesGroup) {
         // Sync axes rotation with main camera
         axesGroup.quaternion.copy(camera.quaternion).invert();
         
@@ -679,7 +692,9 @@ function initAxesHUD() {
 function updateAxesFromLattice(lattice) {
     // Clear existing axes
     while (axesGroup.children.length > 0) {
-        axesGroup.remove(axesGroup.children[0]);
+        const child = axesGroup.children[0];
+        axesGroup.remove(child);
+        disposeObject3D(child);
     }
     
     const headLength = 0.2;
@@ -757,52 +772,70 @@ function addAxesHelper() {
 // Parse POSCAR file
 function parsePOSCAR(content) {
     const lines = content.trim().split('\n').map(line => line.trim());
+    if (lines.length < 8) throw new Error('Invalid POSCAR: header is incomplete');
     
     // Line 0: Comment
     const comment = lines[0];
     
     // Line 1: Universal scaling factor
-    const scale = parseFloat(lines[1]);
+    const scale = Number(lines[1]);
+    if (!Number.isFinite(scale) || scale === 0) throw new Error('Invalid POSCAR: scale factor must be non-zero');
     
     // Lines 2-4: Lattice vectors
     const lattice = [];
     for (let i = 2; i <= 4; i++) {
-        const parts = lines[i].split(/\s+/).filter(p => p).map(parseFloat);
-        lattice.push(parts.map(v => v * scale));
+        const parts = lines[i].split(/\s+/).filter(p => p).map(Number);
+        if (parts.length < 3 || parts.slice(0, 3).some(v => !Number.isFinite(v))) {
+            throw new Error(`Invalid POSCAR: lattice vector on line ${i + 1}`);
+        }
+        lattice.push(parts.slice(0, 3));
     }
+    // A negative scale specifies the desired cell volume in Å³.
+    const determinant = lattice[0][0] * (lattice[1][1] * lattice[2][2] - lattice[1][2] * lattice[2][1])
+        - lattice[0][1] * (lattice[1][0] * lattice[2][2] - lattice[1][2] * lattice[2][0])
+        + lattice[0][2] * (lattice[1][0] * lattice[2][1] - lattice[1][1] * lattice[2][0]);
+    if (Math.abs(determinant) < 1e-10) throw new Error('Invalid POSCAR: lattice has zero volume');
+    const lengthScale = scale > 0 ? scale : Math.cbrt(-scale / Math.abs(determinant));
+    lattice.forEach(vector => vector.forEach((value, index) => { vector[index] = value * lengthScale; }));
     
     // Line 5: Element symbols (VASP 5+ format)
     // Line 6: Number of atoms per element
     let elementLine = 5;
-    let countLine = 6;
     
     // Check if line 5 contains numbers (VASP 4 format) or symbols (VASP 5+)
     const line5Parts = lines[5].split(/\s+/).filter(p => p);
     let elements = [];
     let counts = [];
     
-    if (isNaN(parseInt(line5Parts[0]))) {
+    if (!/^\d+$/.test(line5Parts[0] || '')) {
         // VASP 5+ format: line 5 has element symbols
         elements = line5Parts;
-        counts = lines[6].split(/\s+/).filter(p => p).map(p => parseInt(p));
+        counts = lines[6].split(/\s+/).filter(p => p).map(Number);
         elementLine = 7;
     } else {
         // VASP 4 format: no element symbols, only counts
-        counts = line5Parts.map(p => parseInt(p));
+        counts = line5Parts.map(Number);
         elements = counts.map((_, i) => `Atom${i + 1}`);
         elementLine = 6;
+    }
+    if (!counts.length || counts.length !== elements.length || counts.some(n => !Number.isInteger(n) || n < 0) || counts.every(n => n === 0)) {
+        throw new Error('Invalid POSCAR: element counts are missing or invalid');
+    }
+    if (elements.some(element => !/^[A-Za-z][A-Za-z0-9]*$/.test(element))) {
+        throw new Error('Invalid POSCAR: element symbols contain unsupported characters');
     }
     
     // Check for "Selective Dynamics" line (optional, starts with 'S' or 's')
     let hasSelectiveDynamics = false;
-    const possibleSelectiveLine = lines[elementLine].toLowerCase();
+    const possibleSelectiveLine = (lines[elementLine] || '').toLowerCase();
     if (possibleSelectiveLine.startsWith('s')) {
         hasSelectiveDynamics = true;
         elementLine++; // Move past the "Selective Dynamics" line
     }
     
     // Coordinate type (Direct/Cartesian)
-    const coordType = lines[elementLine].toLowerCase();
+    const coordType = (lines[elementLine] || '').toLowerCase();
+    if (!/^[dcfk]/.test(coordType)) throw new Error('Invalid POSCAR: expected Direct or Cartesian coordinates');
     const isDirect = coordType.startsWith('d') || coordType.startsWith('f');
     
     // Parse atomic positions
@@ -812,19 +845,26 @@ function parsePOSCAR(content) {
     for (let i = 0; i < elements.length; i++) {
         for (let j = 0; j < counts[i]; j++) {
             const posLine = lines[atomIndex];
+            if (!posLine) throw new Error(`Invalid POSCAR: missing atom coordinates on line ${atomIndex + 1}`);
             // Handle comments at end of line
             const cleanLine = posLine.split('!')[0].split('#')[0];
             const allParts = cleanLine.split(/\s+/).filter(p => p);
             
             // First 3 parts are coordinates
-            let x = parseFloat(allParts[0]);
-            let y = parseFloat(allParts[1]);
-            let z = parseFloat(allParts[2]);
+            let x = Number(allParts[0]);
+            let y = Number(allParts[1]);
+            let z = Number(allParts[2]);
+            if (allParts.length < 3 || ![x, y, z].every(Number.isFinite)) {
+                throw new Error(`Invalid POSCAR: coordinates on line ${atomIndex + 1}`);
+            }
             
             // Parse selective dynamics flags (T/F for x, y, z)
             // Default to all active (true) if no selective dynamics
             let selectiveDynamics = [true, true, true];
-            if (hasSelectiveDynamics && allParts.length >= 6) {
+            if (hasSelectiveDynamics) {
+                if (allParts.length < 6 || allParts.slice(3, 6).some(flag => !/^[TF]$/i.test(flag))) {
+                    throw new Error(`Invalid POSCAR: selective dynamics flags on line ${atomIndex + 1}`);
+                }
                 selectiveDynamics = [
                     allParts[3].toUpperCase() === 'T',
                     allParts[4].toUpperCase() === 'T',
@@ -843,6 +883,11 @@ function parsePOSCAR(content) {
                 x = cartX;
                 y = cartY;
                 z = cartZ;
+            } else {
+                // In POSCAR, Cartesian positions are scaled along with lattice vectors.
+                x *= lengthScale;
+                y *= lengthScale;
+                z *= lengthScale;
             }
             
             atoms.push({
@@ -872,25 +917,39 @@ function parsePOSCAR(content) {
 // Parse XDATCAR file format (multi-frame trajectory)
 function parseXDATCAR(content) {
     const lines = content.trim().split('\n').map(line => line.trim());
+    if (lines.length < 9) throw new Error('Invalid XDATCAR: header or frames are incomplete');
     
     // Line 0: Comment
     const comment = lines[0];
     
     // Line 1: Universal scaling factor
-    const scale = parseFloat(lines[1]);
+    const scale = Number(lines[1]);
+    if (!Number.isFinite(scale) || scale <= 0) throw new Error('Invalid XDATCAR: scale factor must be positive');
     
     // Lines 2-4: Lattice vectors (this is the initial/reference lattice)
     const baseLattice = [];
     for (let i = 2; i <= 4; i++) {
-        const parts = lines[i].split(/\s+/).filter(p => p).map(parseFloat);
-        baseLattice.push(parts.map(v => v * scale));
+        const parts = lines[i].split(/\s+/).filter(p => p).map(Number);
+        if (parts.length < 3 || parts.slice(0, 3).some(v => !Number.isFinite(v))) {
+            throw new Error(`Invalid XDATCAR: lattice vector on line ${i + 1}`);
+        }
+        baseLattice.push(parts.slice(0, 3).map(v => v * scale));
+    }
+    if (!cartesianToFractional(new THREE.Vector3(), baseLattice)) {
+        throw new Error('Invalid XDATCAR: lattice has zero volume');
     }
     
     // Line 5: Element symbols
     const elements = lines[5].split(/\s+/).filter(p => p);
+    if (!elements.length || elements.some(element => !/^[A-Za-z][A-Za-z0-9]*$/.test(element))) {
+        throw new Error('Invalid XDATCAR: element symbols are missing or invalid');
+    }
     
     // Line 6: Number of atoms per element
-    const counts = lines[6].split(/\s+/).filter(p => p).map(p => parseInt(p));
+    const counts = lines[6].split(/\s+/).filter(p => p).map(Number);
+    if (counts.length !== elements.length || counts.some(n => !Number.isInteger(n) || n < 0) || counts.every(n => n === 0)) {
+        throw new Error('Invalid XDATCAR: element counts are missing or invalid');
+    }
     const totalAtoms = counts.reduce((a, b) => a + b, 0);
     
     // Build element array for each atom
@@ -927,18 +986,19 @@ function parseXDATCAR(content) {
         const positions = [];
         const fractionalCoords = [];
         
-        // Use the base lattice for this frame (can be extended for NPT with per-frame lattice)
+        // XDATCAR uses the header lattice for every frame.
         const frameLattice = baseLattice.map(v => [...v]);
         
         for (let atomIdx = 0; atomIdx < totalAtoms; atomIdx++) {
-            if (lineIndex >= lines.length) break;
+            if (lineIndex >= lines.length) {
+                throw new Error(`Invalid XDATCAR: frame ${frames.length + 1} is incomplete`);
+            }
             
             const posLine = lines[lineIndex];
-            const parts = posLine.split(/\s+/).filter(p => p).map(parseFloat);
+            const parts = posLine.split(/\s+/).filter(p => p).map(Number);
             
-            if (parts.length < 3) {
-                lineIndex++;
-                continue;
+            if (parts.length < 3 || parts.slice(0, 3).some(v => !Number.isFinite(v))) {
+                throw new Error(`Invalid XDATCAR: coordinates on line ${lineIndex + 1}`);
             }
             
             const fx = parts[0];
@@ -957,14 +1017,7 @@ function parseXDATCAR(content) {
             lineIndex++;
         }
         
-        // Only add frame if we got all atoms
-        if (positions.length === totalAtoms) {
-            frames.push({
-                lattice: frameLattice,
-                positions: positions,
-                fractional: fractionalCoords
-            });
-        }
+        frames.push({ lattice: frameLattice, positions, fractional: fractionalCoords });
     }
     
     if (frames.length === 0) {
@@ -1032,9 +1085,14 @@ function isXYZFormat(content) {
 function parseExtendedXYZLattice(comment) {
     if (!comment) return null;
     const match = comment.match(/Lattice\s*=\s*"([^"]+)"/i);
-    if (!match) return null;
-    const nums = match[1].trim().split(/\s+/).map(parseFloat);
-    if (nums.length < 9 || nums.some(n => Number.isNaN(n))) return null;
+    if (!match) {
+        if (/Lattice\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed Lattice field');
+        return null;
+    }
+    const nums = match[1].trim().split(/\s+/).map(Number);
+    if (nums.length !== 9 || nums.some(n => !Number.isFinite(n))) {
+        throw new Error('Invalid extended XYZ: Lattice must contain nine finite numbers');
+    }
     return [
         [nums[0], nums[1], nums[2]],
         [nums[3], nums[4], nums[5]],
@@ -1089,11 +1147,14 @@ function parseXYZ(content) {
         if (parts.length < 4) {
             throw new Error(`Invalid XYZ atom line ${parsed + 1}: expected Element x y z`);
         }
+        if (!/^[A-Za-z][A-Za-z0-9]*$/.test(parts[0])) {
+            throw new Error(`Invalid XYZ element on atom line ${parsed + 1}`);
+        }
         const element = parts[0].replace(/\d+$/, '');
-        const x = parseFloat(parts[1]);
-        const y = parseFloat(parts[2]);
-        const z = parseFloat(parts[3]);
-        if ([x, y, z].some(n => Number.isNaN(n))) {
+        const x = Number(parts[1]);
+        const y = Number(parts[2]);
+        const z = Number(parts[3]);
+        if ([x, y, z].some(n => !Number.isFinite(n))) {
             throw new Error(`Invalid XYZ coordinates on atom line ${parsed + 1}`);
         }
         atoms.push({
@@ -1110,20 +1171,22 @@ function parseXYZ(content) {
     }
 
     let lattice = parseExtendedXYZLattice(comment);
+    const hasExplicitLattice = Boolean(lattice);
     if (!lattice) {
         const box = latticeFromCartesianAtoms(atoms.map(a => a.position));
         lattice = box.lattice;
+    } else if (!cartesianToFractional(new THREE.Vector3(0, 0, 0), lattice)) {
+        throw new Error('Invalid extended XYZ: lattice has zero volume');
+    }
+
+    if (hasExplicitLattice) {
         atoms.forEach(atom => {
-            atom.position.sub(box.origin);
+            atom.fractional = cartesianToFractional(atom.position, lattice);
         });
     }
 
-    atoms.forEach(atom => {
-        atom.fractional = cartesianToFractional(atom.position, lattice);
-    });
-
     const order = [];
-    const countsMap = {};
+    const countsMap = Object.create(null);
     atoms.forEach(atom => {
         if (!(atom.element in countsMap)) {
             order.push(atom.element);
@@ -1142,8 +1205,13 @@ function parseXYZ(content) {
         isDirect: false,
         hasSelectiveDynamics: false,
         isXDATCAR: false,
-        isXYZ: true
+        isXYZ: true,
+        hasExplicitLattice
     };
+}
+
+function isPeriodicStructure(structure) {
+    return Boolean(structure && (!structure.isXYZ || structure.hasExplicitLattice));
 }
 
 // Create atom sphere
@@ -1332,7 +1400,7 @@ function getOriginalAtomPosition(selectedAtom) {
 function formatAtomCoordinates(selectedAtom, atomIndex) {
     const originalPos = getOriginalAtomPosition(selectedAtom);
     
-    if (selectedAtomCoordMode === 'fractional') {
+    if (isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional') {
         // Get fractional coordinates
         const frac = cartesianToFractional(
             new THREE.Vector3(originalPos.x, originalPos.y, originalPos.z),
@@ -1348,7 +1416,9 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
     
     // Cartesian: cyan with parentheses (default fallback)
     const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
-    return `<div class="sel-coords sel-coords-cart clickable-coords" data-atom-idx="${atomIndex}" title="Click to show Fractional">${coordStr}</div>`;
+    const toggle = isPeriodicStructure(currentStructure) ? 'clickable-coords' : '';
+    const title = isPeriodicStructure(currentStructure) ? 'Click to show Fractional' : 'Cartesian coordinates (Å)';
+    return `<div class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</div>`;
 }
 
 // Compute fractional displacement between two selected atoms and return HTML
@@ -1361,6 +1431,9 @@ function computeDeltas(atomA, atomB) {
     
     const posA = getOriginalAtomPosition(atomA);
     const posB = getOriginalAtomPosition(atomB);
+    if (!isPeriodicStructure(currentStructure)) {
+        return { da: posB.x - posA.x, db: posB.y - posA.y, dc: posB.z - posA.z, dp: 2, unit: 'Å' };
+    }
     
     const fracA = cartesianToFractional(
         new THREE.Vector3(posA.x, posA.y, posA.z),
@@ -1399,15 +1472,16 @@ function formatDelta(atomA, atomB) {
         const val = Object.is(rounded, -0) ? 0 : rounded;
         return (val >= 0 ? '+' : '') + val.toFixed(d.dp);
     };
-    const colorClass = selectedAtomCoordMode === 'fractional' ? 'delta-frac' : 'delta-cart';
-    const title = selectedAtomCoordMode === 'fractional' 
+    const periodic = isPeriodicStructure(currentStructure);
+    const colorClass = periodic && selectedAtomCoordMode === 'fractional' ? 'delta-frac' : 'delta-cart';
+    const title = !periodic ? 'Cartesian displacement (Å)' : selectedAtomCoordMode === 'fractional'
         ? 'Fractional — click for Cartesian' 
         : 'Cartesian (Å) — click for Fractional';
     
-    return `<div class="meas-delta clickable-delta ${colorClass}" title="${title}">` +
-        `<span class="delta-item"><span class="delta-label delta-a">Δa</span> ${fmt(d.da)}</span>` +
-        `<span class="delta-item"><span class="delta-label delta-b">Δb</span> ${fmt(d.db)}</span>` +
-        `<span class="delta-item"><span class="delta-label delta-c">Δc</span> ${fmt(d.dc)}</span>` +
+    return `<div class="meas-delta ${periodic ? 'clickable-delta' : ''} ${colorClass}" title="${title}">` +
+        `<span class="delta-item"><span class="delta-label delta-a">Δ${periodic ? 'a' : 'x'}</span> ${fmt(d.da)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-b">Δ${periodic ? 'b' : 'y'}</span> ${fmt(d.db)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-c">Δ${periodic ? 'c' : 'z'}</span> ${fmt(d.dc)}</span>` +
         `</div>`;
 }
 
@@ -1418,6 +1492,7 @@ function formatDeltaCompact(atomA, atomB) {
 
 // Toggle coordinate display mode and refresh UI
 function toggleCoordinateDisplayMode() {
+    if (!isPeriodicStructure(currentStructure)) return;
     selectedAtomCoordMode = selectedAtomCoordMode === 'fractional' ? 'cartesian' : 'fractional';
     
     // Refresh the appropriate UI based on current mode
@@ -1510,6 +1585,7 @@ function createSupercellWireframe(lattice, na, nb, nc) {
 // Add periodic ghost atoms and bonds to structureGroup
 // Called during renderStructure, before centering
 function addPeriodicImages(structure) {
+    if (!isPeriodicStructure(structure)) return;
     const { a: na, b: nb, c: nc } = settings.periodic;
     
     // Skip if no periodic images
@@ -1525,8 +1601,6 @@ function addPeriodicImages(structure) {
         const supercellWireframe = createSupercellWireframe(lattice, na, nb, nc);
         structureGroup.add(supercellWireframe);
     }
-    
-    const ghostAtomPositions = [];
     
     // Generate ghost atoms for each periodic cell (excluding 0,0,0)
     for (let ia = 0; ia < na; ia++) {
@@ -1549,36 +1623,11 @@ function addPeriodicImages(structure) {
                     structureGroup.add(ghostAtom);
                     // Add to atomMeshes for raycasting (so ghost atoms can be selected)
                     atomMeshes.push(ghostAtom);
-                    ghostAtomPositions.push({ position: ghostPos, element: atom.element });
                 });
             }
         }
     }
     
-    // Create ghost bonds if bonds are enabled
-    if (settings.showBonds) {
-        // Bonds within ghost cells
-        for (let i = 0; i < ghostAtomPositions.length; i++) {
-            for (let j = i + 1; j < ghostAtomPositions.length; j++) {
-                const dist = ghostAtomPositions[i].position.distanceTo(ghostAtomPositions[j].position);
-                if (dist < settings.bondThreshold && dist > 0.5) {
-                    const bond = createGhostBond(ghostAtomPositions[i].position, ghostAtomPositions[j].position);
-                    structureGroup.add(bond);
-                }
-            }
-        }
-        
-        // Bonds between original atoms and ghost atoms (cross-boundary bonds)
-        structure.atoms.forEach(atom => {
-            ghostAtomPositions.forEach(ghost => {
-                const dist = atom.position.distanceTo(ghost.position);
-                if (dist < settings.bondThreshold && dist > 0.5) {
-                    const bond = createGhostBond(atom.position, ghost.position);
-                    structureGroup.add(bond);
-                }
-            });
-        });
-    }
 }
 
 // === ATOM SELECTION & MEASUREMENT FUNCTIONS ===
@@ -1682,6 +1731,7 @@ function createDragGuidePlane() {
     if (!currentStructure || !draggedAtom) return;
     
     removeDragGuidePlane();
+    if (!isPeriodicStructure(currentStructure)) return;
     
     const lattice = currentStructure.lattice;
     const a = new THREE.Vector3(...lattice[0]);
@@ -2263,7 +2313,7 @@ function updateEditUI() {
                 html += '</div>';
                 
                 // Selective dynamics buttons for selected atoms
-                html += `
+                if (isPeriodicStructure(currentStructure)) html += `
                     <div class="sd-buttons">
                         <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms (F F F)">🔒 Fix</button>
                         <button id="unfixSelectedBtn" class="btn btn-unfix" title="Make selected atoms active (T T T)">🔓 Active</button>
@@ -2287,13 +2337,13 @@ function updateEditUI() {
         const allElements = [...new Set([...existingElements, ...commonElements])].sort();
         
         // Use last selected element or default to first in list
-        const selectedElement = lastAddAtomElement || allElements[0];
+        const selectedElement = lastAddAtomElement || existingElements[0] || allElements[0];
         const elementOptions = allElements.map(e => 
             `<option value="${e}"${e === selectedElement ? ' selected' : ''}>${e}</option>`
         ).join('');
         
         // Use last coordinate type
-        const isCartesian = lastAddAtomCoordType === 'cartesian';
+        const isCartesian = !isPeriodicStructure(currentStructure) || lastAddAtomCoordType === 'cartesian';
         const step = isCartesian ? '0.1' : '0.01';
         
         html += `
@@ -2310,10 +2360,10 @@ function updateEditUI() {
                         <input type="radio" name="coordType" value="cartesian"${isCartesian ? ' checked' : ''}>
                         <span>Cartesian (Å)</span>
                     </label>
-                    <label class="coord-type-label">
+                    ${isPeriodicStructure(currentStructure) ? `<label class="coord-type-label">
                         <input type="radio" name="coordType" value="fractional"${!isCartesian ? ' checked' : ''}>
                         <span>Fractional</span>
-                    </label>
+                    </label>` : ''}
                 </div>
                 <div class="add-atom-coords">
                     <div class="coord-input-group">
@@ -2335,7 +2385,7 @@ function updateEditUI() {
         `;
         
         // Periodic Shift section (context-aware: selected atoms or all)
-        const shiftIsCartesian = lastShiftCoordType === 'cartesian';
+        const shiftIsCartesian = !isPeriodicStructure(currentStructure) || lastShiftCoordType === 'cartesian';
         const shiftStep = shiftIsCartesian ? '0.1' : '0.01';
         const shiftLabelX = shiftIsCartesian ? 'Δx' : 'Δa';
         const shiftLabelY = shiftIsCartesian ? 'Δy' : 'Δb';
@@ -2352,17 +2402,17 @@ function updateEditUI() {
         
         html += `
             <div class="sd-batch-section">
-                <div class="sd-batch-title">Periodic Shift</div>
+                <div class="sd-batch-title">${isPeriodicStructure(currentStructure) ? 'Periodic Shift' : 'Move Atoms'}</div>
                 <div class="shift-target-hint">${shiftTargetHint}</div>
                 <div class="add-atom-coord-type">
                     <label class="coord-type-label">
                         <input type="radio" name="shiftCoordType" value="cartesian"${shiftIsCartesian ? ' checked' : ''}>
                         <span>Cartesian (Å)</span>
                     </label>
-                    <label class="coord-type-label">
+                    ${isPeriodicStructure(currentStructure) ? `<label class="coord-type-label">
                         <input type="radio" name="shiftCoordType" value="fractional"${!shiftIsCartesian ? ' checked' : ''}>
                         <span>Fractional</span>
-                    </label>
+                    </label>` : ''}
                 </div>
                 <div class="shift-coords">
                     <div class="shift-input-group">
@@ -2380,12 +2430,12 @@ function updateEditUI() {
                 </div>
                 <div id="shiftError" class="add-atom-error"></div>
                 <button id="applyShiftBtn" class="btn btn-shift">${shiftBtnText}</button>
-                ${!hasSelection ? '<button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell" style="width: 100%; margin-top: 0.5rem;">Center in Cell</button>' : ''}
+                ${!hasSelection && isPeriodicStructure(currentStructure) ? '<button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell" style="width: 100%; margin-top: 0.5rem;">Center in Cell</button>' : ''}
             </div>
         `;
         
         // Selective Dynamics section
-        html += `
+        if (isPeriodicStructure(currentStructure)) html += `
             <div class="sd-batch-section">
                 <div class="sd-batch-title">Selective Dynamics</div>
                 <div class="sd-batch-row">
@@ -2523,40 +2573,70 @@ function updateEditUI() {
 // Call this whenever atom positions change (drag, undo, etc.)
 function rebuildDisplayOptions() {
     if (!currentStructure) return;
-    
+    // Keep displayed periodic images aligned when a real atom is moved.
+    atomMeshes.forEach(mesh => {
+        if (!mesh.userData.isGhost) return;
+        const { originalIndex, cellOffset } = mesh.userData;
+        mesh.position.copy(currentStructure.atoms[originalIndex].position);
+        ['a', 'b', 'c'].forEach((axis, index) => {
+            mesh.position.addScaledVector(new THREE.Vector3(...currentStructure.lattice[index]), cellOffset[axis]);
+        });
+    });
     rebuildBonds();
     rebuildFixedIndicators();
     rebuildLabels();
+    updateSelectionVisualPositions();
 }
 
 // Rebuild bonds between atoms
 function rebuildBonds() {
     if (!currentStructure) return;
-    
-    // Remove existing bonds
     const toRemove = [];
     structureGroup.children.forEach(child => {
-        // Bonds are cylinders (but not ghost bonds which have isGhostBond flag)
-        if (child.geometry && child.geometry.type === 'CylinderGeometry' && !child.userData.isGhostBond) {
+        if (child.userData.isBond || child.userData.isGhostBond) {
             toRemove.push(child);
         }
     });
-    toRemove.forEach(bond => structureGroup.remove(bond));
-    
-    // Rebuild bonds if enabled
-    if (settings.showBonds) {
-        for (let i = 0; i < atomMeshes.length; i++) {
-            for (let j = i + 1; j < atomMeshes.length; j++) {
-                const pos1 = atomMeshes[i].position;
-                const pos2 = atomMeshes[j].position;
-                const dist = pos1.distanceTo(pos2);
-                
-                if (dist < settings.bondThreshold && dist > 0.5) {
-                    const bond = createBond(pos1, pos2);
-                    structureGroup.add(bond);
+    toRemove.forEach(bond => {
+        structureGroup.remove(bond);
+        disposeObject3D(bond);
+    });
+    addBondsFromAtomMeshes();
+}
+
+function addBondsFromAtomMeshes() {
+    if (!settings.showBonds) return;
+    // Spatial buckets keep bond searches close to linear for sparse structures.
+    const bucketSize = settings.bondThreshold;
+    const buckets = new Map();
+    for (let i = 0; i < atomMeshes.length; i++) {
+        const first = atomMeshes[i];
+        const x = Math.floor(first.position.x / bucketSize);
+        const y = Math.floor(first.position.y / bucketSize);
+        const z = Math.floor(first.position.z / bucketSize);
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dz = -1; dz <= 1; dz++) {
+                    for (const second of buckets.get(`${x + dx},${y + dy},${z + dz}`) || []) {
+                        const distance = first.position.distanceTo(second.position);
+                        const radius1 = (ELEMENT_DATA[first.userData.element] || ELEMENT_DATA.DEFAULT).radius;
+                        const radius2 = (ELEMENT_DATA[second.userData.element] || ELEMENT_DATA.DEFAULT).radius;
+                        const limit = settings.useElementRadii
+                            ? Math.min(settings.bondThreshold, 1.3 * (radius1 + radius2))
+                            : settings.bondThreshold;
+                        if (distance < limit && distance > 0.5) {
+                            const bond = first.userData.isGhost || second.userData.isGhost
+                                ? createGhostBond(first.position, second.position)
+                                : createBond(first.position, second.position);
+                            structureGroup.add(bond);
+                        }
+                    }
                 }
             }
         }
+        const key = `${x},${y},${z}`;
+        if (!buckets.has(key)) buckets.set(key, []);
+        buckets.get(key).push(first);
     }
 }
 
@@ -2571,7 +2651,10 @@ function rebuildFixedIndicators() {
             toRemove.push(child);
         }
     });
-    toRemove.forEach(indicator => structureGroup.remove(indicator));
+    toRemove.forEach(indicator => {
+        structureGroup.remove(indicator);
+        disposeObject3D(indicator);
+    });
     
     // Rebuild fixed indicators if enabled
     if (settings.showFixedIndicators) {
@@ -2599,7 +2682,10 @@ function rebuildLabels() {
             toRemove.push(child);
         }
     });
-    toRemove.forEach(label => structureGroup.remove(label));
+    toRemove.forEach(label => {
+        structureGroup.remove(label);
+        disposeObject3D(label);
+    });
     
     // Rebuild if enabled
     if (settings.showLabels) {
@@ -2829,18 +2915,21 @@ function getSelectiveDynamicsStats() {
     if (!currentStructure || currentStructure.atoms.length === 0) return '';
     
     let fixedCount = 0;
+    let partialCount = 0;
     let activeCount = 0;
     
     currentStructure.atoms.forEach(atom => {
         const sd = atom.selectiveDynamics || [true, true, true];
         if (sd.every(v => v === false)) {
             fixedCount++;
+        } else if (sd.some(v => v === false)) {
+            partialCount++;
         } else {
             activeCount++;
         }
     });
     
-    return `🔒 ${fixedCount} fixed • 🔓 ${activeCount} active`;
+    return `${fixedCount} fixed • ${partialCount} partial • ${activeCount} free`;
 }
 
 // ============================================
@@ -2909,13 +2998,17 @@ function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ, atomIndices = nul
         oldPositions: oldPositions
     });
     
-    // Apply shift to specified atoms and wrap periodically
+    // Apply shift; only crystal structures wrap through cell boundaries.
     indicesToShift.forEach(index => {
         const atom = currentStructure.atoms[index];
         if (!atom) return;
         
         // Shift in Cartesian
         atom.position.add(shiftCartesian);
+        if (!isPeriodicStructure(currentStructure)) {
+            atom.fractional = null;
+            return;
+        }
         
         // Convert to fractional for wrapping
         const frac = cartesianToFractional(atom.position, lattice);
@@ -3094,13 +3187,16 @@ function addAtomFromInput() {
         // Cartesian coordinates - validate within cell
         cartesianPos = new THREE.Vector3(x, y, z);
         
-        const validation = isPositionInCell(cartesianPos, currentStructure.lattice);
-        if (!validation.valid) {
-            errorDiv.textContent = validation.message;
-            return;
+        if (isPeriodicStructure(currentStructure)) {
+            const validation = isPositionInCell(cartesianPos, currentStructure.lattice);
+            if (!validation.valid) {
+                errorDiv.textContent = validation.message;
+                return;
+            }
+            fractionalPos = validation.fractional;
+        } else {
+            fractionalPos = null;
         }
-        
-        fractionalPos = validation.fractional;
     }
     
     // Remember form values for next time
@@ -3166,13 +3262,13 @@ function cartesianToFractional(pos, lattice) {
         return null; // Degenerate lattice
     }
     
-    // Inverse matrix elements (transposed cofactor matrix / det)
+    // Cramer's rule: rows are b×c, c×a, and a×b divided by the cell volume.
     const invDet = 1.0 / det;
     
     const inv = [
-        [(b[1] * c[2] - b[2] * c[1]) * invDet, (a[2] * c[1] - a[1] * c[2]) * invDet, (a[1] * b[2] - a[2] * b[1]) * invDet],
-        [(b[2] * c[0] - b[0] * c[2]) * invDet, (a[0] * c[2] - a[2] * c[0]) * invDet, (a[2] * b[0] - a[0] * b[2]) * invDet],
-        [(b[0] * c[1] - b[1] * c[0]) * invDet, (a[1] * c[0] - a[0] * c[1]) * invDet, (a[0] * b[1] - a[1] * b[0]) * invDet]
+        [(b[1] * c[2] - b[2] * c[1]) * invDet, (b[2] * c[0] - b[0] * c[2]) * invDet, (b[0] * c[1] - b[1] * c[0]) * invDet],
+        [(c[1] * a[2] - c[2] * a[1]) * invDet, (c[2] * a[0] - c[0] * a[2]) * invDet, (c[0] * a[1] - c[1] * a[0]) * invDet],
+        [(a[1] * b[2] - a[2] * b[1]) * invDet, (a[2] * b[0] - a[0] * b[2]) * invDet, (a[0] * b[1] - a[1] * b[0]) * invDet]
     ];
     
     // Multiply inverse by position
@@ -3217,7 +3313,7 @@ function isPositionInCell(pos, lattice) {
 
 // Recalculate element counts after deletion
 function recalculateElementCounts() {
-    const elementMap = {};
+    const elementMap = Object.create(null);
     currentStructure.atoms.forEach(atom => {
         elementMap[atom.element] = (elementMap[atom.element] || 0) + 1;
     });
@@ -3423,9 +3519,26 @@ function updateUI_forCurrentMode() {
 // Clear visual measurement objects
 function clearMeasurementVisuals() {
     while (measurementGroup.children.length > 0) {
-        measurementGroup.remove(measurementGroup.children[0]);
+        const child = measurementGroup.children[0];
+        measurementGroup.remove(child);
+        disposeObject3D(child);
     }
     selectionRings = [];
+}
+
+function disposeObject3D(object) {
+    const resources = new Set();
+    object.traverse(child => {
+        if (child.geometry) resources.add(child.geometry);
+        const materials = child.material ? (Array.isArray(child.material) ? child.material : [child.material]) : [];
+        materials.forEach(material => {
+            for (const value of Object.values(material)) {
+                if (value && value.isTexture) resources.add(value);
+            }
+            resources.add(material);
+        });
+    });
+    resources.forEach(resource => resource.dispose());
 }
 
 // Get the smallest atom radius in the current structure
@@ -3552,7 +3665,10 @@ function updateMeasurements() {
             toRemove.push(child);
         }
     });
-    toRemove.forEach(obj => measurementGroup.remove(obj));
+    toRemove.forEach(obj => {
+        measurementGroup.remove(obj);
+        disposeObject3D(obj);
+    });
     
     if (selectedAtoms.length >= 2) {
         // Draw dashed line between atoms 1-2
@@ -3932,6 +4048,7 @@ function createBond(pos1, pos2) {
     );
     
     bond.castShadow = true;
+    bond.userData.isBond = true;
     
     return bond;
 }
@@ -4019,7 +4136,9 @@ function renderStructure(structure, preserveState = false) {
     
     // Clear previous structure
     while (structureGroup.children.length > 0) {
-        structureGroup.remove(structureGroup.children[0]);
+        const child = structureGroup.children[0];
+        structureGroup.remove(child);
+        disposeObject3D(child);
     }
     
     // Clear measurement visuals (will rebuild if preserving)
@@ -4049,30 +4168,15 @@ function renderStructure(structure, preserveState = false) {
         }
     });
     
-    // Add bonds
-    if (settings.showBonds) {
-        for (let i = 0; i < structure.atoms.length; i++) {
-            for (let j = i + 1; j < structure.atoms.length; j++) {
-                const dist = structure.atoms[i].position.distanceTo(structure.atoms[j].position);
-                if (dist < settings.bondThreshold && dist > 0.5) {
-                    const bond = createBond(
-                        structure.atoms[i].position,
-                        structure.atoms[j].position
-                    );
-                    structureGroup.add(bond);
-                }
-            }
-        }
-    }
-    
     // Add unit cell
-    if (settings.showCell) {
+    if (settings.showCell && isPeriodicStructure(structure)) {
         const unitCell = createUnitCell(structure.lattice);
         structureGroup.add(unitCell);
     }
     
     // Add periodic ghost atoms (before centering so they get centered too)
     addPeriodicImages(structure);
+    addBondsFromAtomMeshes();
     
     // Center the structure (includes ghost atoms now)
     const box = new THREE.Box3().setFromObject(structureGroup);
@@ -4158,6 +4262,12 @@ function renderStructure(structure, preserveState = false) {
     }
 }
 
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[character]);
+}
+
 // Update UI with structure info
 function updateUI(structure) {
     // Structure info
@@ -4176,26 +4286,31 @@ function updateUI(structure) {
     
     // Count fixed/active atoms (only relevant for POSCAR with selective dynamics)
     let fixedCount = 0;
+    let partialCount = 0;
     if (!structure.isXDATCAR) {
         structure.atoms.forEach(atom => {
             const sd = atom.selectiveDynamics || [true, true, true];
             if (sd.every(v => v === false)) fixedCount++;
+            else if (sd.some(v => v === false)) partialCount++;
         });
     }
-    const activeCount = structure.atoms.length - fixedCount;
+    const activeCount = structure.atoms.length - fixedCount - partialCount;
     
     // Show selective dynamics info if any atoms are fixed (POSCAR only)
-    const sdInfo = (fixedCount > 0 && !structure.isXDATCAR)
-        ? `<div class="info-item"><span class="info-label">Fixed/Active</span><span class="info-value sd-info">🔒${fixedCount} / 🔓${activeCount}</span></div>`
+    const sdInfo = ((fixedCount > 0 || partialCount > 0) && !structure.isXDATCAR)
+        ? `<div class="info-item"><span class="info-label">Constraints</span><span class="info-value sd-info">${fixedCount} fixed / ${partialCount} partial / ${activeCount} free</span></div>`
         : '';
+    const latticeInfo = isPeriodicStructure(structure) ? `
+        <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
+        <div class="info-item"><span class="info-label">b</span><span class="info-value">${latticeB} Å</span></div>
+        <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>` : '';
     
     structureInfo.innerHTML = `
         <div class="info-item"><span class="info-label">Type</span><span class="info-value">${fileTypeBadge}</span></div>
-        <div class="info-item"><span class="info-label">Title</span><span class="info-value">${structure.comment.substring(0, 20)}</span></div>
+        <div class="info-item"><span class="info-label">File</span><span class="info-value" title="${escapeHTML(currentFilename || '')}">${escapeHTML(currentFilename || 'Untitled')}</span></div>
+        <div class="info-item"><span class="info-label">Title</span><span class="info-value" title="${escapeHTML(structure.comment)}">${escapeHTML(structure.comment.substring(0, 20))}</span></div>
         <div class="info-item"><span class="info-label">Total Atoms</span><span class="info-value">${structure.atoms.length}</span></div>
-        <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
-        <div class="info-item"><span class="info-label">b</span><span class="info-value">${latticeB} Å</span></div>
-        <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>
+        ${latticeInfo}
         ${frameInfo}
         ${sdInfo}
     `;
@@ -4208,22 +4323,25 @@ function updateUI(structure) {
         
         // Count fixed atoms of this element
         let elemFixedCount = 0;
+        let elemPartialCount = 0;
         structure.atoms.forEach(atom => {
             if (atom.element === elem) {
                 const sd = atom.selectiveDynamics || [true, true, true];
                 if (sd.every(v => v === false)) elemFixedCount++;
+                else if (sd.some(v => v === false)) elemPartialCount++;
             }
         });
         
-        const fixedBadge = elemFixedCount > 0 
-            ? `<span class="fixed-badge" title="${elemFixedCount} fixed">🔒${elemFixedCount}</span>` 
-            : '';
+        const fixedBadge = [
+            elemFixedCount > 0 ? `<span class="fixed-badge" title="${elemFixedCount} fully fixed">🔒${elemFixedCount}</span>` : '',
+            elemPartialCount > 0 ? `<span class="fixed-badge" title="${elemPartialCount} partially fixed">◐${elemPartialCount}</span>` : ''
+        ].join('');
         
         atomHTML += `
             <div class="atom-entry fade-in" style="animation-delay: ${i * 0.05}s">
                 <div class="atom-sphere" style="background: radial-gradient(circle at 30% 30%, ${lightenColor(colorHex, 40)}, ${colorHex})"></div>
                 <div class="atom-info">
-                    <div class="atom-symbol">${elem} ${fixedBadge}</div>
+                    <div class="atom-symbol">${escapeHTML(elem)} ${fixedBadge}</div>
                     <div class="atom-count">${structure.counts[i]} atom${structure.counts[i] > 1 ? 's' : ''}</div>
                 </div>
             </div>
@@ -4275,8 +4393,33 @@ const EXAMPLE_CATALOG = [
 
 function loadStructureFromText(content, filename) {
     const nameLower = (filename || '').toLowerCase();
-    if (isXDATCARFormat(content)) {
-        currentStructure = parseXDATCAR(content);
+    let nextStructure;
+    if (nameLower.endsWith('.xdatcar') || isXDATCARFormat(content)) {
+        nextStructure = parseXDATCAR(content);
+    } else if (nameLower.endsWith('.xyz') || isXYZFormat(content)) {
+        nextStructure = parseXYZ(content);
+    } else {
+        nextStructure = parsePOSCAR(content);
+    }
+
+    stopAnimation();
+    undoStack = [];
+    updateUndoButton();
+    settings.periodic = { a: 1, b: 1, c: 1 };
+    ['A', 'B', 'C'].forEach(axis => {
+        document.getElementById(`periodic${axis}`).value = 1;
+        document.getElementById(`periodic${axis}Display`).textContent = 1;
+    });
+    currentStructure = nextStructure;
+    currentFilename = filename || 'Untitled';
+    selectedAtomCoordMode = isPeriodicStructure(currentStructure) ? 'fractional' : 'cartesian';
+    lastAddAtomElement = null;
+    lastAddAtomCoords = { x: 0, y: 0, z: 0 };
+    lastShiftCoords = { a: 0, b: 0, c: 0 };
+    lastZThreshold = null;
+    lastAddAtomCoordType = isPeriodicStructure(currentStructure) ? 'fractional' : 'cartesian';
+    lastShiftCoordType = lastAddAtomCoordType;
+    if (currentStructure.isXDATCAR) {
 
         if (currentMode === 'edit') {
             switchToMeasureMode();
@@ -4286,12 +4429,10 @@ function loadStructureFromText(content, filename) {
         updateTimelineUI();
 
         statusText.textContent = `Loaded XDATCAR: ${filename} (${currentStructure.totalFrames} frames)`;
-    } else if (nameLower.endsWith('.xyz') || isXYZFormat(content)) {
-        currentStructure = parseXYZ(content);
+    } else if (currentStructure.isXYZ) {
         hideTimelinePanel();
         statusText.textContent = `Loaded XYZ: ${filename} (${currentStructure.atoms.length} atoms)`;
     } else {
-        currentStructure = parsePOSCAR(content);
         hideTimelinePanel();
         statusText.textContent = `Loaded: ${filename}`;
     }
@@ -4299,6 +4440,7 @@ function loadStructureFromText(content, filename) {
     renderStructure(currentStructure);
     updateUI(currentStructure);
     updateModeToggleForFileType();
+    updateSupercellButtonState();
 
     dropZone.classList.add('hidden');
     statusText.className = 'success';
@@ -4470,6 +4612,7 @@ function setupDragDrop() {
 
 // Setup controls
 function setupControls() {
+    document.getElementById('undoBtn').addEventListener('click', performUndo);
     // Reset view
     document.getElementById('resetView').addEventListener('click', () => {
         if (currentStructure) {
@@ -4533,6 +4676,11 @@ function setupControls() {
             renderStructure(currentStructure, true); // Preserve state
         }
     });
+
+    document.getElementById('useElementRadii').addEventListener('change', (e) => {
+        settings.useElementRadii = e.target.checked;
+        if (currentStructure) renderStructure(currentStructure, true);
+    });
     
     // Show labels (placeholder for future)
     document.getElementById('showLabels').addEventListener('change', (e) => {
@@ -4568,8 +4716,8 @@ function updateSupercellButtonState() {
     const { a, b, c } = settings.periodic;
     const hasPeriodicImages = a > 1 || b > 1 || c > 1;
     
-    makeSupercellBtn.disabled = !hasPeriodicImages;
-    makeSupercellBtn.title = hasPeriodicImages 
+    makeSupercellBtn.disabled = !isPeriodicStructure(currentStructure) || !hasPeriodicImages;
+    makeSupercellBtn.title = !isPeriodicStructure(currentStructure) ? 'Requires a periodic structure' : hasPeriodicImages
         ? `Convert ${a}×${b}×${c} periodic images to actual supercell`
         : 'Set periodicity > 1×1×1 first';
 }
@@ -4583,11 +4731,18 @@ function setupPeriodicControls() {
         const a = parseInt(document.getElementById('periodicA').value) || 1;
         const b = parseInt(document.getElementById('periodicB').value) || 1;
         const c = parseInt(document.getElementById('periodicC').value) || 1;
+        const next = { a: Math.max(1, Math.min(20, a)), b: Math.max(1, Math.min(20, b)), c: Math.max(1, Math.min(20, c)) };
+        if (currentStructure && currentStructure.atoms.length * next.a * next.b * next.c > 3000) {
+            ['A', 'B', 'C'].forEach(axis => {
+                document.getElementById(`periodic${axis}`).value = settings.periodic[axis.toLowerCase()];
+            });
+            statusText.textContent = 'Periodic preview limited to 3,000 displayed atoms';
+            statusText.className = 'error';
+            return;
+        }
         
         // Clamp values (minimum 1, reasonable max of 20 for performance)
-        settings.periodic.a = Math.max(1, Math.min(20, a));
-        settings.periodic.b = Math.max(1, Math.min(20, b));
-        settings.periodic.c = Math.max(1, Math.min(20, c));
+        settings.periodic = next;
         
         // Update displays
         document.getElementById('periodicADisplay').textContent = settings.periodic.a;
@@ -4863,7 +5018,7 @@ function generatePOSCAR() {
     lines.push('Cartesian');
     
     // Atom positions - group by element, preserving selective dynamics
-    const atomsByElement = {};
+    const atomsByElement = Object.create(null);
     currentStructure.elements.forEach(elem => {
         atomsByElement[elem] = [];
     });
@@ -4892,6 +5047,16 @@ function generatePOSCAR() {
     });
     
     return lines.join('\n');
+}
+
+function generateXYZ() {
+    if (!currentStructure) return null;
+    const lines = [String(currentStructure.atoms.length), currentStructure.comment || 'Exported from Crystal Visualizer'];
+    currentStructure.atoms.forEach(atom => {
+        const { x, y, z } = atom.position;
+        lines.push(`${atom.element} ${x.toFixed(9)} ${y.toFixed(9)} ${z.toFixed(9)}`);
+    });
+    return lines.join('\n') + '\n';
 }
 
 // Soft snap to orthogonal axis view
@@ -4973,7 +5138,7 @@ function getValidUpVectors(viewDir, baseUp) {
 // Check if camera is close to an orthogonal direction and snap if needed
 // Uses visual depth criterion: snap when projected depth is small relative to average cell size
 function checkAndSnapToAxis() {
-    if (!snapSettings.enabled || isSnapping || !currentStructure) return;
+    if (!snapSettings.enabled || isSnapping || !isPeriodicStructure(currentStructure)) return;
     if (isPerspective) return; // Only snap in orthographic mode
     
     const directions = getOrthogonalDirections();
@@ -5249,7 +5414,7 @@ function getFaceCornerPoints(lattice, extendAxisIdx, handleType) {
 function updateVacuumHandles() {
     cleanupVacuumHandles();
     
-    if (currentMode !== 'edit' || !currentStructure) {
+    if (currentMode !== 'edit' || !isPeriodicStructure(currentStructure)) {
         vacuumDragState.active = false;
         updateVacuumHintUI(null);
         return;
@@ -5642,13 +5807,18 @@ function exportPOSCAR() {
     }
     
     let content, filename;
+    const sourceName = (currentFilename || 'structure').replace(/[\\/]/g, '_');
+    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '') || 'structure';
     
     if (currentStructure.isXDATCAR) {
         content = generateXDATCAR();
-        filename = 'XDATCAR_exported';
+        filename = `${stem}_edited.xdatcar`;
+    } else if (currentStructure.isXYZ && !isPeriodicStructure(currentStructure)) {
+        content = generateXYZ();
+        filename = `${stem}_edited.xyz`;
     } else {
         content = generatePOSCAR();
-        filename = 'POSCAR_exported';
+        filename = `${stem}_edited.poscar`;
     }
     
     if (!content) return;
@@ -5665,7 +5835,7 @@ function exportPOSCAR() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : 'POSCAR';
+    const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ && !isPeriodicStructure(currentStructure) ? 'XYZ' : 'POSCAR');
     statusText.textContent = `Exported ${fileType} file`;
     statusText.className = 'success';
 }
@@ -5759,7 +5929,7 @@ function switchToFrame(frameIndex) {
     const frame = currentStructure.frames[frameIndex];
     currentStructure.currentFrameIndex = frameIndex;
     
-    // Update lattice (for NPT simulations where lattice may vary)
+    // Restore the lattice stored with this frame.
     currentStructure.lattice = frame.lattice.map(v => [...v]);
     
     // Update atom positions
@@ -5954,6 +6124,16 @@ function setupTimelineControls() {
 function updateModeToggleForFileType() {
     const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
     const exportBtn = document.getElementById('exportPoscar');
+    const periodic = isPeriodicStructure(currentStructure);
+    const cellBtn = document.getElementById('toggleCell');
+    const axesBtn = document.getElementById('toggleAxes');
+    axesBtn.disabled = !periodic;
+    axesBtn.title = periodic ? 'Toggle Axes' : 'No lattice axes in a molecule';
+    cellBtn.disabled = !periodic;
+    cellBtn.title = periodic ? 'Toggle Unit Cell' : 'No unit cell in a molecule';
+    document.querySelectorAll('#periodicControls .stepper-btn').forEach(button => { button.disabled = !periodic; });
+    document.getElementById('periodicControls').classList.toggle('disabled', !periodic);
+    document.getElementById('vacuumInfo').style.display = periodic ? '' : 'none';
     
     if (currentStructure && currentStructure.isXDATCAR) {
         // Disable edit mode for XDATCAR
@@ -5973,7 +6153,7 @@ function updateModeToggleForFileType() {
         }
         // Update export button for POSCAR
         if (exportBtn) {
-            exportBtn.title = 'Export as POSCAR';
+            exportBtn.title = currentStructure && currentStructure.isXYZ && !periodic ? 'Export as XYZ' : 'Export as POSCAR';
         }
     }
 }
@@ -6003,7 +6183,7 @@ function switchToMeasureMode() {
     if (panelTitle) panelTitle.textContent = '📐 Measurements';
     
     // Clear selection and update UI
-    clearSelection();
+    clearSelection(true);
     updateMeasurementUI();
 }
 
@@ -6023,4 +6203,3 @@ function init() {
 
 // Start the app
 init();
-

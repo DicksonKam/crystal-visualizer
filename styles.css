@@ -959,6 +959,20 @@ body.edit-mode-active .panel-title {
     gap: 0.6rem;
 }
 
+.periodic-group.disabled {
+    opacity: 0.45;
+}
+
+.btn:disabled, .stepper-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.stepper-btn:disabled:hover {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
 .periodic-row {
     display: flex;
     justify-content: space-between;

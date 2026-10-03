@@ -125,6 +125,7 @@ let settings = {
     ghostOpacity: 0.75, // Opacity of ghost atoms (default 75%)
     showFixedIndicators: true // Show visual indicators for fixed atoms
 };
+let measurementMode = 'nearest'; // Or 'selected': measure the visible atom copies exactly.
 
 // Measurement state
 let raycaster, mouse;
@@ -1421,33 +1422,68 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
     return `<div class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</div>`;
 }
 
-// Compute fractional displacement between two selected atoms and return HTML
-// Compute displacement between two atoms along crystal axes a, b, c
-// In fractional mode: shows fractional differences (unitless, 3dp)
-// In cartesian mode: shows Å displacement along each axis (2dp)
-// Always uses Δa, Δb, Δc labels (crystal axes, never x/y/z)
+function getMeasurementPair(atomA, atomB) {
+    const start = atomA.position.clone();
+    let end = atomB.position.clone();
+    let offset = [0, 0, 0];
+    const nearest = measurementMode === 'nearest' && isPeriodicStructure(currentStructure)
+        && !atomA.isGhost && !atomB.isGhost;
+    if (nearest) {
+        const result = CrystalGeometry.nearestImageBetween(start, end, currentStructure.lattice);
+        offset = result.offset;
+        end = start.clone().add(new THREE.Vector3(...result.delta));
+    }
+    return { start, end, offset, distance: start.distanceTo(end), nearest };
+}
+
+function getMeasurementAngle() {
+    if (selectedAtoms.length !== 3) return null;
+    const first = getMeasurementPair(selectedAtoms[1], selectedAtoms[0]);
+    const third = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
+    const v1 = first.end.clone().sub(first.start);
+    const v2 = third.end.clone().sub(third.start);
+    if (v1.length() < 1e-10 || v2.length() < 1e-10) return null;
+    const cosine = Math.max(-1, Math.min(1, v1.normalize().dot(v2.normalize())));
+    return {
+        first: first.end,
+        vertex: first.start,
+        third: third.end,
+        angleDeg: THREE.MathUtils.radToDeg(Math.acos(cosine))
+    };
+}
+
+function formatImageShift(offset) {
+    const axes = ['a', 'b', 'c'];
+    return offset.map((value, index) => value ? `${value > 0 ? '+' : '−'}${Math.abs(value) === 1 ? '' : Math.abs(value)}${axes[index]}` : '').filter(Boolean).join(' ');
+}
+
+function measurementModeControlHTML() {
+    if (!isPeriodicStructure(currentStructure)) return '';
+    const nearest = measurementMode === 'nearest';
+    return `<div class="measurement-mode"><span>Measure</span><button type="button" id="measurementModeToggle" class="btn btn-secondary" title="Switch between shortest periodic distance and the displayed atom copies">${nearest ? 'Nearest periodic' : 'Selected images'}</button></div>`;
+}
+
+function setupMeasurementModeToggle() {
+    const button = document.getElementById('measurementModeToggle');
+    if (!button) return;
+    button.addEventListener('click', () => {
+        measurementMode = measurementMode === 'nearest' ? 'selected' : 'nearest';
+        updateMeasurements();
+        updateUI_forCurrentMode();
+    });
+}
+
+// Compute displacement along the crystal axes, or Cartesian axes for molecules.
 function computeDeltas(atomA, atomB) {
     if (!currentStructure || !currentStructure.lattice) return null;
-    
-    const posA = getOriginalAtomPosition(atomA);
-    const posB = getOriginalAtomPosition(atomB);
+    const pair = getMeasurementPair(atomA, atomB);
+    const delta = pair.end.clone().sub(pair.start);
     if (!isPeriodicStructure(currentStructure)) {
-        return { da: posB.x - posA.x, db: posB.y - posA.y, dc: posB.z - posA.z, dp: 2, unit: 'Å' };
+        return { da: delta.x, db: delta.y, dc: delta.z, dp: 2, unit: 'Å' };
     }
-    
-    const fracA = cartesianToFractional(
-        new THREE.Vector3(posA.x, posA.y, posA.z),
-        currentStructure.lattice
-    );
-    const fracB = cartesianToFractional(
-        new THREE.Vector3(posB.x, posB.y, posB.z),
-        currentStructure.lattice
-    );
-    if (!fracA || !fracB) return null;
-    
-    const dfa = fracB[0] - fracA[0];
-    const dfb = fracB[1] - fracA[1];
-    const dfc = fracB[2] - fracA[2];
+    const fractional = cartesianToFractional(delta, currentStructure.lattice);
+    if (!fractional) return null;
+    const [dfa, dfb, dfc] = fractional;
     
     if (selectedAtomCoordMode === 'fractional') {
         return { da: dfa, db: dfb, dc: dfc, dp: 3, unit: '' };
@@ -2264,23 +2300,20 @@ function updateEditUI() {
                 html += '<div class="preserved-measurement">';
                 html += '<div class="preserved-measurement-header">📐 Measurement Preserved</div>';
                 html += '<div class="preserved-measurement-hint">Click atom to start editing</div>';
+                html += measurementModeControlHTML();
                 
                 // Show measurement values
                 if (selectedAtoms.length >= 2) {
-                    const dist = selectedAtoms[0].position.distanceTo(selectedAtoms[1].position);
-                    html += `<div class="preserved-measurement-value">Distance (1—2): <strong>${dist.toFixed(4)} Å</strong></div>`;
+                    const pair = getMeasurementPair(selectedAtoms[0], selectedAtoms[1]);
+                    html += `<div class="preserved-measurement-value">Distance (1—2): <strong>${pair.distance.toFixed(4)} Å</strong></div>`;
                     html += formatDeltaCompact(selectedAtoms[0], selectedAtoms[1]);
                 }
                 if (selectedAtoms.length === 3) {
-                    const dist23 = selectedAtoms[1].position.distanceTo(selectedAtoms[2].position);
-                    html += `<div class="preserved-measurement-value">Distance (2—3): <strong>${dist23.toFixed(4)} Å</strong></div>`;
+                    const pair = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
+                    html += `<div class="preserved-measurement-value">Distance (2—3): <strong>${pair.distance.toFixed(4)} Å</strong></div>`;
                     html += formatDeltaCompact(selectedAtoms[1], selectedAtoms[2]);
-                    
-                    const v1 = new THREE.Vector3().subVectors(selectedAtoms[0].position, selectedAtoms[1].position).normalize();
-                    const v2 = new THREE.Vector3().subVectors(selectedAtoms[2].position, selectedAtoms[1].position).normalize();
-                    const angle = Math.acos(Math.max(-1, Math.min(1, v1.dot(v2))));
-                    const angleDeg = THREE.MathUtils.radToDeg(angle);
-                    html += `<div class="preserved-measurement-value">Angle (1—2—3): <strong>${angleDeg.toFixed(2)}°</strong></div>`;
+                    const angle = getMeasurementAngle();
+                    if (angle) html += `<div class="preserved-measurement-value">Angle (1—2—3): <strong>${angle.angleDeg.toFixed(2)}°</strong></div>`;
                 }
                 
                 html += `<button id="clearSelectionBtn" class="btn btn-clear" style="margin-top: 0.5rem;">Clear Measurement</button>`;
@@ -2453,6 +2486,7 @@ function updateEditUI() {
     }
     
     panel.innerHTML = html;
+    setupMeasurementModeToggle();
     
     // Add button listeners
     const deleteBtn = document.getElementById('deleteSelectedBtn');
@@ -2619,11 +2653,7 @@ function addBondsFromAtomMeshes() {
                 for (let dz = -1; dz <= 1; dz++) {
                     for (const second of buckets.get(`${x + dx},${y + dy},${z + dz}`) || []) {
                         const distance = first.position.distanceTo(second.position);
-                        const radius1 = (ELEMENT_DATA[first.userData.element] || ELEMENT_DATA.DEFAULT).radius;
-                        const radius2 = (ELEMENT_DATA[second.userData.element] || ELEMENT_DATA.DEFAULT).radius;
-                        const limit = settings.useElementRadii
-                            ? Math.min(settings.bondThreshold, 1.3 * (radius1 + radius2))
-                            : settings.bondThreshold;
+                        const limit = getBondLimit(first.userData.element, second.userData.element);
                         if (distance < limit && distance > 0.5) {
                             const bond = first.userData.isGhost || second.userData.isGhost
                                 ? createGhostBond(first.position, second.position)
@@ -2637,6 +2667,64 @@ function addBondsFromAtomMeshes() {
         const key = `${x},${y},${z}`;
         if (!buckets.has(key)) buckets.set(key, []);
         buckets.get(key).push(first);
+    }
+    if (isPeriodicStructure(currentStructure) && currentStructure.lattice) {
+        addPeriodicBoundaryBonds(buckets, bucketSize);
+    }
+}
+
+function getBondLimit(elementA, elementB) {
+    if (!settings.useElementRadii) return settings.bondThreshold;
+    const radiusA = (ELEMENT_DATA[elementA] || ELEMENT_DATA.DEFAULT).radius;
+    const radiusB = (ELEMENT_DATA[elementB] || ELEMENT_DATA.DEFAULT).radius;
+    return Math.min(settings.bondThreshold, 1.3 * (radiusA + radiusB));
+}
+
+function addPeriodicBoundaryBonds(buckets, bucketSize) {
+    const lattice = currentStructure.lattice;
+    const repeats = [settings.periodic.a, settings.periodic.b, settings.periodic.c];
+    const reciprocalColumns = [
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1)
+    ].map(axis => cartesianToFractional(axis, lattice));
+    if (reciprocalColumns.some(column => !column)) return;
+    // A Cartesian cutoff becomes this distance in each fractional direction.
+    // Only copies near the corresponding faces need an outside neighbor.
+    const margins = [0, 1, 2].map(axis => settings.bondThreshold * Math.hypot(
+        reciprocalColumns[0][axis], reciprocalColumns[1][axis], reciprocalColumns[2][axis]
+    ) + 1e-9);
+
+    for (const atom of atomMeshes) {
+        const fractional = cartesianToFractional(atom.position, lattice);
+        if (!fractional) continue;
+        const shifts = [0, 1, 2].map(axis => {
+            const values = [0];
+            if (fractional[axis] <= margins[axis]) values.push(repeats[axis]);
+            if (fractional[axis] >= repeats[axis] - margins[axis]) values.push(-repeats[axis]);
+            return values;
+        });
+        for (const ia of shifts[0]) for (const ib of shifts[1]) for (const ic of shifts[2]) {
+            if (ia === 0 && ib === 0 && ic === 0) continue;
+            const offset = [ia, ib, ic];
+            const translated = new THREE.Vector3(...[0, 1, 2].map(axis =>
+                atom.position.getComponent(axis) + offset.reduce((sum, count, vector) =>
+                    sum + count * lattice[vector][axis], 0)
+            ));
+            const x = Math.floor(translated.x / bucketSize);
+            const y = Math.floor(translated.y / bucketSize);
+            const z = Math.floor(translated.z / bucketSize);
+            for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
+                for (const neighbor of buckets.get(`${x + dx},${y + dy},${z + dz}`) || []) {
+                    const distance = translated.distanceTo(neighbor.position);
+                    const limit = getBondLimit(atom.userData.element, neighbor.userData.element);
+                    if (distance <= 0.5 || distance >= limit) continue;
+                    const clipped = CrystalGeometry.clipSegmentToCell(translated, neighbor.position, lattice, repeats);
+                    if (!clipped) continue;
+                    structureGroup.add(createGhostBond(new THREE.Vector3(...clipped[0]), new THREE.Vector3(...clipped[1])));
+                }
+            }
+        }
     }
 }
 
@@ -3671,36 +3759,32 @@ function updateMeasurements() {
     });
     
     if (selectedAtoms.length >= 2) {
-        // Draw dashed line between atoms 1-2
-        drawMeasurementLine(selectedAtoms[0].position, selectedAtoms[1].position, 0x00f5d4);
+        const pair = getMeasurementPair(selectedAtoms[0], selectedAtoms[1]);
+        drawMeasurementLine(pair.start, pair.end, 0x00f5d4);
         
         // Add floating distance label at midpoint
         const midpoint = new THREE.Vector3().addVectors(
-            selectedAtoms[0].position, 
-            selectedAtoms[1].position
+            pair.start,
+            pair.end
         ).multiplyScalar(0.5);
-        const distance = selectedAtoms[0].position.distanceTo(selectedAtoms[1].position);
-        createFloatingDistanceLabel(midpoint, distance);
+        createFloatingDistanceLabel(midpoint, pair.distance);
     }
     
     if (selectedAtoms.length === 3) {
         // Draw line between atoms 2-3
-        drawMeasurementLine(selectedAtoms[1].position, selectedAtoms[2].position, 0xf15bb5);
+        const pair = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
+        drawMeasurementLine(pair.start, pair.end, 0xf15bb5);
         
         // Add floating distance label for 2-3 at midpoint
         const midpoint23 = new THREE.Vector3().addVectors(
-            selectedAtoms[1].position, 
-            selectedAtoms[2].position
+            pair.start,
+            pair.end
         ).multiplyScalar(0.5);
-        const distance23 = selectedAtoms[1].position.distanceTo(selectedAtoms[2].position);
-        createFloatingDistanceLabel(midpoint23, distance23);
+        createFloatingDistanceLabel(midpoint23, pair.distance);
         
         // Draw angle arc at vertex and get label position
-        const arcData = drawAngleArc(
-            selectedAtoms[0].position,
-            selectedAtoms[1].position, // vertex
-            selectedAtoms[2].position
-        );
+        const angle = getMeasurementAngle();
+        const arcData = angle ? drawAngleArc(angle.first, angle.vertex, angle.third) : null;
         
         // Add floating angle label near the arc
         if (arcData) {
@@ -3901,10 +3985,10 @@ function updateMeasurementUI() {
     if (!panel) return;
     
     const colors = ['#00f5d4', '#f15bb5', '#fee440']; // cyan, pink, yellow
-    let html = '';
+    let html = measurementModeControlHTML();
     
     if (selectedAtoms.length === 0) {
-        html = '<p class="placeholder-text">Click atoms to measure</p>';
+        html += '<p class="placeholder-text">Click atoms to measure</p>';
     } else {
         // List selected atoms
         html += '<div class="selected-atoms">';
@@ -3930,7 +4014,7 @@ function updateMeasurementUI() {
         
         // Show measurements
         if (selectedAtoms.length >= 2) {
-            const dist = selectedAtoms[0].position.distanceTo(selectedAtoms[1].position);
+            const pair = getMeasurementPair(selectedAtoms[0], selectedAtoms[1]);
             // Build label with ghost indicators
             const label1 = selectedAtoms[0].isGhost ? "1'" : '1';
             const label2 = selectedAtoms[1].isGhost ? "2'" : '2';
@@ -3947,7 +4031,8 @@ function updateMeasurementUI() {
                     </div>
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label1}—${label2})</span>
-                        <span class="meas-value">${dist.toFixed(4)} Å</span>
+                        <span class="meas-value">${pair.distance.toFixed(4)} Å</span>
+                        ${pair.nearest && formatImageShift(pair.offset) ? `<span class="meas-note">Atom ${label2} image ${formatImageShift(pair.offset)}</span>` : ''}
                         ${deltaHtml12}
                     </div>
                 </div>
@@ -3955,10 +4040,7 @@ function updateMeasurementUI() {
         }
         
         if (selectedAtoms.length === 3) {
-            const v1 = new THREE.Vector3().subVectors(selectedAtoms[0].position, selectedAtoms[1].position).normalize();
-            const v2 = new THREE.Vector3().subVectors(selectedAtoms[2].position, selectedAtoms[1].position).normalize();
-            const angle = Math.acos(Math.max(-1, Math.min(1, v1.dot(v2))));
-            const angleDeg = THREE.MathUtils.radToDeg(angle);
+            const angle = getMeasurementAngle();
             
             // Build labels with ghost indicators
             const label1 = selectedAtoms[0].isGhost ? "1'" : '1';
@@ -3966,7 +4048,7 @@ function updateMeasurementUI() {
             const label3 = selectedAtoms[2].isGhost ? "3'" : '3';
             
             // Distance 2-3: two color strips (pink + yellow)
-            const dist23 = selectedAtoms[1].position.distanceTo(selectedAtoms[2].position);
+            const pair = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
             
             // Fractional delta for distance 2-3
             const deltaHtml23 = formatDelta(selectedAtoms[1], selectedAtoms[2]);
@@ -3979,14 +4061,15 @@ function updateMeasurementUI() {
                     </div>
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label2}—${label3})</span>
-                        <span class="meas-value">${dist23.toFixed(4)} Å</span>
+                        <span class="meas-value">${pair.distance.toFixed(4)} Å</span>
+                        ${pair.nearest && formatImageShift(pair.offset) ? `<span class="meas-note">Atom ${label3} image ${formatImageShift(pair.offset)}</span>` : ''}
                         ${deltaHtml23}
                     </div>
                 </div>
             `;
             
             // Angle 1-2-3: three color strips (cyan + pink + yellow)
-            html += `
+            if (angle) html += `
                 <div class="measurement-result">
                     <div class="multi-color-strip triple">
                         <div class="strip-segment" style="background: ${colors[0]}"></div>
@@ -3995,7 +4078,7 @@ function updateMeasurementUI() {
                     </div>
                     <div class="meas-content">
                         <span class="meas-label">Angle (${label1}—${label2}—${label3})</span>
-                        <span class="meas-value angle-value">${angleDeg.toFixed(2)}°</span>
+                        <span class="meas-value angle-value">${angle.angleDeg.toFixed(2)}°</span>
                     </div>
                 </div>
             `;
@@ -4006,6 +4089,7 @@ function updateMeasurementUI() {
     }
     
     panel.innerHTML = html;
+    setupMeasurementModeToggle();
     
     // Add clear button listener
     const clearBtn = document.getElementById('clearSelectionBtn');
@@ -4411,6 +4495,7 @@ function loadStructureFromText(content, filename) {
         document.getElementById(`periodic${axis}Display`).textContent = 1;
     });
     currentStructure = nextStructure;
+    measurementMode = 'nearest';
     currentFilename = filename || 'Untitled';
     selectedAtomCoordMode = isPeriodicStructure(currentStructure) ? 'fractional' : 'cartesian';
     lastAddAtomElement = null;
@@ -4439,6 +4524,7 @@ function loadStructureFromText(content, filename) {
 
     renderStructure(currentStructure);
     updateUI(currentStructure);
+    updateUI_forCurrentMode();
     updateModeToggleForFileType();
     updateSupercellButtonState();
 

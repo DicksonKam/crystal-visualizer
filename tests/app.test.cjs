@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
+const CrystalGeometry = require('../geometry.js');
 
 const root = path.resolve(__dirname, '..');
 
@@ -13,6 +14,10 @@ class Vector3 {
     add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
     sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
     distanceTo(v) { return Math.hypot(this.x - v.x, this.y - v.y, this.z - v.z); }
+    length() { return Math.hypot(this.x, this.y, this.z); }
+    normalize() { const length = this.length(); if (length) { this.x /= length; this.y /= length; this.z /= length; } return this; }
+    dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
+    getComponent(axis) { return [this.x, this.y, this.z][axis]; }
 }
 
 function app() {
@@ -23,7 +28,7 @@ function app() {
             return elements.get(id);
         }
     };
-    const context = vm.createContext({ document, THREE: { Vector3, Vector2: class {}, Plane: class {} }, console });
+    const context = vm.createContext({ document, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, console });
     const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8').replace(/\ninit\(\);\s*$/, '');
     vm.runInContext(source, context);
     return context;
@@ -82,6 +87,26 @@ test('fractional and Cartesian coordinates round-trip in a tilted cell', () => {
     actual.forEach((value, index) => assert.ok(Math.abs(value - expected[index]) < 1e-12));
 });
 
+test('periodic measurements use nearest image unless selected images are requested', () => {
+    const context = app();
+    context.points = [new Vector3(0.1, 0, 0), new Vector3(9.9, 0, 0)];
+    vm.runInContext(`
+        currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]], hasExplicitLattice: true };
+        selectedAtoms = points.map(position => ({ position, isGhost: false }));
+        measurementMode = 'nearest';
+    `, context);
+    const nearest = vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1])', context);
+    assert.ok(Math.abs(nearest.distance - 0.2) < 1e-10);
+    assert.deepEqual(Array.from(nearest.offset), [-1, 0, 0]);
+    const delta = vm.runInContext('computeDeltas(selectedAtoms[0], selectedAtoms[1])', context);
+    assert.ok(Math.abs(delta.da + 0.02) < 1e-10);
+
+    vm.runInContext("measurementMode = 'selected'", context);
+    assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 9.8) < 1e-10);
+    vm.runInContext("measurementMode = 'nearest'; selectedAtoms[1].isGhost = true", context);
+    assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 9.8) < 1e-10);
+});
+
 test('malformed coordinates and constraints report errors', () => {
     const context = app();
     const base = ['bad', '1', '1 0 0', '0 1 0', '0 0 1', 'H', '1', 'Direct', '0 0 x'].join('\n');
@@ -110,7 +135,7 @@ test('plain XYZ keeps molecule coordinates and exports XYZ', () => {
 
 test('a successful replacement clears undo history; a failed parse preserves it', () => {
     const context = app();
-    vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
+    vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
     context.pushUndo({ type: 'add_atom', index: 0 });
     assert.throws(() => context.loadStructureFromText('invalid', 'POSCAR'));
     assert.equal(vm.runInContext('undoStack.length', context), 1);
@@ -160,4 +185,28 @@ test('element radii exclude the false H–H bond in water', () => {
     assert.equal(vm.runInContext('structureGroup.children.length', context), 2);
     vm.runInContext('structureGroup.children = []; settings.useElementRadii = false; addBondsFromAtomMeshes();', context);
     assert.equal(vm.runInContext('structureGroup.children.length', context), 3);
+});
+
+test('periodic bonds cross opposite cell faces without a long interior bond', () => {
+    const context = app();
+    context.points = [new Vector3(0.4, 0, 0), new Vector3(9.6, 0, 0)];
+    vm.runInContext(`
+        currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]] };
+        settings.periodic = { a: 1, b: 1, c: 1 };
+        settings.showBonds = true;
+        settings.useElementRadii = false;
+        settings.bondThreshold = 1.5;
+        atomMeshes = points.map(position => ({ position, userData: { element: 'H' } }));
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        createBond = (a, b) => ({ kind: 'interior', start: a, end: b });
+        createGhostBond = (a, b) => ({ kind: 'boundary', start: a, end: b });
+        addBondsFromAtomMeshes();
+    `, context);
+    const bonds = vm.runInContext('structureGroup.children', context);
+    assert.equal(bonds.length, 2);
+    assert.ok(bonds.every(bond => bond.kind === 'boundary'));
+    const endpoints = bonds.flatMap(bond => [bond.start.x, bond.end.x]);
+    assert.ok(endpoints.some(x => Math.abs(x) < 1e-10));
+    assert.ok(endpoints.some(x => Math.abs(x - 10) < 1e-10));
+    assert.ok(bonds.every(bond => bond.start.distanceTo(bond.end) <= 0.401));
 });

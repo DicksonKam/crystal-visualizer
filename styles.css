@@ -361,6 +361,21 @@ body {
     min-height: 60px;
 }
 
+.measurement-mode {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.measurement-mode .btn {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+}
+
 .selected-atoms {
     display: flex;
     flex-direction: column;
@@ -489,6 +504,13 @@ body {
 
 .meas-value.angle-value {
     color: var(--text-primary); /* White, not yellow - avoids confusion with selection color */
+}
+
+.meas-note {
+    width: 100%;
+    margin-top: 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
 }
 
 /* Delta display under distance measurements (unified fractional/cartesian) */

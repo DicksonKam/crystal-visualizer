@@ -20,13 +20,14 @@ The built-in examples use `fetch`, so opening `index.html` as a raw file will no
 - XDATCAR files display a timeline and export as XDATCAR. Editing is disabled. The header lattice is used for every frame.
 
 The Bond Length slider sets an absolute maximum. “Use Atomic Radii” is on by default and also limits bonds using covalent radii; turn it off to use distance alone.
+For periodic structures, bonds crossing a cell face are shown as faint segments ending at the face. Measurements default to the nearest periodic image, including tilted cells. Use the measurement mode button to measure the displayed copies instead; selecting a ghost copy always measures that explicit image.
 
 ## Code and tests
 
-`index.html` contains the UI, `styles.css` contains the styling, and `app.js` contains parsing, structure operations, Three.js rendering, and event handling. The code currently uses shared state in one JavaScript file, so new features should keep format and coordinate behavior consistent across loading, rendering, editing, undo, and export.
+`index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains testable periodic geometry, and `app.js` contains parsing, structure operations, Three.js rendering, and event handling. The code currently uses shared state in one JavaScript file, so new features should keep format and coordinate behavior consistent across loading, rendering, editing, undo, and export.
 
 Run the focused tests with:
 
 ```sh
-node --test tests/app.test.cjs
+node --test tests/*.test.cjs
 ```

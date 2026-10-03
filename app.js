@@ -133,6 +133,28 @@ let raycaster, mouse;
 let selectedAtoms = []; // Array of { mesh, index, element, position }
 let selectionRings = []; // Visual rings around selected atoms
 let atomMeshes = []; // All atom meshes for raycasting
+const sharedRenderResources = new Set();
+let sharedAtomGeometry = null;
+let sharedBondGeometry = null;
+let sharedSolidBondMaterial = null;
+let sharedGhostBondMaterial = null;
+let smallestAtomRadiusCache = null;
+
+function getSharedAtomGeometry() {
+    if (!sharedAtomGeometry) {
+        sharedAtomGeometry = new THREE.SphereGeometry(1, 24, 24);
+        sharedRenderResources.add(sharedAtomGeometry);
+    }
+    return sharedAtomGeometry;
+}
+
+function getSharedBondGeometry() {
+    if (!sharedBondGeometry) {
+        sharedBondGeometry = new THREE.CylinderGeometry(1, 1, 1, 8);
+        sharedRenderResources.add(sharedBondGeometry);
+    }
+    return sharedBondGeometry;
+}
 
 // Mode state: 'measure' or 'edit'
 let currentMode = 'measure';
@@ -607,6 +629,7 @@ function initScene() {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(viewport.clientWidth, viewport.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.domElement.setAttribute('aria-label', '3D structure view; use Find atom by number to select atoms with the keyboard');
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     viewport.appendChild(renderer.domElement);
@@ -1305,7 +1328,7 @@ function createAtom(element, position, atomIndex, selectiveDynamics = [true, tru
     const isFullyFixed = selectiveDynamics.every(v => v === false);
     const isPartiallyFixed = selectiveDynamics.some(v => v === false) && !isFullyFixed;
     
-    const geometry = new THREE.SphereGeometry(radius, 32, 32);
+    const geometry = getSharedAtomGeometry();
     const material = new THREE.MeshPhysicalMaterial({
         color: elemData.color,
         metalness: 0.1,
@@ -1317,6 +1340,7 @@ function createAtom(element, position, atomIndex, selectiveDynamics = [true, tru
     
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.copy(position);
+    mesh.scale.setScalar(radius);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.userData = { 
@@ -1406,7 +1430,7 @@ function createGhostAtom(element, position, originalIndex, cellOffset) {
     const elemData = ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT;
     const radius = elemData.radius * 0.4 * settings.atomScale;
     
-    const geometry = new THREE.SphereGeometry(radius, 24, 24);
+    const geometry = getSharedAtomGeometry();
     const material = new THREE.MeshPhysicalMaterial({
         color: elemData.color,
         metalness: 0.1,
@@ -1418,6 +1442,7 @@ function createGhostAtom(element, position, originalIndex, cellOffset) {
     
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.copy(position);
+    mesh.scale.setScalar(radius);
     mesh.userData = { 
         element, 
         isGhost: true, 
@@ -1491,15 +1516,17 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
         if (frac) {
             // Fractional: yellow/gold with square brackets
             const coordStr = `[${frac[0].toFixed(3)}, ${frac[1].toFixed(3)}, ${frac[2].toFixed(3)}]`;
-            return `<div class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Click to show Cartesian">${coordStr}</div>`;
+            return `<button type="button" class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Show Cartesian coordinates">${coordStr}</button>`;
         }
     }
     
     // Cartesian: cyan with parentheses (default fallback)
     const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
     const toggle = isPeriodicStructure(currentStructure) ? 'clickable-coords' : '';
-    const title = isPeriodicStructure(currentStructure) ? 'Click to show Fractional' : 'Cartesian coordinates (Å)';
-    return `<div class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</div>`;
+    const title = isPeriodicStructure(currentStructure) ? 'Show fractional coordinates' : 'Cartesian coordinates (Å)';
+    const tag = isPeriodicStructure(currentStructure) ? 'button type="button"' : 'div';
+    const closingTag = isPeriodicStructure(currentStructure) ? 'button' : 'div';
+    return `<${tag} class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</${closingTag}>`;
 }
 
 function getMeasurementPair(atomA, atomB) {
@@ -1540,7 +1567,7 @@ function formatImageShift(offset) {
 function measurementModeControlHTML() {
     if (!isPeriodicStructure(currentStructure)) return '';
     const nearest = measurementMode === 'nearest';
-    return `<div class="measurement-mode"><span>Measure</span><button type="button" id="measurementModeToggle" class="btn btn-secondary" title="Switch between shortest periodic distance and the displayed atom copies">${nearest ? 'Nearest periodic' : 'Selected images'}</button></div>`;
+    return `<div class="measurement-mode"><span>Distance mode</span><button type="button" id="measurementModeToggle" class="btn btn-secondary" title="Switch between shortest periodic distance and the displayed atom copies">${nearest ? 'Nearest periodic' : 'Selected images'}</button></div>`;
 }
 
 function setupMeasurementModeToggle() {
@@ -1591,14 +1618,16 @@ function formatDelta(atomA, atomB) {
     const periodic = isPeriodicStructure(currentStructure);
     const colorClass = periodic && selectedAtomCoordMode === 'fractional' ? 'delta-frac' : 'delta-cart';
     const title = !periodic ? 'Cartesian displacement (Å)' : selectedAtomCoordMode === 'fractional'
-        ? 'Fractional — click for Cartesian' 
-        : 'Cartesian (Å) — click for Fractional';
+        ? 'Fractional — show Cartesian'
+        : 'Cartesian (Å) — show fractional';
     
-    return `<div class="meas-delta ${periodic ? 'clickable-delta' : ''} ${colorClass}" title="${title}">` +
+    const tag = periodic ? 'button type="button"' : 'div';
+    const closingTag = periodic ? 'button' : 'div';
+    return `<${tag} class="meas-delta ${periodic ? 'clickable-delta' : ''} ${colorClass}" title="${title}">` +
         `<span class="delta-item"><span class="delta-label delta-a">Δ${periodic ? 'a' : 'x'}</span> ${fmt(d.da)}</span>` +
         `<span class="delta-item"><span class="delta-label delta-b">Δ${periodic ? 'b' : 'y'}</span> ${fmt(d.db)}</span>` +
         `<span class="delta-item"><span class="delta-label delta-c">Δ${periodic ? 'c' : 'z'}</span> ${fmt(d.dc)}</span>` +
-        `</div>`;
+        `</${closingTag}>`;
 }
 
 // Format delta for preserved measurement in edit mode (same style as formatDelta)
@@ -1627,15 +1656,19 @@ function createGhostBond(pos1, pos2) {
     const smallestRadius = getSmallestAtomRadius();
     const bondRadius = smallestRadius * 0.25;
     
-    const geometry = new THREE.CylinderGeometry(bondRadius, bondRadius, length, 8);
-    const material = new THREE.MeshBasicMaterial({
-        color: 0x888899,
-        transparent: true,
-        opacity: settings.ghostOpacity * 0.6, // Bonds slightly more transparent than atoms
-        depthWrite: false
-    });
+    const geometry = getSharedBondGeometry();
+    if (!sharedGhostBondMaterial) {
+        sharedGhostBondMaterial = new THREE.MeshBasicMaterial({
+            color: 0x888899,
+            transparent: true,
+            opacity: settings.ghostOpacity * 0.6,
+            depthWrite: false
+        });
+        sharedRenderResources.add(sharedGhostBondMaterial);
+    }
     
-    const bond = new THREE.Mesh(geometry, material);
+    const bond = new THREE.Mesh(geometry, sharedGhostBondMaterial);
+    bond.scale.set(bondRadius, length, bondRadius);
     bond.position.copy(pos1).add(pos2).multiplyScalar(0.5);
     bond.quaternion.setFromUnitVectors(
         new THREE.Vector3(0, 1, 0),
@@ -2488,7 +2521,7 @@ function updateEditUI() {
             <div class="add-atom-section">
                 <div class="sd-batch-title">Add Atom</div>
                 <div class="add-atom-row">
-                    <label>Element</label>
+                    <label for="addAtomElement">Element</label>
                     <select id="addAtomElement" class="element-select">
                         ${elementOptions}
                     </select>
@@ -2505,15 +2538,15 @@ function updateEditUI() {
                 </div>
                 <div class="add-atom-coords">
                     <div class="coord-input-group">
-                        <label>x</label>
+                        <label for="addAtomX" id="addAtomLabelX">${isCartesian ? 'x' : 'a'}</label>
                         <input type="number" id="addAtomX" step="${step}" value="${lastAddAtomCoords.x}" class="coord-input">
                     </div>
                     <div class="coord-input-group">
-                        <label>y</label>
+                        <label for="addAtomY" id="addAtomLabelY">${isCartesian ? 'y' : 'b'}</label>
                         <input type="number" id="addAtomY" step="${step}" value="${lastAddAtomCoords.y}" class="coord-input">
                     </div>
                     <div class="coord-input-group">
-                        <label>z</label>
+                        <label for="addAtomZ" id="addAtomLabelZ">${isCartesian ? 'z' : 'c'}</label>
                         <input type="number" id="addAtomZ" step="${step}" value="${lastAddAtomCoords.z}" class="coord-input">
                     </div>
                 </div>
@@ -2554,15 +2587,15 @@ function updateEditUI() {
                 </div>
                 <div class="shift-coords">
                     <div class="shift-input-group">
-                        <label id="shiftLabelA">${shiftLabelX}</label>
+                        <label for="shiftA" id="shiftLabelA">${shiftLabelX}</label>
                         <input type="number" id="shiftA" step="${shiftStep}" value="${lastShiftCoords.a}" class="shift-input">
                     </div>
                     <div class="shift-input-group">
-                        <label id="shiftLabelB">${shiftLabelY}</label>
+                        <label for="shiftB" id="shiftLabelB">${shiftLabelY}</label>
                         <input type="number" id="shiftB" step="${shiftStep}" value="${lastShiftCoords.b}" class="shift-input">
                     </div>
                     <div class="shift-input-group">
-                        <label id="shiftLabelC">${shiftLabelZ}</label>
+                        <label for="shiftC" id="shiftLabelC">${shiftLabelZ}</label>
                         <input type="number" id="shiftC" step="${shiftStep}" value="${lastShiftCoords.c}" class="shift-input">
                     </div>
                 </div>
@@ -2577,7 +2610,7 @@ function updateEditUI() {
             <div class="sd-batch-section">
                 <div class="sd-batch-title">Selective Dynamics</div>
                 <div class="sd-batch-row">
-                    <label>Fix atoms with z &lt;</label>
+                    <label for="fixZThreshold">Fix atoms with z &lt;</label>
                     <input type="number" id="fixZThreshold" step="0.5" value="${lastZThreshold !== null ? lastZThreshold : getDefaultZThreshold()}" class="z-threshold-input">
                     <span>Å</span>
                 </div>
@@ -2692,6 +2725,10 @@ function updateEditUI() {
             document.getElementById('addAtomX').step = step;
             document.getElementById('addAtomY').step = step;
             document.getElementById('addAtomZ').step = step;
+            ['X', 'Y', 'Z'].forEach((axis, index) => {
+                document.getElementById(`addAtomLabel${axis}`).textContent = isFractional
+                    ? ['a', 'b', 'c'][index] : ['x', 'y', 'z'][index];
+            });
             
             // Remember coordinate type
             lastAddAtomCoordType = e.target.value;
@@ -3766,12 +3803,19 @@ function disposeObject3D(object) {
             resources.add(material);
         });
     });
-    resources.forEach(resource => resource.dispose());
+    resources.forEach(resource => {
+        if (!sharedRenderResources.has(resource)) resource.dispose();
+    });
 }
 
 // Get the smallest atom radius in the current structure
 function getSmallestAtomRadius() {
     if (!currentStructure) return 0.3;
+    if (smallestAtomRadiusCache && smallestAtomRadiusCache.structure === currentStructure
+        && smallestAtomRadiusCache.scale === settings.atomScale
+        && smallestAtomRadiusCache.count === currentStructure.atoms.length) {
+        return smallestAtomRadiusCache.value;
+    }
     
     let minRadius = Infinity;
     currentStructure.atoms.forEach(atom => {
@@ -3782,7 +3826,14 @@ function getSmallestAtomRadius() {
         }
     });
     
-    return minRadius;
+    const value = Number.isFinite(minRadius) ? minRadius : 0.3;
+    smallestAtomRadiusCache = {
+        structure: currentStructure,
+        scale: settings.atomScale,
+        count: currentStructure.atoms.length,
+        value
+    };
+    return value;
 }
 
 // Create selection label directly on atom center (no ring)
@@ -4253,14 +4304,18 @@ function createBond(pos1, pos2) {
     const smallestRadius = getSmallestAtomRadius();
     const bondRadius = smallestRadius * 0.25;
     
-    const geometry = new THREE.CylinderGeometry(bondRadius, bondRadius, length, 8);
-    const material = new THREE.MeshPhysicalMaterial({
-        color: 0x888899,
-        metalness: 0.3,
-        roughness: 0.5
-    });
+    const geometry = getSharedBondGeometry();
+    if (!sharedSolidBondMaterial) {
+        sharedSolidBondMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x888899,
+            metalness: 0.3,
+            roughness: 0.5
+        });
+        sharedRenderResources.add(sharedSolidBondMaterial);
+    }
     
-    const bond = new THREE.Mesh(geometry, material);
+    const bond = new THREE.Mesh(geometry, sharedSolidBondMaterial);
+    bond.scale.set(bondRadius, length, bondRadius);
     
     // Position at midpoint
     bond.position.copy(pos1).add(pos2).multiplyScalar(0.5);
@@ -4342,6 +4397,7 @@ function createUnitCell(lattice) {
 // Render the structure
 // preserveState: if true, keeps selections and camera position (for display option changes)
 function renderStructure(structure, preserveState = false) {
+    smallestAtomRadiusCache = null;
     // Save current selection info including ghost atoms
     const savedSelections = preserveState ? selectedAtoms.map(a => ({
         index: a.index,

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=38">
+    <link rel="stylesheet" href="styles.css?v=39">
 </head>
 <body>
     <div id="app">
@@ -176,27 +176,27 @@
                             <div class="periodic-axis">
                                 <span class="axis-badge axis-a">a</span>
                                 <div class="stepper">
-                                    <button type="button" class="stepper-btn" data-axis="a" data-dir="minus">−</button>
+                                    <button type="button" class="stepper-btn" data-axis="a" data-dir="minus" aria-label="Decrease a periodic images">−</button>
                                     <span id="periodicADisplay" class="stepper-value">1</span>
-                                    <button type="button" class="stepper-btn" data-axis="a" data-dir="plus">+</button>
+                                    <button type="button" class="stepper-btn" data-axis="a" data-dir="plus" aria-label="Increase a periodic images">+</button>
                                 </div>
                                 <input type="hidden" id="periodicA" value="1">
                             </div>
                             <div class="periodic-axis">
                                 <span class="axis-badge axis-b">b</span>
                                 <div class="stepper">
-                                    <button type="button" class="stepper-btn" data-axis="b" data-dir="minus">−</button>
+                                    <button type="button" class="stepper-btn" data-axis="b" data-dir="minus" aria-label="Decrease b periodic images">−</button>
                                     <span id="periodicBDisplay" class="stepper-value">1</span>
-                                    <button type="button" class="stepper-btn" data-axis="b" data-dir="plus">+</button>
+                                    <button type="button" class="stepper-btn" data-axis="b" data-dir="plus" aria-label="Increase b periodic images">+</button>
                                 </div>
                                 <input type="hidden" id="periodicB" value="1">
                             </div>
                             <div class="periodic-axis">
                                 <span class="axis-badge axis-c">c</span>
                                 <div class="stepper">
-                                    <button type="button" class="stepper-btn" data-axis="c" data-dir="minus">−</button>
+                                    <button type="button" class="stepper-btn" data-axis="c" data-dir="minus" aria-label="Decrease c periodic images">−</button>
                                     <span id="periodicCDisplay" class="stepper-value">1</span>
-                                    <button type="button" class="stepper-btn" data-axis="c" data-dir="plus">+</button>
+                                    <button type="button" class="stepper-btn" data-axis="c" data-dir="plus" aria-label="Increase c periodic images">+</button>
                                 </div>
                                 <input type="hidden" id="periodicC" value="1">
                             </div>
@@ -254,6 +254,7 @@
                         <span>Right Drag: Pan</span>
                         <span>Scroll: Zoom</span>
                         <span>⌘Z/Ctrl+Z: Undo</span>
+                        <span>⌘⇧Z/Ctrl+Y: Redo</span>
                     </div>
                 </div>
             </div>
@@ -305,7 +306,7 @@
         <!-- Status Bar -->
         <footer class="status-bar">
             <div class="status-left">
-                <span id="statusText">Ready</span>
+                <span id="statusText" role="status" aria-live="polite">Ready</span>
             </div>
             <div class="status-right">
                 <span id="coordInfo">X: - Y: - Z: -</span>
@@ -317,6 +318,6 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TrackballControls.js"></script>
     <script src="geometry.js?v=1"></script>
-    <script src="app.js?v=107"></script>
+    <script src="app.js?v=109"></script>
 </body>
 </html>

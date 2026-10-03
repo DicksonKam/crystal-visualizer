@@ -309,3 +309,13 @@ test('periodic bonds cross opposite cell faces without a long interior bond', ()
     assert.ok(endpoints.some(x => Math.abs(x - 10) < 1e-10));
     assert.ok(bonds.every(bond => bond.start.distanceTo(bond.end) <= 0.401));
 });
+
+test('smallest atom radius is reused until render scale changes', () => {
+    const context = app();
+    let reads = 0;
+    context.atom = { get element() { reads++; return 'H'; } };
+    vm.runInContext('currentStructure = { atoms: [atom] }; getSmallestAtomRadius(); getSmallestAtomRadius();', context);
+    assert.equal(reads, 1);
+    vm.runInContext('settings.atomScale = 1.2; getSmallestAtomRadius();', context);
+    assert.equal(reads, 2);
+});

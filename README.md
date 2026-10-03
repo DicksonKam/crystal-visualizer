@@ -30,6 +30,8 @@ Use **Find atom by number** in the Atoms panel to select and center an atom that
 
 `index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains testable periodic geometry, and `app.js` contains parsing, structure operations, Three.js rendering, and event handling. The code currently uses shared state in one JavaScript file, so new features should keep format and coordinate behavior consistent across loading, rendering, editing, undo, and export.
 
+The renderer reuses sphere and bond geometry across atoms and caches the smallest atom radius during redraws. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
+
 Run the focused tests with:
 
 ```sh

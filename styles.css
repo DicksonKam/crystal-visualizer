@@ -493,6 +493,35 @@ body {
     opacity: 0.85;
 }
 
+button.sel-coords,
+button.meas-delta {
+    appearance: none;
+    background: transparent;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+button.sel-coords {
+    border-top: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+}
+
+button.meas-delta {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+button.sel-coords:focus-visible,
+button.meas-delta:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
 /* Clickable coordinates - toggle between fractional/cartesian */
 .clickable-coords {
     cursor: pointer;

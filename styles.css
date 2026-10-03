@@ -102,6 +102,12 @@ body {
     gap: 0.5rem;
 }
 
+.unsaved-indicator:not([hidden]) {
+    color: var(--accent-yellow);
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
 /* Mode Toggle */
 .mode-toggle {
     display: flex;

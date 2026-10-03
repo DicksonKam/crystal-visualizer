@@ -22,6 +22,8 @@ The built-in examples use `fetch`, so opening `index.html` as a raw file will no
 The Bond Length slider sets an absolute maximum. “Use Atomic Radii” is on by default and also limits bonds using covalent radii; turn it off to use distance alone.
 For periodic structures, bonds crossing a cell face are shown as faint segments ending at the face. Measurements default to the nearest periodic image, including tilted cells. Use the measurement mode button to measure the displayed copies instead; selecting a ghost copy always measures that explicit image.
 
+Editing has Undo and Redo buttons, with ⌘Z/Ctrl+Z and ⌘⇧Z/Ctrl+Y shortcuts. The header marks unsaved structure edits. Exporting clears that marker, while opening a different file or leaving the page asks before discarding unsaved edits. Selection changes alone do not mark the structure as edited.
+
 ## Code and tests
 
 `index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains testable periodic geometry, and `app.js` contains parsing, structure operations, Three.js rendering, and event handling. The code currently uses shared state in one JavaScript file, so new features should keep format and coordinate behavior consistent across loading, rendering, editing, undo, and export.

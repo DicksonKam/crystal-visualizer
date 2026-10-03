@@ -150,7 +150,11 @@ let animationState = {
 // ============================================
 // All reversible operations push to this stack
 let undoStack = [];
+let redoStack = [];
 const MAX_UNDO_HISTORY = 50;
+let nextEditRevision = 0;
+let currentEditRevision = 0;
+let savedEditRevision = 0;
 
 // Operation types:
 // - 'move_atom': { index, oldPosition, newPosition }
@@ -165,17 +169,86 @@ const MAX_UNDO_HISTORY = 50;
 // - 'clear_selection': { selectedAtoms: [...], isMeasurementSelection }
 
 function pushUndo(operation) {
+    operation.beforeRevision = currentEditRevision;
+    operation.afterRevision = isSelectionOperation(operation) ? currentEditRevision : ++nextEditRevision;
+    currentEditRevision = operation.afterRevision;
     undoStack.push(operation);
+    redoStack = [];
     // Limit stack size
     if (undoStack.length > MAX_UNDO_HISTORY) {
         undoStack.shift();
     }
     updateUndoButton();
+    updateDirtyIndicator();
+}
+
+function isSelectionOperation(operation) {
+    return ['select_atom', 'deselect_atom', 'clear_selection'].includes(operation.type);
+}
+
+function hasUnsavedEdits() {
+    return currentEditRevision !== savedEditRevision;
+}
+
+function updateDirtyIndicator() {
+    const indicator = document.getElementById('unsavedIndicator');
+    if (indicator) indicator.hidden = !hasUnsavedEdits();
+    document.title = hasUnsavedEdits() ? '• Crystal Visualizer — unsaved edits' : 'Crystal Visualizer';
 }
 
 function updateUndoButton() {
     const button = document.getElementById('undoBtn');
     if (button) button.disabled = undoStack.length === 0;
+    const redoButton = document.getElementById('redoBtn');
+    if (redoButton) redoButton.disabled = redoStack.length === 0;
+}
+
+function captureRedoState(operation) {
+    return {
+        structure: isSelectionOperation(operation) ? null : JSON.parse(JSON.stringify(currentStructure)),
+        periodic: { ...settings.periodic },
+        selected: selectedAtoms.map(atom => ({
+            index: atom.index,
+            originalIndex: atom.originalIndex,
+            isGhost: Boolean(atom.isGhost),
+            cellOffset: atom.cellOffset ? { ...atom.cellOffset } : null,
+            element: atom.element
+        })),
+        isMeasurementSelection
+    };
+}
+
+function performRedo() {
+    if (redoStack.length === 0) {
+        statusText.textContent = 'Nothing to redo';
+        statusText.className = '';
+        return;
+    }
+    const { operation, state } = redoStack.pop();
+    if (state.structure) {
+        currentStructure = state.structure;
+        currentStructure.atoms.forEach(atom => {
+            atom.position = new THREE.Vector3(atom.position.x, atom.position.y, atom.position.z);
+        });
+    }
+    settings.periodic = { ...state.periodic };
+    ['a', 'b', 'c'].forEach(axis => {
+        const upper = axis.toUpperCase();
+        document.getElementById(`periodic${upper}`).value = settings.periodic[axis];
+        document.getElementById(`periodic${upper}Display`).textContent = settings.periodic[axis];
+    });
+    selectedAtoms = state.selected;
+    isMeasurementSelection = state.isMeasurementSelection;
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateUI_forCurrentMode();
+    updateSupercellButtonState();
+    undoStack.push(operation);
+    currentEditRevision = operation.afterRevision;
+    updateUndoButton();
+    updateDirtyIndicator();
+    statusText.textContent = 'Redid last action';
+    statusText.className = 'success';
 }
 
 function performUndo() {
@@ -186,7 +259,7 @@ function performUndo() {
     }
     
     const op = undoStack.pop();
-    updateUndoButton();
+    const redoState = captureRedoState(op);
     
     switch (op.type) {
         case 'move_atom':
@@ -222,15 +295,21 @@ function performUndo() {
         default:
             console.warn('Unknown undo operation type:', op.type);
     }
+    redoStack.push({ operation: op, state: redoState });
+    currentEditRevision = op.beforeRevision;
+    updateUndoButton();
+    updateDirtyIndicator();
 }
 
 // --- Undo handlers for each operation type ---
 
 function undoMoveAtom(op) {
     currentStructure.atoms[op.index].position.copy(op.oldPosition);
-    atomMeshes[op.index].position.copy(op.oldPosition);
-    rebuildDisplayOptions();
-    updateEditUI();
+    currentStructure.atoms[op.index].fractional = isPeriodicStructure(currentStructure)
+        ? cartesianToFractional(op.oldPosition, currentStructure.lattice) : null;
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateUI_forCurrentMode();
     statusText.textContent = `Undid move of atom #${op.index + 1}`;
     statusText.className = 'success';
 }
@@ -252,7 +331,7 @@ function undoDeleteAtoms(op) {
     recalculateElementCounts();
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
-    updateEditUI();
+    updateUI_forCurrentMode();
     statusText.textContent = `Restored ${op.deletedAtoms.length} atom(s)`;
     statusText.className = 'success';
 }
@@ -263,7 +342,7 @@ function undoAddAtom(op) {
     recalculateElementCounts();
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
-    updateEditUI();
+    updateUI_forCurrentMode();
     statusText.textContent = `Undid add atom #${op.index + 1}`;
     statusText.className = 'success';
 }
@@ -277,7 +356,7 @@ function undoShiftAtoms(op) {
     });
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
-    updateEditUI();
+    updateUI_forCurrentMode();
     const count = op.atomIndices.length;
     statusText.textContent = `Undid shift of ${count} atom${count > 1 ? 's' : ''}`;
     statusText.className = 'success';
@@ -296,7 +375,7 @@ function undoFixAtoms(op) {
     );
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
-    updateEditUI();
+    updateUI_forCurrentMode();
     statusText.textContent = `Undid fix/unfix of ${op.changes.length} atom(s)`;
     statusText.className = 'success';
 }
@@ -318,7 +397,7 @@ function undoMakeSupercell(op) {
     document.getElementById('periodicCDisplay').textContent = settings.periodic.c;
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
-    updateEditUI();
+    updateUI_forCurrentMode();
     updateSupercellButtonState();
     statusText.textContent = 'Undid supercell conversion';
     statusText.className = 'success';
@@ -334,7 +413,7 @@ function undoVacuumDrag(op) {
     });
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
-    updateEditUI();
+    updateUI_forCurrentMode();
     statusText.textContent = 'Undid cell resize';
     statusText.className = 'success';
 }
@@ -354,8 +433,7 @@ function undoSelectAtom(op) {
             isMeasurementSelection = false;
         }
         rebuildSelectionVisuals();
-        updateMeasurementUI();
-        updateEditUI();
+        updateUI_forCurrentMode();
     }
     statusText.textContent = 'Undid atom selection';
     statusText.className = '';
@@ -400,8 +478,7 @@ function undoDeselectAtom(op) {
             isMeasurementSelection = true;
         }
         rebuildSelectionVisuals();
-        updateMeasurementUI();
-        updateEditUI();
+        updateUI_forCurrentMode();
     }
     statusText.textContent = 'Undid atom deselection';
     statusText.className = '';
@@ -441,22 +518,24 @@ function undoClearSelection(op) {
     });
     isMeasurementSelection = op.wasMeasurementSelection;
     rebuildSelectionVisuals();
-    updateMeasurementUI();
-    updateEditUI();
+    updateUI_forCurrentMode();
     statusText.textContent = `Restored ${op.savedSelection.length} selected atom(s)`;
     statusText.className = '';
 }
 
-// Setup keyboard listener for Cmd+Z / Ctrl+Z
+// Setup keyboard listeners for undo and redo.
 function setupUndoKeyboardShortcut() {
     document.addEventListener('keydown', (e) => {
         // Leave text editing to the browser (including contenteditable fields).
         const target = e.target;
         if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) return;
-        // Check for Cmd+Z (Mac) or Ctrl+Z (Windows/Linux)
-        if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+        if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+        if (e.key.toLowerCase() === 'z' && !e.shiftKey) {
             e.preventDefault();
             performUndo();
+        } else if ((e.key.toLowerCase() === 'z' && e.shiftKey) || e.key.toLowerCase() === 'y') {
+            e.preventDefault();
+            performRedo();
         }
     });
 }
@@ -4486,9 +4565,20 @@ function loadStructureFromText(content, filename) {
         nextStructure = parsePOSCAR(content);
     }
 
+    if (hasUnsavedEdits() && !window.confirm('Discard unsaved structure edits and open another file?')) {
+        statusText.textContent = 'Kept the current structure and unsaved edits';
+        statusText.className = '';
+        return false;
+    }
+
     stopAnimation();
     undoStack = [];
+    redoStack = [];
+    nextEditRevision = 0;
+    currentEditRevision = 0;
+    savedEditRevision = 0;
     updateUndoButton();
+    updateDirtyIndicator();
     settings.periodic = { a: 1, b: 1, c: 1 };
     ['A', 'B', 'C'].forEach(axis => {
         document.getElementById(`periodic${axis}`).value = 1;
@@ -4530,6 +4620,7 @@ function loadStructureFromText(content, filename) {
 
     dropZone.classList.add('hidden');
     statusText.className = 'success';
+    return true;
 }
 
 function handleFile(file) {
@@ -4699,6 +4790,7 @@ function setupDragDrop() {
 // Setup controls
 function setupControls() {
     document.getElementById('undoBtn').addEventListener('click', performUndo);
+    document.getElementById('redoBtn').addEventListener('click', performRedo);
     // Reset view
     document.getElementById('resetView').addEventListener('click', () => {
         if (currentStructure) {
@@ -4915,6 +5007,9 @@ function convertToSupercell() {
     const oldStructure = {
         comment: currentStructure.comment,
         scale: currentStructure.scale,
+        isXYZ: Boolean(currentStructure.isXYZ),
+        hasExplicitLattice: Boolean(currentStructure.hasExplicitLattice),
+        isXDATCAR: Boolean(currentStructure.isXDATCAR),
         lattice: currentStructure.lattice.map(v => [...v]),
         coordType: currentStructure.coordType,
         hasSelectiveDynamics: currentStructure.hasSelectiveDynamics,
@@ -5920,6 +6015,8 @@ function exportPOSCAR() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    savedEditRevision = currentEditRevision;
+    updateDirtyIndicator();
     
     const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ && !isPeriodicStructure(currentStructure) ? 'XYZ' : 'POSCAR');
     statusText.textContent = `Exported ${fileType} file`;
@@ -6283,6 +6380,12 @@ function init() {
     setupUndoKeyboardShortcut();
     setupTimelineControls();
     setupExamplePicker();
+    window.addEventListener('beforeunload', event => {
+        if (!hasUnsavedEdits()) return;
+        event.preventDefault();
+        event.returnValue = '';
+    });
+    updateDirtyIndicator();
     
     statusText.textContent = 'Ready — drop a file or try a public example';
 }

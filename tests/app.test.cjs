@@ -12,6 +12,7 @@ class Vector3 {
     clone() { return new Vector3(this.x, this.y, this.z); }
     copy(v) { Object.assign(this, { x: v.x, y: v.y, z: v.z }); return this; }
     add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+    addScaledVector(v, factor) { this.x += v.x * factor; this.y += v.y * factor; this.z += v.z * factor; return this; }
     sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
     distanceTo(v) { return Math.hypot(this.x - v.x, this.y - v.y, this.z - v.z); }
     length() { return Math.hypot(this.x, this.y, this.z); }
@@ -28,7 +29,7 @@ function app() {
             return elements.get(id);
         }
     };
-    const context = vm.createContext({ document, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, console });
+    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, console });
     const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8').replace(/\ninit\(\);\s*$/, '');
     vm.runInContext(source, context);
     return context;
@@ -141,6 +142,76 @@ test('a successful replacement clears undo history; a failed parse preserves it'
     assert.equal(vm.runInContext('undoStack.length', context), 1);
     context.loadStructureFromText(example('examples/xyz/H2O.xyz'), 'H2O.xyz');
     assert.equal(vm.runInContext('undoStack.length', context), 0);
+});
+
+test('canceling a replacement preserves unsaved structure and history', () => {
+    const context = app();
+    vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
+    context.loadStructureFromText(example('examples/xyz/H2O.xyz'), 'H2O.xyz');
+    context.pushUndo({ type: 'add_atom', index: 0 });
+    context.window.confirm = () => false;
+    const kept = context.loadStructureFromText(example('examples/xyz/CH4.xyz'), 'CH4.xyz');
+    assert.equal(kept, false);
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 3);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), true);
+    context.window.confirm = () => true;
+    assert.equal(context.loadStructureFromText(example('examples/xyz/CH4.xyz'), 'CH4.xyz'), true);
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 5);
+    assert.equal(context.hasUnsavedEdits(), false);
+});
+
+test('undo and redo restore an edit; a new edit invalidates redo', () => {
+    const context = app();
+    context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));
+    vm.runInContext(`
+        currentStructure = structure;
+        atomMeshes = structure.atoms.map(atom => ({ position: atom.position.clone() }));
+        rebuildDisplayOptions = () => {};
+        updateEditUI = () => {};
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+        const original = currentStructure.atoms[0].position.clone();
+        pushUndo({ type: 'move_atom', index: 0, oldPosition: original });
+        currentStructure.atoms[0].position.x += 1;
+        atomMeshes[0].position.x += 1;
+    `, context);
+    assert.equal(context.hasUnsavedEdits(), true);
+    const moved = vm.runInContext('currentStructure.atoms[0].position.x', context);
+    context.performUndo();
+    assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].position.x', context) - (moved - 1)) < 1e-10);
+    assert.equal(context.hasUnsavedEdits(), false);
+    context.performRedo();
+    assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].position.x', context) - moved) < 1e-10);
+    assert.equal(context.hasUnsavedEdits(), true);
+    context.performUndo();
+    context.pushUndo({ type: 'move_atom', index: 0, oldPosition: new Vector3() });
+    assert.equal(vm.runInContext('redoStack.length', context), 0);
+});
+
+test('supercell undo and redo preserve lattice-bearing XYZ metadata', () => {
+    const context = app();
+    context.structure = context.parseXYZ(example('examples/xyz/Si_diamond_extended.xyz'));
+    const initialAtoms = context.structure.atoms.length;
+    vm.runInContext(`
+        currentStructure = structure;
+        settings.periodic = { a: 2, b: 1, c: 1 };
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = () => {};
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+        convertToSupercell();
+    `, context);
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), initialAtoms * 2);
+    context.performUndo();
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), initialAtoms);
+    assert.equal(vm.runInContext('currentStructure.isXYZ && currentStructure.hasExplicitLattice', context), true);
+    context.performRedo();
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), initialAtoms * 2);
+    assert.equal(vm.runInContext('currentStructure.isXYZ && currentStructure.hasExplicitLattice', context), true);
 });
 
 test('bond rebuild uses one policy for normal and periodic atoms', () => {

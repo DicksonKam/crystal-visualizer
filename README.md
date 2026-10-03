@@ -1,6 +1,6 @@
 # Crystal Visualizer
 
-A browser-based viewer and editor for atomic structures. It loads VASP POSCAR structures, ordinary and lattice-bearing XYZ files, and XDATCAR trajectories. You can inspect atoms and bonds, measure distances and angles, edit coordinates and selective dynamics, preview periodic images, build supercells, and export the result.
+A browser-based viewer and editor for atomic structures. It loads VASP POSCAR structures, ordinary and lattice-bearing XYZ files, and XDATCAR trajectories. You can inspect atoms and bonds, measure distances and angles, edit coordinates and selective dynamics, preview periodic images, build supercells, and export the result in its source format.
 
 ## Run locally
 

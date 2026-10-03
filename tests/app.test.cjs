@@ -190,6 +190,25 @@ test('extended XYZ honors declared property order and blank comments', () => {
     assert.throws(() => context.parseXYZ('1\nProperties=charge:R:1:species:S:1\n0.2 H'), /three position columns/);
 });
 
+test('extended XYZ export updates lattice metadata and column schema', () => {
+    const context = app();
+    const structure = context.parseXYZ([
+        '1',
+        'Lattice="4 0 0 1 4 0 0 0 4" Properties=charge:R:1:pos:R:3:species:S:1 sample',
+        '0.2 1 2 3 C'
+    ].join('\n'));
+    structure.lattice[0][0] = 8;
+    structure.atoms[0].position.x = 2;
+    const output = CrystalFormats.createFormats(Vector3, context.cartesianToFractional).generateXYZ(structure);
+    assert.match(output.split('\n')[1], /Lattice="8\.000000000000/);
+    assert.match(output.split('\n')[1], /Properties=species:S:1:pos:R:3/);
+    const reparsed = context.parseXYZ(output);
+    assert.equal(reparsed.hasExplicitLattice, true);
+    assert.equal(reparsed.lattice[0][0], 8);
+    assert.equal(reparsed.atoms[0].position.x, 2);
+    assert.equal(reparsed.comment, 'sample');
+});
+
 test('XDATCAR export preserves every frame and its fractional coordinates', () => {
     const context = app();
     for (const file of fs.readdirSync(path.join(root, 'examples/xdatcar'))) {

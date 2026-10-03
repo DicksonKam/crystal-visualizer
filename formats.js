@@ -553,7 +553,11 @@
 
         function generateXYZ(structure) {
             if (!structure) return null;
-            const lines = [String(structure.atoms.length), structure.comment || 'Exported from Crystal Visualizer'];
+            const description = structure.comment || 'Exported from Crystal Visualizer';
+            const metadata = structure.hasExplicitLattice
+                ? `Lattice="${structure.lattice.flat().map(value => value.toFixed(12)).join(' ')}" Properties=species:S:1:pos:R:3`
+                : '';
+            const lines = [String(structure.atoms.length), [description, metadata].filter(Boolean).join(' ')];
             structure.atoms.forEach(atom => {
                 const { x, y, z } = atom.position;
                 lines.push(`${atom.element} ${x.toFixed(9)} ${y.toFixed(9)} ${z.toFixed(9)}`);

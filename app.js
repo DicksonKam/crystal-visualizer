@@ -4611,7 +4611,7 @@ function setupControls() {
     // Export POSCAR button
     const exportBtn = document.getElementById('exportPoscar');
     if (exportBtn) {
-        exportBtn.addEventListener('click', exportPOSCAR);
+        exportBtn.addEventListener('click', exportStructure);
     }
 }
 
@@ -5632,8 +5632,8 @@ function clearVacuumHighlight() {
     vacuumDragState.hoveredEdge = null;
 }
 
-// Export POSCAR file
-function exportPOSCAR() {
+// Export in the source structure's format.
+function exportStructure() {
     if (!currentStructure) {
         statusText.textContent = 'No structure to export';
         statusText.className = '';
@@ -5647,7 +5647,7 @@ function exportPOSCAR() {
     if (currentStructure.isXDATCAR) {
         content = generateXDATCAR();
         filename = `${stem}_edited.xdatcar`;
-    } else if (currentStructure.isXYZ && !isPeriodicStructure(currentStructure)) {
+    } else if (currentStructure.isXYZ) {
         content = generateXYZ();
         filename = `${stem}_edited.xyz`;
     } else {
@@ -5671,7 +5671,7 @@ function exportPOSCAR() {
     savedEditRevision = currentEditRevision;
     updateDirtyIndicator();
     
-    const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ && !isPeriodicStructure(currentStructure) ? 'XYZ' : 'POSCAR');
+    const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ ? 'XYZ' : 'POSCAR');
     statusText.textContent = `Exported ${fileType} file`;
     statusText.className = 'success';
 }
@@ -5953,7 +5953,7 @@ function updateModeToggleForFileType() {
         }
         // Update export button for POSCAR
         if (exportBtn) {
-            exportBtn.title = currentStructure && currentStructure.isXYZ && !periodic ? 'Export as XYZ' : 'Export as POSCAR';
+            exportBtn.title = currentStructure && currentStructure.isXYZ ? 'Export as XYZ' : 'Export as POSCAR';
         }
     }
 }

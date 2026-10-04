@@ -422,6 +422,150 @@ test('exact fractional coordinates update one atom and round-trip through undo',
     assert.ok(vm.runInContext('currentStructure.atoms[0].position.distanceTo(expected)', context) < 1e-10);
 });
 
+test('overflowing exact coordinates leave the atom and undo history unchanged', () => {
+    const context = app();
+    context.structure = context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));
+    vm.runInContext(`
+        currentStructure = structure;
+        selectedAtoms = [{ index: 0, isGhost: false, element: 'Si' }];
+        selectedAtomCoordMode = 'fractional';
+    `, context);
+    context.document.getElementById('editAtom0').value = '1e308';
+    context.document.getElementById('editAtom1').value = '0';
+    context.document.getElementById('editAtom2').value = '0';
+    const oldPosition = context.structure.atoms[0].position.clone();
+    assert.equal(context.applyExactAtomCoordinates(), false);
+    assert.equal(context.structure.atoms[0].position.distanceTo(oldPosition), 0);
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.match(context.document.getElementById('editAtomError').textContent, /cannot be represented/);
+});
+
+test('shift form rejects invalid moves atomically and keeps success feedback visible', () => {
+    const context = app();
+    context.structure = context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));
+    const elements = new Map();
+    context.document.getElementById = id => {
+        if (!elements.has(id)) elements.set(id, { value: '', textContent: '', className: '', classList: { add() {}, remove() {} } });
+        return elements.get(id);
+    };
+    let mode = 'cartesian';
+    context.document.querySelector = () => ({ value: mode });
+    context.replaceFeedback = () => elements.set('shiftError', { textContent: '', className: '' });
+    vm.runInContext(`
+        currentStructure = structure;
+        selectedAtoms = [];
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = () => {
+            replaceFeedback();
+            renderedShift = { ...lastShiftCoords };
+        };
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+    `, context);
+    const original = context.structure.atoms[0].position.clone();
+    context.document.getElementById('shiftA').value = '1oops';
+    context.applyGlobalPeriodicShift();
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(context.structure.atoms[0].position.distanceTo(original), 0);
+    assert.match(context.document.getElementById('shiftError').textContent, /finite shift/);
+
+    mode = 'fractional';
+    context.document.getElementById('shiftA').value = '1e308';
+    context.applyGlobalPeriodicShift();
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(context.structure.atoms[0].position.distanceTo(original), 0);
+    assert.match(context.document.getElementById('shiftError').textContent, /cannot be represented/);
+
+    mode = 'cartesian';
+    context.document.getElementById('shiftA').value = '0.25';
+    context.applyGlobalPeriodicShift();
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.ok(Math.abs(context.structure.atoms[0].position.x - 0.25) < 1e-10);
+    assert.equal(vm.runInContext('renderedShift.a', context), 0.25);
+    assert.match(context.document.getElementById('shiftError').textContent, /Shifted all atoms/);
+    context.performUndo();
+    assert.equal(context.structure.atoms[0].position.distanceTo(original), 0);
+    assert.deepEqual(Array.from(context.structure.atoms[0].fractional), [0, 0, 0]);
+    context.performRedo();
+    assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].position.x', context) - 0.25) < 1e-10);
+});
+
+test('add atom form rejects partial numbers and shows feedback after rebuilding', () => {
+    const context = app();
+    context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));
+    const elements = new Map();
+    context.document.getElementById = id => {
+        if (!elements.has(id)) elements.set(id, { value: '', textContent: '', className: '', classList: { add() {}, remove() {} } });
+        return elements.get(id);
+    };
+    context.document.querySelector = () => ({ value: 'cartesian' });
+    context.replaceFeedback = () => elements.set('addAtomError', { textContent: '', className: '' });
+    vm.runInContext(`
+        currentStructure = structure;
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = replaceFeedback;
+    `, context);
+    context.document.getElementById('addAtomElement').value = 'H';
+    context.document.getElementById('addAtomX').value = '1oops';
+    context.document.getElementById('addAtomY').value = '0';
+    context.document.getElementById('addAtomZ').value = '2';
+    context.addAtomFromInput();
+    assert.equal(context.structure.atoms.length, 3);
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.match(context.document.getElementById('addAtomError').textContent, /Invalid coordinates/);
+
+    context.document.getElementById('addAtomX').value = '1';
+    context.addAtomFromInput();
+    assert.equal(context.structure.atoms.length, 4);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.match(context.document.getElementById('addAtomError').textContent, /Added H/);
+});
+
+test('selected fractional shift wraps in a tilted cell and undo restores coordinates', () => {
+    const context = app();
+    const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
+    const first = context.fractionalToCartesian([0.9, 0.1, 0.1], lattice);
+    const originalFirst = first.clone();
+    const second = context.fractionalToCartesian([0.2, 0.2, 0.2], lattice);
+    const originalSecond = second.clone();
+    context.structure = { lattice, atoms: [
+        { element: 'H', position: first, fractional: [0.9, 0.1, 0.1] },
+        { element: 'H', position: second, fractional: [0.2, 0.2, 0.2] }
+    ] };
+    vm.runInContext(`
+        currentStructure = structure;
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = () => {};
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+    `, context);
+    assert.equal(context.applyPeriodicShiftByFractional(0.3, 0, 0, [0]), true);
+    const shifted = context.cartesianToFractional(context.structure.atoms[0].position, lattice);
+    assert.ok(Math.abs(shifted[0] - 0.2) < 1e-10);
+    assert.equal(context.structure.atoms[1].position.distanceTo(originalSecond), 0);
+    context.performUndo();
+    assert.equal(context.structure.atoms[0].position.distanceTo(originalFirst), 0);
+    assert.ok(Math.abs(context.structure.atoms[0].fractional[0] - 0.9) < 1e-10);
+    context.performRedo();
+    assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].fractional[0]', context) - 0.2) < 1e-10);
+});
+
+test('multi-atom shift validates every result before changing any atom', () => {
+    const context = app();
+    context.structure = { isXYZ: true, hasExplicitLattice: false, atoms: [
+        { element: 'H', position: new Vector3(0, 0, 0) },
+        { element: 'H', position: new Vector3(1e308, 0, 0) }
+    ] };
+    vm.runInContext('currentStructure = structure', context);
+    assert.equal(context.applyPeriodicShiftByCartesian(1e308, 0, 0), false);
+    assert.equal(context.structure.atoms[0].position.x, 0);
+    assert.equal(context.structure.atoms[1].position.x, 1e308);
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+});
+
 test('bond rebuild uses one policy for normal and periodic atoms', () => {
     const context = app();
     const positions = [0, 1, 2].map(x => new Vector3(x, 0, 0));

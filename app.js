@@ -463,7 +463,10 @@ function undoShiftAtoms(op) {
     // Restore old positions
     op.atomIndices.forEach((atomIdx, i) => {
         if (currentStructure.atoms[atomIdx]) {
-            currentStructure.atoms[atomIdx].position.copy(op.oldPositions[i]);
+            const atom = currentStructure.atoms[atomIdx];
+            atom.position.copy(op.oldPositions[i]);
+            atom.fractional = isPeriodicStructure(currentStructure)
+                ? cartesianToFractional(atom.position, currentStructure.lattice) : null;
         }
     });
     renderStructure(currentStructure, true);
@@ -2390,13 +2393,19 @@ function applyExactAtomCoordinates() {
     const fractionalInput = isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional';
     const position = fractionalInput ? fractionalToCartesian(values, currentStructure.lattice)
         : new THREE.Vector3(...values);
+    const fractional = isPeriodicStructure(currentStructure)
+        ? (fractionalInput ? values : cartesianToFractional(position, currentStructure.lattice)) : null;
+    if (![position.x, position.y, position.z].every(Number.isFinite)
+        || (isPeriodicStructure(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) {
+        error.textContent = 'Coordinates cannot be represented in this cell';
+        return false;
+    }
     const atom = currentStructure.atoms[index];
     if (atom.position.distanceTo(position) < 1e-10) return false;
     const oldPosition = atom.position.clone();
     pushUndo({ type: 'move_atom', index, oldPosition, newPosition: position.clone() });
     atom.position.copy(position);
-    atom.fractional = isPeriodicStructure(currentStructure)
-        ? (fractionalInput ? values : cartesianToFractional(position, currentStructure.lattice)) : null;
+    atom.fractional = fractional;
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateEditUI();
@@ -2884,19 +2893,18 @@ function applyGlobalPeriodicShift() {
     errorDiv.textContent = '';
     errorDiv.className = 'add-atom-error';
     
-    const val1 = parseFloat(document.getElementById('shiftA').value) || 0;
-    const val2 = parseFloat(document.getElementById('shiftB').value) || 0;
-    const val3 = parseFloat(document.getElementById('shiftC').value) || 0;
+    const values = ['shiftA', 'shiftB', 'shiftC'].map(id => document.getElementById(id).value.trim());
+    const [val1, val2, val3] = values.map(value => value === '' ? 0 : Number(value));
     const coordType = document.querySelector('input[name="shiftCoordType"]:checked').value;
+    if (![val1, val2, val3].every(Number.isFinite)) {
+        errorDiv.textContent = 'Enter three finite shift values';
+        return;
+    }
     
     if (val1 === 0 && val2 === 0 && val3 === 0) {
         errorDiv.textContent = 'Enter a non-zero shift';
         return;
     }
-    
-    // Remember values
-    lastShiftCoords = { a: val1, b: val2, c: val3 };
-    lastShiftCoordType = coordType;
     
     // Determine which atoms to shift (selected or all)
     const atomIndicesToShift = selectedAtoms.length > 0 
@@ -2907,78 +2915,34 @@ function applyGlobalPeriodicShift() {
         ? `${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''}`
         : 'all atoms';
     
-    if (coordType === 'fractional') {
-        applyPeriodicShiftByFractional(val1, val2, val3, atomIndicesToShift);
-        errorDiv.textContent = `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) frac`;
-    } else {
-        applyPeriodicShiftByCartesian(val1, val2, val3, atomIndicesToShift);
-        errorDiv.textContent = `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) Å`;
+    const previousCoords = lastShiftCoords;
+    const previousType = lastShiftCoordType;
+    lastShiftCoords = { a: val1, b: val2, c: val3 };
+    lastShiftCoordType = coordType;
+    const shifted = coordType === 'fractional'
+        ? applyPeriodicShiftByFractional(val1, val2, val3, atomIndicesToShift)
+        : applyPeriodicShiftByCartesian(val1, val2, val3, atomIndicesToShift);
+    if (!shifted) {
+        lastShiftCoords = previousCoords;
+        lastShiftCoordType = previousType;
+        errorDiv.textContent = 'Shift cannot be represented in this cell';
+        return;
     }
-    errorDiv.className = 'add-atom-error success';
+    const result = document.getElementById('shiftError');
+    result.textContent = `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) ${coordType === 'fractional' ? 'frac' : 'Å'}`;
+    result.className = 'add-atom-error success';
 }
 
 // Apply periodic shift by Cartesian coordinates (Å)
 // atomIndices: optional array of indices to shift (null = shift all)
 function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ, atomIndices = null) {
-    if (!currentStructure) return;
-    
-    const lattice = currentStructure.lattice;
-    const shiftCartesian = new THREE.Vector3(deltaX, deltaY, deltaZ);
-    
-    // Determine which atoms to shift
-    const indicesToShift = atomIndices || currentStructure.atoms.map((_, i) => i);
-    
-    // Save old positions for undo (unified undo stack)
-    const oldPositions = indicesToShift.map(i => currentStructure.atoms[i].position.clone());
-    pushUndo({
-        type: 'shift_atoms',
-        atomIndices: [...indicesToShift],
-        shiftVector: shiftCartesian.clone(),
-        oldPositions: oldPositions
-    });
-    
-    // Apply shift; only crystal structures wrap through cell boundaries.
-    indicesToShift.forEach(index => {
-        const atom = currentStructure.atoms[index];
-        if (!atom) return;
-        
-        // Shift in Cartesian
-        atom.position.add(shiftCartesian);
-        if (!isPeriodicStructure(currentStructure)) {
-            atom.fractional = null;
-            return;
-        }
-        
-        // Convert to fractional for wrapping
-        const frac = cartesianToFractional(atom.position, lattice);
-        
-        if (frac) {
-            // Wrap to [0, 1) range
-            frac[0] = ((frac[0] % 1) + 1) % 1;
-            frac[1] = ((frac[1] % 1) + 1) % 1;
-            frac[2] = ((frac[2] % 1) + 1) % 1;
-            
-            // Convert back to Cartesian
-            const newPos = fractionalToCartesian(frac, lattice);
-            atom.position.copy(newPos);
-            atom.fractional = frac;
-        }
-    });
-    
-    // Re-render structure
-    renderStructure(currentStructure, true);
-    updateUI(currentStructure);
-    updateEditUI();
-    
-    const targetDesc = atomIndices ? `${atomIndices.length} atom${atomIndices.length > 1 ? 's' : ''}` : 'all atoms';
-    statusText.textContent = `Shifted ${targetDesc}`;
-    statusText.className = 'success';
+    return applyCartesianShift(new THREE.Vector3(deltaX, deltaY, deltaZ), atomIndices);
 }
 
 // Apply periodic shift by fractional coordinates
 // atomIndices: optional array of indices to shift (null = shift all)
 function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = null) {
-    if (!currentStructure) return;
+    if (!currentStructure || !isPeriodicStructure(currentStructure)) return false;
     
     const lattice = currentStructure.lattice;
     
@@ -2989,50 +2953,47 @@ function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = nu
         deltaA * lattice[0][2] + deltaB * lattice[1][2] + deltaC * lattice[2][2]
     );
     
-    // Determine which atoms to shift
-    const indicesToShift = atomIndices || currentStructure.atoms.map((_, i) => i);
-    
-    // Save old positions for undo (unified undo stack)
-    const oldPositions = indicesToShift.map(i => currentStructure.atoms[i].position.clone());
+    return applyCartesianShift(shiftCartesian, atomIndices);
+}
+
+function applyCartesianShift(shiftCartesian, atomIndices) {
+    if (!currentStructure || ![shiftCartesian.x, shiftCartesian.y, shiftCartesian.z].every(Number.isFinite)) return false;
+    const indicesToShift = atomIndices ? [...new Set(atomIndices)] : currentStructure.atoms.map((_, index) => index);
+    const periodic = isPeriodicStructure(currentStructure);
+    const updates = [];
+    for (const index of indicesToShift) {
+        const atom = currentStructure.atoms[index];
+        if (!atom) return false;
+        let position = atom.position.clone().add(shiftCartesian);
+        if (![position.x, position.y, position.z].every(Number.isFinite)) return false;
+        let fractional = null;
+        if (periodic) {
+            fractional = cartesianToFractional(position, currentStructure.lattice);
+            if (!fractional || fractional.some(value => !Number.isFinite(value))) return false;
+            fractional = fractional.map(value => ((value % 1) + 1) % 1);
+            position = fractionalToCartesian(fractional, currentStructure.lattice);
+            if (![position.x, position.y, position.z].every(Number.isFinite)) return false;
+        }
+        updates.push({ index, position, fractional });
+    }
+    const oldPositions = updates.map(({ index }) => currentStructure.atoms[index].position.clone());
     pushUndo({
         type: 'shift_atoms',
-        atomIndices: [...indicesToShift],
+        atomIndices: indicesToShift,
         shiftVector: shiftCartesian.clone(),
-        oldPositions: oldPositions
+        oldPositions
     });
-    
-    // Apply shift to specified atoms and wrap periodically
-    indicesToShift.forEach(index => {
-        const atom = currentStructure.atoms[index];
-        if (!atom) return;
-        
-        // Shift in Cartesian
-        atom.position.add(shiftCartesian);
-        
-        // Convert to fractional for wrapping
-        const frac = cartesianToFractional(atom.position, lattice);
-        
-        if (frac) {
-            // Wrap to [0, 1) range
-            frac[0] = ((frac[0] % 1) + 1) % 1;
-            frac[1] = ((frac[1] % 1) + 1) % 1;
-            frac[2] = ((frac[2] % 1) + 1) % 1;
-            
-            // Convert back to Cartesian
-            const newPos = fractionalToCartesian(frac, lattice);
-            atom.position.copy(newPos);
-            atom.fractional = frac;
-        }
+    updates.forEach(({ index, position, fractional }) => {
+        currentStructure.atoms[index].position.copy(position);
+        currentStructure.atoms[index].fractional = fractional;
     });
-    
-    // Re-render structure
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateEditUI();
-    
-    const targetDesc = atomIndices ? `${atomIndices.length} atom${atomIndices.length > 1 ? 's' : ''}` : 'all atoms';
+    const targetDesc = atomIndices ? `${indicesToShift.length} atom${indicesToShift.length > 1 ? 's' : ''}` : 'all atoms';
     statusText.textContent = `Shifted ${targetDesc}`;
     statusText.className = 'success';
+    return true;
 }
 
 // Center structure in the unit cell
@@ -3064,7 +3025,7 @@ function centerStructureInCell() {
     const deltaB = 0.5 - centerFracB;
     const deltaC = 0.5 - centerFracC;
     
-    applyPeriodicShiftByFractional(deltaA, deltaB, deltaC);
+    if (!applyPeriodicShiftByFractional(deltaA, deltaB, deltaC)) return;
     
     const errorDiv = document.getElementById('shiftError');
     if (errorDiv) {
@@ -3095,11 +3056,11 @@ function addAtomFromInput() {
     }
     
     // Validate coordinates are numbers
-    const x = parseFloat(xInput);
-    const y = parseFloat(yInput);
-    const z = parseFloat(zInput);
+    const x = Number(xInput);
+    const y = Number(yInput);
+    const z = Number(zInput);
     
-    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+    if ([xInput, yInput, zInput].some(value => value.trim() === '') || ![x, y, z].every(Number.isFinite)) {
         errorDiv.textContent = 'Invalid coordinates';
         return;
     }
@@ -3137,6 +3098,11 @@ function addAtomFromInput() {
             fractionalPos = null;
         }
     }
+    if (![cartesianPos.x, cartesianPos.y, cartesianPos.z].every(Number.isFinite)
+        || (fractionalPos && fractionalPos.some(value => !Number.isFinite(value)))) {
+        errorDiv.textContent = 'Coordinates cannot be represented in this cell';
+        return;
+    }
     
     // Remember form values for next time
     lastAddAtomElement = element;
@@ -3169,8 +3135,9 @@ function addAtomFromInput() {
     updateEditUI();
     
     // Show success message
-    errorDiv.textContent = `Added ${element} at (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`;
-    errorDiv.className = 'add-atom-error success';
+    const result = document.getElementById('addAtomError');
+    result.textContent = `Added ${element} at (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`;
+    result.className = 'add-atom-error success';
     
     statusText.textContent = `Added ${element} atom`;
     statusText.className = 'success';

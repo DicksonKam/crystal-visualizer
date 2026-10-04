@@ -34,14 +34,19 @@ async function prepare(page,kind){
     throw Error('No unobscured fixture frame edge');
 },kind);}
 async function idle(page){expect(await page.evaluate(()=>({atom:draggedAtom,cell:vacuumDragState.isDragging,pointer:activeEditPointerId,enabled:controls.enabled,guide:!!dragGuidePlane}))).toEqual({atom:null,cell:false,pointer:null,enabled:true,guide:false});}
-for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cell'])for(const interruption of ['escape','resize-escape','blur-event','release-outside']){
+for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cell'])for(const interruption of ['escape','resize-escape','panel-escape','blur-event','release-outside']){
  test(`${cell} ${kind}: ${interruption} preserves measurement and the next gesture`,async({page},info)=>{
     test.setTimeout(150000);await page.setViewportSize({width:900,height:760});await upload(page,source(lattice),'gesture.poscar');
     for(const n of [1,2]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
     await page.locator('[data-mode="edit"]').click();
     const directory=info.outputPath('visual');await fs.mkdir(directory,{recursive:true});const {observe}=createVisualObserver(page,directory,901,1);
     for(let cycle=0;cycle<3;cycle++){
-        await page.setViewportSize({width:900,height:760});const point=await prepare(page,kind);const before=await capture(page);
+        await page.setViewportSize({width:900,height:760});
+        if(interruption==='panel-escape'){
+            await page.locator('#sidebarDivider').focus();await page.keyboard.press('End');
+            expect(Number(await page.locator('#sidebarDivider').getAttribute('aria-valuenow'))).toBeGreaterThan(0);
+        }
+        const point=await prepare(page,kind);const before=await capture(page);
         await page.mouse.move(point.x,point.y);await page.mouse.down();
         expect(await page.evaluate(kind=>kind==='atom'?!!draggedAtom:vacuumDragState.isDragging,kind)).toBe(true);
         await page.mouse.move(point.x+point.dx,point.y+point.dy,{steps:4});
@@ -50,6 +55,11 @@ for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cel
         else if(interruption==='resize-escape'){
             await page.setViewportSize({width:390,height:844});
             if(cycle===0)await observe({step:cycle*10+1,action:'viewport',stage:'preview'});
+            await page.keyboard.press('Escape');
+        }else if(interruption==='panel-escape'){
+            await page.locator('#sidebarDivider').focus();await page.keyboard.press('Home');
+            await expect(page.locator('#sidebarDivider')).toHaveAttribute('aria-valuenow','0');
+            if(cycle===0)await observe({step:cycle*10+1,action:'panel-collapse',stage:'preview'});
             await page.keyboard.press('Escape');
         }else if(interruption==='blur-event'){
             // Headless tab activation does not emit native window blur. Exercise
@@ -66,9 +76,13 @@ for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cel
         expect((await capture(page)).selection).toEqual(before.selection);
         if(cycle===0)await observe({step:cycle*10+2,action:interruption,stage:'settled'});
         // The first gesture after cancellation/commit must work without a reset.
-        const next=await prepare(page,kind);await page.mouse.move(next.x,next.y);await page.mouse.down();
+        const next=await prepare(page,kind);const nextBefore=await capture(page);await page.mouse.move(next.x,next.y);await page.mouse.down();
         expect(await page.evaluate(kind=>kind==='atom'?!!draggedAtom:vacuumDragState.isDragging,kind)).toBe(true);
         await page.mouse.move(next.x+next.dx,next.y+next.dy,{steps:4});await page.mouse.up();await idle(page);
+        const nextAfter=await capture(page);expect(nextAfter.violations).toEqual([]);
+        expect(nextAfter.undo).toHaveLength(nextBefore.undo.length+1);
+        expect(nextAfter.undo.at(-1).type).toBe(kind==='atom'?'move_atom':'vacuum_drag');
+        expect(nextAfter.geometry).not.toEqual(nextBefore.geometry);
         await page.locator('#undoBtn').click();expect((await capture(page)).geometry).toEqual(before.geometry);
     }
     await info.attach('coverage',{body:JSON.stringify({cell,kind,interruption,cycles:3,realPointer:true}),contentType:'application/json'});

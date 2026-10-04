@@ -64,5 +64,59 @@
     "source": "/private/tmp/crystal-playback-edge-results/playback-rebuild-visual-de-ac96e-idebar-rebuild-combinations-chromium/visual/seed-907-step-18-playing-rebuild-settled.png",
     "sha256": "99181e378767640f9214ae3d4421b3186dcbb1b479696871809dd01c8c9a7a42",
     "openedAndInspected": true
+  },
+  {
+    "file": "tilted-boundary-preview.png",
+    "source": "/private/tmp/crystal-gesture-edge-results/gesture-edge-visual-tilted-bc1c9-rement-and-the-next-gesture-chromium/visual/seed-901-step-0-atom-preview.png",
+    "sha256": "2d0333941c9dc0b712d67f71e55a5b2cac2d9a62dc7ccc7217059ab9a8752620",
+    "openedAndInspected": true
+  },
+  {
+    "file": "tilted-resize-cancel.png",
+    "source": "/private/tmp/crystal-gesture-edge-results/gesture-edge-visual-tilted-bc1c9-rement-and-the-next-gesture-chromium/visual/seed-901-step-2-resize-escape-settled.png",
+    "sha256": "759db3f7ed02325cb332ec38b79e6f691ff683945392dec74967a2c745080ece",
+    "openedAndInspected": true
+  },
+  {
+    "file": "cubic-frame-resize-preview.png",
+    "source": "/private/tmp/crystal-gesture-edge-results/gesture-edge-visual-cubic--f8f3c-rement-and-the-next-gesture-chromium/visual/seed-901-step-1-viewport-preview.png",
+    "sha256": "d5c56ccea95f701255d9bc53d12f28171099d68314ad1ce8b21e5089dd59c094",
+    "openedAndInspected": true
+  },
+  {
+    "file": "load-error-history-restored.png",
+    "source": "/private/tmp/crystal-edge-full-results/load-edit-race-visual-dela-bb674--right-document-and-visuals-chromium/visual/seed-902-step-1-404-settled.png",
+    "sha256": "bd0f1de9a448cb82624f04e4e0819754ee4d4f0413707596246588f30cd12bbd",
+    "openedAndInspected": true
+  },
+  {
+    "file": "tilted-blur-handler-restored.png",
+    "source": "/private/tmp/crystal-edge-full-results/gesture-edge-visual-tilted-4c9e9-rement-and-the-next-gesture-chromium/visual/seed-901-step-2-blur-event-settled.png",
+    "sha256": "1193f8d103c3b4ff945874f004af26b6fa37799152f29cf5d8245b86e38e8966",
+    "openedAndInspected": true
+  },
+  {
+    "file": "boundary-history-full-run-final.png",
+    "source": "/private/tmp/crystal-edge-full-results/visual-edit-visual-boundar-2d014-nging-panel-width-at-1440px-chromium/final.png",
+    "sha256": "81094595babcd1cd26ae841c17d58acb4017eb0fd727938494710c210573cdf2",
+    "openedAndInspected": true
+  },
+  {
+    "file": "mixed-supercell-full-run.png",
+    "source": "/private/tmp/crystal-edge-full-results/rebuild-edge-visual-mixed--c1616-ort-survive-rebuild-history-chromium/visual/seed-904-step-2-supercell-settled.png",
+    "sha256": "759af4c720fb0243ee7f42138f9f492b5de48cb5feeddfbbc5a09af9f00a35ba",
+    "openedAndInspected": true
+  },
+  {
+    "file": "frame-held-panel-collapse.png",
+    "source": "/private/tmp/crystal-edge-panel-results/gesture-edge-visual-cubic--332a0-rement-and-the-next-gesture-chromium/visual/seed-901-step-1-panel-collapse-preview.png",
+    "sha256": "0f842481402235fc74a2b366cca127dc9368aa6727f248f281e46f2cde790d63",
+    "openedAndInspected": true
+  },
+  {
+    "file": "tilted-panel-cancel-restored.png",
+    "source": "/private/tmp/crystal-edge-panel-results/gesture-edge-visual-tilted-2f916-rement-and-the-next-gesture-chromium/visual/seed-901-step-2-panel-escape-settled.png",
+    "sha256": "c8692e03169313b789bd4c85f10d16d63c00487d8e0385b683efea6e4a4be9ed",
+    "openedAndInspected": true
   }
 ]

@@ -1,0 +1,318 @@
+{
+  "stats": {
+    "startTime": "2026-10-04T20:58:02.863Z",
+    "duration": 275638.991,
+    "expected": 17,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "tests": [
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "trajectory-supercell-edge.spec.cjs",
+      "title": "trajectory periodic preview remains coherent at the last frame with edit actions gated",
+      "status": "passed",
+      "retry": 0,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "periodicPreview": true,
+            "lastFrame": true,
+            "editDisabled": true,
+            "supercellHidden": true
+          }
+        }
+      ]
+    }
+  ]
+}

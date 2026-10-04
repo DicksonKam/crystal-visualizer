@@ -1,0 +1,1056 @@
+{
+  "stats": {
+    "startTime": "2026-10-04T20:39:43.664Z",
+    "duration": 1007259.789,
+    "expected": 98,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "tests": [
+    {
+      "file": "app.spec.cjs",
+      "title": "all example URLs are served and the VASP example loads through the picker",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 6163,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "duplicate species preserve membership through editing, deletion, undo/redo and downloads",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5619,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "adding to a repeated species requires a visible group choice",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3496,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "undo adding a new element restores the original species header",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3501,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "XYZ edits warn about stale results, allow cancellation and preserve original results after undo",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3742,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "real cell resize preview cannot collapse and remains reversible",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3017,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "skew-cell load and measurements stay responsive with an explicit boundary-bond warning",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2918,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "large finite selected positions do not require periodic-image offsets",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2228,
+      "attachments": []
+    },
+    {
+      "file": "app.spec.cjs",
+      "title": "trajectory playback shows the correct icon, navigates frames and preserves export",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 4924,
+      "attachments": []
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "cubic, view -1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 6197,
+      "attachments": []
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "cubic, view 1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5895,
+      "attachments": []
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "skewed, view -1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5844,
+      "attachments": []
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "skewed, view 1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 6710,
+      "attachments": []
+    },
+    {
+      "file": "axes-overlay.spec.cjs",
+      "title": "preserves opaque background and underlying content at wide and narrow sizes",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1874,
+      "attachments": []
+    },
+    {
+      "file": "axes-overlay.spec.cjs",
+      "title": "preserves opaque background and underlying content at wide and narrow sizes",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3005,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "real approaching rotation settles with normal damping and snaps within the total correction budget",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3322,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "departing rotation, an elongated cell outside the cone, zoom, pan and clicks do not snap",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5865,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "signed controller alignments preserve pose contracts and camera actions leave the document unchanged",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3705,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "pointer interruption, focus, Escape and scene changes invalidate active movement",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5509,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "internal fitting fits narrow large scenes and existing Reset restores deterministic roll",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1299,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "original interface, reduced motion, keyboard Reset and molecule navigation remain intact",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3610,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "the real controls and controller produce equivalent timestamped gestures at 30, 60 and 120 Hz",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1430,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "a close-zoom approach still snaps after damping and a pause before release",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5819,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "near-axis overshoot captures consistently across zoom and release delay, while a deliberate departure does not",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 10628,
+      "attachments": []
+    },
+    {
+      "file": "camera.spec.cjs",
+      "title": "touch intent follows consumed one-finger input and ignores pointer duplicates and multifinger navigation",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3426,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "cubic cell image is unaffected by resize hitboxes at aligned directions and zoom levels",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2131,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "skewed cell image is unaffected by resize hitboxes at aligned directions and zoom levels",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2106,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "picking-only handles remain immediately pickable and do not affect camera bounds",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1657,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "handle references refresh after rebuilds and disappear when the cell or edit mode is hidden",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3223,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "cubic pointer resizing keeps hover, Escape, undo and redo working with picking-only handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8475,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "skewed pointer resizing keeps hover, Escape, undo and redo working with picking-only handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8707,
+      "attachments": []
+    },
+    {
+      "file": "cell-frame.spec.cjs",
+      "title": "axis alignment and wheel input restore handles without obsolete transitions",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2568,
+      "attachments": []
+    },
+    {
+      "file": "dense-edit-visual.spec.cjs",
+      "title": "dense atom/bond rendering survives movement cancellation, 501/500 transitions and cell resizing",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 24056,
+      "attachments": [
+        {
+          "name": "dense-coverage",
+          "data": {
+            "initialAtoms": 501,
+            "transitions": [
+              501,
+              500,
+              501,
+              500,
+              501,
+              500,
+              501
+            ],
+            "captures": 13
+          }
+        }
+      ]
+    },
+    {
+      "file": "drag-plane.spec.cjs",
+      "title": "boundary guide and movement cover all six cell faces and constrain tangent sections",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1238,
+      "attachments": []
+    },
+    {
+      "file": "drag-plane.spec.cjs",
+      "title": "pointer dragging reaches both halves of a boundary face and supports undo/redo",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3624,
+      "attachments": []
+    },
+    {
+      "file": "drag-plane.spec.cjs",
+      "title": "boundary atom drag preview rebuilds bonds before pointer release",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1956,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded Edit-mode combinations, seed 1",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 10024,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded Edit-mode combinations, seed 2",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 11694,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded Edit-mode combinations, seed 3",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 7761,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded Edit-mode combinations, seed 4",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 7013,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded document replacement and download combinations, seed 21",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 14362,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded document replacement and download combinations, seed 22",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 15211,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded compound selection actions at the history capacity, seed 39",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 39373,
+      "attachments": []
+    },
+    {
+      "file": "edit-stress.spec.cjs",
+      "title": "seeded periodic-copy selection and editing combinations, seed 5",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 55048,
+      "attachments": []
+    },
+    {
+      "file": "empty-edit-history.spec.cjs",
+      "title": "complete deletion, refill and history branching remain coherent across repeated edit cycles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 12654,
+      "attachments": []
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8469,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8599,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8943,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 12437,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "atom",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22328,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 21256,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22265,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 31971,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "cubic",
+            "kind": "cell",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8438,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8567,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8522,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 9668,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "atom",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22032,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22395,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "resize-escape",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22024,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "blur-event",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 31564,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "cell": "tilted",
+            "kind": "cell",
+            "interruption": "release-outside",
+            "cycles": 3,
+            "realPointer": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "ghost-shift.spec.cjs",
+      "title": "shifting a preserved periodic-copy measurement (copy only) reports its editability and preserves history",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3675,
+      "attachments": []
+    },
+    {
+      "file": "ghost-shift.spec.cjs",
+      "title": "shifting a preserved periodic-copy measurement (mixed) reports its editability and preserves history",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 4061,
+      "attachments": []
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example decline during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2941,
+      "attachments": []
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example accept during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3297,
+      "attachments": []
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example 404 during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3500,
+      "attachments": []
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example malformed during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3416,
+      "attachments": []
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example superseded during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3326,
+      "attachments": []
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "distances and angle connect the actual selected atoms across the cell",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2276,
+      "attachments": []
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "mode changes, clear, undo and document replacement dispose and restore actual measurements",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3558,
+      "attachments": []
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3072,
+      "attachments": []
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "explicit ghost selections measure their world positions without substituting another image",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2257,
+      "attachments": []
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2680,
+      "attachments": []
+    },
+    {
+      "file": "playback-rebuild-visual.spec.cjs",
+      "title": "molecule continuous playback survives periodic/display/window/sidebar rebuild combinations",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 17847,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "fixture": "molecule",
+            "steps": 24,
+            "frames": 106
+          }
+        }
+      ]
+    },
+    {
+      "file": "playback-rebuild-visual.spec.cjs",
+      "title": "dense continuous playback survives periodic/display/window/sidebar rebuild combinations",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 83268,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "fixture": "dense",
+            "steps": 24,
+            "frames": 245
+          }
+        }
+      ]
+    },
+    {
+      "file": "rebuild-edge-visual.spec.cjs",
+      "title": "empty periodic documents retain duplicate species, constraints and editable refill through history branches",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 26431,
+      "attachments": []
+    },
+    {
+      "file": "rebuild-edge-visual.spec.cjs",
+      "title": "mixed-element instancing, periodic copies, supercells, constraints and export survive rebuild history",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 26560,
+      "attachments": []
+    },
+    {
+      "file": "selection-history.spec.cjs",
+      "title": "undo and redo restore the context of an edit multi-selection without making an oversized measurement",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3894,
+      "attachments": []
+    },
+    {
+      "file": "selection-history.spec.cjs",
+      "title": "measurement undo replaces the selection, preserves order and resolves current positions",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 4413,
+      "attachments": []
+    },
+    {
+      "file": "selection-history.spec.cjs",
+      "title": "selection history distinguishes periodic copies and safely omits copies no longer displayed",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 4102,
+      "attachments": []
+    },
+    {
+      "file": "selection-history.spec.cjs",
+      "title": "document replacement and disappearing periodic selections reset measurement purpose",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 4913,
+      "attachments": []
+    },
+    {
+      "file": "selection-history.spec.cjs",
+      "title": "selection undo and redo keep the currently displayed trajectory frame",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2830,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "sidebar resizing, collapse and restore preserve the document at 1440px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 5275,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "sidebar resizing, collapse and restore preserve the document at 800px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2807,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "sidebar resizing, collapse and restore preserve the document at 390px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2146,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "divider keyboard controls and canceled drag restore presentation state",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1711,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "file-load status wrapping resizes the canvas without a window or divider gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1528,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2928,
+      "attachments": []
+    },
+    {
+      "file": "sidebar-layout.spec.cjs",
+      "title": "constraint threshold and its unit stay together across intermediate panel widths",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 4045,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "title": "keyboard trajectory scrubbing ArrowRight pauses playback at 900px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3062,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "title": "keyboard trajectory scrubbing Home pauses playback at 900px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2983,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "title": "keyboard trajectory scrubbing End pauses playback at 900px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2836,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "title": "keyboard trajectory scrubbing ArrowRight pauses playback at 390px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2630,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "title": "keyboard trajectory scrubbing Home pauses playback at 390px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2629,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "title": "keyboard trajectory scrubbing End pauses playback at 390px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2445,
+      "attachments": []
+    },
+    {
+      "file": "trajectory-supercell-edge.spec.cjs",
+      "title": "trajectory periodic preview and supercell action keep every frame consistent",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2733,
+      "attachments": [
+        {
+          "name": "button-state",
+          "data": {
+            "visible": false,
+            "enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "file": "visual-edit.spec.cjs",
+      "title": "visual boundary editing with changing panel width at 1440px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 79894,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "cycles": 16,
+            "actionsPerCycle": [
+              "panel drag",
+              "atom drag",
+              "first frame drag",
+              "undo twice",
+              "redo twice",
+              "undo twice"
+            ],
+            "screenshots": 7
+          }
+        }
+      ]
+    },
+    {
+      "file": "visual-edit.spec.cjs",
+      "title": "visual boundary editing with changing panel width at 900px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 60911,
+      "attachments": [
+        {
+          "name": "coverage",
+          "data": {
+            "viewport": {
+              "width": 900,
+              "height": 760
+            },
+            "cycles": 16,
+            "actionsPerCycle": [
+              "panel drag",
+              "atom drag",
+              "first frame drag",
+              "undo twice",
+              "redo twice",
+              "undo twice"
+            ],
+            "screenshots": 7
+          }
+        }
+      ]
+    }
+  ]
+}

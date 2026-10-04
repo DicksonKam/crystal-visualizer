@@ -5691,15 +5691,26 @@ function exportStructure() {
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
+    a.style.display = 'none';
     document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+        a.click();
+    } catch (error) {
+        statusText.textContent = `Could not start ${filename} download`;
+        statusText.className = 'error';
+        return;
+    } finally {
+        // Keep the Blob URL available while the browser starts its download.
+        setTimeout(() => {
+            a.remove();
+            URL.revokeObjectURL(url);
+        }, 60000);
+    }
     savedEditRevision = currentEditRevision;
     updateDirtyIndicator();
     
     const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ ? 'XYZ' : 'POSCAR');
-    statusText.textContent = `Exported ${fileType} file`;
+    statusText.textContent = `Started ${fileType} download`;
     statusText.className = 'success';
 }
 

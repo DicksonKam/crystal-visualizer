@@ -341,6 +341,44 @@ test('canceling a replacement preserves unsaved structure and history', () => {
     assert.equal(context.hasUnsavedEdits(), false);
 });
 
+test('export keeps its Blob URL alive during download and preserves edits if click fails', () => {
+    for (const shouldFail of [false, true]) {
+        const context = app();
+        context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));
+        const calls = { revoked: [], timer: null, anchor: null };
+        context.Blob = Blob;
+        context.URL = {
+            createObjectURL() { return 'blob:export-test'; },
+            revokeObjectURL(url) { calls.revoked.push(url); }
+        };
+        context.setTimeout = (callback, delay) => { calls.timer = { callback, delay }; };
+        context.document.body = { appendChild(anchor) { calls.anchor = anchor; } };
+        context.document.createElement = () => ({
+            style: {},
+            click() { if (shouldFail) throw new Error('download blocked'); },
+            remove() { this.removed = true; }
+        });
+        vm.runInContext(`
+            currentStructure = structure;
+            currentFilename = 'H2O.xyz';
+            pushUndo({ type: 'move_atom', index: 0 });
+        `, context);
+        assert.equal(context.hasUnsavedEdits(), true);
+        context.exportStructure();
+        assert.equal(calls.anchor.href, 'blob:export-test');
+        assert.equal(calls.anchor.download, 'H2O_edited.xyz');
+        assert.equal(calls.anchor.removed, undefined);
+        assert.deepEqual(calls.revoked, []);
+        assert.equal(calls.timer.delay, 60000);
+        assert.equal(context.hasUnsavedEdits(), shouldFail);
+        assert.match(context.document.getElementById('statusText').textContent,
+            shouldFail ? /Could not start/ : /Started XYZ download/);
+        calls.timer.callback();
+        assert.equal(calls.anchor.removed, true);
+        assert.deepEqual(calls.revoked, ['blob:export-test']);
+    }
+});
+
 test('undo and redo restore an edit; a new edit invalidates redo', () => {
     const context = app();
     context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));

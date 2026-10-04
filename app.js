@@ -1441,9 +1441,9 @@ function onMouseDown(event) {
     dragStartMouse.copy(mouseNDC);
     
     const atomHit = getAtomIntersection(event);
-    // Keep the existing highlighted-handle requirement, but resolve the target
-    // again at pointer-down rather than trusting a cached hover mesh.
-    if (!atomHit && currentMode === 'edit' && vacuumDragState.active && vacuumDragState.hoveredEdge) {
+    // Hover is presentation state and may have been cleared by an atom drag
+    // or rebuild. The current pointer hit alone determines gesture ownership.
+    if (!atomHit && currentMode === 'edit' && vacuumDragState.active) {
         const handleInfo = checkVacuumHandleIntersection(event);
         if (handleInfo) {
             controls.enabled = false;
@@ -1778,23 +1778,10 @@ function onMouseMove(event) {
             currentStructure.atoms[draggedAtom.index].fractional = prepared.fractional;
             updateDirtyIndicator();
             
-            // Update selection visuals in real-time
-            if (selectedAtoms.length > 0) {
-                // Update the position in selectedAtoms for the dragged atom
-                const selectedIdx = selectedAtoms.findIndex(a => a.index === draggedAtom.index);
-                if (selectedIdx !== -1) {
-                    selectedAtoms[selectedIdx].position.copy(newWorldPos);
-                }
-                
-                // Update selection label positions (rings/checkmarks move with atoms)
-                updateSelectionVisualPositions();
-                
-                // Update measurement lines/arcs if preserving measurement
-                if (isMeasurementSelection) {
-                    updateMeasurements();
-                    updateEditUI(); // Update panel with new values
-                }
-            }
+            // A preview changes the same geometry as a committed move. Refresh
+            // all derived visuals, including bonds and displayed periodic copies.
+            rebuildDisplayOptions();
+            if (selectedAtoms.length > 0) updateEditUI();
         }
     }
 }

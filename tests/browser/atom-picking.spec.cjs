@@ -59,6 +59,15 @@ for (const [name, lattice] of Object.entries(cells)) for (const sign of [-1, 1])
         const moved = await page.evaluate(() => ({ lattice: currentStructure.lattice, position: currentStructure.atoms[0].position.toArray() }));
         expect(moved.lattice).toEqual(lattice);
         moved.position.forEach((v, i) => expect(v).toBeCloseTo(points.expected[i], 5));
+        // First frame gesture after moving a boundary atom must start immediately.
+        await page.mouse.move(points.emptyEdge.x, points.emptyEdge.y);
+        await page.evaluate(() => clearVacuumHighlight());
+        await page.mouse.down();
+        expect(await page.evaluate(() => vacuumDragState.isDragging)).toBe(true);
+        await page.mouse.move(points.emptyEdge.x + 25, points.emptyEdge.y + 25, { steps: 3 });
+        await page.mouse.up();
+        expect(await page.evaluate(() => editHistory.undoStack.at(-1).type)).toBe('vacuum_drag');
+        await page.locator('#undoBtn').click();
         await page.locator('#undoBtn').click();
         expect(await page.evaluate(() => currentStructure.atoms[0].position.toArray())).toEqual(points.original);
         await page.locator('#redoBtn').click();

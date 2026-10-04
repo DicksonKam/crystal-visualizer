@@ -2,7 +2,7 @@
 
 Status: **complete**. Six retained runs contain **65,160 passing action steps
 across 402 scenarios**, including a 1,000-step single-document session. Three
-confirmed app bugs were fixed and covered by regressions; the current app passed
+confirmed app bugs were fixed and covered by regressions; the campaign's final app passed
 **141 unit tests and 55 browser tests**. No buttons or panels were added, and
 nothing was pushed.
 
@@ -207,7 +207,40 @@ app has no remaining bugs.
   The separate Add Atom interaction timeout remains documented with its
   successful full-seed replay and qualified explanation.
 - **Validation and preservation:** the full 141-unit/55-browser verification
-  covers the final app hash retained in `campaign-summary.json`; the browser
+  covers the campaign's final app hash retained in `campaign-summary.json`; the browser
   runner's last-run status is passed with no failed tests. All campaign browsers
   were isolated from the user's tab. Source changes and evidence are saved in
   local Git commits; no push or new app controls were part of this work.
+
+## User-reported follow-up (2026-10-05, Hong Kong)
+
+The user immediately reported boundary-atom movement followed by a rejected
+first frame drag, plus stray bonds. The campaign missed these conditions;
+its passing totals are historical evidence, not proof of this later behavior.
+
+- Frame pointer-down required a cached hover highlight, despite independently
+  raycasting the current pointer. Atom drags clear highlights, so a valid frame
+  hit without that presentation state was rejected. The handler now determines
+  ownership from the current hit, retaining visible-atom priority. A regression
+  moves a boundary atom, clears the hover presentation state, and uses the first
+  real frame gesture to resize, then verifies Undo/Redo for both edits. It covers
+  cubic/tilted cells and both viewing directions. Without the fix it failed at
+  the assertion that a cell drag started; all four cases pass after the fix.
+- Drag previews updated the atom but left bonds and periodic-copy meshes at the
+  previous coordinates until release. Previews now use the existing shared
+  display-refresh path. A real-pointer regression moves a boundary atom beyond
+  the bond cutoff before releasing, verifies that the old bond disappears, and
+  verifies Escape restores it. It failed before correction and passes afterward.
+- Separately, the renderer deliberately generates clipped connections to
+  undisplayed periodic neighbors. Such segments can terminate at the cell frame
+  without a visible endpoint atom. This behavior has not been removed; the user
+  was asked whether bonds should connect only displayed atoms. The screenshot's
+  strands are not proven to be stale solely by the preview regression.
+
+Follow-up validation: **141 unit tests and 19 browser tests passed**, covering
+atom picking, boundary drag planes, frame rendering/lifecycle/gestures and
+preserved measurements. This is not a repeat of the full sustained campaign.
+The shared refresh performs additional work during drag previews; large-view
+performance has not been benchmarked by these small-structure regressions.
+No new app controls were added and the user's unsaved browser document was
+left intact.

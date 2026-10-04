@@ -92,3 +92,27 @@ test('pointer dragging reaches both halves of a boundary face and supports undo/
     const restored = await page.evaluate(() => currentStructure.atoms[0].position.toArray());
     restored.forEach((value, axis) => expect(value).toBeCloseTo([0, 0, 4][axis], 5));
 });
+
+test('boundary atom drag preview rebuilds bonds before pointer release', async ({ page }) => {
+    await upload(page, 'preview\n1\n4 0 0\n0 4 0\n0 0 4\nH\n2\nCartesian\n0 2 2\n0 3 2\n', 'preview.poscar');
+    await page.locator('[data-mode="edit"]').click();
+    const points = await page.evaluate(() => {
+        settings.useElementRadii = false; settings.bondThreshold = 1.5;
+        rebuildBonds(); cancelCameraAlignment(); controls.staticMoving = true;
+        const center = new THREE.Vector3(0, 2, 2).add(structureGroup.position);
+        controls.target.copy(center); camera.position.copy(center).add(new THREE.Vector3(-16, 0, 0));
+        camera.up.set(0, 1, 0); camera.lookAt(center); controls.update();
+        camera.updateMatrixWorld(true); scene.updateMatrixWorld(true);
+        const rect = renderer.domElement.getBoundingClientRect();
+        const screen = xyz => { const p = new THREE.Vector3(...xyz).add(structureGroup.position).project(camera);
+            return { x: rect.left+(p.x+1)*rect.width/2, y: rect.top+(1-p.y)*rect.height/2 }; };
+        return { start: screen([0,2,2]), end: screen([0,.5,.5]) };
+    });
+    const bonds = () => page.evaluate(() => structureGroup.children.filter(c => c.userData.isBond).length);
+    expect(await bonds()).toBe(1);
+    await page.mouse.move(points.start.x, points.start.y); await page.mouse.down();
+    await page.mouse.move(points.end.x, points.end.y, { steps: 4 });
+    expect(await bonds()).toBe(0);
+    await page.keyboard.press('Escape'); await page.mouse.up();
+    expect(await bonds()).toBe(1);
+});

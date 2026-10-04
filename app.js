@@ -189,6 +189,30 @@ function getSharedBondGeometry() {
     return sharedBondGeometry;
 }
 
+function getBondMaterial(isGhost) {
+    if (isGhost) {
+        if (!sharedGhostBondMaterial) {
+            sharedGhostBondMaterial = new THREE.MeshBasicMaterial({
+                color: 0x888899,
+                transparent: true,
+                opacity: settings.ghostOpacity * 0.6,
+                depthWrite: false
+            });
+            sharedRenderResources.add(sharedGhostBondMaterial);
+        }
+        return sharedGhostBondMaterial;
+    }
+    if (!sharedSolidBondMaterial) {
+        sharedSolidBondMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x888899,
+            metalness: 0.3,
+            roughness: 0.5
+        });
+        sharedRenderResources.add(sharedSolidBondMaterial);
+    }
+    return sharedSolidBondMaterial;
+}
+
 function getAtomMaterial(element, isGhost = false) {
     const key = `${element}:${isGhost ? 'ghost' : 'solid'}`;
     if (!sharedAtomMaterials.has(key)) {
@@ -1279,18 +1303,7 @@ function createGhostBond(pos1, pos2) {
     const smallestRadius = getSmallestAtomRadius();
     const bondRadius = smallestRadius * 0.25;
     
-    const geometry = getSharedBondGeometry();
-    if (!sharedGhostBondMaterial) {
-        sharedGhostBondMaterial = new THREE.MeshBasicMaterial({
-            color: 0x888899,
-            transparent: true,
-            opacity: settings.ghostOpacity * 0.6,
-            depthWrite: false
-        });
-        sharedRenderResources.add(sharedGhostBondMaterial);
-    }
-    
-    const bond = new THREE.Mesh(geometry, sharedGhostBondMaterial);
+    const bond = new THREE.Mesh(getSharedBondGeometry(), getBondMaterial(true));
     bond.scale.set(bondRadius, length, bondRadius);
     bond.position.copy(pos1).add(pos2).multiplyScalar(0.5);
     bond.quaternion.setFromUnitVectors(
@@ -2438,6 +2451,16 @@ function rebuildBonds() {
 
 function addBondsFromAtomMeshes() {
     if (!settings.showBonds) return;
+    const dense = displayedAtomCount > DENSE_VIEW_ATOMS;
+    const solidSegments = [];
+    const ghostSegments = [];
+    const addBond = (first, second, isGhost) => {
+        if (dense) {
+            (isGhost ? ghostSegments : solidSegments).push([first, second]);
+        } else {
+            structureGroup.add(isGhost ? createGhostBond(first, second) : createBond(first, second));
+        }
+    };
     // Spatial buckets keep bond searches close to linear for sparse structures.
     const bucketSize = settings.bondThreshold;
     const buckets = new Map();
@@ -2453,10 +2476,7 @@ function addBondsFromAtomMeshes() {
                         const distance = first.position.distanceTo(second.position);
                         const limit = getBondLimit(first.userData.element, second.userData.element);
                         if (distance < limit && distance > 0.5) {
-                            const bond = first.userData.isGhost || second.userData.isGhost
-                                ? createGhostBond(first.position, second.position)
-                                : createBond(first.position, second.position);
-                            structureGroup.add(bond);
+                            addBond(first.position, second.position, first.userData.isGhost || second.userData.isGhost);
                         }
                     }
                 }
@@ -2467,8 +2487,37 @@ function addBondsFromAtomMeshes() {
         buckets.get(key).push(first);
     }
     if (isPeriodicStructure(currentStructure) && currentStructure.lattice) {
-        addPeriodicBoundaryBonds(buckets, bucketSize);
+        addPeriodicBoundaryBonds(buckets, bucketSize, (first, second) => addBond(first, second, true));
     }
+    if (dense) {
+        addInstancedBonds(solidSegments, false);
+        addInstancedBonds(ghostSegments, true);
+    }
+}
+
+function addInstancedBonds(segments, isGhost) {
+    if (!segments.length) return;
+    // Each batch owns its geometry so removing it also releases its GPU instance data.
+    const bonds = new THREE.InstancedMesh(getSharedBondGeometry().clone(), getBondMaterial(isGhost), segments.length);
+    const transform = new THREE.Object3D();
+    const direction = new THREE.Vector3();
+    const up = new THREE.Vector3(0, 1, 0);
+    const radius = getSmallestAtomRadius() * 0.25;
+    segments.forEach(([first, second], index) => {
+        direction.subVectors(second, first);
+        const length = direction.length();
+        transform.position.copy(first).add(second).multiplyScalar(0.5);
+        transform.quaternion.setFromUnitVectors(up, direction.normalize());
+        transform.scale.set(radius, length, radius);
+        transform.updateMatrix();
+        bonds.setMatrixAt(index, transform.matrix);
+    });
+    bonds.instanceMatrix.needsUpdate = true;
+    // The base cylinder's bounds do not include the positions of its instances.
+    bonds.frustumCulled = false;
+    bonds.castShadow = !isGhost;
+    bonds.userData = isGhost ? { isGhost: true, isGhostBond: true } : { isBond: true };
+    structureGroup.add(bonds);
 }
 
 function getBondLimit(elementA, elementB) {
@@ -2478,7 +2527,7 @@ function getBondLimit(elementA, elementB) {
     return Math.min(settings.bondThreshold, 1.3 * (radiusA + radiusB));
 }
 
-function addPeriodicBoundaryBonds(buckets, bucketSize) {
+function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
     const lattice = currentStructure.lattice;
     const repeats = [settings.periodic.a, settings.periodic.b, settings.periodic.c];
     const reciprocalColumns = [
@@ -2522,7 +2571,7 @@ function addPeriodicBoundaryBonds(buckets, bucketSize) {
                     if (distance <= 0.5 || distance >= limit) continue;
                     const clipped = CrystalGeometry.clipSegmentToCell(translated, neighbor.position, lattice, repeats);
                     if (!clipped) continue;
-                    structureGroup.add(createGhostBond(new THREE.Vector3(...clipped[0]), new THREE.Vector3(...clipped[1])));
+                    addGhostBond(new THREE.Vector3(...clipped[0]), new THREE.Vector3(...clipped[1]));
                 }
             }
         }
@@ -3894,17 +3943,7 @@ function createBond(pos1, pos2) {
     const smallestRadius = getSmallestAtomRadius();
     const bondRadius = smallestRadius * 0.25;
     
-    const geometry = getSharedBondGeometry();
-    if (!sharedSolidBondMaterial) {
-        sharedSolidBondMaterial = new THREE.MeshPhysicalMaterial({
-            color: 0x888899,
-            metalness: 0.3,
-            roughness: 0.5
-        });
-        sharedRenderResources.add(sharedSolidBondMaterial);
-    }
-    
-    const bond = new THREE.Mesh(geometry, sharedSolidBondMaterial);
+    const bond = new THREE.Mesh(getSharedBondGeometry(), getBondMaterial(false));
     bond.scale.set(bondRadius, length, bondRadius);
     
     // Position at midpoint

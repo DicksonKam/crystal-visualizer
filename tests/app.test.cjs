@@ -13,6 +13,8 @@ class Vector3 {
     clone() { return new Vector3(this.x, this.y, this.z); }
     copy(v) { Object.assign(this, { x: v.x, y: v.y, z: v.z }); return this; }
     add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+    subVectors(a, b) { this.x = a.x - b.x; this.y = a.y - b.y; this.z = a.z - b.z; return this; }
+    multiplyScalar(factor) { this.x *= factor; this.y *= factor; this.z *= factor; return this; }
     addScaledVector(v, factor) { this.x += v.x * factor; this.y += v.y * factor; this.z += v.z * factor; return this; }
     sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
     distanceTo(v) { return Math.hypot(this.x - v.x, this.y - v.y, this.z - v.z); }
@@ -445,6 +447,64 @@ test('bond rebuild uses one policy for normal and periodic atoms', () => {
     assert.deepEqual(Array.from(counts()), [1, 1]);
 });
 
+test('dense bonds use two disposable batches with correct transforms', () => {
+    const context = app();
+    class Geometry {
+        clone() { return new Geometry(); }
+        dispose() { this.disposed = true; }
+    }
+    class Material {
+        dispose() { this.disposed = true; }
+    }
+    class Object3D {
+        constructor() {
+            this.position = new Vector3();
+            this.scale = { set: (x, y, z) => { this.radius = x; this.length = y; this.depth = z; } };
+            this.quaternion = { setFromUnitVectors() {} };
+        }
+        updateMatrix() {
+            this.matrix = { center: this.position.clone(), radius: this.radius, length: this.length };
+        }
+    }
+    class InstancedMesh {
+        constructor(geometry, material, count) {
+            Object.assign(this, { geometry, material, count, matrices: [], instanceMatrix: {}, userData: {} });
+        }
+        setMatrixAt(index, matrix) { this.matrices[index] = matrix; }
+        traverse(visitor) { visitor(this); }
+    }
+    Object.assign(context.THREE, {
+        CylinderGeometry: Geometry,
+        MeshBasicMaterial: Material,
+        MeshPhysicalMaterial: Material,
+        Object3D,
+        InstancedMesh
+    });
+    context.positions = [0, 1, 2].map(x => new Vector3(x, 0, 0));
+    vm.runInContext(`
+        currentStructure = { atoms: positions.map(position => ({ element: 'H', position })) };
+        settings.showBonds = true;
+        settings.useElementRadii = false;
+        settings.bondThreshold = 1.5;
+        displayedAtomCount = 600;
+        atomMeshes = positions.map((position, index) => ({ position, userData: { element: 'H', isGhost: index === 2 } }));
+        structureGroup = {
+            children: [],
+            add(child) { this.children.push(child); },
+            remove(child) { this.children.splice(this.children.indexOf(child), 1); }
+        };
+        addBondsFromAtomMeshes();
+    `, context);
+    const firstBatches = Array.from(vm.runInContext('structureGroup.children', context));
+    assert.equal(firstBatches.length, 2);
+    assert.deepEqual(Array.from(firstBatches, batch => batch.count), [1, 1]);
+    assert.deepEqual(Array.from(firstBatches, batch => batch.matrices[0].center.x), [0.5, 1.5]);
+    assert.ok(firstBatches.every(batch => batch.matrices[0].length === 1 && batch.frustumCulled === false));
+    context.rebuildBonds();
+    assert.equal(vm.runInContext('structureGroup.children.length', context), 2);
+    assert.ok(firstBatches.every(batch => batch.geometry.disposed));
+});
+
 test('element radii exclude the false H–H bond in water', () => {
     const context = app();
     const water = context.parseXYZ(example('examples/xyz/H2O.xyz'));
@@ -486,6 +546,32 @@ test('periodic bonds cross opposite cell faces without a long interior bond', ()
     assert.ok(endpoints.some(x => Math.abs(x) < 1e-10));
     assert.ok(endpoints.some(x => Math.abs(x - 10) < 1e-10));
     assert.ok(bonds.every(bond => bond.start.distanceTo(bond.end) <= 0.401));
+});
+
+test('dense periodic boundary segments join the ghost batch', () => {
+    const context = app();
+    context.points = [new Vector3(0.4, 0, 0), new Vector3(9.6, 0, 0)];
+    vm.runInContext(`
+        currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]] };
+        settings.periodic = { a: 1, b: 1, c: 1 };
+        settings.showBonds = true;
+        settings.useElementRadii = false;
+        settings.bondThreshold = 1.5;
+        displayedAtomCount = 600;
+        atomMeshes = points.map(position => ({ position, userData: { element: 'H' } }));
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        addInstancedBonds = (segments, isGhost) => {
+            if (segments.length) structureGroup.add({ segments, isGhost });
+        };
+        addBondsFromAtomMeshes();
+    `, context);
+    const batches = vm.runInContext('structureGroup.children', context);
+    assert.equal(batches.length, 1);
+    assert.equal(batches[0].isGhost, true);
+    assert.equal(batches[0].segments.length, 2);
+    const endpoints = batches[0].segments.flatMap(([start, end]) => [start.x, end.x]);
+    assert.ok(endpoints.some(x => Math.abs(x) < 1e-10));
+    assert.ok(endpoints.some(x => Math.abs(x - 10) < 1e-10));
 });
 
 test('periodic bonds reach neighbors across multiple vectors of a tilted basis', () => {

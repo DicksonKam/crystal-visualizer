@@ -111,6 +111,30 @@ test('dense views use lower-detail spheres and skip shadow passes', () => {
     assert.equal(vm.runInContext('renderer.shadowMap.enabled', context), true);
 });
 
+test('idle frames skip WebGL work while edits and camera movement render promptly', () => {
+    const context = app();
+    context.frames = { count: 0 };
+    context.requestAnimationFrame = () => {};
+    vm.runInContext(`
+        controls = { update() {} };
+        renderer = { render() { frames.count++; } };
+        scene = {};
+        camera = {};
+        currentStructure = { atoms: [] };
+        measurementGroup = null;
+        settings.showAxes = false;
+        animate(100);
+        animate(110);
+    `, context);
+    assert.equal(context.frames.count, 1);
+    vm.runInContext('requestRender(); animate(120)', context);
+    assert.equal(context.frames.count, 2);
+    vm.runInContext('lastCameraMotionAt = 125; animate(140); animate(145)', context);
+    assert.equal(context.frames.count, 3);
+    vm.runInContext('displayedAtomCount = 600; requestRender(); animate(155); animate(175)', context);
+    assert.equal(context.frames.count, 4);
+});
+
 test('POSCAR examples preserve coordinates and constraints after export', () => {
     const context = app();
     for (const file of fs.readdirSync(path.join(root, 'examples/poscar'))) {

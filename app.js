@@ -141,8 +141,15 @@ let sharedGhostBondMaterial = null;
 const sharedAtomMaterials = new Map();
 let smallestAtomRadiusCache = null;
 let displayedAtomCount = 0;
+let renderPending = true;
+let lastRenderedAt = -Infinity;
+let lastCameraMotionAt = -Infinity;
 
 const DENSE_VIEW_ATOMS = 500;
+
+function requestRender() {
+    renderPending = true;
+}
 
 function countDisplayedAtoms(structure) {
     if (!structure) return 0;
@@ -211,6 +218,7 @@ function setAtomGlow(mesh, color, intensity) {
         mesh.material = base;
         oldMaterial.dispose();
     }
+    requestRender();
 }
 
 // Mode state: 'measure' or 'edit'
@@ -702,6 +710,10 @@ function initScene() {
     controls.dynamicDampingFactor = 0.15;
     controls.minDistance = 2;
     controls.maxDistance = 100;
+    controls.addEventListener('change', () => {
+        lastCameraMotionAt = performance.now();
+        requestRender();
+    });
     
     // Hide vacuum handles when camera starts moving
     controls.addEventListener('start', () => {
@@ -763,7 +775,7 @@ function initScene() {
     initAxesHUD();
     
     // Animation loop
-    animate();
+    requestAnimationFrame(animate);
     
     // Handle resize
     window.addEventListener('resize', onWindowResize);
@@ -776,9 +788,19 @@ function initScene() {
     renderer.domElement.addEventListener('click', onClickFallback);
 }
 
-function animate() {
+function animate(timestamp) {
     requestAnimationFrame(animate);
     controls.update();
+    if (!currentStructure && !renderPending) return;
+
+    const active = animationState.isPlaying || isDragging || vacuumDragState.isDragging || isSnapping
+        || timestamp - lastCameraMotionAt < 250;
+    const dense = displayedAtomCount > DENSE_VIEW_ATOMS;
+    const interval = 1000 / (active ? (dense ? 30 : 60) : 5);
+    if (!renderPending && timestamp - lastRenderedAt < interval) return;
+    if (dense && timestamp - lastRenderedAt < 1000 / 30) return;
+    lastRenderedAt = timestamp;
+    renderPending = false;
     
     // Make selection rings face the camera
     if (measurementGroup) {
@@ -829,6 +851,7 @@ function onWindowResize() {
     orthographicCamera.updateProjectionMatrix();
     
     renderer.setSize(viewport.clientWidth, viewport.clientHeight);
+    requestRender();
 }
 
 // Initialize axes HUD (separate scene rendered in corner)
@@ -1590,6 +1613,7 @@ function createDragGuidePlane() {
         dragGuidePlane.renderOrder = 997;
         
         scene.add(dragGuidePlane);
+        requestRender();
     }
 }
 
@@ -1600,6 +1624,7 @@ function removeDragGuidePlane() {
         if (dragGuidePlane.geometry) dragGuidePlane.geometry.dispose();
         if (dragGuidePlane.material) dragGuidePlane.material.dispose();
         dragGuidePlane = null;
+        requestRender();
     }
     dragPlaneNormal = null;
     dragPolygonVertices = [];
@@ -2392,6 +2417,7 @@ function rebuildDisplayOptions() {
     rebuildFixedIndicators();
     rebuildLabels();
     updateSelectionVisualPositions();
+    requestRender();
 }
 
 // Rebuild bonds between atoms
@@ -2560,6 +2586,7 @@ function rebuildLabels() {
             structureGroup.add(label);
         });
     }
+    requestRender();
 }
 
 // Create a subtle, camera-facing label sprite for an atom
@@ -3262,6 +3289,7 @@ function createSelectionVisual(mesh, selectionNumber, isGhost = false) {
     } else {
         createEditSelectionMarker(mesh, selectionNumber);
     }
+    requestRender();
 }
 
 // Rebuild all selection visuals (used after mode change or re-render)
@@ -3381,6 +3409,7 @@ function clearMeasurementVisuals() {
         disposeObject3D(child);
     }
     selectionRings = [];
+    requestRender();
 }
 
 function disposeObject3D(object) {
@@ -3574,6 +3603,7 @@ function updateMeasurements() {
             createFloatingAngleLabel(arcData.labelPosition, arcData.angleDeg);
         }
     }
+    requestRender();
 }
 
 // Get the floating label size (matches selection label size)
@@ -4120,6 +4150,7 @@ function renderStructure(structure, preserveState = false) {
     } else {
         fitStructureToView();
     }
+    requestRender();
 }
 
 function fitStructureToView(preserveOrientation = false) {
@@ -4563,6 +4594,7 @@ function setupControls() {
         settings.showAxes = !settings.showAxes;
         e.currentTarget.classList.toggle('active', settings.showAxes);
         // Axes HUD visibility is controlled in animate() loop via settings.showAxes
+        requestRender();
     });
     
     // Toggle unit cell
@@ -5617,6 +5649,7 @@ function showVacuumHighlight(edgeMesh) {
     structureGroup.add(highlightGroup);
     vacuumDragState.highlightLine = highlightGroup;
     vacuumDragState.hoveredEdge = edgeMesh;
+    requestRender();
 }
 
 // Clear vacuum highlight
@@ -5649,6 +5682,7 @@ function clearVacuumHighlight() {
     });
     
     vacuumDragState.hoveredEdge = null;
+    requestRender();
 }
 
 // Export in the source structure's format.

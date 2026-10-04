@@ -31,7 +31,7 @@ Use **Find atom by number** in the Atoms panel to select and center an atom that
 
 `index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains periodic geometry, and `formats.js` contains file parsers and exporters that can run without the browser or Three.js renderer. `app.js` contains structure operations, rendering, and event handling. These areas still share application state, so new features should keep loading, rendering, editing, undo, and export behavior consistent.
 
-The renderer reuses sphere geometry and element materials across atoms, reuses bond geometry, and caches the smallest atom radius during redraws. Views above 500 displayed atoms use simpler spheres and skip shadows to keep large structures responsive. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
+The renderer reuses sphere geometry and element materials across atoms, reuses bond geometry, and caches the smallest atom radius during redraws. Views above 500 displayed atoms use simpler spheres, skip shadows, and cap active rendering at 30 fps. Idle views render at a lower rate, while edits request an immediate redraw. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
 
 Run the focused tests with:
 

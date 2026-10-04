@@ -3934,6 +3934,7 @@ function renderStructure(structure, preserveState = false) {
         cellOffset: a.cellOffset ? { ...a.cellOffset } : null,
         element: a.element
     })) : [];
+    const savedMeasurementSelection = preserveState && isMeasurementSelection;
     const savedCameraPose = preserveState ? getCameraPose() : null;
     
     // Update axes HUD to reflect actual lattice vectors (for tilted/non-cubic cells)
@@ -3951,6 +3952,7 @@ function renderStructure(structure, preserveState = false) {
     // Clear measurement visuals (will rebuild if preserving)
     clearMeasurementVisuals();
     selectedAtoms = [];
+    isMeasurementSelection = false;
     atomMeshes = [];
     
     // Add atoms
@@ -3995,7 +3997,9 @@ function renderStructure(structure, preserveState = false) {
         cameraController.setPose(savedCameraPose, 'rebuild');
         
         // Restore selections with correct mode-aware visuals.
+        isMeasurementSelection = savedMeasurementSelection;
         selectedAtoms = restoreSelectedAtoms(savedSelections);
+        if (!selectedAtoms.length) isMeasurementSelection = false;
         
         // Rebuild visuals based on current mode
         rebuildSelectionVisuals();

@@ -110,3 +110,34 @@ test('selection history distinguishes periodic copies and safely omits copies no
     });
     expect(sanitized).toEqual(smaller.indices);
 });
+
+test('document replacement and disappearing periodic selections reset measurement purpose', async ({ page }) => {
+    await upload(page, source, 'first.xyz');
+    await select(page,1); await select(page,2);
+    await page.locator('[data-mode="edit"]').click();
+    expect((await state(page)).measurement).toBe(true);
+    await upload(page, source, 'replacement.xyz');
+    const cleared=await state(page);
+    expect(cleared.indices).toEqual([]); expect(cleared.measurement).toBe(false);
+    await select(page,1);
+    expect((await state(page)).measurement).toBe(false);
+    await page.locator('#undoBtn').click();
+    expect((await state(page)).indices).toEqual([]);
+    expect((await state(page)).measurement).toBe(false);
+    await page.locator('#redoBtn').click();
+    expect((await state(page)).indices).toEqual([0]);
+    expect((await state(page)).measurement).toBe(false);
+    await upload(page, 'copies\n1\n4 0 0\n0 4 0\n0 0 4\nH\n1\nCartesian\n1 1 1\n', 'copies.poscar');
+    await page.locator('[data-mode="measure"]').click();
+    await page.getByRole('button',{name:'Increase a periodic images',exact:true}).click();
+    await page.evaluate(()=>{
+        const ghost=atomMeshes.find(mesh=>mesh.userData.isGhost);
+        selectAtom(ghost,ghost.userData.atomIndex); updateMeasurements(); updateMeasurementUI();
+    });
+    await page.locator('[data-mode="edit"]').click();
+    expect((await state(page)).measurement).toBe(true);
+    await page.getByRole('button',{name:'Decrease a periodic images',exact:true}).click();
+    const disappeared=await state(page);
+    expect(disappeared.indices).toEqual([]); expect(disappeared.measurement).toBe(false);
+    expect(disappeared.rings).toBe(0); expect(disappeared.lines).toBe(0);
+});

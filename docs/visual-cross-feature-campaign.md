@@ -67,3 +67,15 @@ with an explicit limitation for subpixel atoms. Seed 707 passed all 120 steps an
 captured 41 images afterward. Failure/replay evidence and summaries are retained
 in the campaign evidence directory. The timed campaign must still be resumed
 and completed; these short portions do not establish sustained completion.
+
+Seed 708 then passed 120 steps and 36 captures with the panel-overflow check
+enabled. A new 30-minute campaign resumed at seed 709. The full current browser
+suite (64 tests) is running separately with one worker to limit competing GPU
+load. Neither run has yet been reported complete.
+
+The 600-atom initial view, a real atom-drag preview and trajectory playback were
+opened and inspected; representative images and their hashes are retained in
+`inspection-ledger.json` beside the evidence. The earlier preview also documents
+the panel clipping before its fix. Dense renderer transitions around 500 atoms
+and dense edit/cell-preview combinations need additional focused coverage;
+initial dense rendering alone does not prove those interactions.

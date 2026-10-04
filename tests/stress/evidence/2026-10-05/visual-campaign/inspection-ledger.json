@@ -1,0 +1,20 @@
+[
+  {
+    "file": "dense-600-inspected.png",
+    "sha256": "938c9917c398d5dd7ec0dacf69c5cc792919530be22fd289bfab63ef36c838e9",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-702/seed-705/seed-705-step--1-load-initial.png"
+  },
+  {
+    "file": "atom-preview-before-panel-fix-inspected.png",
+    "sha256": "c97d72ca15aea15a6b8f5e88697ca858a5b4990c0bf6f05bafe8de9e60b67c31",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-702/seed-703/seed-703-step-57-drag-atom-preview.png"
+  },
+  {
+    "file": "playback-inspected.png",
+    "sha256": "bc18e321f2d463b2e951cdfc6a88612c952076e728edb0ee9fe39d193be16fa1",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-702/seed-703/seed-703-step-22-playback-after.png"
+  }
+]

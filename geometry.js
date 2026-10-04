@@ -167,7 +167,7 @@
             if (row < 0) {
                 const vector = displacement(trial);
                 const squared = dot(vector, vector);
-                if (partialSquared < bestProjectedSquared - 1e-12) {
+                if (partialSquared < bestProjectedSquared) {
                     bestProjectedSquared = partialSquared;
                     bestSquared = squared;
                     bestOffset = [...trial];
@@ -192,7 +192,8 @@
                 if (integer < first || integer > last) continue;
                 const residual = r[row][row] * (integer - center);
                 const nextSquared = partialSquared + residual * residual;
-                if (nextSquared <= bestProjectedSquared + 1e-12) {
+                const tolerance = Number.EPSILON * 32 * Math.max(bestProjectedSquared, Number.MIN_VALUE);
+                if (nextSquared <= bestProjectedSquared + tolerance) {
                     trial[row] = integer;
                     search(row - 1, nextSquared);
                 }

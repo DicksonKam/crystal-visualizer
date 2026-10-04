@@ -7,6 +7,10 @@
         if (![0, 1, 2].includes(axis) || !['near', 'far'].includes(handle) || !Number.isFinite(delta)) {
             throw new Error('Invalid cell resize');
         }
+        if (delta === 0) return {
+            lattice: originalLattice.map(vector => [...vector]),
+            updates: documentModel.preparePositions(structure, originalPositions, originalLattice)
+        };
         const vector = originalLattice[axis];
         const length = Math.hypot(...vector);
         if (!Number.isFinite(length) || length <= 0) throw new Error('Invalid original cell length');
@@ -14,8 +18,9 @@
         const projections = originalPositions.map(pos => direction[0] * pos.x + direction[1] * pos.y + direction[2] * pos.z);
         if (!projections.every(Number.isFinite)) throw new Error('Atom extent cannot be represented');
         const epsilon = 0.001;
-        const extent = projections.length ? (handle === 'far' ? Math.max(...projections) + epsilon
-            : length + epsilon - Math.min(...projections)) : epsilon;
+        const max = projections.reduce((value, projection) => Math.max(value, projection), -Infinity);
+        const min = projections.reduce((value, projection) => Math.min(value, projection), Infinity);
+        const extent = projections.length ? (handle === 'far' ? max + epsilon : length + epsilon - min) : epsilon;
         // Atom coordinates may lie outside the cell. Their extent alone must
         // never allow a zero or reversed cell vector.
         const newLength = Math.max(epsilon, extent, length + delta);

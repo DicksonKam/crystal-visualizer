@@ -536,6 +536,7 @@ function undoDeleteAtoms(op) {
 function undoAddAtom(op) {
     // Remove the added atom
     currentStructure.atoms.splice(op.index, 1);
+    if (op.newGroupId) currentStructure.speciesGroups = currentStructure.speciesGroups.filter(group => group.id !== op.newGroupId);
     recalculateElementCounts();
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
@@ -739,6 +740,7 @@ function setupUndoKeyboardShortcut() {
 
 // Remember Add Atom form values
 let lastAddAtomElement = null;
+let lastAddAtomSpecies = null;
 let lastAddAtomCoords = { x: 0, y: 0, z: 0 };
 let lastAddAtomCoordType = 'fractional'; // Default to fractional
 
@@ -1965,15 +1967,17 @@ function onMouseMove(event) {
             
             // Convert to local position
             const newLocalPos = newWorldPos.clone().sub(structureGroup.position);
-            const fractional = hasLattice(currentStructure)
-                ? cartesianToFractional(newLocalPos, currentStructure.lattice) : null;
-            if (![newLocalPos.x, newLocalPos.y, newLocalPos.z].every(Number.isFinite)
-                || (hasLattice(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) return;
+            let prepared;
+            try {
+                [prepared] = CrystalDocument.preparePositions(currentStructure, [newLocalPos]);
+            } catch {
+                return;
+            }
             
             // Update atom position (both mesh and structure data for live readouts)
             draggedAtom.mesh.position.copy(newLocalPos);
             currentStructure.atoms[draggedAtom.index].position.copy(newLocalPos);
-            currentStructure.atoms[draggedAtom.index].fractional = fractional;
+            currentStructure.atoms[draggedAtom.index].fractional = prepared.fractional;
             updateDirtyIndicator();
             
             // Update selection visuals in real-time
@@ -2395,7 +2399,7 @@ function updateEditUI() {
                     <label for="addAtomSpecies">Species group</label>
                     <select id="addAtomSpecies" class="element-select">
                         ${currentStructure.speciesGroups.map((group, index) => group.element === selectedElement
-                            ? `<option value="${group.id}">${group.element} — group ${index + 1}</option>` : '').join('')}
+                            ? `<option value="${group.id}"${group.id === lastAddAtomSpecies ? ' selected' : ''}>${group.element} — group ${index + 1}</option>` : '').join('')}
                     </select>
                 </div>` : ''}
                 <div class="add-atom-coord-type">
@@ -2587,9 +2591,11 @@ function updateEditUI() {
     if (addAtomElement) {
         addAtomElement.addEventListener('change', (e) => {
             lastAddAtomElement = e.target.value;
+            lastAddAtomCoords = Object.fromEntries(['x', 'y', 'z'].map(axis => [axis, document.getElementById(`addAtom${axis.toUpperCase()}`).value]));
             updateEditUI();
         });
     }
+    document.getElementById('addAtomSpecies')?.addEventListener('change', event => { lastAddAtomSpecies = event.target.value; });
     
     // Coordinate type radio buttons - update step values and remember choice
     const coordTypeRadios = document.querySelectorAll('input[name="coordType"]');
@@ -2632,17 +2638,15 @@ function applyExactAtomCoordinates() {
     const fractionalInput = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
     const position = fractionalInput ? fractionalToCartesian(values, currentStructure.lattice)
         : new THREE.Vector3(...values);
-    const fractional = hasLattice(currentStructure)
-        ? (fractionalInput ? values : cartesianToFractional(position, currentStructure.lattice)) : null;
-    if (![position.x, position.y, position.z].every(Number.isFinite)
-        || (hasLattice(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) {
-        error.textContent = 'Coordinates cannot be represented in this cell';
-        return false;
-    }
     const atom = currentStructure.atoms[index];
     if (atom.position.distanceTo(position) < 1e-10) return false;
     const oldPosition = atom.position.clone();
-    commitGeometryEdit({ type: 'move_atom', index, oldPosition, newPosition: position.clone() }, [{ index, position }]);
+    try {
+        commitGeometryEdit({ type: 'move_atom', index, oldPosition, newPosition: position.clone() }, [{ index, position }]);
+    } catch {
+        error.textContent = 'Coordinates cannot be represented in this cell';
+        return false;
+    }
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateEditUI();
@@ -3293,8 +3297,10 @@ function addAtomFromInput() {
             fractionalPos = null;
         }
     }
-    if (![cartesianPos.x, cartesianPos.y, cartesianPos.z].every(Number.isFinite)
-        || (fractionalPos && fractionalPos.some(value => !Number.isFinite(value)))) {
+    try {
+        const [prepared] = CrystalDocument.preparePositions(currentStructure, [cartesianPos]);
+        fractionalPos = prepared.fractional;
+    } catch {
         errorDiv.textContent = 'Coordinates cannot be represented in this cell';
         return;
     }
@@ -3320,6 +3326,7 @@ function addAtomFromInput() {
         return;
     }
     if (prepared.newGroup) currentStructure.speciesGroups.push(prepared.newGroup);
+    lastAddAtomSpecies = prepared.atom.speciesId;
     currentStructure.nextAtomId = prepared.nextAtomId;
     currentStructure.nextSpeciesId = prepared.nextSpeciesId;
     currentStructure.atoms.push(prepared.atom);
@@ -3328,7 +3335,8 @@ function addAtomFromInput() {
     // Save for undo (unified undo stack)
     pushUndo({
         type: 'add_atom',
-        index: newIndex
+        index: newIndex,
+        newGroupId: prepared.newGroup?.id || null
     });
     
     // Recalculate element counts
@@ -3582,6 +3590,7 @@ function updateUI_forCurrentMode() {
 
 // Clear visual measurement objects
 function clearMeasurementVisuals() {
+    setGeometryWarning('measurement', '');
     while (measurementGroup.children.length > 0) {
         const child = measurementGroup.children[0];
         measurementGroup.remove(child);
@@ -4477,6 +4486,7 @@ function loadStructureFromText(content, filename, requestId = null) {
     currentFilename = filename || 'Untitled';
     selectedAtomCoordMode = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastAddAtomElement = null;
+    lastAddAtomSpecies = null;
     lastAddAtomCoords = { x: 0, y: 0, z: 0 };
     lastShiftCoords = { a: 0, b: 0, c: 0 };
     lastZThreshold = null;
@@ -4984,7 +4994,7 @@ function setupModeToggle() {
             if (mode === currentMode) return;
             
             // Block edit mode for XDATCAR files
-            if (mode === 'edit' && currentStructure && currentStructure.isXDATCAR) {
+            if (mode === 'edit' && currentStructure && !CrystalDocument.capabilities(currentStructure).editable) {
                 statusText.textContent = 'Edit mode is disabled for trajectory files (XDATCAR)';
                 statusText.className = '';
                 return;

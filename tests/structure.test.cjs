@@ -88,4 +88,7 @@ test('cell resize validates every proposed position before committing a tilted n
     const extreme = { lattice: [[1e102, 0, 0], [0, 1e102, 0], [0, 0, 1e102]], atoms: [] };
     assert.throws(() => prepareCellResize(extreme, extreme.lattice, [], 0, 'far', 1e308), /volume is not finite/);
     assert.deepEqual(structure.atoms[0].position, { x: 3, y: 4, z: 1 });
+    const unchanged = prepareCellResize(structure, lattice, [{ x: 3, y: 4, z: 1 }], 0, 'far', 0);
+    assert.deepEqual(unchanged.lattice, lattice);
+    assert.deepEqual(unchanged.updates[0].position, { x: 3, y: 4, z: 1 });
 });

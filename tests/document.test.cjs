@@ -42,3 +42,12 @@ test('XYZ atom order may interleave elements without changing species membership
     assert.deepEqual(structure.counts, [2, 1]);
     assert.deepEqual(documentModel.groupedAtoms(structure).map(group => group.atoms.map(atom => atom.position.x)), [[0, 2], [1]]);
 });
+
+test('coordinate preparation rejects malformed molecule coordinates without changing its document', () => {
+    const molecule = { isXYZ: true, atoms: [], lattice: null };
+    for (const point of [[], [1, 2], [1, 2, 3, 4], [NaN, 0, 0]]) {
+        assert.throws(() => documentModel.preparePositions(molecule, [point]), /three finite/);
+    }
+    assert.deepEqual(documentModel.preparePositions(molecule, [[1, 2, 3]]), [{ position: { x: 1, y: 2, z: 3 }, fractional: null }]);
+    assert.deepEqual(molecule, { isXYZ: true, atoms: [], lattice: null });
+});

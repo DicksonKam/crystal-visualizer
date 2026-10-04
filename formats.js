@@ -343,7 +343,7 @@
         function xyzHeaderFields(comment) {
             const fields = [];
             let index = 0;
-            function token() {
+            function token(strict = false) {
                 const start = index;
                 const open = comment[index];
                 if (open === '"' || open === "'") {
@@ -352,16 +352,20 @@
                         if (comment[index] === '\\') index += 2;
                         else if (comment[index++] === open) return comment.slice(start, index);
                     }
-                    throw new Error('Invalid extended XYZ: unterminated quoted field');
+                    if (strict) throw new Error('Invalid extended XYZ: unterminated quoted field');
+                    return comment.slice(start);
                 }
                 if (open === '[' || open === '{') {
                     const close = open === '[' ? ']' : '}';
                     index++;
                     while (index < comment.length && comment[index] !== close) {
-                        if ('"\''.includes(comment[index])) token();
+                        if ('"\'[{'.includes(comment[index])) token(strict);
                         else index++;
                     }
-                    if (index >= comment.length) throw new Error('Invalid extended XYZ: unterminated array field');
+                    if (index >= comment.length) {
+                        if (strict) throw new Error('Invalid extended XYZ: unterminated array field');
+                        return comment.slice(start);
+                    }
                     index++;
                     return comment.slice(start, index);
                 }
@@ -377,7 +381,7 @@
                 if (comment[index] !== '=') continue;
                 index++;
                 while (/\s/.test(comment[index] || '') && index < comment.length) index++;
-                const rawValue = token();
+                const rawValue = token(true);
                 if (!rawValue) throw new Error('Invalid extended XYZ: missing field value');
                 const unwrap = value => /^["'\[{]/.test(value) ? value.slice(1, -1) : value;
                 fields.push({ key: unwrap(rawKey), value: unwrap(rawValue), raw: comment.slice(start, index), start, end: index });

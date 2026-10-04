@@ -153,3 +153,11 @@ test('boundary bond workload is rejected before allocating huge ranges', () => {
     assert.deepEqual(ordinary, [[[0, 1], [0, 0], [0, 0]]]);
     assert.throws(() => boundaryTranslationRanges([[1e20, 0, 0]], [[10, 0, 0], [0, 10, 0], [0, 0, 10]], [1, 1, 1], [true, true, true], 2.5), /integer precision/);
 });
+
+test('nearest-image accuracy does not depend on an absolute squared-distance tolerance', () => {
+    const lattice = [[1.2e-5, 0, 0], [6e-6, 1.2e-5, 0], [0, 0, 1]];
+    requireFiniteCell(lattice);
+    const point = [8.99e-6, 6e-6, 0];
+    const result = nearestImageBetween([0, 0, 0], point, lattice);
+    assert.ok(Math.abs(result.distance - bruteNearest([0, 0, 0], point, lattice, 2)) < 1e-15);
+});

@@ -201,4 +201,8 @@ test('XYZ header fields honor quoted keys and values and reject duplicate struct
     assert.deepEqual(structure.pbc, [false, false, false]);
     assert.throws(() => strictFormats.parseXYZ('1\nProperties=species:S:1:pos:R:3 Properties=species:S:1:pos:R:3\nH 0 0 0\n'), /duplicate Properties/);
     assert.throws(() => strictFormats.parseXYZ('1\nenergy="broken\nH 0 0 0\n'), /unterminated/);
+    const nested = strictFormats.parseXYZ('1\nProperties=species:S:1:pos:R:3 stress=[[1,0,0],[0,1,0],[0,0,1]] label="pbc=F"\nH 0 0 0\n');
+    assert.equal(nested.xyzMetadata[0].raw, 'stress=[[1,0,0],[0,1,0],[0,0,1]]');
+    assert.match(strictFormats.generateXYZ(nested), /stress=\[\[1,0,0\],\[0,1,0\],\[0,0,1\]\]/);
+    assert.equal(strictFormats.parseXYZ('1\n"unfinished human title\nH 0 0 0\n').comment, '"unfinished human title');
 });

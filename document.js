@@ -65,12 +65,13 @@
     }
 
     function preparePositions(structure, positions, lattice = structure.lattice) {
-        if (capabilities(structure).cell) geometry.requireFiniteCell(lattice, 'edited cell');
+        const { cell } = capabilities(structure);
+        if (cell) geometry.requireFiniteCell(lattice, 'edited cell');
         return positions.map(position => {
             const point = Array.isArray(position) ? position : [position.x, position.y, position.z];
-            if (!point.every(Number.isFinite)) throw new Error('Coordinates must be finite');
-            const fractional = capabilities(structure).cell ? geometry.cartesianToFractional(point, lattice) : null;
-            if (capabilities(structure).cell && !fractional) throw new Error('Coordinates cannot be represented in this cell');
+            if (point.length !== 3 || !point.every(Number.isFinite)) throw new Error('Coordinates must contain three finite values');
+            const fractional = cell ? geometry.cartesianToFractional(point, lattice) : null;
+            if (cell && !fractional) throw new Error('Coordinates cannot be represented in this cell');
             return { position: { x: point[0], y: point[1], z: point[2] }, fractional };
         });
     }
@@ -80,7 +81,7 @@
     }
 
     function geometrySignature(structure) {
-        return JSON.stringify({ lattice: capabilities(structure).cell ? structure.lattice : null,
+        return JSON.stringify({ lattice: capabilities(structure).cell ? structure.lattice : null, pbc: capabilities(structure).periodicAxes,
             atoms: structure.atoms.map(atom => [atom.element, atom.position.x, atom.position.y, atom.position.z]) });
     }
 

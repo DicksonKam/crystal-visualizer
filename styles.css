@@ -102,6 +102,41 @@ body {
     gap: 0.5rem;
 }
 
+.camera-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.camera-auto-snap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+}
+
+.camera-axis-views {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+}
+
+.camera-axis-views .btn {
+    justify-content: center;
+}
+
+.camera-auto-snap input {
+    accent-color: var(--accent-cyan);
+}
+
+.camera-panel button:focus-visible,
+.camera-auto-snap input:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
 .unsaved-indicator:not([hidden]) {
     color: var(--accent-yellow);
     font-size: 0.72rem;

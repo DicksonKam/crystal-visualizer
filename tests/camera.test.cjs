@@ -143,3 +143,47 @@ test('projection-aware fitting and clipping include every bound corner in narrow
     }
     close(POLICY.maxCorrectionDegrees, 5);
 });
+
+test('recent reversal overrides earlier approach and settled ineligible views leave no pending work', () => {
+    const r = rig(); r.controller.begin('rotate', 0);
+    r.setAngle(1); r.controller.tick(100);
+    r.setAngle(4); r.controller.tick(300); r.controller.end(300);
+    r.controller.tick(320); r.controller.tick(500);
+    assert.deepEqual(r.events, []);
+    assert.equal(r.controller.phase, 'idle');
+    r.setAngle(25); r.controller.begin('rotate', 600);
+    r.setAngle(30); r.controller.tick(700); r.controller.end(700);
+    r.controller.tick(720); r.controller.tick(841);
+    assert.equal(r.controller.phase, 'idle');
+    assert.deepEqual(r.events, []);
+});
+
+test('a changing candidate must independently complete its continuous stability interval', () => {
+    const r = rig();
+    const nearAxes = math.axes([[1, 0, 0], [Math.cos(math.radians(4)), Math.sin(math.radians(4)), 0], [0, 0, 1]]);
+    let pose = math.clonePose(r.pose);
+    const events = [];
+    const controller = createController({ math, getPose: () => pose, applyPose: value => { pose = value; }, clearMotion() {}, getAxes: () => nearAxes, onStart: kind => events.push(kind) });
+    controller.begin('rotate', 0); pose.quaternion = q(1); controller.tick(100); controller.end(100);
+    controller.tick(120); controller.tick(200);
+    pose.quaternion = q(3); controller.tick(220); // New +b candidate, still moving.
+    controller.tick(240); controller.tick(359);
+    assert.deepEqual(events, []);
+    controller.tick(361);
+    assert.deepEqual(events, ['automatic']);
+});
+
+test('instant camera actions cancel movement, clear controls and copy the requested pose', () => {
+    const r = rig(); r.controller.align(q(0), 0); r.controller.tick(100);
+    const target = { ...math.clonePose(r.pose), pivot: new THREE.Vector3(1, 2, 3), zoom: 2 };
+    r.controller.setPose(target, 'focus');
+    r.controller.tick(1000);
+    assert.equal(r.controller.phase, 'idle');
+    assert.deepEqual(r.pose.pivot.toArray(), [1, 2, 3]);
+    close(r.pose.zoom, 2);
+    close(math.angularDistance(r.pose.quaternion, target.quaternion), 0);
+    target.pivot.x = 99;
+    close(r.pose.pivot.x, 1);
+    assert.deepEqual(r.events, ['start:explicit', 'start:focus', 'end:focus']);
+    assert.equal(r.motion.length, 3);
+});

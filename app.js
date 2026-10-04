@@ -105,6 +105,9 @@ Object.setPrototypeOf(ELEMENT_DATA, null);
 
 // Global state
 let scene, camera, renderer, controls;
+let cameraMath, cameraController;
+let cameraInputKind = 'rotate';
+let manualCameraTickAt = 0;
 let perspectiveCamera, orthographicCamera;
 let isPerspective = false; // Default to orthographic
 let structureGroup, measurementGroup;
@@ -812,38 +815,8 @@ function initScene() {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     viewport.appendChild(renderer.domElement);
     
-    // Controls - Use TrackballControls for VESTA-like rotation behavior
-    controls = new THREE.TrackballControls(camera, renderer.domElement);
-    controls.rotateSpeed = 3.0;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.noZoom = false;
-    controls.noPan = false;
-    controls.staticMoving = false; // Enable damping
-    controls.dynamicDampingFactor = 0.15;
-    controls.minDistance = 2;
-    controls.maxDistance = 100;
-    controls.addEventListener('change', () => {
-        lastCameraMotionAt = performance.now();
-        requestRender();
-    });
-    
-    // Hide vacuum handles when camera starts moving
-    controls.addEventListener('start', () => {
-        if (!vacuumDragState.isDragging) {
-            cameraInteractionActive = true;
-            cancelCameraAlignment();
-            cleanupVacuumHandles();
-            updateVacuumHintUI(null);
-        }
-    });
-    
-    // Check for axis snap on end of camera rotation
-    controls.addEventListener('end', () => {
-        cameraInteractionActive = false;
-        scheduleCameraAlignment();
-    });
-    
+    initCameraController();
+
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
@@ -900,10 +873,10 @@ function initScene() {
 
 function animate(timestamp) {
     requestAnimationFrame(animate);
-    controls.update();
+    updateCamera(timestamp);
     if (!currentStructure && !renderPending) return;
 
-    const active = animationState.isPlaying || isDragging || vacuumDragState.isDragging || isSnapping
+    const active = animationState.isPlaying || isDragging || vacuumDragState.isDragging || cameraController?.transitioning
         || timestamp - lastCameraMotionAt < 250;
     const dense = displayedAtomCount > DENSE_VIEW_ATOMS;
     const interval = 1000 / (active ? (dense ? 30 : 60) : 5);
@@ -961,6 +934,7 @@ function onWindowResize() {
     orthographicCamera.updateProjectionMatrix();
     
     renderer.setSize(viewport.clientWidth, viewport.clientHeight);
+    controls.handleResize();
     requestRender();
 }
 
@@ -4178,8 +4152,7 @@ function renderStructure(structure, preserveState = false) {
         cellOffset: a.cellOffset ? { ...a.cellOffset } : null,
         element: a.element
     })) : [];
-    const savedCameraPos = preserveState ? camera.position.clone() : null;
-    const savedControlsTarget = preserveState ? controls.target.clone() : null;
+    const savedCameraPose = preserveState ? getCameraPose() : null;
     
     // Update axes HUD to reflect actual lattice vectors (for tilted/non-cubic cells)
     if (structure.lattice) {
@@ -4236,11 +4209,8 @@ function renderStructure(structure, preserveState = false) {
     const center = box.getCenter(new THREE.Vector3());
     structureGroup.position.sub(center);
     
-    if (preserveState && savedCameraPos) {
-        // Restore camera position
-        camera.position.copy(savedCameraPos);
-        controls.target.copy(savedControlsTarget);
-        controls.update();
+    if (savedCameraPose) {
+        cameraController.setPose(savedCameraPose, 'rebuild');
         
         // Restore selections with correct mode-aware visuals.
         selectedAtoms = restoreSelectedAtoms(savedSelections);
@@ -4254,10 +4224,12 @@ function renderStructure(structure, preserveState = false) {
         } else {
             updateEditUI();
         }
+        updateCameraClipping();
         updateVacuumHandles();
     } else {
         fitStructureToView();
     }
+    updateCameraControlState();
     requestRender();
 }
 
@@ -4273,22 +4245,11 @@ function getStructureBounds() {
 }
 
 function fitStructureToView(preserveOrientation = false) {
-    cancelCameraAlignment();
-    cleanupVacuumHandles();
-    const box = getStructureBounds();
-    const size = Math.max(box.getSize(new THREE.Vector3()).length(), 1);
-    const direction = preserveOrientation
-        ? camera.position.clone().sub(controls.target).normalize()
-        : new THREE.Vector3(1, 0.8, 1).normalize();
-    const distance = size * 1.5 * Math.hypot(1, 0.8, 1);
-    perspectiveCamera.position.copy(direction).multiplyScalar(distance);
-    orthographicCamera.position.copy(direction).multiplyScalar(distance);
-    orthographicCamera.zoom = 15 / (size * 1.2);
-    orthographicCamera.updateProjectionMatrix();
-    controls.target.set(0, 0, 0);
-    controls.update();
-    updateVacuumHandles();
-    requestRender();
+    const quaternion = preserveOrientation ? camera.quaternion.clone()
+        : cameraMath.orientation([1, 0.8, 1], [0, 1, 0]);
+    const fitted = cameraMath.fit(getStructureBounds(), quaternion, viewport.clientWidth / viewport.clientHeight,
+        orthographicCamera.top - orthographicCamera.bottom, isPerspective ? perspectiveCamera.fov : null);
+    cameraController.setPose(fitted, preserveOrientation ? 'fit' : 'reset');
 }
 
 function escapeHTML(value) {
@@ -4396,9 +4357,9 @@ function jumpToAtom(number) {
     }
     const target = new THREE.Vector3();
     mesh.getWorldPosition(target);
-    camera.position.add(target.clone().sub(controls.target));
-    controls.target.copy(target);
-    controls.update();
+    const pose = getCameraPose();
+    pose.pivot.copy(target);
+    cameraController.setPose(pose, 'focus');
     if (currentMode === 'measure' || isMeasurementSelection) updateMeasurements();
     updateUI_forCurrentMode();
     statusText.textContent = `Selected atom #${index + 1} (${currentStructure.atoms[index].element})`;
@@ -5078,247 +5039,177 @@ function updateModeButtonState() {
 function generatePOSCAR() { return crystalFormats.generatePOSCAR(currentStructure); }
 function generateXYZ() { return crystalFormats.generateXYZ(currentStructure); }
 
-// Soft snap to orthogonal axis view
-// NOTE: All snap logic uses actual lattice vectors (a, b, c), not world axes (x, y, z)
-// This ensures correct behavior for tilted/non-cubic primitive cells
-const snapSettings = {
-    enabled: true,
-    // Visual depth threshold: snap when projected depth < threshold × average cell dimension
-    // Using average dimension as reference provides consistent behavior across all axes
-    visualDepthRatio: 0.08, // 8% of average dimension
-    animationDuration: 300 // ms
-};
+// Camera actions share one controller and the app's animation loop.
+function getCameraPose() {
+    return { quaternion: camera.quaternion.clone(), pivot: controls.target.clone(),
+        distance: camera.position.distanceTo(controls.target), zoom: camera.zoom };
+}
 
-let isSnapping = false;
-let snapAnimation = null;
-let cameraInteractionActive = false;
-let cameraAlignmentTimer = null;
-let cameraAlignmentRevision = 0;
+function updateCameraClipping() {
+    if (!cameraMath || !structureGroup) return;
+    const planes = cameraMath.clipping(getStructureBounds(), getCameraPose());
+    camera.near = planes.near;
+    camera.far = planes.far;
+    camera.updateProjectionMatrix();
+}
 
-// Invalidate both settling timers and animation callbacks when their view changes.
+function applyCameraPose(pose) {
+    camera.quaternion.copy(pose.quaternion);
+    camera.up.set(0, 1, 0).applyQuaternion(pose.quaternion);
+    controls.target.copy(pose.pivot);
+    camera.position.copy(cameraMath.position(pose));
+    camera.zoom = pose.zoom;
+    camera.updateMatrixWorld(true);
+    updateCameraClipping();
+    requestRender();
+}
+
+// TrackballControls stores inertia in private closure state. Recreate its
+// adapter to discard that state while preserving the camera and public options.
+function clearManualCameraMotion() {
+    if (typeof THREE.TrackballControls !== 'function' || !renderer) return;
+    const previous = controls;
+    const pivot = previous ? previous.target.clone() : new THREE.Vector3();
+    const position = camera.position.clone(), quaternion = camera.quaternion.clone(), up = camera.up.clone();
+    const enabled = previous ? previous.enabled : true;
+    if (previous) previous.dispose();
+    controls = new THREE.TrackballControls(camera, renderer.domElement);
+    controls.target.copy(pivot);
+    camera.position.copy(position); camera.quaternion.copy(quaternion); camera.up.copy(up);
+    controls.rotateSpeed = previous?.rotateSpeed ?? 3;
+    controls.zoomSpeed = previous?.zoomSpeed ?? 1.2;
+    controls.panSpeed = previous?.panSpeed ?? 0.8;
+    controls.staticMoving = previous?.staticMoving ?? false;
+    controls.dynamicDampingFactor = previous?.dynamicDampingFactor ?? 0.15;
+    controls.noRotate = previous?.noRotate ?? false;
+    controls.noZoom = previous?.noZoom ?? false;
+    controls.noPan = previous?.noPan ?? false;
+    controls.minDistance = 2; controls.maxDistance = Infinity;
+    controls.keys = []; // Camera keys must not intercept coordinate/text input.
+    controls.enabled = enabled;
+    controls.update();
+    manualCameraTickAt = performance.now();
+    controls.addEventListener('change', () => {
+        lastCameraMotionAt = performance.now();
+        requestRender();
+    });
+    controls.addEventListener('start', () => {
+        if (vacuumDragState.isDragging) return;
+        cameraController.begin(cameraInputKind, performance.now());
+        cleanupVacuumHandles();
+        updateVacuumHintUI(null);
+    });
+    controls.addEventListener('end', () => {
+        const time = performance.now();
+        controls.update(); // Consume the gesture's final input before measuring it.
+        manualCameraTickAt = time;
+        cameraController.end(time);
+        if (!cameraController.settling) updateVacuumHandles();
+    });
+}
+
 function cancelCameraAlignment() {
-    cameraAlignmentRevision++;
-    if (cameraAlignmentTimer !== null) clearTimeout(cameraAlignmentTimer);
-    if (snapAnimation !== null) cancelAnimationFrame(snapAnimation);
-    cameraAlignmentTimer = null;
-    snapAnimation = null;
-    isSnapping = false;
+    if (!cameraController) return;
+    const transitioning = cameraController.transitioning;
+    cameraController.cancel();
+    if (!transitioning) clearManualCameraMotion();
 }
 
-function scheduleCameraAlignment() {
-    if (cameraAlignmentTimer !== null) clearTimeout(cameraAlignmentTimer);
-    const revision = cameraAlignmentRevision;
-    cameraAlignmentTimer = setTimeout(() => {
-        cameraAlignmentTimer = null;
-        if (revision !== cameraAlignmentRevision || cameraInteractionActive || vacuumDragState.isDragging) return;
-        checkAndSnapToAxis();
-        updateVacuumHandles();
-    }, 100);
-}
-
-// Get orthogonal view directions based on lattice vectors
-function getOrthogonalDirections() {
-    if (!currentStructure || !currentStructure.lattice) return [];
-    
-    const lattice = currentStructure.lattice;
-    
-    // Get lattice vector lengths
-    const aVec = new THREE.Vector3(lattice[0][0], lattice[0][1], lattice[0][2]);
-    const bVec = new THREE.Vector3(lattice[1][0], lattice[1][1], lattice[1][2]);
-    const cVec = new THREE.Vector3(lattice[2][0], lattice[2][1], lattice[2][2]);
-    
-    const aLen = aVec.length();
-    const bLen = bVec.length();
-    const cLen = cVec.length();
-    
-    // Average cell dimension - universal reference for visual depth
-    const avgDim = (aLen + bLen + cLen) / 3;
-    
-    const a = aVec.clone().normalize();
-    const b = bVec.clone().normalize();
-    const c = cVec.clone().normalize();
-    
-    // Each direction has: normalized direction, name, up vector, depth length, and avgDim reference
-    const directions = [
-        { dir: a.clone(), name: '+a', baseUp: c.clone(), depthLen: aLen, avgDim },
-        { dir: a.clone().negate(), name: '-a', baseUp: c.clone(), depthLen: aLen, avgDim },
-        { dir: b.clone(), name: '+b', baseUp: c.clone(), depthLen: bLen, avgDim },
-        { dir: b.clone().negate(), name: '-b', baseUp: c.clone(), depthLen: bLen, avgDim },
-        { dir: c.clone(), name: '+c', baseUp: b.clone(), depthLen: cLen, avgDim },
-        { dir: c.clone().negate(), name: '-c', baseUp: b.clone(), depthLen: cLen, avgDim }
-    ];
-    
-    return directions;
-}
-
-// Get 8 valid up vectors for a face (0°, 45°, 90°, 135°, 180°, 225°, 270°, 315° roll)
-// This allows finer control especially for tilted/non-cubic cells
-function getValidUpVectors(viewDir, baseUp) {
-    const ups = [];
-    
-    // Compute right vector (perpendicular to both viewDir and baseUp)
-    const right = new THREE.Vector3().crossVectors(baseUp, viewDir).normalize();
-    
-    // Generate 8 orientations at 45° increments
-    for (let i = 0; i < 8; i++) {
-        const angle = (i * 45) * Math.PI / 180;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        
-        // Rotate baseUp around viewDir by angle
-        // up_rotated = baseUp * cos(angle) + right * sin(angle)
-        const rotatedUp = new THREE.Vector3()
-            .addScaledVector(baseUp, cos)
-            .addScaledVector(right, sin)
-            .normalize();
-        
-        ups.push(rotatedUp);
-    }
-    
-    return ups;
-}
-
-// Check if camera is close to an orthogonal direction and snap if needed
-// Uses visual depth criterion: snap when projected depth is small relative to average cell size
-function checkAndSnapToAxis() {
-    if (!snapSettings.enabled || isSnapping || cameraInteractionActive || vacuumDragState.isDragging || !hasLattice(currentStructure)) return;
-    if (isPerspective) return; // Only snap in orthographic mode
-    
-    const directions = getOrthogonalDirections();
-    if (directions.length === 0) return;
-    
-    // Get current camera direction (from target to camera - where camera is looking FROM)
-    const cameraFromDir = new THREE.Vector3();
-    cameraFromDir.subVectors(camera.position, controls.target).normalize();
-    
-    // Find the direction with the smallest visual depth ratio
-    // Visual depth = projected depth / average cell dimension
-    let closestDir = null;
-    let closestBaseUp = null;
-    let closestName = '';
-    let smallestVisualDepth = Infinity;
-    
-    for (const { dir, name, baseUp, depthLen, avgDim } of directions) {
-        // Must be facing towards this direction (dot > 0)
-        const dot = cameraFromDir.dot(dir);
-        if (dot <= 0) continue;
-        
-        // Angle from this axis
-        const angle = Math.acos(Math.min(1, Math.max(-1, dot)));
-        
-        // Projected depth = depthLen × sin(angle)
-        // Normalized by average cell dimension for consistent visual criterion
-        const visualDepth = (depthLen * Math.sin(angle)) / avgDim;
-        
-        if (visualDepth < smallestVisualDepth) {
-            smallestVisualDepth = visualDepth;
-            closestDir = dir.clone();
-            closestBaseUp = baseUp.clone();
-            closestName = name;
-        }
-    }
-    
-    // Snap when visual depth is below threshold
-    if (!closestDir || smallestVisualDepth > snapSettings.visualDepthRatio) return;
-    
-    // Now find the closest roll orientation (0°, 90°, 180°, 270°)
-    const validUps = getValidUpVectors(closestDir, closestBaseUp);
-    const currentUp = camera.up.clone().normalize();
-    
-    let closestUp = validUps[0];
-    let closestUpDot = -Infinity;
-    
-    for (const up of validUps) {
-        const dot = currentUp.dot(up);
-        if (dot > closestUpDot) {
-            closestUpDot = dot;
-            closestUp = up;
-        }
-    }
-    
-    // Animate to the snapped position with the closest up vector
-    animateSnapToDirection(closestDir, closestUp, closestName);
-}
-
-// Smoothly animate camera to snap to direction using quaternion interpolation
-function animateSnapToDirection(targetDir, targetUp, axisName) {
-    if (isSnapping) return;
-    isSnapping = true;
-    cleanupVacuumHandles();
-    const revision = cameraAlignmentRevision;
-    
-    const distance = camera.position.distanceTo(controls.target);
-    
-    // Target position: target + direction * distance
-    const targetPosition = new THREE.Vector3()
-        .copy(controls.target)
-        .addScaledVector(targetDir, distance);
-    
-    // Create quaternions for start and end orientations
-    const startQuaternion = camera.quaternion.clone();
-    
-    // Create a temporary camera to compute target orientation with FIXED up vector
-    const tempCamera = camera.clone();
-    tempCamera.position.copy(targetPosition);
-    tempCamera.up.copy(targetUp); // Use the fixed up vector from crystallographic convention
-    tempCamera.lookAt(controls.target);
-    let targetQuaternion = tempCamera.quaternion.clone();
-    
-    // CRITICAL: Ensure we take the shortest path for slerp
-    // If dot product is negative, negate target quaternion to avoid "long way around"
-    if (startQuaternion.dot(targetQuaternion) < 0) {
-        targetQuaternion = new THREE.Quaternion(
-            -targetQuaternion.x,
-            -targetQuaternion.y,
-            -targetQuaternion.z,
-            -targetQuaternion.w
-        );
-    }
-    
-    const startPosition = camera.position.clone();
-    const startUp = camera.up.clone();
-    const startTime = performance.now();
-    
-    function animateFrame() {
-        if (revision !== cameraAlignmentRevision) return;
-        const elapsed = performance.now() - startTime;
-        const progress = Math.min(elapsed / snapSettings.animationDuration, 1);
-        
-        // Ease out cubic for smooth deceleration
-        const eased = 1 - Math.pow(1 - progress, 3);
-        
-        // Interpolate position
-        camera.position.lerpVectors(startPosition, targetPosition, eased);
-        
-        // Interpolate orientation using quaternion slerp (avoids gimbal lock)
-        camera.quaternion.slerpQuaternions(startQuaternion, targetQuaternion, eased);
-        
-        // Also interpolate up vector for controls consistency
-        camera.up.lerpVectors(startUp, targetUp, eased).normalize();
-        
-        // Update controls
-        controls.update();
-        
-        if (progress < 1) {
-            snapAnimation = requestAnimationFrame(animateFrame);
-        } else {
-            // Finalize - ensure exact alignment
-            camera.position.copy(targetPosition);
-            camera.quaternion.copy(targetQuaternion);
-            camera.up.copy(targetUp);
-            controls.update();
-            
-            isSnapping = false;
-            snapAnimation = null;
-            statusText.textContent = `Aligned to ${axisName} axis`;
-            statusText.className = '';
-            
-            // Update vacuum handles now that we're aligned
+function initCameraController() {
+    cameraMath = CrystalCamera.createMath(THREE);
+    clearManualCameraMotion();
+    cameraController = CrystalCamera.createController({
+        math: cameraMath, getPose: getCameraPose, applyPose: applyCameraPose,
+        clearMotion: clearManualCameraMotion,
+        getAxes: () => hasLattice(currentStructure) ? cameraMath.axes(currentStructure.lattice) : [],
+        reducedMotion: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        onStart: () => { cleanupVacuumHandles(); updateVacuumHintUI(null); requestRender(); },
+        onComplete: (kind, name) => {
             updateVacuumHandles();
+            if (kind === 'automatic' || kind === 'explicit') {
+                statusText.textContent = `Aligned to ${name} axis`;
+                statusText.className = '';
+            }
+            requestRender();
+        }
+    });
+    // Capture before TrackballControls begins a gesture, so replacing its
+    // adapter cannot discard the pointerdown that should interrupt a transition.
+    document.addEventListener('pointerdown', event => {
+        if (activeEditPointerId !== null) return;
+        cancelCameraAlignment();
+        if (event.target === renderer.domElement) {
+            cameraInputKind = event.button === 0 ? 'rotate' : event.button === 1 ? 'zoom' : 'pan';
+        } else updateVacuumHandles();
+    }, { capture: true });
+    document.addEventListener('wheel', event => {
+        if (activeEditPointerId !== null) return;
+        cancelCameraAlignment();
+        cameraInputKind = 'zoom';
+        if (event.target !== renderer.domElement) updateVacuumHandles();
+    }, { capture: true, passive: true });
+    renderer.domElement.addEventListener('touchstart', event => {
+        cancelCameraAlignment();
+        cameraInputKind = event.touches.length === 1 ? 'rotate' : 'zoom';
+    }, { capture: true, passive: true });
+    const interrupt = () => { cancelCameraAlignment(); updateVacuumHandles(); };
+    window.addEventListener('blur', interrupt);
+    document.addEventListener('keydown', event => {
+        if (!['Shift', 'Control', 'Alt', 'Meta'].includes(event.key) && activeEditPointerId === null) interrupt();
+    }, { capture: true });
+    renderer.domElement.addEventListener('pointercancel', interrupt);
+}
+
+function updateCamera(time) {
+    if (!cameraController) { controls.update(); return; }
+    const before = cameraController.phase;
+    if (!cameraController.transitioning) {
+        // The legacy controls damping is per-update. A fixed simulation step
+        // keeps its decay consistent across display rates, with bounded catch-up.
+        const step = CrystalCamera.POLICY.controlsStepMilliseconds;
+        if (time - manualCameraTickAt > 250) manualCameraTickAt = time - step;
+        while (time - manualCameraTickAt >= step && !cameraController.transitioning) {
+            controls.update();
+            manualCameraTickAt += step;
+            cameraController.tick(manualCameraTickAt);
         }
     }
-    
-    animateFrame();
+    if (cameraController.transitioning) {
+        manualCameraTickAt = time;
+        cameraController.tick(time);
+    }
+    const handleAxis = currentMode === 'edit' && settings.showCell && !vacuumDragState.isDragging
+        ? getCurrentAxisAlignment()?.axis || null : null;
+    if (cameraController.phase === 'idle' && (before !== 'idle'
+        || vacuumDragState.currentAxis !== handleAxis)) updateVacuumHandles();
+}
+
+function updateCameraControlState() {
+    if (!document.querySelectorAll || !cameraController) return;
+    const available = hasLattice(currentStructure) && cameraMath.axes(currentStructure.lattice).length === 6;
+    document.querySelectorAll('[data-camera-axis]').forEach(button => { button.disabled = !available; });
+    document.getElementById('autoSnap').disabled = !available;
+    document.getElementById('fitView').disabled = !currentStructure;
+    document.getElementById('resetView').disabled = !currentStructure;
+}
+
+function setupCameraControls() {
+    document.getElementById('autoSnap').addEventListener('change', event => {
+        cancelCameraAlignment();
+        cameraController.autoSnap = event.target.checked;
+        updateVacuumHandles();
+    });
+    document.getElementById('fitView').addEventListener('click', () => {
+        if (currentStructure) fitStructureToView(true);
+    });
+    document.querySelectorAll('[data-camera-axis]').forEach(button => {
+        button.addEventListener('click', () => {
+            if (!hasLattice(currentStructure)) return;
+            const axis = cameraMath.axes(currentStructure.lattice).find(value => value.name === button.dataset.cameraAxis);
+            if (axis) cameraController.align(cameraMath.canonical(axis), performance.now(), 'explicit', axis.name);
+        });
+    });
+    updateCameraControlState();
 }
 
 // ==========================================
@@ -5466,7 +5357,7 @@ function getFaceCornerPoints(lattice, extendAxisIdx, handleType) {
 function updateVacuumHandles() {
     cleanupVacuumHandles();
     
-    if (currentMode !== 'edit' || !settings.showCell || isSnapping || cameraInteractionActive
+    if (currentMode !== 'edit' || !settings.showCell || cameraController?.transitioning || cameraController?.interacting || cameraController?.settling
         || vacuumDragState.isDragging || !hasLattice(currentStructure)) {
         updateVacuumHintUI(null);
         return;
@@ -6285,6 +6176,7 @@ function init() {
     initScene();
     setupDragDrop();
     setupControls();
+    setupCameraControls();
     setupModeToggle();
     setupPeriodicControls();
     setupUndoKeyboardShortcut();

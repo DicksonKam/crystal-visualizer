@@ -210,39 +210,28 @@ for (const [name, lattice] of Object.entries(cells)) {
     });
 }
 
-test('real snap and wheel transitions restore handles without stale alignment callbacks', async ({ page }) => {
+test('axis alignment and wheel input restore handles without obsolete transitions', async ({ page }) => {
     await upload(page, poscar(cells.cubic), 'frame.poscar');
     await page.locator('[data-mode="edit"]').click();
-    await align(page, 0, -1, 4);
-    await page.evaluate(() => {
-        controls.dispatchEvent({ type: 'end' });
-    });
+    await page.locator('[data-camera-axis="-a"]').click();
     await expect(page.locator('#statusText')).toContainText('Aligned to -a axis');
     await expect.poll(() => page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
-    const canvas = page.locator('canvas[aria-label^="3D structure"]');
-    const box = await canvas.boundingBox();
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    const box = await page.locator('canvas[aria-label^="3D structure"]').boundingBox();
+    await page.mouse.move(box.x + box.width * .8, box.y + box.height * .2);
     await page.mouse.wheel(0, 100);
-    await expect.poll(() => page.evaluate(() => cameraAlignmentTimer === null && !isSnapping && vacuumDragState.handles.length === 8)).toBe(true);
-    // A new camera interaction invalidates the pending settling callback.
-    await page.evaluate(() => {
-        controls.dispatchEvent({ type: 'end' });
-        controls.dispatchEvent({ type: 'start' });
-    });
-    await page.waitForTimeout(150);
-    expect(await page.evaluate(() => ({ snapping: isSnapping, handles: vacuumDragState.handles.length }))).toEqual({ snapping: false, handles: 0 });
-    await page.evaluate(() => controls.dispatchEvent({ type: 'end' }));
+    await expect.poll(() => page.evaluate(() => cameraController.phase === 'idle' && vacuumDragState.handles.length === 8)).toBe(true);
+    // Mode changes cancel a real transition before its completion can restore handles.
+    await page.evaluate(() => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[4]), performance.now(), 'explicit', '+c'));
     await page.locator('[data-mode="measure"]').click();
-    await page.waitForTimeout(150);
-    expect(await page.evaluate(() => ({ snapping: isSnapping, handles: vacuumDragState.handles.length }))).toEqual({ snapping: false, handles: 0 });
+    await page.waitForTimeout(400);
+    expect(await page.evaluate(() => ({ phase: cameraController.phase, handles: vacuumDragState.handles.length }))).toEqual({ phase: 'idle', handles: 0 });
     await page.locator('[data-mode="edit"]').click();
-    await align(page, 0, -1, 4);
     await page.evaluate(() => {
-        checkAndSnapToAxis();
+        cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[0]), performance.now(), 'explicit', '+a');
         loadStructureFromText('1\nmolecule\nH 0 0 0\n', 'replacement.xyz');
     });
     const position = await page.evaluate(() => camera.position.toArray());
     await page.waitForTimeout(400);
     expect(await page.evaluate(() => camera.position.toArray())).toEqual(position);
-    expect(await page.evaluate(() => ({ snapping: isSnapping, handles: vacuumDragState.handles.length }))).toEqual({ snapping: false, handles: 0 });
+    expect(await page.evaluate(() => ({ phase: cameraController.phase, handles: vacuumDragState.handles.length }))).toEqual({ phase: 'idle', handles: 0 });
 });

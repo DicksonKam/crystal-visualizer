@@ -122,7 +122,8 @@
                 const tan = Math.tan(radians(fov / 2));
                 distance = Math.max(distance, ...points.flatMap(point => [point.z + Math.abs(point.x) * padding / (tan * aspect), point.z + Math.abs(point.y) * padding / tan]));
             }
-            const pose = { pivot, quaternion: quaternion.clone(), distance, zoom: frustumHeight / (2 * padding * Math.max(y, x / aspect)) };
+            const pose = { pivot, quaternion: quaternion.clone(), distance,
+                zoom: fov === null ? frustumHeight / (2 * padding * Math.max(y, x / aspect)) : 1 };
             if (![distance, pose.zoom, ...pivot.toArray()].every(Number.isFinite)) throw new Error('Structure cannot be fitted to a finite camera view');
             return { ...pose, ...clipping(bounds, pose) };
         }
@@ -191,6 +192,13 @@
                 if (reducedMotion()) this.tick(time);
                 return true;
             },
+            setPose(pose, kind) {
+                this.cancel();
+                onStart(kind);
+                applyPose(math.clonePose(pose));
+                clearMotion();
+                onComplete(kind, '');
+            },
             tick(time) {
                 if (transition) {
                     const current = transition;
@@ -206,16 +214,19 @@
                 }
                 const { pose, speed } = this.sample(time);
                 if (!pending || !this.autoSnap) return;
-                const axis = math.nearestAxis(pose.quaternion, getAxes(), pending.candidate, policy);
-                if (!axis) { pending.candidate = pending.stableAt = pending.quietAt = null; return; }
-                if (axis.name !== pending.candidate) {
-                    pending.candidate = axis.name;
-                    pending.stableAt = time;
-                    pending.quietAt = null;
-                }
                 if (speed < policy.settledSpeedDegrees) {
                     if (pending.quietAt === null) pending.quietAt = time;
                 } else pending.quietAt = null;
+                const axis = math.nearestAxis(pose.quaternion, getAxes(), pending.candidate, policy);
+                if (!axis) {
+                    pending.candidate = pending.stableAt = null;
+                    if (pending.quietAt !== null && time - pending.quietAt >= policy.settledMilliseconds) pending = null;
+                    return;
+                }
+                if (axis.name !== pending.candidate) {
+                    pending.candidate = axis.name;
+                    pending.stableAt = time;
+                }
                 if (pending.quietAt === null || time - pending.quietAt < policy.settledMilliseconds || time - pending.stableAt < policy.settledMilliseconds) return;
                 const approach = math.degrees(math.back(pending.reference).angleTo(axis.direction) - math.back(pose.quaternion).angleTo(axis.direction));
                 if (approach <= policy.intentNoiseDegrees) { pending = null; return; }

@@ -26,9 +26,13 @@
             // Line 0: Comment
             const comment = lines[0];
 
-            // Line 1: Universal scaling factor
-            const scale = Number(lines[1]);
-            if (!Number.isFinite(scale) || scale === 0) throw new Error('Invalid POSCAR: scale factor must be non-zero');
+            // Line 1: one universal factor (or target volume), or three Cartesian factors.
+            const scaleParts = lines[1].split(/\s+/).map(Number);
+            if (![1, 3].includes(scaleParts.length) || scaleParts.some(value => !Number.isFinite(value) || value === 0)
+                || (scaleParts.length === 3 && scaleParts.some(value => value < 0))) {
+                throw new Error('Invalid POSCAR: expected one non-zero scale factor or three positive factors');
+            }
+            const scale = scaleParts.length === 1 ? scaleParts[0] : scaleParts;
 
             // Lines 2-4: Lattice vectors
             const lattice = [];
@@ -41,8 +45,11 @@
             }
             // A negative scale specifies the desired cell volume in Å³.
             const determinant = requireFiniteCell(lattice, 'POSCAR');
-            const lengthScale = scale > 0 ? scale : Math.cbrt(-scale / Math.abs(determinant));
-            lattice.forEach(vector => vector.forEach((value, index) => { vector[index] = value * lengthScale; }));
+            const lengthScale = scaleParts.length === 1
+                ? (scale > 0 ? scale : Math.cbrt(-scale / Math.abs(determinant)))
+                : null;
+            const cartesianScales = scaleParts.length === 3 ? scaleParts : [lengthScale, lengthScale, lengthScale];
+            lattice.forEach(vector => vector.forEach((value, index) => { vector[index] = value * cartesianScales[index]; }));
             requireFiniteCell(lattice, 'POSCAR');
 
             // Line 5: Element symbols (VASP 5+ format)
@@ -135,9 +142,9 @@
                         z = cartZ;
                     } else {
                         // In POSCAR, Cartesian positions are scaled along with lattice vectors.
-                        x *= lengthScale;
-                        y *= lengthScale;
-                        z *= lengthScale;
+                        x *= cartesianScales[0];
+                        y *= cartesianScales[1];
+                        z *= cartesianScales[2];
                     }
                     if (![x, y, z].every(Number.isFinite)) {
                         throw new Error(`Invalid POSCAR: scaled coordinates on line ${atomIndex + 1} are not finite`);
@@ -222,16 +229,12 @@
                 const headerLine = lines[lineIndex];
 
                 // Check for configuration header: "Direct configuration= N" or just "Direct"
-                if (!headerLine.toLowerCase().startsWith('direct')) {
+                if (!headerLine) {
                     lineIndex++;
                     continue;
                 }
-
-                // Extract frame number if present (for reference, not strictly needed)
-                let frameNumber = frames.length + 1;
-                const configMatch = headerLine.match(/configuration\s*=\s*(\d+)/i);
-                if (configMatch) {
-                    frameNumber = parseInt(configMatch[1]);
+                if (!/^direct(?:\s+configuration\s*=\s*\d+)?$/i.test(headerLine)) {
+                    throw new Error(`Invalid XDATCAR: expected a Direct frame header on line ${lineIndex + 1}`);
                 }
 
                 lineIndex++; // Move past header
@@ -434,6 +437,7 @@
 
             const atoms = [];
             let parsed = 0;
+            let lastAtomLine = countIndex + 1;
             for (let i = countIndex + 2; i < rawLines.length && parsed < nAtoms; i++) {
                 const line = rawLines[i];
                 if (!line) continue;
@@ -456,10 +460,16 @@
                     selectiveDynamics: [true, true, true]
                 });
                 parsed++;
+                lastAtomLine = i;
             }
 
             if (parsed !== nAtoms) {
                 throw new Error(`XYZ file declared ${nAtoms} atoms but found ${parsed}`);
+            }
+            for (let i = lastAtomLine + 1; i < rawLines.length; i++) {
+                if (rawLines[i]) {
+                    throw new Error('XYZ file contains another frame or trailing data; only one frame is supported');
+                }
             }
 
             let lattice = parseExtendedXYZLattice(rawComment);

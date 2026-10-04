@@ -55,3 +55,33 @@ test('XDATCAR rejects atom counts larger than the available frame', () => {
     const xdatcar = ['cell', '1', '2 0 0', '0 2 0', '0 0 2', 'H', '9007199254740991', 'Direct configuration= 1', '0 0 0'].join('\n');
     assert.throws(() => strictFormats.parseXDATCAR(xdatcar), /fewer atom lines/);
 });
+
+test('XDATCAR rejects unexpected frame text instead of silently dropping data', () => {
+    const frame = ['cell', '1', '2 0 0', '0 2 0', '0 0 2', 'H', '1', 'Direct configuration= 1', '0 0 0'].join('\n');
+    assert.throws(() => strictFormats.parseXDATCAR(`${frame}\nunfinished frame`), /expected a Direct frame header on line 10/);
+    assert.throws(() => strictFormats.parseXDATCAR(frame.replace('Direct configuration= 1', 'Direct configuration= nope')), /expected a Direct frame header on line 8/);
+    const withSeparator = `${frame}\n\nDirect configuration= 2\n0.5 0.5 0.5\n`;
+    const trajectory = strictFormats.parseXDATCAR(withSeparator);
+    assert.equal(trajectory.frames.length, 2);
+    assert.equal(strictFormats.parseXDATCAR(strictFormats.generateXDATCAR(trajectory)).frames.length, 2);
+});
+
+test('XYZ rejects a second frame instead of exporting only the first', () => {
+    const firstFrame = '1\nfirst frame\nH 0 0 0\n';
+    assert.throws(() => strictFormats.parseXYZ(`${firstFrame}1\nsecond frame\nH 1 0 0\n`), /only one frame is supported/);
+    assert.equal(strictFormats.parseXYZ(`${firstFrame}\n`).atoms.length, 1);
+});
+
+test('POSCAR applies three scale factors to lattice components and Cartesian positions', () => {
+    const header = ['anisotropic cell', '2 3 4', '1 1 0', '0 2 1', '0 0 3', 'H', '1'];
+    const cartesian = strictFormats.parsePOSCAR([...header, 'Cartesian', '0.5 0.25 0.5'].join('\n'));
+    assert.deepEqual(cartesian.lattice, [[2, 3, 0], [0, 6, 4], [0, 0, 12]]);
+    assert.deepEqual([cartesian.atoms[0].position.x, cartesian.atoms[0].position.y, cartesian.atoms[0].position.z], [1, 0.75, 2]);
+    assert.deepEqual(cartesian.scale, [2, 3, 4]);
+    const direct = strictFormats.parsePOSCAR([...header, 'Direct', '0.5 0.25 0.5'].join('\n'));
+    assert.deepEqual([direct.atoms[0].position.x, direct.atoms[0].position.y, direct.atoms[0].position.z], [1, 3, 7]);
+    const roundTrip = strictFormats.parsePOSCAR(strictFormats.generatePOSCAR(direct));
+    assert.deepEqual([roundTrip.atoms[0].position.x, roundTrip.atoms[0].position.y, roundTrip.atoms[0].position.z], [1, 3, 7]);
+    assert.throws(() => strictFormats.parsePOSCAR([...header.slice(0, 1), '2 0 4', ...header.slice(2), 'Direct', '0 0 0'].join('\n')), /three positive factors/);
+    assert.throws(() => strictFormats.parsePOSCAR([...header.slice(0, 1), '2 -3 4', ...header.slice(2), 'Direct', '0 0 0'].join('\n')), /three positive factors/);
+});

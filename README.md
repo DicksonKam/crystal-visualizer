@@ -40,6 +40,15 @@ Automatic snapping uses the existing drag controls and adds no buttons or panels
 
 Use **Find atom by number** in the Atoms panel to select and center an atom that is hard to click. Focusing an atom moves the camera and pivot together, preserving orientation and zoom while canceling alignment. In Edit mode, selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
 Keyboard focus stays on coordinate and measurement controls when their panels refresh. Clearing a selection returns focus to Find atom by number.
+
+Drag the divider between the left panel and the structure view to resize the
+panel; pull it fully left to collapse it and drag it right to reopen. Double-click
+the divider to collapse or restore it. When focused, Left/Right resize it,
+Home collapses it, End widens it, and Enter toggles collapse. Escape cancels an
+unfinished divider drag. The width is remembered locally when storage is
+available and bounded to keep the structure view usable on smaller screens.
+Filenames and titles are shown in full with wrapping; the toolbar wraps on
+narrow screens.
 Shift and add-atom inputs reject invalid or unrepresentable coordinates without changing the structure or undo history.
 **Center in Cell** uses periodic coordinates, so a cluster that crosses a cell boundary stays together when moved to the middle.
 

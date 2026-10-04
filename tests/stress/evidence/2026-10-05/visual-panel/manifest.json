@@ -1,0 +1,88 @@
+{
+  "timestampUTC": "2026-10-04T19:10:51.326135+00:00",
+  "verification": {
+    "unitTestsPassed": 141,
+    "browserTestsPassed": 62,
+    "browserRuntime": "5.4 minutes",
+    "lastRun": {
+      "status": "passed",
+      "failedTests": []
+    }
+  },
+  "visualSequence": {
+    "fixture": "Al_fcc_cartesian.poscar",
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "width": 900,
+        "height": 760
+      }
+    ],
+    "cyclesPerViewport": 16,
+    "gesturesPerCycle": [
+      "divider drag",
+      "boundary atom drag",
+      "first frame drag",
+      "two undo",
+      "two redo",
+      "two undo"
+    ],
+    "capturedImagesPerViewport": 7,
+    "layoutViewports": [
+      1440,
+      800,
+      390
+    ],
+    "manualInspection": "Expanded/collapsed layouts, complete long text, preview plane, frame preview, and rotated view inspected from actual rendered PNGs. Representative images retained."
+  },
+  "sourceSha256": {
+    "app.js": "a368fcb67ccb8f804f6e5d701ac1e3f9fd86888aa4ead1cecb60e568102bea2a",
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "styles.css": "b37cc107e9d157ad326a332c3bffde0525af06e84de86674d7285c1f77ca9c62",
+    "index.html": "f5da762098de6fafa60ca691eb2e96ce30542e38d3342407a3bffcf105e72698",
+    "tests/browser/visual-edit.spec.cjs": "bd13973eb74ffc95ea55ef14f4f0941f586d3f5d441eab0dbc2e950485d401a1",
+    "tests/browser/sidebar-layout.spec.cjs": "92d58e45c3054d222a15a7ed14d7aa58c7f382f7f8619dce76b72c385402081e"
+  },
+  "screenshots": [
+    {
+      "file": "expanded-800.png",
+      "sha256": "79450e9074ecb8e694bbec57bf71762cc4e12375e5560a5c201d82022de0e9d1",
+      "visuallyInspected": true
+    },
+    {
+      "file": "expanded-390.png",
+      "sha256": "63aecb3eb070dcb457d201005a8fd615d4401448cb5196d21488e07fcaef646b",
+      "visuallyInspected": true
+    },
+    {
+      "file": "collapsed-800.png",
+      "sha256": "a04ded812a555840aa7ba4ee053ba883826e4d78cfa26f3adace9592564e1451",
+      "visuallyInspected": true
+    },
+    {
+      "file": "frame-preview-900.png",
+      "sha256": "316a671e34f27d61a34b9ca60f96e6af6d18b4c7252c11677a6f9d5775cdfb9a",
+      "visuallyInspected": true
+    },
+    {
+      "file": "atom-preview-1440.png",
+      "sha256": "42f46b2c0d2b103d9e3b8a044e61961abefd516e416be8617e3dd5a707d9a018",
+      "visuallyInspected": true
+    },
+    {
+      "file": "rotated-900.png",
+      "sha256": "83116e9dc3d83ab4a98e54cdd802498d2efa6dfe9625da56b41056aed3534637",
+      "visuallyInspected": true
+    }
+  ],
+  "limitations": [
+    "Repeated synthetic FCC sequence is not exhaustive arbitrary user behavior.",
+    "Initial alignment is prepared in the harness, then gestures and final rotation use real pointer events.",
+    "An initial visual run was intentionally interrupted because its camera setup omitted clipping updates; corrected runs passed.",
+    "Chromium software WebGL; no new large-structure or multi-GPU performance claim.",
+    "Clipped periodic-neighbor bonds are retained; their display policy is a separate pending preference."
+  ]
+}

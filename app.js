@@ -778,6 +778,7 @@ function initScene() {
     
     // Handle resize
     window.addEventListener('resize', onWindowResize);
+    CrystalLayout.initSidebar(onWindowResize);
     
     // Handle mouse events for atom selection and dragging
     // Use capture phase to ensure we handle events before OrbitControls/TrackballControls
@@ -849,6 +850,7 @@ function animate(timestamp) {
 }
 
 function onWindowResize() {
+    if (!viewport.clientWidth || !viewport.clientHeight) return;
     const aspect = viewport.clientWidth / viewport.clientHeight;
     const frustumSize = 15;
     
@@ -4074,7 +4076,7 @@ function updateUI(structure) {
     structureInfo.innerHTML = `
         <div class="info-item"><span class="info-label">Type</span><span class="info-value">${fileTypeBadge}</span></div>
         <div class="info-item"><span class="info-label">File</span><span class="info-value" title="${escapeHTML(currentFilename || '')}">${escapeHTML(currentFilename || 'Untitled')}</span></div>
-        <div class="info-item"><span class="info-label">Title</span><span class="info-value" title="${escapeHTML(structure.comment)}">${escapeHTML(structure.comment.substring(0, 20))}</span></div>
+        <div class="info-item"><span class="info-label">Title</span><span class="info-value" title="${escapeHTML(structure.comment)}">${escapeHTML(structure.comment)}</span></div>
         <div class="info-item"><span class="info-label">Total Atoms</span><span class="info-value">${structure.atoms.length}</span></div>
         ${latticeInfo}
         ${structure.isXYZ && structure.hasExplicitLattice ? `<div class="info-item"><span class="info-label">Periodic axes</span><span class="info-value">${['a', 'b', 'c'].filter((_, axis) => getPeriodicAxes(structure)[axis]).join(', ') || 'None'}</span></div>` : ''}

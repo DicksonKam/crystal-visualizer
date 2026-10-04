@@ -197,8 +197,9 @@ body {
 
 /* === Sidebar === */
 .sidebar {
-    width: 280px;
-    min-width: 280px;
+    width: var(--sidebar-width, 280px);
+    min-width: 0;
+    flex-shrink: 0;
     background: var(--bg-secondary);
     border-right: 1px solid var(--border-color);
     display: flex;
@@ -244,10 +245,15 @@ body {
 }
 
 .info-label {
+    flex-shrink: 0;
+    margin-right: .75rem;
     color: var(--text-secondary);
 }
 
 .info-value {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: right;
     color: var(--accent-cyan);
     font-weight: 500;
 }
@@ -801,6 +807,7 @@ body.edit-mode-active .panel-title {
 
 /* === Viewport === */
 .viewport-container {
+    min-width: 0;
     flex: 1;
     position: relative;
     overflow: hidden;
@@ -1250,8 +1257,7 @@ body.edit-mode-active .panel-title {
 /* === Responsive === */
 @media (max-width: 768px) {
     .sidebar {
-        width: 240px;
-        min-width: 240px;
+        width: var(--sidebar-width, 240px);
     }
     
     .controls-hint {
@@ -1834,4 +1840,36 @@ body.edit-mode-active .panel-title {
     .fps-control {
         display: none;
     }
+}
+
+/* The divider stays reachable when the panel is collapsed. */
+.sidebar[aria-hidden="true"] { visibility: hidden; border: 0; }
+.sidebar-divider {
+    flex: 0 0 10px;
+    cursor: col-resize;
+    touch-action: none;
+    background: var(--bg-secondary);
+    position: relative;
+}
+.sidebar-divider::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 42px;
+    top: calc(50% - 21px);
+    left: 3px;
+    border-radius: 3px;
+    background: var(--text-muted);
+}
+.sidebar-divider:hover::after,
+.sidebar-divider:focus-visible::after,
+.resizing-sidebar .sidebar-divider::after { background: var(--accent-cyan); }
+.sidebar-divider:focus-visible { outline: 1px solid var(--accent-cyan); outline-offset: -1px; }
+.resizing-sidebar { user-select: none; cursor: col-resize; }
+
+@media (max-width: 1100px) {
+    .header { flex-wrap: wrap; gap: .6rem; padding: .6rem 1rem; }
+    .logo-text { white-space: nowrap; }
+    .header-controls { width: 100%; flex-wrap: wrap; }
+    .header-controls > * { flex-shrink: 0; }
 }

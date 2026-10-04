@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=45">
+    <link rel="stylesheet" href="styles.css?v=46">
 </head>
 <body>
     <div id="app">
@@ -110,7 +110,7 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Sidebar -->
-            <aside class="sidebar">
+            <aside class="sidebar" id="sidebar">
                 <div class="panel structure-info">
                     <h3 class="panel-title">Structure Info</h3>
                     <div id="structureInfo" class="info-content">
@@ -226,6 +226,9 @@
                     </div>
                 </div>
             </aside>
+            <div id="sidebarDivider" class="sidebar-divider" role="separator" tabindex="0"
+                 aria-label="Resize left panel" aria-controls="sidebar" aria-orientation="vertical"
+                 aria-valuemin="0" aria-valuenow="280" title="Drag to resize; pull left to collapse. Double-click to collapse or restore."></div>
 
             <!-- 3D Viewport -->
             <div class="viewport-container">
@@ -325,6 +328,7 @@
     <script src="history.js?v=1"></script>
     <script src="camera.js?v=5"></script>
     <script src="measurement.js?v=2"></script>
-    <script src="app.js?v=160"></script>
+    <script src="layout.js?v=1"></script>
+    <script src="app.js?v=161"></script>
 </body>
 </html>

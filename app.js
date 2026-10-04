@@ -107,6 +107,8 @@ Object.setPrototypeOf(ELEMENT_DATA, null);
 let scene, camera, renderer, controls;
 let cameraMath, cameraController;
 let cameraInputKind = 'rotate';
+let cameraInputPosition = null;
+let cameraManualInputPending = false;
 let manualCameraTickAt = 0;
 let perspectiveCamera, orthographicCamera;
 let isPerspective = false; // Default to orthographic
@@ -4999,6 +5001,7 @@ function applyCameraPose(pose) {
 // TrackballControls stores inertia in private closure state. Recreate its
 // adapter to discard that state while preserving the camera and public options.
 function clearManualCameraMotion() {
+    cameraManualInputPending = false;
     if (typeof THREE.TrackballControls !== 'function' || !renderer) return;
     const previous = controls;
     const pivot = previous ? previous.target.clone() : new THREE.Vector3();
@@ -5035,7 +5038,8 @@ function clearManualCameraMotion() {
         const time = performance.now();
         controls.update(); // Consume the gesture's final input before measuring it.
         manualCameraTickAt = time;
-        cameraController.end(time);
+        cameraController.end(time, cameraManualInputPending);
+        cameraManualInputPending = false;
         if (!cameraController.settling) updateVacuumHandles();
     });
 }
@@ -5072,6 +5076,7 @@ function initCameraController() {
         cancelCameraAlignment();
         if (event.target === renderer.domElement) {
             cameraInputKind = event.button === 0 ? 'rotate' : event.button === 1 ? 'zoom' : 'pan';
+            cameraInputPosition = [event.clientX, event.clientY];
         } else updateVacuumHandles();
     }, { capture: true });
     document.addEventListener('wheel', event => {
@@ -5083,6 +5088,24 @@ function initCameraController() {
     renderer.domElement.addEventListener('touchstart', event => {
         cancelCameraAlignment();
         cameraInputKind = event.touches.length === 1 ? 'rotate' : 'zoom';
+        cameraInputPosition = event.touches.length === 1 ? [event.touches[0].clientX, event.touches[0].clientY] : null;
+    }, { capture: true, passive: true });
+    // Mark input before the controls consume it. Damping-only updates still
+    // contribute to angular speed, but cannot masquerade as a deliberate drag.
+    const markRotationInput = (x, y) => {
+        if (!cameraController.interacting || cameraInputKind !== 'rotate') return;
+        if (cameraInputPosition && (x !== cameraInputPosition[0] || y !== cameraInputPosition[1])) {
+            cameraManualInputPending = true;
+        }
+        cameraInputPosition = [x, y];
+    };
+    document.addEventListener('pointermove', event => {
+        // The pinned controls consume touchmove, not touch pointermove. Marking
+        // both could attribute a damping step to unconsumed touch coordinates.
+        if (event.pointerType !== 'touch') markRotationInput(event.clientX, event.clientY);
+    }, { capture: true });
+    renderer.domElement.addEventListener('touchmove', event => {
+        if (event.touches.length === 1) markRotationInput(event.touches[0].clientX, event.touches[0].clientY);
     }, { capture: true, passive: true });
     const interrupt = () => { cancelCameraAlignment(); updateVacuumHandles(); };
     window.addEventListener('blur', interrupt);
@@ -5103,7 +5126,8 @@ function updateCamera(time) {
         while (time - manualCameraTickAt >= step && !cameraController.transitioning) {
             controls.update();
             manualCameraTickAt += step;
-            cameraController.tick(manualCameraTickAt);
+            cameraController.tick(manualCameraTickAt, cameraManualInputPending);
+            cameraManualInputPending = false;
         }
     }
     if (cameraController.transitioning) {

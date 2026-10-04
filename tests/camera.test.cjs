@@ -211,13 +211,45 @@ test('slow approach and holding before release retain intent at any zoom or dist
     }
 });
 
-test('settling detects a reversal from inertia and permits a fresh intentional approach', () => {
-    for (const reapproach of [false, true]) {
+test('inertial overshoot retains manual approach but cannot expand the capture cone', () => {
+    for (const angle of [-1, -6]) {
         const r = rig(); r.controller.begin('rotate', 0);
-        r.setAngle(.1); r.controller.tick(100); r.controller.end(100);
-        r.setAngle(-1); r.controller.tick(200); // Overshot and departed by .9°.
-        if (reapproach) { r.setAngle(-.4); r.controller.tick(300); }
-        for (const time of [320, 500, 900]) r.controller.tick(time);
-        assert.equal(r.events.includes('end:automatic'), reapproach);
+        r.setAngle(.1); r.controller.tick(100); r.controller.end(100, false);
+        r.setAngle(angle); r.controller.tick(200, false);
+        for (const time of [320, 500, 900]) r.controller.tick(time, false);
+        assert.equal(r.events.includes('end:automatic'), angle === -1);
     }
+});
+
+test('inertia while holding the pointer cannot erase approach, and release delay does not change capture', () => {
+    for (const held of [false, true]) {
+        const r = rig(); r.controller.begin('rotate', 0);
+        r.setAngle(7); r.controller.tick(100, true);
+        if (!held) r.controller.end(100, false);
+        r.setAngle(.1); r.controller.tick(300, false);
+        r.setAngle(-.6); r.controller.tick(500, false);
+        if (held) r.controller.end(600, false);
+        for (const time of [700, 900, 1300]) r.controller.tick(time, false);
+        assert.deepEqual(r.events, ['start:automatic', 'end:automatic']);
+        close(math.angularDistance(r.pose.quaternion, q(0)), 0);
+    }
+});
+
+test('deliberate departure uses the current pose even after a large inertial approach', () => {
+    const r = rig(); r.controller.begin('rotate', 0);
+    r.setAngle(7); r.controller.tick(100, true);
+    r.setAngle(.4); r.controller.tick(200, false); // Inertia must not count as manual approach.
+    r.setAngle(1); r.controller.tick(300, true); // Explicit .6° movement away.
+    r.controller.end(300, false);
+    for (const time of [320, 500, 900]) r.controller.tick(time, false);
+    assert.deepEqual(r.events, []);
+    close(math.angularDistance(r.pose.quaternion, q(1)), 0);
+});
+
+test('damping with no actual rotation input cannot create a snap gesture', () => {
+    const r = rig(); r.controller.begin('rotate', 0);
+    r.setAngle(3); r.controller.tick(100, false);
+    r.controller.end(100, false);
+    for (const time of [320, 500, 900]) r.controller.tick(time, false);
+    assert.deepEqual(r.events, []);
 });

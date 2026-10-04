@@ -151,51 +151,47 @@
             begin(kind, time) {
                 this.cancel();
                 const pose = math.clonePose(getPose());
-                const direction = math.back(pose.quaternion);
-                const intent = new Map(getAxes().map(axis => {
-                    const angle = math.degrees(direction.angleTo(axis.direction));
-                    return [axis.name, { direction: axis.direction.clone(), peak: angle, trough: angle, approaching: false }];
-                }));
-                gesture = { kind, start: pose.quaternion, maxMotion: 0, intent };
+                const intent = new Map(getAxes().map(axis => [axis.name, {
+                    direction: axis.direction.clone(), motion: 0, peak: 0, trough: 0, approaching: false
+                }]));
+                gesture = { kind, motion: 0, intent };
                 previousSample = { time, quaternion: pose.quaternion.clone() };
             },
-            sample(time) {
+            sample(time, manualInput = Boolean(gesture)) {
                 const pose = getPose();
                 const speed = previousSample && time > previousSample.time
                     ? math.degrees(math.angularDistance(previousSample.quaternion, pose.quaternion)) * 1000 / (time - previousSample.time) : Infinity;
-                previousSample = { time, quaternion: pose.quaternion.clone() };
-                if (gesture?.kind === 'rotate') {
-                    gesture.maxMotion = Math.max(gesture.maxMotion, math.degrees(math.angularDistance(gesture.start, pose.quaternion)));
-                }
-                // Track terminal approach by angular extrema, not a time window.
-                // Holding still and slow damping cannot erase intent. A departure
-                // beyond the noise margin resets it, including inertia past an axis.
-                const intent = gesture?.kind === 'rotate' ? gesture.intent : pending?.intent;
-                if (intent) {
+                // Only consumed pointer/touch movement expresses intent. Integrate
+                // its angular contribution using the pose immediately before it,
+                // so intervening inertia neither cancels nor invents an approach.
+                if (manualInput && gesture?.kind === 'rotate' && previousSample) {
+                    gesture.motion += math.degrees(math.angularDistance(previousSample.quaternion, pose.quaternion));
+                    const before = math.back(previousSample.quaternion);
                     const direction = math.back(pose.quaternion);
-                    for (const state of intent.values()) {
-                        const angle = math.degrees(direction.angleTo(state.direction));
+                    for (const state of gesture.intent.values()) {
+                        state.motion += math.degrees(direction.angleTo(state.direction) - before.angleTo(state.direction));
                         if (state.approaching) {
-                            state.trough = Math.min(state.trough, angle);
-                            if (angle - state.trough > policy.intentNoiseDegrees) {
+                            state.trough = Math.min(state.trough, state.motion);
+                            if (state.motion - state.trough > policy.intentNoiseDegrees) {
                                 state.approaching = false;
-                                state.peak = angle;
+                                state.peak = state.motion;
                             }
                         } else {
-                            state.peak = Math.max(state.peak, angle);
-                            if (state.peak - angle > policy.intentNoiseDegrees) {
+                            state.peak = Math.max(state.peak, state.motion);
+                            if (state.peak - state.motion > policy.intentNoiseDegrees) {
                                 state.approaching = true;
-                                state.trough = angle;
+                                state.trough = state.motion;
                             }
                         }
                     }
                 }
+                previousSample = { time, quaternion: pose.quaternion.clone() };
                 return { pose, speed };
             },
-            end(time) {
+            end(time, manualInput = Boolean(gesture)) {
                 if (!gesture) return;
-                this.sample(time);
-                if (gesture.kind === 'rotate' && gesture.maxMotion >= policy.meaningfulDegrees && this.autoSnap) {
+                this.sample(time, manualInput);
+                if (gesture.kind === 'rotate' && gesture.motion >= policy.meaningfulDegrees && this.autoSnap) {
                     pending = { intent: gesture.intent, candidate: null, stableAt: null, quietAt: null };
                 }
                 gesture = null;
@@ -217,7 +213,7 @@
                 clearMotion();
                 onComplete(kind, '');
             },
-            tick(time) {
+            tick(time, manualInput = Boolean(gesture)) {
                 if (transition) {
                     const current = transition;
                     if (current.revision !== revision) return;
@@ -230,7 +226,7 @@
                     }
                     return;
                 }
-                const { pose, speed } = this.sample(time);
+                const { pose, speed } = this.sample(time, manualInput);
                 if (!pending || !this.autoSnap) return;
                 if (speed < policy.settledSpeedDegrees) {
                     if (pending.quietAt === null) pending.quietAt = time;
@@ -247,7 +243,7 @@
                 }
                 if (pending.quietAt === null || time - pending.quietAt < policy.settledMilliseconds || time - pending.stableAt < policy.settledMilliseconds) return;
                 const intent = pending.intent.get(axis.name);
-                const approach = intent?.approaching ? intent.peak - math.degrees(axis.angle) : 0;
+                const approach = intent?.approaching ? intent.peak - intent.motion : 0;
                 if (approach <= policy.intentNoiseDegrees) { pending = null; return; }
                 const target = math.automaticOrientation(pose.quaternion, axis, policy);
                 if (target && math.angularDistance(pose.quaternion, target) > 1e-6) this.align(target, time, 'automatic', axis.name);

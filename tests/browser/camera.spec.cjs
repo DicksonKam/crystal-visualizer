@@ -292,3 +292,74 @@ test('a close-zoom approach still snaps after damping and a pause before release
         expect(await page.evaluate(() => window.cameraAlignments[0].correction)).toBeLessThanOrEqual(5 + 1e-8);
     }
 });
+
+test('near-axis overshoot captures consistently across zoom and release delay, while a deliberate departure does not', async ({ page }) => {
+    await upload(page, cell(), 'camera.poscar');
+    for (const zoom of [1, 15]) for (const hold of [45, 1400]) {
+        await seed(page, 3);
+        await page.evaluate(zoom => { camera.zoom = zoom; camera.updateProjectionMatrix(); requestRender(); }, zoom);
+        await page.waitForTimeout(150);
+        const before = await pose(page);
+        const box = await canvas(page).boundingBox();
+        const x = box.x + box.width * .8, y = box.y + box.height * .2;
+        await page.mouse.move(x, y); await page.mouse.down();
+        await page.mouse.move(x + 1, y);
+        await page.waitForTimeout(hold);
+        expect(await page.evaluate(() => window.cameraAlignments.length)).toBe(0);
+        await page.mouse.up();
+        await expect.poll(() => page.evaluate(() => window.cameraAlignments.length), { timeout: 6000 }).toBe(1);
+        await expect.poll(() => page.evaluate(() => cameraController.phase)).toBe('idle');
+        const after = await pose(page);
+        nearArray(after.direction, [1, 0, 0]);
+        nearArray(after.pivot, before.pivot);
+        expect(after.zoom).toBe(zoom);
+        expect(after.distance).toBeCloseTo(before.distance, 7);
+        expect(await page.evaluate(() => window.cameraAlignments[0].correction)).toBeLessThanOrEqual(5 + 1e-8);
+    }
+    // The final view is still within the capture cone. The input direction,
+    // rather than zoom or the cone alone, must suppress a drag away.
+    await seed(page, .5);
+    await drag(page, -1);
+    await page.waitForTimeout(1600);
+    const angle = await page.evaluate(() => cameraMath.degrees(cameraMath.back(camera.quaternion).angleTo(new THREE.Vector3(1, 0, 0))));
+    expect(angle).toBeGreaterThan(.5); expect(angle).toBeLessThan(5);
+    expect(await page.evaluate(() => window.cameraAlignments.length)).toBe(0);
+});
+
+test('touch intent follows consumed one-finger input and ignores pointer duplicates and multifinger navigation', async ({ page }) => {
+    await upload(page, cell(), 'camera.poscar');
+    await seed(page, 3);
+    const before = await pose(page);
+    await page.evaluate(() => {
+        const target = renderer.domElement, rect = target.getBoundingClientRect();
+        const x = rect.left + rect.width * .8, y = rect.top + rect.height * .2;
+        window.testCameraTouch = (type, offsets) => {
+            const touches = offsets.map((offset, identifier) => new Touch({ identifier, target, clientX: x + offset, clientY: y, pageX: x + offset, pageY: y }));
+            target.dispatchEvent(new TouchEvent(type, { bubbles: true, cancelable: true, touches, targetTouches: touches, changedTouches: touches }));
+        };
+        window.testCameraTouch('touchstart', [0]);
+        target.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'touch', clientX: x + 1, clientY: y }));
+    });
+    expect(await page.evaluate(() => cameraManualInputPending)).toBe(false);
+    await page.evaluate(() => window.testCameraTouch('touchmove', [1]));
+    await page.waitForTimeout(1400);
+    expect(await page.evaluate(() => window.cameraAlignments.length)).toBe(0);
+    await page.evaluate(() => window.testCameraTouch('touchend', []));
+    await expect.poll(() => page.evaluate(() => window.cameraAlignments.length)).toBe(1);
+    await expect.poll(() => page.evaluate(() => cameraController.phase)).toBe('idle');
+    const after = await pose(page);
+    nearArray(after.direction, [1, 0, 0]);
+    nearArray(after.pivot, before.pivot); expect(after.zoom).toBe(before.zoom);
+    await seed(page, 3);
+    const navigation = await pose(page);
+    await page.evaluate(() => {
+        window.testCameraTouch('touchstart', [0, 40]);
+        window.testCameraTouch('touchmove', [0, 60]);
+    });
+    await expect.poll(() => page.evaluate(() => camera.zoom)).not.toBe(navigation.zoom);
+    await page.evaluate(() => window.testCameraTouch('touchend', []));
+    await page.waitForTimeout(300);
+    nearArray((await pose(page)).q, navigation.q);
+    expect((await pose(page)).zoom).not.toBe(navigation.zoom);
+    expect(await page.evaluate(() => window.cameraAlignments.length)).toBe(0);
+});

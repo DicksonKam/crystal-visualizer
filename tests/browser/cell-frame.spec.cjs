@@ -213,7 +213,7 @@ for (const [name, lattice] of Object.entries(cells)) {
 test('axis alignment and wheel input restore handles without obsolete transitions', async ({ page }) => {
     await upload(page, poscar(cells.cubic), 'frame.poscar');
     await page.locator('[data-mode="edit"]').click();
-    await page.locator('[data-camera-axis="-a"]').click();
+    await page.evaluate(() => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[1]), performance.now(), 'explicit', '-a'));
     await expect(page.locator('#statusText')).toContainText('Aligned to -a axis');
     await expect.poll(() => page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
     const box = await page.locator('canvas[aria-label^="3D structure"]').boundingBox();

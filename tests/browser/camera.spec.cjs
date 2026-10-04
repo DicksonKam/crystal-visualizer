@@ -83,13 +83,13 @@ test('departing rotation, an elongated cell outside the cone, zoom, pan and clic
     expect(await page.evaluate(() => window.cameraAlignments.length)).toBe(0);
 });
 
-test('six explicit signed lattice views preserve pose contracts and camera actions leave the document unchanged', async ({ page }) => {
+test('signed controller alignments preserve pose contracts and camera actions leave the document unchanged', async ({ page }) => {
     await upload(page, cell([[9, 2, 1], [1, 11, 2], [2, 1, 8]]), 'skew.poscar');
     const documentState = () => page.evaluate(() => ({ text: generatePOSCAR(), undo: editHistory.undoStack.length, redo: editHistory.redoStack.length, dirty: editHistory.dirty, revision: editHistory.currentEditRevision }));
     const original = await documentState();
     for (const name of ['+a', '-a', '+b', '-b', '+c', '-c']) {
         const before = await pose(page);
-        await page.getByRole('button', { name: `View from ${name}`, exact: true }).click();
+        await page.evaluate(name => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice).find(axis => axis.name === name)), performance.now(), 'explicit', name), name);
         await expect.poll(() => page.evaluate(() => cameraController.phase)).toBe('idle');
         const expected = await page.evaluate(name => cameraMath.axes(currentStructure.lattice).find(axis => axis.name === name).direction.toArray(), name);
         const after = await pose(page);
@@ -98,12 +98,12 @@ test('six explicit signed lattice views preserve pose contracts and camera actio
         expect(after.zoom).toBe(before.zoom);
         expect(after.distance).toBeCloseTo(before.distance, 7);
     }
-    await page.locator('#fitView').click();
+    await page.evaluate(() => fitStructureToView(true));
     await page.locator('#resetView').click();
     expect(await documentState()).toEqual(original);
 });
 
-test('pointer interruption, focus, Auto Snap off and scene changes invalidate active movement', async ({ page }) => {
+test('pointer interruption, focus, Escape and scene changes invalidate active movement', async ({ page }) => {
     await upload(page, cell(), 'camera.poscar');
     await seed(page, 3);
     // Start with real damped input, then explicitly align before its inertia finishes.
@@ -118,11 +118,10 @@ test('pointer interruption, focus, Auto Snap off and scene changes invalidate ac
     await page.waitForTimeout(45);
     await page.mouse.up();
     expect((await pose(page)).q).not.toEqual(before.q);
-    await page.locator('#autoSnap').uncheck();
+    await page.keyboard.press('Escape');
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => cameraController.phase)).toBe('idle');
     // Atom focus during an actual automatic snap preserves the interrupted orientation.
-    await page.locator('#autoSnap').check();
     await seed(page);
     await drag(page, 2);
     await expect.poll(() => page.evaluate(() => cameraController.transitioning), { timeout: 6000, intervals: [10] }).toBe(true);
@@ -139,11 +138,11 @@ test('pointer interruption, focus, Auto Snap off and scene changes invalidate ac
     expect(after.zoom).toBe(focused.zoom);
     expect(await page.evaluate(() => editHistory.currentEditRevision)).toBe(focused.revision);
     await expect(page.locator('#statusText')).toContainText('Selected atom #1');
-    // Turning Auto Snap off cancels an active transition as well as pending capture.
+    // Escape cancels an active transition as well as pending capture.
     await seed(page);
     await drag(page, 2);
     await expect.poll(() => page.evaluate(() => cameraController.transitioning), { timeout: 6000, intervals: [10] }).toBe(true);
-    await page.locator('#autoSnap').uncheck();
+    await page.keyboard.press('Escape');
     const stopped = await pose(page);
     await page.waitForTimeout(400);
     nearArray((await pose(page)).q, stopped.q);
@@ -156,12 +155,12 @@ test('pointer interruption, focus, Auto Snap off and scene changes invalidate ac
     nearArray((await pose(page)).q, rebuilt.q);
 });
 
-test('Fit View fits narrow large scenes and Reset restores deterministic roll', async ({ page }) => {
+test('internal fitting fits narrow large scenes and existing Reset restores deterministic roll', async ({ page }) => {
     await page.setViewportSize({ width: 650, height: 800 });
     await upload(page, cell([[500, 0, 0], [0, 500, 0], [0, 0, 500]]), 'large.poscar');
     await seed(page, 32, 68);
     const before = await pose(page);
-    await page.locator('#fitView').click();
+    await page.evaluate(() => fitStructureToView(true));
     nearArray((await pose(page)).q, before.q);
     const projected = await page.evaluate(() => {
         camera.updateMatrixWorld(true);
@@ -180,32 +179,28 @@ test('Fit View fits narrow large scenes and Reset restores deterministic roll', 
     nearArray(second.q, first.q); nearArray(second.pivot, first.pivot);
     expect(second.zoom).toBeCloseTo(first.zoom, 9);
     await page.setViewportSize({ width: 430, height: 850 });
-    await page.locator('#fitView').click();
-    for (const selector of ['#autoSnap', '#fitView', '[data-camera-axis="+a"]', '#resetView']) {
-        const rect = await page.locator(selector).boundingBox();
-        expect(rect.width).toBeGreaterThan(0); expect(rect.x).toBeGreaterThanOrEqual(0); expect(rect.x + rect.width).toBeLessThanOrEqual(430);
-    }
-    await page.getByRole('button', { name: 'Reset View', exact: true }).click();
-    nearArray((await pose(page)).q, first.q);
+    await page.evaluate(() => fitStructureToView(true));
+
 });
 
-test('reduced motion, keyboard axis controls and molecule navigation remain accessible', async ({ page }) => {
+test('original interface, reduced motion, keyboard Reset and molecule navigation remain intact', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await upload(page, cell(), 'camera.poscar');
-    const button = page.getByRole('button', { name: 'View from -b', exact: true });
+    expect(await page.locator('.camera-panel, #autoSnap, #fitView, [data-camera-axis]').count()).toBe(0);
+    const button = page.getByRole('button', { name: 'Reset View', exact: true });
     await button.focus();
     await page.keyboard.press('Enter');
     expect((await pose(page)).phase).toBe('idle');
-    nearArray((await pose(page)).direction, [0, -1, 0]);
+    const expectedDefault = await page.evaluate(() => new THREE.Vector3(1, .8, 1).normalize().toArray());
+    nearArray((await pose(page)).direction, expectedDefault);
     await seed(page);
     await drag(page, 2);
     await expect.poll(() => page.evaluate(() => window.cameraAlignments.filter(value => value.kind === 'automatic').length), { timeout: 6000 }).toBe(1);
     expect((await pose(page)).phase).toBe('idle');
     nearArray((await pose(page)).direction, [1, 0, 0]);
     await upload(page, '2\nmolecule\nH 0 0 0\nH 1 0 0\n', 'molecule.xyz');
-    await expect(page.locator('#autoSnap')).toBeDisabled();
-    for (const button of await page.locator('[data-camera-axis]').all()) await expect(button).toBeDisabled();
-    await expect(page.locator('#fitView')).toBeEnabled();
+    expect(await page.evaluate(() => hasLattice(currentStructure))).toBe(false);
+    await expect(page.locator('#resetView')).toBeEnabled();
     const before = await pose(page);
     await drag(page, 10);
     expect((await pose(page)).q).not.toEqual(before.q);

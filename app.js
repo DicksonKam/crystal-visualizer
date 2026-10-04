@@ -4229,7 +4229,6 @@ function renderStructure(structure, preserveState = false) {
     } else {
         fitStructureToView();
     }
-    updateCameraControlState();
     requestRender();
 }
 
@@ -5182,34 +5181,6 @@ function updateCamera(time) {
         ? getCurrentAxisAlignment()?.axis || null : null;
     if (cameraController.phase === 'idle' && (before !== 'idle'
         || vacuumDragState.currentAxis !== handleAxis)) updateVacuumHandles();
-}
-
-function updateCameraControlState() {
-    if (!document.querySelectorAll || !cameraController) return;
-    const available = hasLattice(currentStructure) && cameraMath.axes(currentStructure.lattice).length === 6;
-    document.querySelectorAll('[data-camera-axis]').forEach(button => { button.disabled = !available; });
-    document.getElementById('autoSnap').disabled = !available;
-    document.getElementById('fitView').disabled = !currentStructure;
-    document.getElementById('resetView').disabled = !currentStructure;
-}
-
-function setupCameraControls() {
-    document.getElementById('autoSnap').addEventListener('change', event => {
-        cancelCameraAlignment();
-        cameraController.autoSnap = event.target.checked;
-        updateVacuumHandles();
-    });
-    document.getElementById('fitView').addEventListener('click', () => {
-        if (currentStructure) fitStructureToView(true);
-    });
-    document.querySelectorAll('[data-camera-axis]').forEach(button => {
-        button.addEventListener('click', () => {
-            if (!hasLattice(currentStructure)) return;
-            const axis = cameraMath.axes(currentStructure.lattice).find(value => value.name === button.dataset.cameraAxis);
-            if (axis) cameraController.align(cameraMath.canonical(axis), performance.now(), 'explicit', axis.name);
-        });
-    });
-    updateCameraControlState();
 }
 
 // ==========================================
@@ -6176,7 +6147,6 @@ function init() {
     initScene();
     setupDragDrop();
     setupControls();
-    setupCameraControls();
     setupModeToggle();
     setupPeriodicControls();
     setupUndoKeyboardShortcut();

@@ -62,3 +62,25 @@ test('file-load status wrapping resizes the canvas without a window or divider g
     await page.evaluate(()=>{statusText.textContent='Loaded: a very long structure filename and status that wraps over several lines on a narrow screen';});
     await canvasMatches(page);
 });
+
+test('narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling', async ({page},testInfo) => {
+    await page.setViewportSize({width:390,height:844});
+    const {sourceFor}=require('../stress/edit-scenario.cjs');
+    await upload(page,sourceFor(2).content,'tilted.poscar');
+    await page.locator('[data-mode="edit"]').click();
+    await page.locator('#addAtomX').fill('.5');
+    await page.getByRole('button',{name:'Increase c periodic images',exact:true}).click();
+    await page.screenshot({path:testInfo.outputPath('narrow-controls.png')});
+    const overflow=await page.locator('.sidebar').evaluate(e=>({left:e.scrollLeft,width:e.clientWidth,content:e.scrollWidth}));
+    expect(overflow.left).toBe(0);
+    expect(overflow.content).toBeLessThanOrEqual(overflow.width+1);
+    await page.locator('.sidebar').evaluate(e=>{e.scrollTop=0;});
+    await page.screenshot({path:testInfo.outputPath('narrow-info.png')});
+    await page.locator('[data-mode="measure"]').click();
+    for(const number of [1,2]) { await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
+    await page.locator('[data-mode="edit"]').click();
+    await page.locator('#addAtomX').fill('.25');
+    const preserved=await page.locator('.sidebar').evaluate(e=>({left:e.scrollLeft,width:e.clientWidth,content:e.scrollWidth}));
+    expect(preserved.left).toBe(0); expect(preserved.content).toBeLessThanOrEqual(preserved.width+1);
+    await page.screenshot({path:testInfo.outputPath('narrow-preserved-measurement.png')});
+});

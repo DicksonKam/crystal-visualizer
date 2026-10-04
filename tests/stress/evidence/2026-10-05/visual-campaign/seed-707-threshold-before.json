@@ -1,0 +1,1789 @@
+{
+  "seed": 707,
+  "error": "AssertionError [ERR_ASSERTION]: fitted structure rendered no visible content\n    at observe (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-observer.cjs:58:20)\n    at async runScenario (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:346:39)\n    at async /Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-campaign.cjs:33:40",
+  "errors": [],
+  "sourceHashes": {
+    "app.js": "4a38eadea93e814bd2c3557f3fafb285286d3eaf1d0bb1c5a1dd5e8970ff9cf9",
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "styles.css": "f779d43124c98457daa1674e897c059feec389d388b03f39762f62d95eec6f60",
+    "index.html": "7959c24febab184d096f482a271756f5376d886c2c6c4d43fa583ff014d2e9a7",
+    "tests/stress/edit-scenario.cjs": "997dd64791a87f51f7b1195a01b66e5d940ce06be6af3465696ddfd779f25d3d",
+    "tests/stress/visual-observer.cjs": "914ee102b0324b8601f9f8b96969a7654d89b24cf4adc0dfaad12ec15c427b08"
+  },
+  "actionSequence": [
+    {
+      "step": 0,
+      "action": "clear",
+      "performed": false,
+      "visual": {
+        "filename": "seed-707-step-0-clear-after.png",
+        "metrics": {
+          "content": 490,
+          "cyan": 341,
+          "transparent": 0,
+          "checksum": 5091250,
+          "width": 195,
+          "height": 670,
+          "canvasCSS": [
+            195,
+            670
+          ],
+          "viewportCSS": [
+            195,
+            670
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": true,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 1,
+      "action": "pan",
+      "delta": [
+        12,
+        -8
+      ],
+      "pointer": {
+        "x": 351,
+        "y": 275.78125
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 2,
+      "action": "clear",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 3,
+      "action": "jump",
+      "number": 5,
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 4,
+      "action": "resize",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 5,
+      "action": "download",
+      "filename": "periodic_edited.xyz",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 6,
+      "action": "export",
+      "exported": [],
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 7,
+      "action": "invalid_load",
+      "file": "invalid.xyz",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 8,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-8-reset-after.png",
+        "metrics": {
+          "content": 493,
+          "cyan": 343,
+          "transparent": 0,
+          "checksum": 4967467,
+          "width": 195,
+          "height": 652,
+          "canvasCSS": [
+            195,
+            652
+          ],
+          "viewportCSS": [
+            195,
+            652
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": true,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 9,
+      "action": "display",
+      "selector": "#toggleAxes",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-9-display-after.png",
+        "metrics": {
+          "content": 493,
+          "cyan": 343,
+          "transparent": 0,
+          "checksum": 4967467,
+          "width": 195,
+          "height": 652,
+          "canvasCSS": [
+            195,
+            652
+          ],
+          "viewportCSS": [
+            195,
+            652
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": true,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 10,
+      "action": "bond_length",
+      "key": "End",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 11,
+      "action": "center",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 12,
+      "action": "mode",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-12-mode-after.png",
+        "metrics": {
+          "content": 493,
+          "cyan": 343,
+          "transparent": 0,
+          "checksum": 4967467,
+          "width": 195,
+          "height": 652,
+          "canvasCSS": [
+            195,
+            652
+          ],
+          "viewportCSS": [
+            195,
+            652
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": true,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 13,
+      "action": "display",
+      "selector": "#toggleCell",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-13-display-after.png",
+        "metrics": {
+          "content": 17,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 4618222,
+          "width": 195,
+          "height": 652,
+          "canvasCSS": [
+            195,
+            652
+          ],
+          "viewportCSS": [
+            195,
+            652
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 14,
+      "action": "supercell",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 15,
+      "action": "click",
+      "index": 1,
+      "pointer": {
+        "x": 309.9840052885127,
+        "y": 479.1802557163854,
+        "displayedIndex": 1
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 16,
+      "action": "rotate",
+      "delta": [
+        14,
+        2
+      ],
+      "pointer": {
+        "x": 351,
+        "y": 272.18125
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 17,
+      "action": "add",
+      "element": "H",
+      "values": [
+        "0.86110",
+        "0.87882",
+        "0.74880"
+      ],
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 18,
+      "action": "fix",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 19,
+      "action": "replace",
+      "variant": 3,
+      "file": "periodic.xyz",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-19-replace-after.png",
+        "metrics": {
+          "content": 262,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 4900952,
+          "width": 195,
+          "height": 670,
+          "canvasCSS": [
+            195,
+            670
+          ],
+          "viewportCSS": [
+            195,
+            670
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "dialog": "Discard unsaved structure edits and open another file?",
+      "response": "accept"
+    },
+    {
+      "step": 20,
+      "action": "invalid_load",
+      "file": "invalid.xyz",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 21,
+      "action": "drag",
+      "index": 2,
+      "pointer": {
+        "x": 288.5004565873511,
+        "y": 388.66003826614815,
+        "displayedIndex": 2
+      },
+      "delta": [
+        10,
+        -2
+      ],
+      "preview": {
+        "filename": "seed-707-step-21-drag-atom-preview.png",
+        "metrics": {
+          "content": 1593,
+          "cyan": 1386,
+          "transparent": 0,
+          "checksum": 5168845,
+          "width": 195,
+          "height": 608,
+          "canvasCSS": [
+            195,
+            608
+          ],
+          "viewportCSS": [
+            195,
+            608
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 22,
+      "action": "invalid",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 23,
+      "action": "fix",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 24,
+      "action": "invalid",
+      "performed": false,
+      "visual": {
+        "filename": "seed-707-step-24-invalid-after.png",
+        "metrics": {
+          "content": 229,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 4570155,
+          "width": 195,
+          "height": 626,
+          "canvasCSS": [
+            195,
+            626
+          ],
+          "viewportCSS": [
+            195,
+            626
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 25,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-25-reset-after.png",
+        "metrics": {
+          "content": 262,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 4595381,
+          "width": 195,
+          "height": 626,
+          "canvasCSS": [
+            195,
+            626
+          ],
+          "viewportCSS": [
+            195,
+            626
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 26,
+      "action": "cancel",
+      "index": 3,
+      "pointer": {
+        "x": 361.782187161267,
+        "y": 453.61150574158086,
+        "displayedIndex": 3
+      },
+      "delta": [
+        17,
+        -5
+      ],
+      "preview": {
+        "filename": "seed-707-step-26-cancel-atom-preview.png",
+        "metrics": {
+          "content": 8274,
+          "cyan": 8022,
+          "transparent": 0,
+          "checksum": 8864551,
+          "width": 195,
+          "height": 626,
+          "canvasCSS": [
+            195,
+            626
+          ],
+          "viewportCSS": [
+            195,
+            626
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 27,
+      "action": "download",
+      "filename": "periodic_edited.xyz",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "dialog": "Geometry has changed. The edited export will omit source metadata (energy) because it may no longer describe this structure. Export species and positions only?",
+      "response": "accept"
+    },
+    {
+      "step": 28,
+      "action": "scale",
+      "key": "End",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 29,
+      "action": "drag",
+      "index": 3,
+      "pointer": {
+        "x": 358.2387298713003,
+        "y": 420.7354460758957,
+        "displayedIndex": 3
+      },
+      "delta": [
+        5,
+        -15
+      ],
+      "preview": {
+        "filename": "seed-707-step-29-drag-atom-preview.png",
+        "metrics": {
+          "content": 8097,
+          "cyan": 6656,
+          "transparent": 0,
+          "checksum": 9336731,
+          "width": 195,
+          "height": 608,
+          "canvasCSS": [
+            195,
+            608
+          ],
+          "viewportCSS": [
+            195,
+            608
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 30,
+      "action": "center",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 31,
+      "action": "download",
+      "filename": "periodic_edited.xyz",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "dialog": "Geometry has changed. The edited export will omit source metadata (energy) because it may no longer describe this structure. Export species and positions only?",
+      "response": "accept"
+    },
+    {
+      "step": 32,
+      "action": "drag",
+      "index": 0,
+      "pointer": {
+        "x": 282.22509936167654,
+        "y": 474.96781073241516,
+        "displayedIndex": 0
+      },
+      "delta": [
+        -2,
+        15
+      ],
+      "preview": {
+        "filename": "seed-707-step-32-drag-atom-preview.png",
+        "metrics": {
+          "content": 1708,
+          "cyan": 7,
+          "transparent": 0,
+          "checksum": 5821915,
+          "width": 195,
+          "height": 652,
+          "canvasCSS": [
+            195,
+            652
+          ],
+          "viewportCSS": [
+            195,
+            652
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "gesture"
+        }
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 33,
+      "action": "undo",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 34,
+      "action": "click",
+      "index": 2,
+      "pointer": {
+        "x": 282.5773157709918,
+        "y": 444.6917896838537,
+        "displayedIndex": 2
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 35,
+      "action": "drag",
+      "index": 0,
+      "pointer": {
+        "x": 296.24236249052484,
+        "y": 413.83741630770703,
+        "displayedIndex": 0
+      },
+      "delta": [
+        -5,
+        15
+      ],
+      "preview": {
+        "filename": "seed-707-step-35-drag-atom-preview.png",
+        "metrics": {
+          "content": 17329,
+          "cyan": 16070,
+          "transparent": 0,
+          "checksum": 13567850,
+          "width": 195,
+          "height": 626,
+          "canvasCSS": [
+            195,
+            626
+          ],
+          "viewportCSS": [
+            195,
+            626
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 36,
+      "action": "invalid_load",
+      "file": "invalid.xyz",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-36-invalid_load-after.png",
+        "metrics": {
+          "content": 1277,
+          "cyan": 45,
+          "transparent": 0,
+          "checksum": 5073727,
+          "width": 195,
+          "height": 608,
+          "canvasCSS": [
+            195,
+            608
+          ],
+          "viewportCSS": [
+            195,
+            608
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 37,
+      "action": "replace",
+      "variant": 1,
+      "file": "cell.poscar",
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-37-replace-after.png",
+        "metrics": {
+          "content": 101,
+          "cyan": 2,
+          "transparent": 0,
+          "checksum": 4796041,
+          "width": 195,
+          "height": 670,
+          "canvasCSS": [
+            195,
+            670
+          ],
+          "viewportCSS": [
+            195,
+            670
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "dialog": "Discard unsaved structure edits and open another file?",
+      "response": "accept"
+    },
+    {
+      "step": 38,
+      "action": "rotate",
+      "delta": [
+        0,
+        -8
+      ],
+      "pointer": {
+        "x": 351,
+        "y": 275.78125
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 39,
+      "action": "coordinates",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 40,
+      "action": "coordinates",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 41,
+      "action": "export",
+      "exported": [],
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 42,
+      "action": "batch_fix",
+      "selector": "#fixByZBtn",
+      "threshold": "2.52424",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 43,
+      "action": "scale",
+      "key": "Home",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 44,
+      "action": "download",
+      "filename": "cell_edited.poscar",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 45,
+      "action": "bond_length",
+      "key": "Home",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 46,
+      "action": "mode",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 47,
+      "action": "redo",
+      "performed": false,
+      "visual": null
+    },
+    {
+      "step": 48,
+      "action": "click",
+      "index": 1,
+      "pointer": {
+        "x": 300.77825814708694,
+        "y": 466.3403910664617,
+        "displayedIndex": 1
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-707-step-48-click-after.png",
+        "metrics": {
+          "content": 2,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 4609875,
+          "width": 195,
+          "height": 652,
+          "canvasCSS": [
+            195,
+            652
+          ],
+          "viewportCSS": [
+            195,
+            652
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": true,
+          "phase": "idle"
+        }
+      }
+    },
+    {
+      "step": 49,
+      "action": "click",
+      "index": 1,
+      "pointer": {
+        "x": 300.5558571819413,
+        "y": 457.6208917542284,
+        "displayedIndex": 1
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 50,
+      "action": "bond_length",
+      "key": "Home",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 51,
+      "action": "periodic",
+      "axis": "b",
+      "increase": true,
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 52,
+      "action": "pan",
+      "delta": [
+        8,
+        -13
+      ],
+      "pointer": {
+        "x": 351,
+        "y": 272.18125
+      },
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 53,
+      "action": "mode",
+      "performed": true,
+      "visual": null
+    },
+    {
+      "step": 54,
+      "action": "reset",
+      "performed": true
+    }
+  ],
+  "lastStates": [
+    {
+      "step": 52,
+      "action": "pan",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            3,
+            2
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                4.5,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                4,
+                4.5,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                8,
+                9,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2,
+                6.75,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "measure",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 10,
+            "type": "fix_atoms"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 1,
+        "atomCount": 5,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 2,
+          "c": 1
+        }
+      },
+      "delta": [
+        8,
+        -13
+      ],
+      "pointer": {
+        "x": 351,
+        "y": 272.18125
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            3,
+            2
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                4.5,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                4,
+                4.5,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                8,
+                9,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2,
+                6.75,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "measure",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 10,
+            "type": "fix_atoms"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 1,
+        "atomCount": 5,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 2,
+          "c": 1
+        }
+      },
+      "visual": null
+    },
+    {
+      "step": 53,
+      "action": "mode",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            3,
+            2
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                4.5,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                4,
+                4.5,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                8,
+                9,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2,
+                6.75,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "measure",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 10,
+            "type": "fix_atoms"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 1,
+        "atomCount": 5,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 2,
+          "c": 1
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            3,
+            2
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                4.5,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                4,
+                4.5,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                8,
+                9,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2,
+                6.75,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 10,
+            "type": "fix_atoms"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 1,
+        "atomCount": 5,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 2,
+          "c": 1
+        }
+      },
+      "visual": null
+    },
+    {
+      "step": 54,
+      "action": "reset",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            3,
+            2
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                4.5,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                4,
+                4.5,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                8,
+                9,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2,
+                6.75,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 10,
+            "type": "fix_atoms"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 1,
+        "atomCount": 5,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 2,
+          "c": 1
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              10
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            3,
+            2
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0,
+                4.5,
+                0
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                4,
+                4.5,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                8,
+                9,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2,
+                6.75,
+                5
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 10,
+            "type": "fix_atoms"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 1,
+        "atomCount": 5,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 2,
+          "c": 1
+        }
+      }
+    }
+  ],
+  "originalSha256": "55c3bdc0940a742034bcadaca1ed79095df451c18f19ab626d32b1386e2d0a3b",
+  "classification": "visual oracle threshold unsuitable for minimum atom size with cell/axes hidden; replay pending"
+}

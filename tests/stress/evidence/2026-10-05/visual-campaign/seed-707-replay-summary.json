@@ -1,0 +1,75 @@
+{
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T19:31:50.966Z",
+    "seconds": 1,
+    "initialSeed": 707,
+    "steps": 120,
+    "sourceHashes": {
+      "app.js": "4a38eadea93e814bd2c3557f3fafb285286d3eaf1d0bb1c5a1dd5e8970ff9cf9",
+      "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+      "styles.css": "f779d43124c98457daa1674e897c059feec389d388b03f39762f62d95eec6f60",
+      "index.html": "7959c24febab184d096f482a271756f5376d886c2c6c4d43fa583ff014d2e9a7",
+      "tests/stress/edit-scenario.cjs": "997dd64791a87f51f7b1195a01b66e5d940ce06be6af3465696ddfd779f25d3d",
+      "tests/stress/visual-observer.cjs": "66b6e30e6931fabeb4db37438696fd7071ad7049c2fd1d608164c5d0f6e953da"
+    }
+  },
+  "terminal": {
+    "event": "complete",
+    "nextSeed": 708,
+    "actions": 120,
+    "images": 41,
+    "elapsedSeconds": 18.533153291
+  },
+  "passedSeeds": [
+    707
+  ],
+  "passedActionSteps": 120,
+  "performedActionCounts": {
+    "clear": 1,
+    "pan": 4,
+    "jump": 6,
+    "resize": 0,
+    "download": 7,
+    "export": 2,
+    "invalid_load": 5,
+    "reset": 4,
+    "display": 5,
+    "bond_length": 3,
+    "center": 2,
+    "mode": 7,
+    "supercell": 0,
+    "click": 4,
+    "rotate": 4,
+    "add": 1,
+    "fix": 0,
+    "replace": 7,
+    "drag": 5,
+    "invalid": 0,
+    "cancel": 1,
+    "scale": 4,
+    "undo": 3,
+    "coordinates": 0,
+    "batch_fix": 1,
+    "redo": 0,
+    "periodic": 5,
+    "delete": 0,
+    "zoom": 2,
+    "panel": 4,
+    "decline_load": 0,
+    "ghost": 0,
+    "shift": 1,
+    "viewport": 1
+  },
+  "recordedOperationCounts": {
+    "select_atom": 7,
+    "clear_selection": 4,
+    "add_atom": 1,
+    "move_atom": 4,
+    "shift_atoms": 3,
+    "fix_atoms": 1
+  },
+  "logSha256": "663856ff0dda1b06862a4dc18036a5d931b7cba1123d0b3d471b6709d93ecc1d",
+  "classification": "passing complete full-seed replay",
+  "rawDirectory": "/private/tmp/crystal-visual-707-replay"
+}

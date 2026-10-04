@@ -252,6 +252,26 @@ test('fractional and Cartesian coordinates round-trip in a tilted cell', () => {
     actual.forEach((value, index) => assert.ok(Math.abs(value - expected[index]) < 1e-12));
 });
 
+test('Cartesian measurement deltas use x/y/z components in a tilted cell', () => {
+    const context = app();
+    const lattice = [[2, 0, 0], [1, 2, 0], [0, 0, 3]];
+    const first = { position: new Vector3(0, 0, 0), isGhost: false };
+    const second = { position: new Vector3(0.7, 0.6, 0), isGhost: false };
+    context.first = first;
+    context.second = second;
+    context.lattice = lattice;
+    vm.runInContext('currentStructure = { lattice }; measurementMode = "selected"; selectedAtomCoordMode = "cartesian";', context);
+    const cartesian = context.computeDeltas(first, second);
+    assert.ok(Math.abs(cartesian.da - 0.7) < 1e-12);
+    assert.ok(Math.abs(cartesian.db - 0.6) < 1e-12);
+    assert.match(context.formatDelta(first, second), /Δx<\/span> \+0\.70/);
+    vm.runInContext('selectedAtomCoordMode = "fractional";', context);
+    const fractional = context.computeDeltas(first, second);
+    assert.ok(Math.abs(fractional.da - 0.2) < 1e-12);
+    assert.ok(Math.abs(fractional.db - 0.3) < 1e-12);
+    assert.match(context.formatDelta(first, second), /Δa<\/span> \+0\.200/);
+});
+
 test('periodic measurements use nearest image unless selected images are requested', () => {
     const context = app();
     context.points = [new Vector3(0.1, 0, 0), new Vector3(9.9, 0, 0)];

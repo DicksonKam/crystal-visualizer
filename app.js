@@ -1283,27 +1283,18 @@ function setupMeasurementModeToggle() {
     });
 }
 
-// Compute displacement along the crystal axes, or Cartesian axes for molecules.
+// Compute fractional displacement only when requested; Cartesian values use world axes.
 function computeDeltas(atomA, atomB) {
     if (!currentStructure || !currentStructure.lattice) return null;
     const pair = getMeasurementPair(atomA, atomB);
     const delta = pair.end.clone().sub(pair.start);
-    if (!isPeriodicStructure(currentStructure)) {
+    if (!isPeriodicStructure(currentStructure) || selectedAtomCoordMode !== 'fractional') {
         return { da: delta.x, db: delta.y, dc: delta.z, dp: 2, unit: 'Å' };
     }
     const fractional = cartesianToFractional(delta, currentStructure.lattice);
     if (!fractional) return null;
     const [dfa, dfb, dfc] = fractional;
-    
-    if (selectedAtomCoordMode === 'fractional') {
-        return { da: dfa, db: dfb, dc: dfc, dp: 3, unit: '' };
-    } else {
-        // Cartesian: project fractional deltas onto lattice vector lengths
-        const aLen = Math.sqrt(currentStructure.lattice[0].reduce((s, v) => s + v * v, 0));
-        const bLen = Math.sqrt(currentStructure.lattice[1].reduce((s, v) => s + v * v, 0));
-        const cLen = Math.sqrt(currentStructure.lattice[2].reduce((s, v) => s + v * v, 0));
-        return { da: dfa * aLen, db: dfb * bLen, dc: dfc * cLen, dp: 2, unit: '' };
-    }
+    return { da: dfa, db: dfb, dc: dfc, dp: 3, unit: '' };
 }
 
 // Format delta display for measurement panel (used in both measure and edit modes)
@@ -1319,17 +1310,18 @@ function formatDelta(atomA, atomB) {
         return (val >= 0 ? '+' : '') + val.toFixed(d.dp);
     };
     const periodic = isPeriodicStructure(currentStructure);
-    const colorClass = periodic && selectedAtomCoordMode === 'fractional' ? 'delta-frac' : 'delta-cart';
-    const title = !periodic ? 'Cartesian displacement (Å)' : selectedAtomCoordMode === 'fractional'
+    const fractional = periodic && selectedAtomCoordMode === 'fractional';
+    const colorClass = fractional ? 'delta-frac' : 'delta-cart';
+    const title = !periodic ? 'Cartesian displacement (Å)' : fractional
         ? 'Fractional — show Cartesian'
         : 'Cartesian (Å) — show fractional';
     
     const tag = periodic ? 'button type="button"' : 'div';
     const closingTag = periodic ? 'button' : 'div';
     return `<${tag} class="meas-delta ${periodic ? 'clickable-delta' : ''} ${colorClass}" title="${title}">` +
-        `<span class="delta-item"><span class="delta-label delta-a">Δ${periodic ? 'a' : 'x'}</span> ${fmt(d.da)}</span>` +
-        `<span class="delta-item"><span class="delta-label delta-b">Δ${periodic ? 'b' : 'y'}</span> ${fmt(d.db)}</span>` +
-        `<span class="delta-item"><span class="delta-label delta-c">Δ${periodic ? 'c' : 'z'}</span> ${fmt(d.dc)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-a">Δ${fractional ? 'a' : 'x'}</span> ${fmt(d.da)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-b">Δ${fractional ? 'b' : 'y'}</span> ${fmt(d.db)}</span>` +
+        `<span class="delta-item"><span class="delta-label delta-c">Δ${fractional ? 'c' : 'z'}</span> ${fmt(d.dc)}</span>` +
         `</${closingTag}>`;
 }
 

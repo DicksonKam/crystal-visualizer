@@ -16,5 +16,41 @@
     "sha256": "bc18e321f2d463b2e951cdfc6a88612c952076e728edb0ee9fe39d193be16fa1",
     "openedAndInspected": true,
     "originalPath": "/private/tmp/crystal-cross-visual-702/seed-703/seed-703-step-22-playback-after.png"
+  },
+  {
+    "file": "dense-501-drag-inspected.png",
+    "sha256": "968e912f7cd66dbbb168f13c4c7b9406a8282de5b83c78d13eb4e5ba9bbf37c3",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-dense-results/dense-edit-visual-dense-at-62ad1-ansitions-and-cell-resizing-chromium/visual/seed-501-step-3-drag-atom-preview.png"
+  },
+  {
+    "file": "dense-500-rebuild-inspected.png",
+    "sha256": "4a4fa391f2bd6aa2dac06eeb8d80b684b1e0ee2d873d8f5a035cc68070b518a6",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-dense-results/dense-edit-visual-dense-at-62ad1-ansitions-and-cell-resizing-chromium/visual/seed-501-step-5-delete-after.png"
+  },
+  {
+    "file": "dense-501-cell-preview-inspected.png",
+    "sha256": "323702028194ffb41578951d78f0dddbe6416f576b1bbf2aa413e5b824f6370d",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-dense-results/dense-edit-visual-dense-at-62ad1-ansitions-and-cell-resizing-chromium/visual/seed-501-step-10-resize-cell-preview.png"
+  },
+  {
+    "file": "dense-periodic-drag-inspected.png",
+    "sha256": "24a4c1a460dc3d99d196b498810bd27790f683af80a9db4fe951eca91641a1e6",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-followup-709/seed-710/seed-710-step-8-drag-atom-preview.png"
+  },
+  {
+    "file": "narrow-cell-preview-inspected.png",
+    "sha256": "51acb6422aef220be93987b85765f7cd0fa82144937b12c45b0076b74e0eabd8",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-followup-709/seed-711/seed-711-step-31-resize-cell-preview.png"
+  },
+  {
+    "file": "trajectory-measurement-inspected.png",
+    "sha256": "ca62ce6f0c69ab220590ccf590b28dd6d0de072cefee803652ab0b584959a802",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-followup-709/seed-711/seed-711-step-96-jump-after.png"
   }
 ]

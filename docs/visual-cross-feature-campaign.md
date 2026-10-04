@@ -34,7 +34,7 @@ atoms difficult to see in a narrow view.
   agreement before capturing, so persistent mismatches still fail. The corrected
   seed-701 pilot passed 40 steps and captured 10 images; initial, reset, and file
   replacement images were opened and inspected.
-- **Open visual finding:** narrow-panel images show horizontal scrolling after
+- **Confirmed and fixed: narrow-panel horizontal overflow.** narrow-panel images show horizontal scrolling after
   controls receive focus, clipping labels and controls at the left. Constraint
   summaries also wrap poorly at that width. A focused regression reproduced an 82-pixel horizontal scroll after editing
   and periodic controls. Container-based reflow now passes that regression,
@@ -79,3 +79,12 @@ opened and inspected; representative images and their hashes are retained in
 the panel clipping before its fix. Dense renderer transitions around 500 atoms
 and dense edit/cell-preview combinations need additional focused coverage;
 initial dense rendering alone does not prove those interactions.
+
+The focused dense workflow passed: real atom drag/cancellation, delete/add and
+undo/redo across 501↔500 atoms (instanced/non-instanced rendering), then a real
+cell resize preview, release, undo and redo. Its 13 captures include inspected
+atom-preview, 500-atom rebuild and cell-preview images, now retained with hashes.
+Further inspected resumed-campaign images cover dense periodic drag, narrow
+cell resizing and trajectory measurement. The 64-test suite excludes this new
+focused test because discovery preceded its creation; results will be reported
+separately. The sustained campaign remains active.

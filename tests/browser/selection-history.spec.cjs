@@ -141,3 +141,20 @@ test('document replacement and disappearing periodic selections reset measuremen
     expect(disappeared.indices).toEqual([]); expect(disappeared.measurement).toBe(false);
     expect(disappeared.rings).toBe(0); expect(disappeared.lines).toBe(0);
 });
+
+test('selection undo and redo keep the currently displayed trajectory frame', async ({ page }) => {
+    const content=await require('node:fs/promises').readFile(require('node:path').resolve(__dirname,'../../examples/xdatcar/H2_vibration.xdatcar'),'utf8');
+    await upload(page,content,'H2_vibration.xdatcar');
+    await select(page,1); await select(page,2);
+    await page.locator('#frameSlider').focus(); await page.locator('#frameSlider').press('End');
+    const frame=await page.evaluate(()=>({index:currentStructure.currentFrameIndex,positions:currentStructure.atoms.map(a=>a.position.toArray())}));
+    expect(frame.index).toBe(15);
+    await page.locator('#undoBtn').click();
+    expect((await state(page)).indices).toEqual([0]);
+    expect(await page.evaluate(()=>({index:currentStructure.currentFrameIndex,positions:currentStructure.atoms.map(a=>a.position.toArray())}))).toEqual(frame);
+    await page.locator('#redoBtn').click();
+    const redone=await state(page);
+    expect(redone.indices).toEqual([0,1]); expect(redone.positions).toEqual(redone.actual);
+    expect(await page.evaluate(()=>({index:currentStructure.currentFrameIndex,positions:currentStructure.atoms.map(a=>a.position.toArray())}))).toEqual(frame);
+    expect(redone.revision).toBe(0); expect(redone.dirty).toBe(false);
+});

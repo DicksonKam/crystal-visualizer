@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs/promises');
 
 function random(seed) {
     let value = seed >>> 0;
@@ -28,6 +29,7 @@ async function capture(page) {
         const violations = [];
         const fail = message => violations.push(message);
         if (new Set(currentStructure.atoms.map(a => a.id)).size !== currentStructure.atoms.length) fail('duplicate document atom IDs');
+        if (!selectedAtoms.length && isMeasurementSelection) fail('empty selection retains measurement purpose');
         if (new Set(selectedAtoms.map(a => a.mesh)).size !== selectedAtoms.length) fail('duplicate selected copies');
         if ((currentMode === 'measure' || isMeasurementSelection) && selectedAtoms.length > 3) fail('oversized measurement');
         if (selectionRings.length !== selectedAtoms.length) fail('marker count disagrees with selection');
@@ -59,7 +61,7 @@ async function capture(page) {
         const redo = editHistory.redoStack.map(entry => ({ id: id(entry.operation), type: entry.operation.type }));
         return { geometry, selection, violations, undo, redo, dirty: editHistory.dirty, revision: editHistory.currentEditRevision,
             atomCount: currentStructure.atoms.length, lattice: hasLattice(currentStructure), periodic: isPeriodicStructure(currentStructure),
-            supportsSD: supportsSelectiveDynamics(currentStructure), repeats: { ...settings.periodic } };
+            supportsSD: supportsSelectiveDynamics(currentStructure), trajectory: Boolean(currentStructure.isXDATCAR), frameCount: currentStructure.totalFrames || 0, repeats: { ...settings.periodic } };
     });
 }
 function compareGeometry(actual, expected, label) {
@@ -75,10 +77,25 @@ function compareGeometry(actual, expected, label) {
     compare(actual, expected, 'geometry');
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
-async function runScenario(page, { seed, steps = 160, log = [] }) {
+async function runScenario(page, { seed, steps = 160, log = [], extended = false }) {
     page.setDefaultTimeout(5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
     const source = sourceFor(seed);
+    let acceptDialogs = true;
+    const handleDialog = async dialog => { log.push({ dialog: dialog.message(), response: acceptDialogs ? 'accept' : 'dismiss' }); if(acceptDialogs) await dialog.accept(); else await dialog.dismiss(); };
+    if (extended) {
+        page.on('dialog', handleDialog);
+        // Observe completion of the real FileReader/load adapter. Waiting for
+        // an existing "Loaded" label can otherwise match the previous document.
+        await page.evaluate(() => {
+            window.stressLoadSerial=0;
+            window.stressOriginalLoad=loadStructureFromText;
+            loadStructureFromText=function(...args) {
+                try { return window.stressOriginalLoad(...args); }
+                finally { window.stressLoadSerial++; }
+            };
+        });
+    }
     await page.locator('#fileInput').setInputFiles({ name: source.name, mimeType: 'text/plain', buffer: Buffer.from(source.content) });
     await page.locator('#statusText').filter({ hasText: 'Loaded' }).waitFor();
     const known = new Map(); const counts = {}, operations = {};
@@ -88,12 +105,14 @@ async function runScenario(page, { seed, steps = 160, log = [] }) {
         const choices = ['mode', 'jump', 'click', 'undo', 'redo', 'clear', 'reset', 'rotate', 'export'];
         if (previous.selection.mode === 'edit') choices.push('add', 'coordinates', 'shift', 'delete', 'fix', 'drag', 'cancel', 'invalid');
         if (previous.periodic) choices.push('periodic', 'supercell', 'resize');
+        if (extended) choices.push('replace', 'invalid_load', 'decline_load', 'download', 'display', 'batch_fix', 'center');
+        if (extended && previous.trajectory) choices.push('frame');
         const action = choices[integer(choices.length)];
         const record = { step, action, before: previous }; log.push(record);
         let performed = true;
         const click = async selector => { if (!await visible(page, selector)) { performed = false; return false; } await page.locator(selector).click(); return true; };
         try {
-            if (action === 'mode') await page.locator(`[data-mode="${previous.selection.mode === 'edit' ? 'measure' : 'edit'}"]`).click();
+            if (action === 'mode') await click(`[data-mode="${previous.selection.mode === 'edit' ? 'measure' : 'edit'}"]`);
             else if (action === 'jump') {
                 if (!previous.atomCount) performed = false;
                 else { const number = integer(previous.atomCount)+1; record.number = number; await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
@@ -133,16 +152,66 @@ async function runScenario(page, { seed, steps = 160, log = [] }) {
             } else if (action === 'supercell') {
                 if (previous.atomCount * Object.values(previous.repeats).reduce((a,b)=>a*b,1) > 48) performed = false;
                 else await click('#makeSupercellBtn');
+            } else if (action === 'replace' || action === 'invalid_load' || action === 'decline_load') {
+                let replacement;
+                if (action === 'invalid_load') replacement = { name:'invalid.xyz', content:'2\ninvalid\nH not-a-number 0 0\nH 0 0 0\n' };
+                else if (integer(5) === 0) replacement = {name:'trajectory.xdatcar',content:await fs.readFile(require('node:path').resolve(__dirname,'../../examples/xdatcar/H2_vibration.xdatcar'),'utf8')};
+                else { const variant=integer(4); record.variant=variant; replacement=sourceFor(variant);
+                    if (variant === 3) replacement.content = replacement.content.replace('Properties=', 'energy=-1.23 Properties='); }
+                record.file = replacement.name;
+                if(action === 'decline_load' && !previous.dirty) performed=false;
+                else {
+                    acceptDialogs = action !== 'decline_load';
+                    const loadSerial=await page.evaluate(()=>window.stressLoadSerial);
+                    await page.locator('#fileInput').setInputFiles({name:replacement.name,mimeType:'text/plain',buffer:Buffer.from(replacement.content)});
+                    await page.waitForFunction(serial=>window.stressLoadSerial>serial,loadSerial);
+                    await page.locator('#statusText').filter({hasText:action === 'invalid_load' ? /Could not|Error|Invalid/ : action === 'decline_load' ? 'Kept the current' : 'Loaded'}).waitFor();
+                    acceptDialogs = true;
+                    if(action === 'replace') known.clear();
+                }
+            } else if (action === 'display') {
+                const selector=['#showLabels','#showBonds','#showFixedIndicators','#useElementRadii','#toggleCell','#toggleAxes'][integer(6)]; record.selector=selector;
+                await click(selector);
+            } else if (action === 'batch_fix') {
+                const selector=integer(2) ? '#fixByZBtn' : '#unfixAllBtn'; record.selector=selector;
+                if(await visible(page,selector)) {
+                    if(selector==='#fixByZBtn') { record.threshold=(rng()*5).toFixed(5); await page.locator('#fixZThreshold').fill(record.threshold); }
+                    await page.locator(selector).click();
+                } else performed=false;
+            } else if (action === 'center') {
+                await click('#shiftCenterBtn');
+            } else if (action === 'frame') {
+                const key=integer(2) ? 'Home' : 'End'; record.key=key;
+                await page.locator('#frameSlider').focus(); await page.locator('#frameSlider').press(key);
+            } else if (action === 'download') {
+                if(!previous.atomCount) performed=false;
+                else {
+                    const waiting=page.waitForEvent('download'); await page.locator('#exportPoscar').click(); const file=await waiting;
+                    const text=await fs.readFile(await file.path(),'utf8'); record.filename=file.suggestedFilename();
+                    const errors=await page.evaluate(text=>{
+                        const parsed=currentStructure.isXDATCAR ? parseXDATCAR(text) : currentStructure.isXYZ ? parseXYZ(text) : parsePOSCAR(text);
+                        const expected=currentStructure.isXYZ || currentStructure.isXDATCAR ? currentStructure.atoms : currentStructure.speciesGroups.flatMap(group=>currentStructure.atoms.filter(a=>a.speciesId===group.id));
+                        const atoms=currentStructure.isXDATCAR ? parsed.atoms.map((a,i)=>({...a,position:parsed.frames[currentStructure.currentFrameIndex].positions[i]})) : parsed.atoms;
+                        const errors=[];
+                        if(atoms.length!==expected.length) errors.push('download atom count');
+                        atoms.forEach((a,i)=>{if(a.element!==expected[i].element || a.position.distanceTo(expected[i].position)>1e-7) errors.push(`download atom ${i}`);
+                            if(!currentStructure.isXYZ && !currentStructure.isXDATCAR && JSON.stringify(a.selectiveDynamics || [true,true,true]) !== JSON.stringify(expected[i].selectiveDynamics || [true,true,true])) errors.push(`download constraints ${i}`);
+                        });
+                        return errors;
+                    },text);
+                    assert.deepEqual(errors,[],'download round-trip');
+                }
             } else if (action === 'export') {
                 if (!previous.atomCount) performed = false;
                 else record.exported = await page.evaluate(() => {
-                    const text = currentStructure.isXYZ ? generateXYZ() : generatePOSCAR();
-                    const parsed = currentStructure.isXYZ ? parseXYZ(text) : parsePOSCAR(text);
+                    const text = currentStructure.isXDATCAR ? generateXDATCAR() : currentStructure.isXYZ ? generateXYZ() : generatePOSCAR();
+                    const parsed = currentStructure.isXDATCAR ? parseXDATCAR(text) : currentStructure.isXYZ ? parseXYZ(text) : parsePOSCAR(text);
                     const errors = [];
                     if (parsed.atoms.length !== currentStructure.atoms.length) errors.push('export atom count');
-                    const expected = currentStructure.isXYZ ? currentStructure.atoms
+                    const expected = currentStructure.isXYZ || currentStructure.isXDATCAR ? currentStructure.atoms
                         : currentStructure.speciesGroups.flatMap(group => currentStructure.atoms.filter(atom => atom.speciesId === group.id));
-                    parsed.atoms.forEach((a,i) => { if (a.element !== expected[i].element || a.position.distanceTo(expected[i].position)>1e-7) errors.push(`export atom ${i}`); });
+                    const exportedAtoms = currentStructure.isXDATCAR ? parsed.atoms.map((a,i)=>({...a,position:parsed.frames[currentStructure.currentFrameIndex].positions[i]})) : parsed.atoms;
+                    exportedAtoms.forEach((a,i) => { if (a.element !== expected[i].element || a.position.distanceTo(expected[i].position)>1e-7) errors.push(`export atom ${i}`); });
                     if (!currentStructure.isXYZ && JSON.stringify(parsed.counts) !== JSON.stringify(currentStructure.counts)) errors.push('export species counts');
                     return errors;
                 });
@@ -203,7 +272,9 @@ async function runScenario(page, { seed, steps = 160, log = [] }) {
                 if (!previous.undo.some(old => old.id === op.id)) operations[op.type] = (operations[op.type] || 0) + 1;
             }
             assert.deepEqual(after.violations, [], `seed ${seed}, step ${step}, ${action}`);
-            if (action === 'invalid' || action === 'cancel' || action === 'export' || action === 'periodic' || action === 'rotate' || action === 'reset' || action === 'mode') compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
+            if (['invalid','invalid_load','decline_load','cancel','export','download','display','periodic','rotate','reset','mode'].includes(action)) compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
+            if (action === 'invalid_load' || action === 'decline_load') { assert.deepEqual(after.undo,previous.undo); assert.deepEqual(after.redo,previous.redo); assert.deepEqual(after.selection,previous.selection); assert.equal(after.dirty,previous.dirty); }
+            if (action === 'replace') { assert.equal(after.undo.length,0); assert.equal(after.redo.length,0); assert.equal(after.dirty,false); }
             if ((action === 'undo' || action === 'redo') && performed) {
                 const op = action === 'undo' ? previous.undo.at(-1) : previous.redo.at(-1);
                 // Redo restores the state captured when Undo was pressed, which
@@ -211,15 +282,34 @@ async function runScenario(page, { seed, steps = 160, log = [] }) {
                 const entry = known.get(op.id);
                 if (action === 'undo' && entry) entry.after = previous;
                 const expected = entry?.[action === 'undo' ? 'before' : 'after'];
-                if(expected) { compareGeometry(after.geometry,expected.geometry,`${action} ${op.type}`);
-                    if(['select_atom','deselect_atom','clear_selection'].includes(op.type)) assert.deepEqual(after.selection,expected.selection,`${action} selection context`); }
-            } else if(after.undo.at(-1)?.id !== previous.undo.at(-1)?.id && after.undo.length === Math.min(50,previous.undo.length+1)) {
-                const op=after.undo.at(-1); known.set(op.id,{before:previous,after});
-                assert.equal(after.redo.length,0,'new action must clear redo branch');
+                if(['select_atom','deselect_atom','clear_selection'].includes(op.type)) {
+                    // Timeline navigation updates displayed positions outside
+                    // edit history. Selection undo must keep the current frame.
+                    compareGeometry(after.geometry,previous.geometry,`${action} selection changes document`);
+                    assert.equal(after.revision,previous.revision,'selection history changes edit revision');
+                    assert.equal(after.dirty,previous.dirty,'selection history changes saved status');
+                    if(expected) assert.deepEqual(after.selection,expected.selection,`${action} selection context`);
+                } else if(expected) compareGeometry(after.geometry,expected.geometry,`${action} ${op.type}`);
+            } else {
+                const added=after.undo.filter(op=>!previous.undo.some(old=>old.id===op.id));
+                if(added.length) {
+                    assert.equal(after.redo.length,0,'new action must clear redo branch');
+                    if(added.length===1) known.set(added[0].id,{before:previous,after});
+                    else {
+                        // Jumping from an edit selection, or measuring a fourth
+                        // atom, records Clear then Select. At the 50-entry limit
+                        // stack length cannot reveal that two operations occurred.
+                        assert.deepEqual(added.map(op=>op.type),['clear_selection','select_atom'],'unknown compound UI action');
+                        const cleared={...previous,selection:{mode:previous.selection.mode,measurement:false,identities:[]}};
+                        known.set(added[0].id,{before:previous,after:cleared});
+                        known.set(added[1].id,{before:cleared,after});
+                    }
+                }
             }
             previous=after;
         } catch(error) { error.message=`Seed ${seed}, step ${step}, action ${action}: ${error.message}`; throw error; }
     }
+    if(extended) { page.off('dialog',handleDialog); await page.evaluate(()=>{loadStructureFromText=window.stressOriginalLoad;}); }
     return { seed, steps, counts, operations, final: previous };
 }
 module.exports={runScenario,capture,sourceFor};

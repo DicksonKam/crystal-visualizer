@@ -8,6 +8,14 @@ tests passed**. Both stress campaigns were still running. This result covers
 the current app fixes and expanded scenario/history regressions; it is not a
 claim that the sustained campaign has finished.
 
+An additional focused browser test passed eight complete deletion/refill cycles,
+including blocked empty export, species creation, Undo/Redo and history branching.
+It uses real multi-selection clicks and existing forms
+(`tests/browser/empty-edit-history.spec.cjs`). Its first attempt requested an
+unavailable sodium option; replay with the offered carbon option passed. This
+setup error is not counted as an app bug. The final full suite will include
+this additional test.
+
 The campaign uses isolated Chromium contexts with software WebGL, synthetic
 molecular/cubic/tilted/partially periodic structures, and a supplied hydrogen
 trajectory. It does not modify the user's open document. No app controls were

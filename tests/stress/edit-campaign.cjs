@@ -15,7 +15,7 @@ if(!Number.isFinite(seconds) || seconds<=0 || !Number.isInteger(initialSeed) || 
     const file=path.join(directory,`${runId}.jsonl`);
     const emit=async record => { const line=JSON.stringify(record); await fs.appendFile(file,line+'\n'); process.stdout.write(line+'\n'); };
     const harnessHash=crypto.createHash('sha256').update(await fs.readFile(require.resolve('./edit-scenario.cjs'))).digest('hex');
-    await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,harnessHash});
+    await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,harnessHash,appHash:crypto.createHash('sha256').update(await fs.readFile(path.resolve(__dirname,'../../app.js'))).digest('hex')});
     const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
     const started=performance.now(); let seed=initialSeed, actions=0; const counts={};
     try {
@@ -34,7 +34,7 @@ if(!Number.isFinite(seconds) || seconds<=0 || !Number.isInteger(initialSeed) || 
                 const result=await runScenario(page,{seed,steps,log});
                 if(errors.length) throw new Error(`Uncaught browser errors: ${errors.join('; ')}`);
                 actions+=result.steps; for(const [key,count] of Object.entries(result.counts)) counts[key]=(counts[key]||0)+count;
-                await emit({event:'pass',seed,steps,scenarioSeconds:(performance.now()-scenarioStart)/1000,elapsedSeconds:(performance.now()-started)/1000,actions,counts:result.counts});
+                await emit({event:'pass',seed,steps,scenarioSeconds:(performance.now()-scenarioStart)/1000,elapsedSeconds:(performance.now()-started)/1000,actions,counts:result.counts,operations:result.operations});
             } catch(error) {
                 const failure=path.join(directory,`${runId}-seed-${seed}`);
                 await fs.writeFile(failure+'.json',JSON.stringify({seed,steps,error:error.stack,errors,log},null,2));

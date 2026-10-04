@@ -76,11 +76,12 @@ function compareGeometry(actual, expected, label) {
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
 async function runScenario(page, { seed, steps = 160, log = [] }) {
+    page.setDefaultTimeout(5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
     const source = sourceFor(seed);
     await page.locator('#fileInput').setInputFiles({ name: source.name, mimeType: 'text/plain', buffer: Buffer.from(source.content) });
     await page.locator('#statusText').filter({ hasText: 'Loaded' }).waitFor();
-    const known = new Map(); const counts = {};
+    const known = new Map(); const counts = {}, operations = {};
     let previous = await capture(page);
     assert.deepEqual(previous.violations, []);
     for (let step = 0; step < steps; step++) {
@@ -182,12 +183,25 @@ async function runScenario(page, { seed, steps = 160, log = [] }) {
                         if(action==='cancel') await page.keyboard.press('Escape'); await page.mouse.up(); }
                 }
             } else if (action === 'rotate') {
-                const box=await page.locator('canvas[aria-label^="3D structure"]').boundingBox(); record.delta=[integer(31)-15,integer(31)-15];
-                const x=box.x+box.width*.8,y=box.y+box.height*.2;
-                await page.mouse.move(x,y); await page.mouse.down(); await page.mouse.move(x+record.delta[0],y+record.delta[1],{steps:3}); await page.mouse.up();
+                record.delta=[integer(31)-15,integer(31)-15];
+                const background = await page.evaluate(() => {
+                    camera.updateWorldMatrix(true,false); structureGroup.updateWorldMatrix(true,true);
+                    const r=renderer.domElement.getBoundingClientRect();
+                    for(const [u,v] of [[.8,.2],[.9,.1],[.9,.9],[.1,.9],[.5,.1],[.5,.9],[.1,.1],[.9,.5],[.1,.5]]) {
+                        raycaster.setFromCamera(new THREE.Vector2(u*2-1,1-v*2),camera);
+                        if (!raycaster.intersectObjects(atomMeshes,false).length && !raycaster.intersectObjects(vacuumDragState.handles,false).length) return {x:r.left+r.width*u,y:r.top+r.height*v};
+                    }
+                    return null;
+                });
+                if(!background) performed=false;
+                else { record.pointer=background; const {x,y}=background;
+                    await page.mouse.move(x,y); await page.mouse.down(); await page.mouse.move(x+record.delta[0],y+record.delta[1],{steps:3}); await page.mouse.up(); }
             }
             const after = await capture(page); record.performed=performed; record.after=after;
             counts[action] = (counts[action] || 0) + Number(performed);
+            if (!['undo','redo'].includes(action)) for (const op of after.undo) {
+                if (!previous.undo.some(old => old.id === op.id)) operations[op.type] = (operations[op.type] || 0) + 1;
+            }
             assert.deepEqual(after.violations, [], `seed ${seed}, step ${step}, ${action}`);
             if (action === 'invalid' || action === 'cancel' || action === 'export' || action === 'periodic' || action === 'rotate' || action === 'reset' || action === 'mode') compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
             if ((action === 'undo' || action === 'redo') && performed) {
@@ -206,6 +220,6 @@ async function runScenario(page, { seed, steps = 160, log = [] }) {
             previous=after;
         } catch(error) { error.message=`Seed ${seed}, step ${step}, action ${action}: ${error.message}`; throw error; }
     }
-    return { seed, steps, counts, final: previous };
+    return { seed, steps, counts, operations, final: previous };
 }
 module.exports={runScenario,capture,sourceFor};

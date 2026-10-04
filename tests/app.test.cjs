@@ -5,6 +5,7 @@ const test = require('node:test');
 const vm = require('node:vm');
 const CrystalGeometry = require('../geometry.js');
 const CrystalFormats = require('../formats.js');
+const CrystalStructure = require('../structure.js');
 
 const root = path.resolve(__dirname, '..');
 
@@ -53,7 +54,7 @@ function app() {
             return elements.get(id);
         }
     };
-    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, CrystalFormats, console });
+    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, CrystalFormats, CrystalStructure, console });
     const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8').replace(/\ninit\(\);\s*$/, '');
     vm.runInContext(source, context);
     return context;
@@ -1270,6 +1271,37 @@ test('POSCAR constraint edits survive export and undo restores the original flag
     context.performUndo();
     assert.deepEqual(Array.from(vm.runInContext('currentStructure.atoms[0].selectiveDynamics', context)), [true, true, true]);
     assert.equal(context.hasUnsavedEdits(), false);
+});
+
+test('default constraint threshold handles large structures without overflowing the call stack', () => {
+    const context = app();
+    context.structure = { atoms: Array.from({ length: 200000 }, (_, index) => ({ position: { z: index === 0 ? -2 : 10 } })) };
+    vm.runInContext('currentStructure = structure', context);
+    assert.equal(context.getDefaultZThreshold(), '4.00');
+});
+
+test('sidebar counts constraints in one pass while preserving totals and element badges', () => {
+    const context = app();
+    let elementReads = 0;
+    let flagReads = 0;
+    const flags = [[false, false, false], [false, true, true], [true, true, true]];
+    context.structure = {
+        comment: 'mixed cell', lattice: [[2, 0, 0], [0, 2, 0], [0, 0, 2]],
+        elements: Array.from({ length: 50 }, (_, index) => `Element${index}`),
+        counts: Array(50).fill(200),
+        atoms: Array.from({ length: 10000 }, (_, index) => ({
+            get element() { elementReads++; return `Element${index % 50}`; },
+            get selectiveDynamics() { flagReads++; return flags[index % 3]; }
+        }))
+    };
+    context.updateUI(context.structure);
+    assert.match(context.document.getElementById('structureInfo').innerHTML, /3334 fixed \/ 3333 partial \/ 3333 free/);
+    const html = context.document.getElementById('atomList').innerHTML;
+    assert.ok(html.includes('Element0'));
+    assert.ok(html.includes('67 fully fixed'));
+    assert.ok(html.includes('200 atoms'));
+    assert.equal(flagReads, 10000);
+    assert.ok(elementReads <= 20000, `Expected linear atom visits, got ${elementReads}`);
 });
 
 test('multi-atom shift validates every result before changing any atom', () => {

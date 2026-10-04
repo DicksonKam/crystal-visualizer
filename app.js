@@ -3005,34 +3005,15 @@ function unfixAllAtoms() {
 // Get default z threshold (midpoint of z-range)
 function getDefaultZThreshold() {
     if (!currentStructure || currentStructure.atoms.length === 0) return 0;
-    
-    const zValues = currentStructure.atoms.map(a => a.position.z);
-    const minZ = Math.min(...zValues);
-    const maxZ = Math.max(...zValues);
-    
-    return ((minZ + maxZ) / 2).toFixed(2);
+    return CrystalStructure.zMidpoint(currentStructure.atoms).toFixed(2);
 }
 
 // Get selective dynamics statistics
 function getSelectiveDynamicsStats() {
     if (!supportsSelectiveDynamics(currentStructure) || currentStructure.atoms.length === 0) return '';
     
-    let fixedCount = 0;
-    let partialCount = 0;
-    let activeCount = 0;
-    
-    currentStructure.atoms.forEach(atom => {
-        const sd = atom.selectiveDynamics || [true, true, true];
-        if (sd.every(v => v === false)) {
-            fixedCount++;
-        } else if (sd.some(v => v === false)) {
-            partialCount++;
-        } else {
-            activeCount++;
-        }
-    });
-    
-    return `${fixedCount} fixed • ${partialCount} partial • ${activeCount} free`;
+    const summary = CrystalStructure.summarizeConstraints(currentStructure.atoms);
+    return `${summary.fixed} fixed • ${summary.partial} partial • ${summary.free} free`;
 }
 
 // ============================================
@@ -4280,21 +4261,13 @@ function updateUI(structure) {
         ? `<div class="info-item"><span class="info-label">Frame</span><span class="info-value" id="sidebarFrameDisplay">${structure.currentFrameIndex + 1} / ${structure.totalFrames}</span></div>`
         : '';
     
-    // Count fixed/active atoms (only relevant for POSCAR with selective dynamics)
-    let fixedCount = 0;
-    let partialCount = 0;
-    if (supportsSelectiveDynamics(structure)) {
-        structure.atoms.forEach(atom => {
-            const sd = atom.selectiveDynamics || [true, true, true];
-            if (sd.every(v => v === false)) fixedCount++;
-            else if (sd.some(v => v === false)) partialCount++;
-        });
-    }
-    const activeCount = structure.atoms.length - fixedCount - partialCount;
+    // Reuse one pass for overall and per-element constraint counts.
+    const constraints = supportsSelectiveDynamics(structure)
+        ? CrystalStructure.summarizeConstraints(structure.atoms) : null;
     
     // Show selective dynamics info if any atoms are fixed (POSCAR only)
-    const sdInfo = ((fixedCount > 0 || partialCount > 0) && supportsSelectiveDynamics(structure))
-        ? `<div class="info-item"><span class="info-label">Constraints</span><span class="info-value sd-info">${fixedCount} fixed / ${partialCount} partial / ${activeCount} free</span></div>`
+    const sdInfo = constraints && (constraints.fixed > 0 || constraints.partial > 0)
+        ? `<div class="info-item"><span class="info-label">Constraints</span><span class="info-value sd-info">${constraints.fixed} fixed / ${constraints.partial} partial / ${constraints.free} free</span></div>`
         : '';
     const latticeInfo = isPeriodicStructure(structure) ? `
         <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
@@ -4319,16 +4292,9 @@ function updateUI(structure) {
         const elemData = ELEMENT_DATA[elem] || ELEMENT_DATA.DEFAULT;
         const colorHex = '#' + elemData.color.toString(16).padStart(6, '0');
         
-        // Count fixed atoms of this element
-        let elemFixedCount = 0;
-        let elemPartialCount = 0;
-        structure.atoms.forEach(atom => {
-            if (supportsSelectiveDynamics(structure) && atom.element === elem) {
-                const sd = atom.selectiveDynamics || [true, true, true];
-                if (sd.every(v => v === false)) elemFixedCount++;
-                else if (sd.some(v => v === false)) elemPartialCount++;
-            }
-        });
+        const elementConstraints = constraints?.byElement.get(elem);
+        const elemFixedCount = elementConstraints?.fixed || 0;
+        const elemPartialCount = elementConstraints?.partial || 0;
         
         const fixedBadge = [
             elemFixedCount > 0 ? `<span class="fixed-badge" title="${elemFixedCount} fully fixed">🔒${elemFixedCount}</span>` : '',

@@ -2,7 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const root = path.resolve(__dirname, '../..');
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.poscar': 'text/plain', '.xyz': 'text/plain', '.xdatcar': 'text/plain' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.poscar': 'text/plain', '.vasp': 'text/plain', '.xyz': 'text/plain', '.xdatcar': 'text/plain' };
 
 http.createServer(async (request, response) => {
     try {

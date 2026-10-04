@@ -30,6 +30,20 @@ async function download(page) {
     return fs.readFile(await result.path(), 'utf8');
 }
 
+test('all example URLs are served and the VASP example loads through the picker', async ({ page }) => {
+    const paths = await page.locator('[data-example-path]').evaluateAll(buttons => buttons.map(button => button.dataset.examplePath));
+    expect(paths.length).toBeGreaterThan(0);
+    for (const path of paths) {
+        const response = await page.request.get(path);
+        expect(response.status(), path).toBe(200);
+        expect(response.headers()['content-type'], path).toBe('text/plain');
+        expect((await response.text()).trim(), path).not.toBe('');
+    }
+    await page.locator('[data-example-path="examples/poscar/SrTiO3_perovskite.vasp"]').click();
+    await expect(page.locator('#statusText')).toContainText('Loaded: SrTiO3_perovskite.vasp');
+    expect(await page.evaluate(() => ({ filename: currentFilename, atoms: currentStructure.atoms.length, counts: currentStructure.counts }))).toEqual({ filename: 'SrTiO3_perovskite.vasp', atoms: 5, counts: [1, 1, 3] });
+});
+
 test('duplicate species preserve membership through editing, deletion, undo/redo and downloads', async ({ page }) => {
     await upload(page, groups, 'groups.poscar');
     await editX(page, 2, 2);

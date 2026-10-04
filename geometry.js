@@ -7,6 +7,16 @@
     const length = a => Math.sqrt(dot(a, a));
     const components = point => Array.isArray(point) ? point : [point.x, point.y, point.z];
 
+    function requireFiniteCell(lattice, format = 'cell') {
+        if (lattice.some(vector => vector.some(value => !Number.isFinite(value)))) {
+            throw new Error(`Invalid ${format}: lattice has non-finite coordinates`);
+        }
+        const volume = dot(lattice[0], cross(lattice[1], lattice[2]));
+        if (!Number.isFinite(volume)) throw new Error(`Invalid ${format}: lattice volume is not finite`);
+        if (Math.abs(volume) < 1e-10) throw new Error(`Invalid ${format}: lattice has zero volume`);
+        return volume;
+    }
+
     function fractionalToCartesian(fractional, lattice) {
         return [0, 1, 2].map(axis => fractional.reduce((sum, value, index) => sum + value * lattice[index][axis], 0));
     }
@@ -15,9 +25,10 @@
         const [a, b, c] = lattice;
         const reciprocal = [cross(b, c), cross(c, a), cross(a, b)];
         const volume = dot(a, reciprocal[0]);
-        if (Math.abs(volume) < 1e-10) return null;
+        if (!Number.isFinite(volume) || Math.abs(volume) < 1e-10) return null;
         const position = components(point);
-        return reciprocal.map(row => dot(position, row) / volume);
+        const fractional = reciprocal.map(row => dot(position, row) / volume);
+        return fractional.every(Number.isFinite) ? fractional : null;
     }
 
     // Average positions on each periodic axis. A linear average puts atoms at
@@ -159,7 +170,7 @@
         ];
     }
 
-    const api = { fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell };
+    const api = { requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalGeometry = api;
 })(globalThis);

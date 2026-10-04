@@ -1,6 +1,16 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
+const { requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
+
+test('cell validation and coordinate conversion reject non-finite results', () => {
+    assert.equal(requireFiniteCell([[2, 0, 0], [0, 3, 0], [0, 0, -4]]), -24);
+    const overflowing = [[2e103, 0, 0], [0, 2e103, 0], [0, 0, 1e102]];
+    assert.throws(() => requireFiniteCell(overflowing), /volume is not finite/);
+    assert.equal(cartesianToFractional([1, 1, 1], overflowing), null);
+    assert.throws(() => requireFiniteCell([[Infinity, 0, 0], [0, 1, 0], [0, 0, 1]]), /non-finite coordinates/);
+    assert.throws(() => requireFiniteCell([[1, 0, 0], [2, 0, 0], [0, 0, 1]]), /zero volume/);
+    assert.equal(cartesianToFractional([1e308, 0, 0], [[10, 0, 0], [0, 10, 0], [0, 0, 10]]), null);
+});
 
 test('coordinate conversion round-trips arrays and objects in a tilted cell', () => {
     const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];

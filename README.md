@@ -25,6 +25,7 @@ XYZ property declarations validate column names, types, and counts before loadin
 The Bond Length slider sets an absolute maximum. “Use Atomic Radii” is on by default and also limits bonds using covalent radii; turn it off to use distance alone.
 For periodic structures, bonds crossing a cell face are shown as faint segments ending at the face. Measurements default to the nearest periodic image, including tilted cells. Use the measurement mode button to measure the displayed copies instead; selecting a ghost copy always measures that explicit image.
 Changing the number of periodic images refits the preview while keeping its viewing direction.
+Supercell conversion validates the expanded cell and every atom before changing the document or undo history. Cells or coordinates that cannot be represented are rejected, and conversion shares the preview's 3,000-atom limit.
 
 Editing has Undo and Redo buttons, with ⌘Z/Ctrl+Z and ⌘⇧Z/Ctrl+Y shortcuts. The header marks unsaved structure edits. Exporting clears that marker, while opening a different file or leaving the page asks before discarding unsaved edits. Selection changes alone do not mark the structure as edited.
 Deleting all atoms leaves an editable empty structure. Export waits until you add an atom or undo the deletion, so it cannot download a file the viewer cannot reopen.
@@ -38,7 +39,7 @@ Shift and add-atom inputs reject invalid or unrepresentable coordinates without 
 
 ## Code and tests
 
-`index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains coordinate conversion and periodic geometry, `formats.js` contains file parsers and exporters, and `structure.js` contains structure summaries. These three modules run without the browser or Three.js renderer. `app.js` contains structure operations, rendering, and event handling. These areas still share application state, so new features should keep loading, rendering, editing, undo, and export behavior consistent.
+`index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains coordinate conversion, cell validation, and periodic geometry, `formats.js` contains file parsers and exporters, and `structure.js` contains supercell preparation and structure summaries. These three modules run without the browser or Three.js renderer. `app.js` contains structure operations, rendering, and event handling. These areas still share application state, so new features should keep loading, rendering, editing, undo, and export behavior consistent.
 
 The renderer reuses sphere geometry and element materials across atoms, reuses bond geometry, and caches the smallest atom radius during redraws. Views above 500 displayed atoms use simpler spheres, batch atoms by element and ghost state while retaining their picking/editing meshes, batch solid and ghost bonds, skip shadows, and cap active rendering at 30 fps. Idle views render at a lower rate, while edits request an immediate redraw. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
 

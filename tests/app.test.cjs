@@ -910,6 +910,50 @@ test('supercell undo and redo preserve lattice-bearing XYZ metadata', () => {
     assert.equal(vm.runInContext('currentStructure.isDirect', context), false);
 });
 
+test('failed supercell preparation preserves structure, preview, selections, and both history stacks', () => {
+    for (const source of [
+        '1\nLattice="1e102 0 0 0 1e102 0 0 0 1e102"\nH 0 0 0\n',
+        '1\nLattice="8e307 0 0 0 1e-154 0 0 0 1e-154"\nH 1.4e308 0 0\n'
+    ]) {
+        const context = loadingApp();
+        context.loadStructureFromText(source, 'extreme.xyz');
+        context.source = source;
+        vm.runInContext(`
+            settings.periodic = { a: 20, b: currentStructure.lattice[0][0] < 1e200 ? 20 : 1, c: 1 };
+            if (currentStructure.lattice[0][0] > 1e200) settings.periodic.a = 2;
+            selectedAtoms = [{ index: 0, element: 'H' }];
+            pushUndo({ type: 'select_atom', atomData: { index: 0 } });
+            redoStack = [{ operation: { type: 'clear_selection' } }];
+            globalThis.beforeState = JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack, redoStack });
+        `, context);
+        assert.equal(context.convertToSupercell(), false);
+        assert.equal(vm.runInContext('JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack, redoStack })', context), context.beforeState);
+        assert.equal(context.hasUnsavedEdits(), false);
+        assert.match(context.document.getElementById('statusText').textContent, /Cannot create supercell/);
+        assert.equal(vm.runInContext('currentSourceText', context), source);
+    }
+});
+
+test('prepared supercells export and reopen with matching positions, constraints, and fractional coordinates', () => {
+    const context = loadingApp();
+    context.loadStructureFromText(example('examples/poscar/Al_slab_selective.poscar'), 'slab.poscar');
+    vm.runInContext('settings.periodic = { a: 2, b: 2, c: 1 };', context);
+    assert.equal(context.convertToSupercell(), true);
+    const generated = context.generatePOSCAR();
+    const reparsed = context.parsePOSCAR(generated);
+    const atoms = vm.runInContext('currentStructure.atoms', context);
+    assert.equal(reparsed.atoms.length, atoms.length);
+    atoms.forEach((atom, index) => {
+        assert.ok(atom.fractional.every(Number.isFinite));
+        const position = context.fractionalToCartesian(atom.fractional, reparsed.lattice);
+        assert.ok(atom.position.distanceTo(position) < 1e-9);
+        assert.ok(atom.position.distanceTo(reparsed.atoms[index].position) < 1e-9);
+        assert.deepEqual(Array.from(atom.selectiveDynamics), Array.from(reparsed.atoms[index].selectiveDynamics));
+    });
+    assert.equal(reparsed.atoms.filter(atom => atom.selectiveDynamics.some(value => !value)).length,
+        atoms.filter(atom => atom.selectiveDynamics.some(value => !value)).length);
+});
+
 test('exact fractional coordinates update one atom and round-trip through undo', () => {
     const context = app();
     context.structure = context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));
@@ -1088,6 +1132,16 @@ test('cell drags update fractional coordinates, skip no changes, and roll back c
         assert.equal(vm.runInContext('undoStack.length', context), action === 'commit' ? 1 : 0);
         assert.equal(vm.runInContext('lastUiLattice', context), action === 'commit' ? 4 : 2);
         assert.equal(captured.size, 0);
+        if (action === 'commit') {
+            context.performUndo();
+            assert.equal(vm.runInContext('currentStructure.lattice[0][0]', context), 2);
+            assert.equal(vm.runInContext('currentStructure.atoms[0].fractional[0]', context), 0.5);
+            assert.equal(context.hasUnsavedEdits(), false);
+            context.performRedo();
+            assert.equal(vm.runInContext('currentStructure.lattice[0][0]', context), 4);
+            assert.equal(vm.runInContext('currentStructure.atoms[0].fractional[0]', context), 0.25);
+            assert.equal(context.hasUnsavedEdits(), true);
+        }
         if (action === 'commit') {
             context.performUndo();
             assert.equal(context.structure.atoms[0].fractional[0], 0.5);

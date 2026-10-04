@@ -1,23 +1,7 @@
 // File parsing independent of rendering and browser state.
 (function (root) {
+    const { requireFiniteCell } = typeof module !== 'undefined' && module.exports ? require('./geometry.js') : root.CrystalGeometry;
     function createFormats(Vector3, cartesianToFractional) {
-        function cellVolume(lattice) {
-            const [a, b, c] = lattice;
-            return a[0] * (b[1] * c[2] - b[2] * c[1])
-                - a[1] * (b[0] * c[2] - b[2] * c[0])
-                + a[2] * (b[0] * c[1] - b[1] * c[0]);
-        }
-
-        function requireFiniteCell(lattice, format) {
-            if (lattice.some(vector => vector.some(value => !Number.isFinite(value)))) {
-                throw new Error(`Invalid ${format}: lattice has non-finite coordinates`);
-            }
-            const volume = cellVolume(lattice);
-            if (!Number.isFinite(volume)) throw new Error(`Invalid ${format}: lattice volume is not finite`);
-            if (Math.abs(volume) < 1e-10) throw new Error(`Invalid ${format}: lattice has zero volume`);
-            return volume;
-        }
-
         // Parse POSCAR file
         function parsePOSCAR(content) {
             const lines = content.trim().split('\n').map(line => line.trim());

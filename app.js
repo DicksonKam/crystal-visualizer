@@ -4932,6 +4932,18 @@ function convertToSupercell() {
     
     // Skip if already 1×1×1
     if (na === 1 && nb === 1 && nc === 1) return false;
+
+    let prepared;
+    try {
+        prepared = CrystalStructure.buildSupercell(currentStructure, [na, nb, nc]);
+    } catch (error) {
+        statusText.textContent = `Cannot create supercell: ${error.message}`;
+        statusText.className = 'error';
+        return false;
+    }
+    const newAtoms = prepared.atoms.map(atom => ({
+        ...atom, position: new THREE.Vector3(atom.position.x, atom.position.y, atom.position.z)
+    }));
     
     // Keep all parsed metadata in the undo snapshot as formats evolve.
     const oldStructure = snapshotStructure(currentStructure);
@@ -4941,45 +4953,9 @@ function convertToSupercell() {
         oldPeriodic: { a: na, b: nb, c: nc }
     });
     
-    const lattice = currentStructure.lattice;
-    const aVec = new THREE.Vector3(...lattice[0]);
-    const bVec = new THREE.Vector3(...lattice[1]);
-    const cVec = new THREE.Vector3(...lattice[2]);
-    
-    // Create new atoms array with all periodic copies
-    const newAtoms = [];
-    
-    for (let ia = 0; ia < na; ia++) {
-        for (let ib = 0; ib < nb; ib++) {
-            for (let ic = 0; ic < nc; ic++) {
-                const translation = new THREE.Vector3()
-                    .addScaledVector(aVec, ia)
-                    .addScaledVector(bVec, ib)
-                    .addScaledVector(cVec, ic);
-                
-                currentStructure.atoms.forEach(atom => {
-                    const newPos = atom.position.clone().add(translation);
-                    newAtoms.push({
-                        element: atom.element,
-                        position: newPos,
-                        fractional: null, // Will need recalculation if needed
-                        selectiveDynamics: atom.selectiveDynamics ? [...atom.selectiveDynamics] : [true, true, true]
-                    });
-                });
-            }
-        }
-    }
-    
-    // Update lattice vectors for supercell
-    const newLattice = [
-        lattice[0].map(v => v * na),
-        lattice[1].map(v => v * nb),
-        lattice[2].map(v => v * nc)
-    ];
-    
     // Update structure
     currentStructure.atoms = newAtoms;
-    currentStructure.lattice = newLattice;
+    currentStructure.lattice = prepared.lattice;
     currentStructure.comment = `${currentStructure.comment} (${na}×${nb}×${nc} supercell)`;
     
     // Recalculate element counts

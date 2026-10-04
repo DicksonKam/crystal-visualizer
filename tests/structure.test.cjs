@@ -1,6 +1,43 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { summarizeConstraints, zMidpoint } = require('../structure.js');
+const { buildSupercell, summarizeConstraints, zMidpoint } = require('../structure.js');
+const { fractionalToCartesian } = require('../geometry.js');
+
+test('supercells prepare tilted-cell copies with current fractional coordinates and independent constraints', () => {
+    const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
+    const fractional = [0.2, 0.35, 0.7];
+    const coordinates = fractionalToCartesian(fractional, lattice);
+    const source = { lattice, atoms: [{ element: 'Si', position: { x: coordinates[0], y: coordinates[1], z: coordinates[2] }, fractional, selectiveDynamics: [false, true, false] }] };
+    const before = JSON.stringify(source);
+    const prepared = buildSupercell(source, [2, 3, 1]);
+    const expectedLattice = [[4, 0, 0], [2.4, 9, 0], [0.4, 0.5, 4]];
+    prepared.lattice.forEach((vector, axis) => vector.forEach((value, component) => assert.ok(Math.abs(value - expectedLattice[axis][component]) < 1e-12)));
+    assert.equal(prepared.atoms.length, 6);
+    for (let a = 0; a < 2; a++) for (let b = 0; b < 3; b++) {
+        const atom = prepared.atoms[a * 3 + b];
+        const expected = [(fractional[0] + a) / 2, (fractional[1] + b) / 3, fractional[2]];
+        atom.fractional.forEach((value, axis) => assert.ok(Math.abs(value - expected[axis]) < 1e-12));
+        assert.deepEqual(atom.selectiveDynamics, [false, true, false]);
+        assert.notEqual(atom.selectiveDynamics, source.atoms[0].selectiveDynamics);
+    }
+    assert.equal(JSON.stringify(source), before);
+});
+
+test('supercell validation rejects overflow, invalid repeats, and excessive copies without changing the source', () => {
+    const source = { lattice: [[1e102, 0, 0], [0, 1e102, 0], [0, 0, 1e102]], atoms: [{ element: 'H', position: { x: 0, y: 0, z: 0 } }] };
+    const before = JSON.stringify(source);
+    assert.throws(() => buildSupercell(source, [20, 20, 1]), /volume is not finite/);
+    assert.equal(JSON.stringify(source), before);
+    for (const repeats of [[0, 1, 1], [1.5, 1, 1], [21, 1, 1], [2, 1], ['2', 1, 1]]) {
+        assert.throws(() => buildSupercell(source, repeats), /integers from 1 to 20/);
+    }
+    assert.throws(() => buildSupercell({ atoms: { length: 1001 } }, [3, 1, 1]), /3,000 atoms/);
+    const wide = { lattice: [[8e307, 0, 0], [0, 1e-154, 0], [0, 0, 1e-154]], atoms: [{ element: 'H', position: { x: 1.4e308, y: 0, z: 0 } }] };
+    const wideBefore = JSON.stringify(wide);
+    assert.throws(() => buildSupercell(wide, [2, 1, 1]), /atom coordinates cannot be represented/);
+    assert.equal(JSON.stringify(wide), wideBefore);
+    assert.throws(() => buildSupercell(wide, [3, 1, 1]), /non-finite coordinates/);
+});
 
 test('constraint summaries keep global and per-element counts consistent', () => {
     const summary = summarizeConstraints([

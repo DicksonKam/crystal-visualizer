@@ -3078,8 +3078,10 @@ function applyGlobalPeriodicShift() {
         return;
     }
     const result = document.getElementById('shiftError');
-    result.textContent = `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) ${coordType === 'fractional' ? 'frac' : 'Å'}`;
-    result.className = 'add-atom-error success';
+    result.textContent = shifted.changedCount
+        ? `Shifted ${targetDesc} by (${val1.toFixed(2)}, ${val2.toFixed(2)}, ${val3.toFixed(2)}) ${coordType === 'fractional' ? 'frac' : 'Å'}`
+        : 'Shift leaves atom positions unchanged';
+    result.className = shifted.changedCount ? 'add-atom-error success' : 'add-atom-error';
 }
 
 // Apply periodic shift by Cartesian coordinates (Å)
@@ -3105,6 +3107,7 @@ function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = nu
     return applyCartesianShift(shiftCartesian, atomIndices);
 }
 
+// A valid shift reports how many positions changed; invalid input returns false.
 function applyCartesianShift(shiftCartesian, atomIndices) {
     if (!currentStructure || ![shiftCartesian.x, shiftCartesian.y, shiftCartesian.z].every(Number.isFinite)) return false;
     const indicesToShift = atomIndices ? [...new Set(atomIndices)] : currentStructure.atoms.map((_, index) => index);
@@ -3125,14 +3128,20 @@ function applyCartesianShift(shiftCartesian, atomIndices) {
         }
         updates.push({ index, position, fractional });
     }
-    const oldPositions = updates.map(({ index }) => currentStructure.atoms[index].position.clone());
+    const changedUpdates = updates.filter(({ index, position }) => currentStructure.atoms[index].position.distanceTo(position) >= 1e-10);
+    if (changedUpdates.length === 0) {
+        statusText.textContent = 'Shift leaves atom positions unchanged';
+        statusText.className = '';
+        return { changedCount: 0 };
+    }
+    const oldPositions = changedUpdates.map(({ index }) => currentStructure.atoms[index].position.clone());
     pushUndo({
         type: 'shift_atoms',
-        atomIndices: indicesToShift,
+        atomIndices: changedUpdates.map(({ index }) => index),
         shiftVector: shiftCartesian.clone(),
         oldPositions
     });
-    updates.forEach(({ index, position, fractional }) => {
+    changedUpdates.forEach(({ index, position, fractional }) => {
         currentStructure.atoms[index].position.copy(position);
         currentStructure.atoms[index].fractional = fractional;
     });
@@ -3142,7 +3151,7 @@ function applyCartesianShift(shiftCartesian, atomIndices) {
     const targetDesc = atomIndices ? `${indicesToShift.length} atom${indicesToShift.length > 1 ? 's' : ''}` : 'all atoms';
     statusText.textContent = `Shifted ${targetDesc}`;
     statusText.className = 'success';
-    return true;
+    return { changedCount: changedUpdates.length };
 }
 
 // Center structure in the unit cell
@@ -3162,13 +3171,19 @@ function centerStructureInCell() {
     const center = CrystalGeometry.periodicFractionalCenter(fractionalPositions);
     const [deltaA, deltaB, deltaC] = center.map(value => 0.5 - value);
     
-    if (!applyPeriodicShiftByFractional(deltaA, deltaB, deltaC)) return;
+    const shifted = applyPeriodicShiftByFractional(deltaA, deltaB, deltaC);
+    if (!shifted) {
+        statusText.textContent = 'Cannot center atoms in this cell';
+        statusText.className = 'error';
+        return;
+    }
     
     const errorDiv = document.getElementById('shiftError');
     if (errorDiv) {
-        errorDiv.textContent = 'Structure centered in cell';
-        errorDiv.className = 'add-atom-error success';
+        errorDiv.textContent = shifted.changedCount ? 'Structure centered in cell' : 'Structure is already centered in cell';
+        errorDiv.className = shifted.changedCount ? 'add-atom-error success' : 'add-atom-error';
     }
+    statusText.textContent = shifted.changedCount ? 'Structure centered in cell' : 'Structure is already centered in cell';
 }
 
 // Add atom from input form

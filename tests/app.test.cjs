@@ -959,7 +959,7 @@ test('selected fractional shift wraps in a tilted cell and undo restores coordin
         updateUI_forCurrentMode = () => {};
         updateSupercellButtonState = () => {};
     `, context);
-    assert.equal(context.applyPeriodicShiftByFractional(0.3, 0, 0, [0]), true);
+    assert.equal(context.applyPeriodicShiftByFractional(0.3, 0, 0, [0]).changedCount, 1);
     const shifted = context.cartesianToFractional(context.structure.atoms[0].position, lattice);
     assert.ok(Math.abs(shifted[0] - 0.2) < 1e-10);
     assert.equal(context.structure.atoms[1].position.distanceTo(originalSecond), 0);
@@ -989,10 +989,37 @@ test('center in cell moves a boundary-spanning cluster to the middle of a tilted
     assert.ok(Math.abs(centered[0][0] - 0.49) < 1e-10);
     assert.ok(Math.abs(centered[1][0] - 0.51) < 1e-10);
     assert.ok(centered.every(frac => Math.abs(frac[1] - 0.5) < 1e-10 && Math.abs(frac[2] - 0.5) < 1e-10));
+    context.centerStructureInCell();
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.match(context.document.getElementById('shiftError').textContent, /already centered/);
     context.performUndo();
     assert.ok(Math.abs(context.cartesianToFractional(context.structure.atoms[0].position, lattice)[0] - 0.99) < 1e-10);
+    assert.equal(context.hasUnsavedEdits(), false);
     context.performRedo();
     assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].fractional[0]', context) - 0.49) < 1e-10);
+});
+
+test('whole-cell periodic shifts preserve exact positions, redo history, and the clean state', () => {
+    const context = app();
+    const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
+    context.structure = { lattice, atoms: [0.2, 0.4].map(a => ({
+        element: 'H', position: context.fractionalToCartesian([a, 0.3, 0.4], lattice), fractional: [a, 0.3, 0.4]
+    })) };
+    const originalPositions = context.structure.atoms.map(atom => atom.position.clone());
+    context.document.querySelector = () => ({ value: 'fractional' });
+    vm.runInContext(`
+        currentStructure = structure;
+        redoStack = [{ operation: { type: 'select_atom' } }];
+        renderStructure = () => { throw new Error('unchanged shift rebuilt the structure'); };
+    `, context);
+    assert.equal(context.applyPeriodicShiftByFractional(1, 0, 0).changedCount, 0);
+    context.document.getElementById('shiftA').value = '1';
+    context.applyGlobalPeriodicShift();
+    context.structure.atoms.forEach((atom, index) => assert.equal(atom.position.distanceTo(originalPositions[index]), 0));
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('redoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), false);
+    assert.match(context.document.getElementById('shiftError').textContent, /positions unchanged/);
 });
 
 test('constraint controls reject invalid thresholds and skip unchanged atoms', () => {

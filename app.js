@@ -389,6 +389,31 @@ function captureRedoState(operation) {
     };
 }
 
+function restoreSelectedAtoms(savedSelections) {
+    return savedSelections.map(saved => {
+        const mesh = saved.isGhost
+            ? atomMeshes.find(candidate => saved.cellOffset && candidate.userData.isGhost
+                && candidate.userData.originalIndex === saved.originalIndex
+                && candidate.userData.cellOffset
+                && candidate.userData.cellOffset.a === saved.cellOffset.a
+                && candidate.userData.cellOffset.b === saved.cellOffset.b
+                && candidate.userData.cellOffset.c === saved.cellOffset.c)
+            : atomMeshes[saved.index];
+        if (!mesh || (!saved.isGhost && mesh.userData.isGhost)) return null;
+        const position = new THREE.Vector3();
+        mesh.getWorldPosition(position);
+        return {
+            mesh,
+            index: saved.index,
+            originalIndex: saved.originalIndex,
+            element: saved.element,
+            position,
+            isGhost: Boolean(saved.isGhost),
+            cellOffset: saved.cellOffset
+        };
+    }).filter(Boolean);
+}
+
 function performRedo() {
     if (redoStack.length === 0) {
         statusText.textContent = 'Nothing to redo';
@@ -396,21 +421,28 @@ function performRedo() {
         return;
     }
     const { operation, state } = redoStack.pop();
-    if (state.structure) {
+    if (isSelectionOperation(operation)) {
+        selectedAtoms.forEach(atom => unhighlightAtomMesh(atom.mesh));
+        selectedAtoms = restoreSelectedAtoms(state.selected);
+        isMeasurementSelection = state.isMeasurementSelection;
+        rebuildSelectionVisuals();
+        updateUI_forCurrentMode();
+        requestRender();
+    } else {
         currentStructure = restoreStructure(state.structure);
+        settings.periodic = { ...state.periodic };
+        ['a', 'b', 'c'].forEach(axis => {
+            const upper = axis.toUpperCase();
+            document.getElementById(`periodic${upper}`).value = settings.periodic[axis];
+            document.getElementById(`periodic${upper}Display`).textContent = settings.periodic[axis];
+        });
+        selectedAtoms = state.selected;
+        isMeasurementSelection = state.isMeasurementSelection;
+        renderStructure(currentStructure, true);
+        updateUI(currentStructure);
+        updateUI_forCurrentMode();
+        updateSupercellButtonState();
     }
-    settings.periodic = { ...state.periodic };
-    ['a', 'b', 'c'].forEach(axis => {
-        const upper = axis.toUpperCase();
-        document.getElementById(`periodic${upper}`).value = settings.periodic[axis];
-        document.getElementById(`periodic${upper}Display`).textContent = settings.periodic[axis];
-    });
-    selectedAtoms = state.selected;
-    isMeasurementSelection = state.isMeasurementSelection;
-    renderStructure(currentStructure, true);
-    updateUI(currentStructure);
-    updateUI_forCurrentMode();
-    updateSupercellButtonState();
     undoStack.push(operation);
     currentEditRevision = operation.afterRevision;
     updateUndoButton();
@@ -4113,51 +4145,8 @@ function renderStructure(structure, preserveState = false) {
         controls.target.copy(savedControlsTarget);
         controls.update();
         
-        // Restore selections with correct mode-aware visuals
-        savedSelections.forEach(saved => {
-            if (saved.isGhost && saved.cellOffset) {
-                // Find the ghost atom mesh by matching originalIndex and cellOffset
-                const ghostMesh = atomMeshes.find(m => 
-                    m.userData.isGhost && 
-                    m.userData.originalIndex === saved.originalIndex &&
-                    m.userData.cellOffset &&
-                    m.userData.cellOffset.a === saved.cellOffset.a &&
-                    m.userData.cellOffset.b === saved.cellOffset.b &&
-                    m.userData.cellOffset.c === saved.cellOffset.c
-                );
-                
-                if (ghostMesh) {
-                    const worldPos = new THREE.Vector3();
-                    ghostMesh.getWorldPosition(worldPos);
-                    
-                    selectedAtoms.push({
-                        mesh: ghostMesh,
-                        index: saved.index,
-                        originalIndex: saved.originalIndex,
-                        element: saved.element,
-                        position: worldPos.clone(),
-                        isGhost: true,
-                        cellOffset: saved.cellOffset
-                    });
-                }
-            } else {
-                // Regular atom
-                const atomIndex = saved.index;
-                if (atomIndex < atomMeshes.length && !atomMeshes[atomIndex].userData.isGhost) {
-                    const atom = currentStructure.atoms[atomIndex];
-                    const mesh = atomMeshes[atomIndex];
-                    const worldPos = new THREE.Vector3();
-                    mesh.getWorldPosition(worldPos);
-                    
-                    selectedAtoms.push({
-                        mesh: mesh,
-                        index: atomIndex,
-                        element: atom.element,
-                        position: worldPos.clone()
-                    });
-                }
-            }
-        });
+        // Restore selections with correct mode-aware visuals.
+        selectedAtoms = restoreSelectedAtoms(savedSelections);
         
         // Rebuild visuals based on current mode
         rebuildSelectionVisuals();

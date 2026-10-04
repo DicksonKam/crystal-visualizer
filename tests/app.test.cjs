@@ -570,6 +570,81 @@ test('undo and redo restore an edit; a new edit invalidates redo', () => {
     assert.equal(vm.runInContext('redoStack.length', context), 0);
 });
 
+test('redoing regular and periodic-image selections reuses atom meshes', () => {
+    for (const isGhost of [false, true]) {
+        const context = app();
+        const offset = { a: 1, b: 0, c: 0 };
+        const regularMesh = {
+            userData: { isGhost: false },
+            getWorldPosition(target) { target.copy(new Vector3(1, 2, 3)); }
+        };
+        const ghostMesh = {
+            userData: { isGhost: true, originalIndex: 0, cellOffset: offset },
+            getWorldPosition(target) { target.copy(new Vector3(4, 2, 3)); }
+        };
+        Object.assign(context, { regularMesh, ghostMesh });
+        vm.runInContext(`
+            atomMeshes = [regularMesh, ghostMesh];
+            settings.periodic = { a: 2, b: 1, c: 1 };
+            renderStructure = () => { throw new Error('selection redo rebuilt the structure'); };
+            rebuildSelectionVisuals = () => {};
+            updateUI_forCurrentMode = () => {};
+            unhighlightAtomMesh = () => {};
+        `, context);
+        context.isGhost = isGhost;
+        vm.runInContext(`
+            selectedAtoms = [{
+                mesh: isGhost ? ghostMesh : regularMesh,
+                index: isGhost ? 'ghost_0_100' : 0,
+                originalIndex: 0,
+                element: 'Si',
+                position: new THREE.Vector3(isGhost ? 4 : 1, 2, 3),
+                isGhost,
+                cellOffset: isGhost ? { a: 1, b: 0, c: 0 } : null
+            }];
+            isMeasurementSelection = true;
+            pushUndo({ type: 'select_atom', atomData: { index: selectedAtoms[0].index, isGhost } });
+        `, context);
+        context.performUndo();
+        assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
+        vm.runInContext('settings.periodic.a = 3', context);
+        context.performRedo();
+        assert.equal(vm.runInContext('selectedAtoms.length', context), 1);
+        assert.equal(vm.runInContext('selectedAtoms[0].mesh === (isGhost ? ghostMesh : regularMesh)', context), true);
+        assert.equal(vm.runInContext('selectedAtoms[0].position.x', context), isGhost ? 4 : 1);
+        assert.equal(vm.runInContext('isMeasurementSelection', context), true);
+        assert.equal(vm.runInContext('settings.periodic.a', context), 3);
+        assert.equal(context.hasUnsavedEdits(), false);
+    }
+});
+
+test('redoing cleared selections does not rebuild the structure', () => {
+    const context = app();
+    const mesh = {
+        userData: { isGhost: false },
+        getWorldPosition(target) { target.copy(new Vector3(1, 2, 3)); }
+    };
+    context.mesh = mesh;
+    vm.runInContext(`
+        atomMeshes = [mesh];
+        selectedAtoms = [{ mesh, index: 0, originalIndex: 0, element: 'Si',
+            position: new THREE.Vector3(1, 2, 3), isGhost: false, cellOffset: null }];
+        renderStructure = () => { throw new Error('clear redo rebuilt the structure'); };
+        rebuildSelectionVisuals = () => {};
+        updateUI_forCurrentMode = () => {};
+        clearMeasurementVisuals = () => {};
+        highlightAtomMesh = () => {};
+        unhighlightAtomMesh = () => {};
+        clearSelection();
+    `, context);
+    assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
+    context.performUndo();
+    assert.equal(vm.runInContext('selectedAtoms.length', context), 1);
+    context.performRedo();
+    assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
+    assert.equal(context.hasUnsavedEdits(), false);
+});
+
 test('supercell undo and redo preserve lattice-bearing XYZ metadata', () => {
     const context = app();
     context.structure = context.parseXYZ(example('examples/xyz/Si_diamond_extended.xyz'));

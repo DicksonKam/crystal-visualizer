@@ -716,6 +716,147 @@ test('overflowing exact coordinates leave the atom and undo history unchanged', 
     assert.match(context.document.getElementById('editAtomError').textContent, /cannot be represented/);
 });
 
+function prepareDragContext(structure) {
+    const context = app();
+    context.structure = structure;
+    const captured = new Set();
+    context.canvas = {
+        setPointerCapture(id) { captured.add(id); },
+        hasPointerCapture(id) { return captured.has(id); },
+        releasePointerCapture(id) { captured.delete(id); }
+    };
+    vm.runInContext(`
+        currentStructure = structure;
+        currentMode = 'edit';
+        renderer = { domElement: canvas };
+        controls = { enabled: false };
+        removeDragGuidePlane = () => {};
+        createDragGuidePlane = () => {};
+        clearVacuumHighlight = () => {};
+        rebuildDisplayOptions = () => {};
+        renderStructure = () => {};
+        updateVacuumHandles = () => {};
+        updateUI = structure => { lastUiLattice = structure.lattice?.[0][0]; };
+        updateEditUI = () => {};
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+        highlightAtomMesh = () => {};
+        unhighlightAtomMesh = () => {};
+        captureEditPointer({ pointerId: 7 });
+    `, context);
+    return { context, captured };
+}
+
+test('atom drag keeps tilted-cell coordinates current and skips a stationary drag', () => {
+    const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
+    for (const moved of [false, true]) {
+        const start = new Vector3(...CrystalGeometry.fractionalToCartesian([0.2, 0.3, 0.4], lattice));
+        const end = new Vector3(...CrystalGeometry.fractionalToCartesian([moved ? 0.4 : 0.2, 0.3, 0.4], lattice));
+        const { context, captured } = prepareDragContext({ lattice, atoms: [{ element: 'H', position: start.clone(), fractional: [0.2, 0.3, 0.4] }] });
+        Object.assign(context, { start, end });
+        vm.runInContext(`
+            draggedAtom = { index: 0, mesh: { position: start.clone() }, startPosition: start.clone() };
+            structureGroup = { position: new THREE.Vector3() };
+            getMouseNDC = () => ({ distanceTo: () => 0.1 });
+            mouse = { copy() {} };
+            raycaster = { setFromCamera() {}, ray: { intersectPlane(plane, target) { return target.copy(end); } } };
+            constrainToPolygon = point => point;
+            onMouseMove({ pointerId: 7 });
+        `, context);
+        assert.ok(Math.abs(context.structure.atoms[0].fractional[0] - (moved ? 0.4 : 0.2)) < 1e-10);
+        assert.equal(context.hasUnsavedEdits(), moved);
+        context.onMouseUp({ button: 0, pointerId: 7 });
+        assert.equal(vm.runInContext('undoStack.length', context), moved ? 1 : 0);
+        assert.equal(context.hasUnsavedEdits(), moved);
+        assert.equal(vm.runInContext('draggedAtom', context), null);
+        assert.equal(vm.runInContext('controls.enabled', context), true);
+        assert.equal(captured.size, 0);
+    }
+});
+
+test('canceled atom drag restores coordinates, history, and pointer control', () => {
+    const lattice = [[2, 0, 0], [0, 2, 0], [0, 0, 2]];
+    const { context, captured } = prepareDragContext({ lattice, atoms: [{ element: 'H', position: new Vector3(1.5, 0, 0), fractional: [0.75, 0, 0] }] });
+    vm.runInContext(`
+        draggedAtom = { index: 0, mesh: { position: new THREE.Vector3(1.5, 0, 0) }, startPosition: new THREE.Vector3(1, 0, 0) };
+        isDragging = true;
+        redoStack = [{ operation: { type: 'select_atom' } }];
+    `, context);
+    assert.equal(context.hasUnsavedEdits(), true);
+    context.cancelEditDrag({ pointerId: 8 });
+    assert.equal(context.structure.atoms[0].position.x, 1.5);
+    assert.equal(captured.size, 1);
+    context.cancelEditDrag({ pointerId: 7 });
+    assert.equal(context.structure.atoms[0].position.x, 1);
+    assert.deepEqual(Array.from(context.structure.atoms[0].fractional), [0.5, 0, 0]);
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('redoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), false);
+    assert.equal(vm.runInContext('controls.enabled && !isDragging && draggedAtom === null', context), true);
+    assert.equal(captured.size, 0);
+});
+
+test('undo cancels an unfinished drag before touching existing history', () => {
+    const { context } = prepareDragContext({ isXYZ: true, atoms: [{ element: 'H', position: new Vector3(2, 0, 0) }] });
+    vm.runInContext(`
+        pushUndo({ type: 'select_atom', atomData: { index: 0 } });
+        draggedAtom = { index: 0, mesh: { position: new THREE.Vector3(2, 0, 0) }, startPosition: new THREE.Vector3(1, 0, 0) };
+        isDragging = true;
+    `, context);
+    context.performUndo();
+    assert.equal(context.structure.atoms[0].position.x, 1);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), false);
+});
+
+test('export finishes a live drag and saves the moved coordinates with undo intact', () => {
+    const { context, captured } = prepareDragContext({ isXYZ: true, atoms: [{ element: 'H', position: new Vector3(2, 0, 0) }] });
+    let download;
+    context.Blob = class { constructor(parts) { this.content = parts.join(''); } };
+    context.URL = { createObjectURL(blob) { download = blob.content; return 'blob:test'; }, revokeObjectURL() {} };
+    context.setTimeout = () => {};
+    context.document.body = { appendChild() {} };
+    context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
+    vm.runInContext(`
+        draggedAtom = { index: 0, mesh: { position: new THREE.Vector3(2, 0, 0) }, startPosition: new THREE.Vector3(1, 0, 0) };
+        isDragging = true;
+    `, context);
+    context.exportStructure();
+    assert.match(download, /H 2\.000000000 0\.000000000 0\.000000000/);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), false);
+    assert.equal(captured.size, 0);
+    context.performUndo();
+    assert.equal(context.structure.atoms[0].position.x, 1);
+    assert.equal(context.hasUnsavedEdits(), true);
+});
+
+test('cell drags update fractional coordinates, skip no changes, and roll back cancellation', () => {
+    for (const action of ['unchanged', 'commit', 'cancel']) {
+        const { context, captured } = prepareDragContext({ lattice: [[action === 'unchanged' ? 2 : 4, 0, 0], [0, 2, 0], [0, 0, 2]], atoms: [{ element: 'H', position: new Vector3(1, 0, 0), fractional: [0.5, 0, 0] }] });
+        vm.runInContext(`
+            vacuumDragState.isDragging = true;
+            vacuumDragState.dragExtendAxis = 'a';
+            vacuumDragState.originalLattice = [[2, 0, 0], [0, 2, 0], [0, 0, 2]];
+            vacuumDragState.originalAtomPositions = [{ x: 1, y: 0, z: 0 }];
+        `, context);
+        assert.equal(context.hasUnsavedEdits(), action !== 'unchanged');
+        if (action === 'cancel') context.cancelEditDrag();
+        else context.onMouseUp({ button: 0, pointerId: 7 });
+        assert.equal(context.structure.lattice[0][0], action === 'commit' ? 4 : 2);
+        assert.equal(context.structure.atoms[0].fractional[0], action === 'commit' ? 0.25 : 0.5);
+        assert.equal(vm.runInContext('undoStack.length', context), action === 'commit' ? 1 : 0);
+        assert.equal(vm.runInContext('lastUiLattice', context), action === 'commit' ? 4 : 2);
+        assert.equal(captured.size, 0);
+        if (action === 'commit') {
+            context.performUndo();
+            assert.equal(context.structure.atoms[0].fractional[0], 0.5);
+            context.performRedo();
+            assert.equal(vm.runInContext('currentStructure.atoms[0].fractional[0]', context), 0.25);
+        }
+    }
+});
+
 test('shift form rejects invalid moves atomically and keeps success feedback visible', () => {
     const context = app();
     context.structure = context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));

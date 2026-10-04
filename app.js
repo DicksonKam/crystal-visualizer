@@ -346,7 +346,9 @@ function isSelectionOperation(operation) {
 }
 
 function hasUnsavedEdits() {
-    return currentEditRevision !== savedEditRevision;
+    const pendingAtomMove = isDragging && draggedAtom && currentStructure?.atoms[draggedAtom.index]
+        && currentStructure.atoms[draggedAtom.index].position.distanceTo(draggedAtom.startPosition) >= 1e-10;
+    return currentEditRevision !== savedEditRevision || Boolean(pendingAtomMove) || hasVacuumDragChanges();
 }
 
 function updateDirtyIndicator() {
@@ -415,6 +417,10 @@ function restoreSelectedAtoms(savedSelections) {
 }
 
 function performRedo() {
+    if (draggedAtom || vacuumDragState.isDragging) {
+        cancelEditDrag();
+        return;
+    }
     if (redoStack.length === 0) {
         statusText.textContent = 'Nothing to redo';
         statusText.className = '';
@@ -452,6 +458,10 @@ function performRedo() {
 }
 
 function performUndo() {
+    if (draggedAtom || vacuumDragState.isDragging) {
+        cancelEditDrag();
+        return;
+    }
     if (undoStack.length === 0) {
         statusText.textContent = 'Nothing to undo';
         statusText.className = '';
@@ -608,6 +618,7 @@ function undoVacuumDrag(op) {
     op.oldAtomPositions.forEach((pos, i) => {
         if (currentStructure.atoms[i]) {
             currentStructure.atoms[i].position = new THREE.Vector3(pos.x, pos.y, pos.z);
+            currentStructure.atoms[i].fractional = cartesianToFractional(currentStructure.atoms[i].position, currentStructure.lattice);
         }
     });
     renderStructure(currentStructure, true);
@@ -758,6 +769,7 @@ let isMeasurementSelection = false;
 let isDragging = false;
 let wasDragging = false; // Flag to prevent click after drag
 let draggedAtom = null; // { mesh, index, startPosition }
+let activeEditPointerId = null;
 let dragStartMouse = new THREE.Vector2();
 let dragPlane = new THREE.Plane();
 let dragOffset = new THREE.Vector3();
@@ -897,7 +909,16 @@ function initScene() {
     renderer.domElement.addEventListener('pointerdown', onMouseDown, { capture: true });
     renderer.domElement.addEventListener('pointermove', onMouseMove);
     renderer.domElement.addEventListener('pointerup', onMouseUp, { capture: true });
+    renderer.domElement.addEventListener('pointercancel', cancelEditDrag);
+    renderer.domElement.addEventListener('lostpointercapture', cancelEditDrag);
     renderer.domElement.addEventListener('click', onClickFallback);
+    window.addEventListener('blur', cancelEditDrag);
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && (draggedAtom || vacuumDragState.isDragging)) {
+            event.preventDefault();
+            cancelEditDrag();
+        }
+    });
 }
 
 function animate(timestamp) {
@@ -1510,6 +1531,7 @@ function getMouseNDC(event) {
 function onMouseDown(event) {
     if (!currentStructure) return;
     if (event.button !== 0) return; // Only left click
+    if (activeEditPointerId !== null) return;
     
     pointerDownTime = Date.now();
     wasDragging = false;
@@ -1533,6 +1555,7 @@ function onMouseDown(event) {
         event.stopPropagation();
         
         if (startVacuumDrag(handleInfo, event)) {
+            captureEditPointer(event);
             return; // Vacuum drag started, don't process atom selection
         } else {
             // If drag didn't start, re-enable controls
@@ -1567,6 +1590,7 @@ function onMouseDown(event) {
             startPosition: clickedMesh.position.clone(),
             startWorldPosition: new THREE.Vector3()
         };
+        captureEditPointer(event);
         clickedMesh.getWorldPosition(draggedAtom.startWorldPosition);
         
         // Create drag plane perpendicular to camera
@@ -1581,6 +1605,62 @@ function onMouseDown(event) {
             dragOffset.subVectors(draggedAtom.startWorldPosition, intersectPoint);
         }
     }
+}
+
+function captureEditPointer(event) {
+    activeEditPointerId = event.pointerId;
+    renderer.domElement.setPointerCapture(event.pointerId);
+}
+
+function releaseEditPointer() {
+    const pointerId = activeEditPointerId;
+    activeEditPointerId = null;
+    if (pointerId !== null && renderer.domElement.hasPointerCapture(pointerId)) {
+        renderer.domElement.releasePointerCapture(pointerId);
+    }
+}
+
+// Interrupted drags restore the document without adding an undo entry.
+function cancelEditDrag(event) {
+    if (event?.pointerId !== undefined && event.pointerId !== activeEditPointerId) return;
+    if (!draggedAtom && !vacuumDragState.isDragging) return;
+    const wasVacuumDrag = vacuumDragState.isDragging;
+    if (wasVacuumDrag) {
+        const { originalLattice, originalAtomPositions } = vacuumDragState;
+        currentStructure.lattice = originalLattice.map(vector => [...vector]);
+        currentStructure.atoms.forEach((atom, index) => {
+            atom.position.copy(originalAtomPositions[index]);
+            atom.fractional = cartesianToFractional(atom.position, currentStructure.lattice);
+        });
+        resetVacuumDragState();
+        clearVacuumHighlight();
+    } else {
+        const atom = currentStructure.atoms[draggedAtom.index];
+        atom.position.copy(draggedAtom.startPosition);
+        atom.fractional = isPeriodicStructure(currentStructure)
+            ? cartesianToFractional(atom.position, currentStructure.lattice) : null;
+        draggedAtom.mesh.position.copy(atom.position);
+        if (selectedAtoms.some(selected => selected.mesh === draggedAtom.mesh)) highlightAtomMesh(draggedAtom.mesh);
+        else unhighlightAtomMesh(draggedAtom.mesh);
+    }
+    removeDragGuidePlane();
+    draggedAtom = null;
+    isDragging = false;
+    wasDragging = true;
+    controls.enabled = true;
+    releaseEditPointer();
+    if (wasVacuumDrag) {
+        renderStructure(currentStructure, true);
+        updateVacuumHandles();
+        updateUI(currentStructure);
+    } else {
+        rebuildDisplayOptions();
+    }
+    updateUI_forCurrentMode();
+    updateDirtyIndicator();
+    requestRender();
+    statusText.textContent = 'Drag canceled; original geometry restored';
+    statusText.className = '';
 }
 
 // Store drag plane info
@@ -1796,10 +1876,15 @@ function constrainToPolygon(worldPos) {
 // Mouse move handler
 function onMouseMove(event) {
     if (!currentStructure) return;
+    if (activeEditPointerId !== null && event.pointerId !== activeEditPointerId) return;
     
     // Handle vacuum drag
     if (vacuumDragState.isDragging) {
         updateVacuumDrag(event);
+        return;
+    }
+    if (draggedAtom && currentMode !== 'edit') {
+        cancelEditDrag();
         return;
     }
     
@@ -1854,10 +1939,16 @@ function onMouseMove(event) {
             
             // Convert to local position
             const newLocalPos = newWorldPos.clone().sub(structureGroup.position);
+            const fractional = isPeriodicStructure(currentStructure)
+                ? cartesianToFractional(newLocalPos, currentStructure.lattice) : null;
+            if (![newLocalPos.x, newLocalPos.y, newLocalPos.z].every(Number.isFinite)
+                || (isPeriodicStructure(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) return;
             
             // Update atom position (both mesh and structure data for live readouts)
             draggedAtom.mesh.position.copy(newLocalPos);
             currentStructure.atoms[draggedAtom.index].position.copy(newLocalPos);
+            currentStructure.atoms[draggedAtom.index].fractional = fractional;
+            updateDirtyIndicator();
             
             // Update selection visuals in real-time
             if (selectedAtoms.length > 0) {
@@ -1884,18 +1975,22 @@ function onMouseMove(event) {
 function onMouseUp(event) {
     if (!currentStructure) return;
     if (event.button !== 0) return; // Only left click
+    if (activeEditPointerId !== null && event.pointerId !== activeEditPointerId) return;
     
     // Handle vacuum drag end
     if (vacuumDragState.isDragging) {
         endVacuumDrag();
         controls.enabled = true;
+        releaseEditPointer();
+        return;
+    }
+    if (draggedAtom && currentMode !== 'edit') {
+        cancelEditDrag();
         return;
     }
     
     // Always re-enable controls on mouse up
     controls.enabled = true;
-    
-    const mouseNDC = getMouseNDC(event);
     
     if (draggedAtom && currentMode === 'edit') {
         if (isDragging) {
@@ -1913,22 +2008,30 @@ function onMouseUp(event) {
             const oldPos = draggedAtom.startPosition.clone();
             const newPos = draggedAtom.mesh.position.clone();
             
-            pushUndo({
-                type: 'move_atom',
-                index: draggedAtom.index,
-                oldPosition: oldPos,
-                newPosition: newPos.clone()
-            });
+            const changed = oldPos.distanceTo(newPos) >= 1e-10;
+            if (changed) {
+                pushUndo({
+                    type: 'move_atom',
+                    index: draggedAtom.index,
+                    oldPosition: oldPos,
+                    newPosition: newPos.clone()
+                });
+            } else {
+                newPos.copy(oldPos);
+                draggedAtom.mesh.position.copy(oldPos);
+            }
             
             // Update structure data
             currentStructure.atoms[draggedAtom.index].position.copy(newPos);
+            currentStructure.atoms[draggedAtom.index].fractional = isPeriodicStructure(currentStructure)
+                ? cartesianToFractional(newPos, currentStructure.lattice) : null;
             
             // Rebuild all display options (bonds, fixed indicators, etc.)
             rebuildDisplayOptions();
             
             // Update status
-            statusText.textContent = `Moved atom #${draggedAtom.index + 1}`;
-            statusText.className = 'success';
+            statusText.textContent = changed ? `Moved atom #${draggedAtom.index + 1}` : 'Atom position unchanged';
+            statusText.className = changed ? 'success' : '';
             
             // Update edit UI to show undo option
             updateEditUI();
@@ -1938,6 +2041,7 @@ function onMouseUp(event) {
         isDragging = false;
         draggedAtom = null;
     }
+    releaseEditPointer();
     // Note: Measure mode clicks are handled by onClickFallback
 }
 
@@ -4327,6 +4431,7 @@ function loadStructureFromText(content, filename) {
         return false;
     }
 
+    cancelEditDrag();
     stopAnimation();
     undoStack = [];
     redoStack = [];
@@ -5472,6 +5577,10 @@ function updateVacuumDrag(event) {
     }
     
     // Re-render and show drag highlight
+    currentStructure.atoms.forEach(atom => {
+        atom.fractional = cartesianToFractional(atom.position, currentStructure.lattice);
+    });
+    updateDirtyIndicator();
     renderStructure(currentStructure, true);
     createDragFaceHighlight(axis, dragHandle);
     
@@ -5513,6 +5622,25 @@ function createDragFaceHighlight(extendAxis, handleType) {
     structureGroup.add(line);
 }
 
+function hasVacuumDragChanges() {
+    const { isDragging, originalLattice, originalAtomPositions } = vacuumDragState;
+    return Boolean(isDragging && originalLattice && originalAtomPositions && currentStructure && (
+        currentStructure.lattice.some((vector, axis) => vector.some((value, component) => Math.abs(value - originalLattice[axis][component]) >= 1e-10))
+        || currentStructure.atoms.some((atom, index) => atom.position.distanceTo(originalAtomPositions[index]) >= 1e-10)
+    ));
+}
+
+// Clear state shared by completed and canceled cell drags.
+function resetVacuumDragState() {
+    Object.assign(vacuumDragState, {
+        isDragging: false,
+        dragHandle: null,
+        dragExtendAxis: null,
+        originalLattice: null,
+        originalAtomPositions: null
+    });
+}
+
 // End vacuum drag operation
 function endVacuumDrag() {
     if (!vacuumDragState.isDragging) return;
@@ -5521,22 +5649,24 @@ function endVacuumDrag() {
     
     // Save for undo before clearing (unified undo stack)
     // Only save if there was an actual change
-    if (originalLattice && originalAtomPositions) {
+    const changed = hasVacuumDragChanges();
+    if (changed) {
         pushUndo({
             type: 'vacuum_drag',
             oldLattice: originalLattice.map(v => [...v]),
             oldAtomPositions: originalAtomPositions.map(p => ({ x: p.x, y: p.y, z: p.z }))
         });
+    } else if (originalLattice && originalAtomPositions) {
+        currentStructure.lattice = originalLattice.map(vector => [...vector]);
+        currentStructure.atoms.forEach((atom, index) => atom.position.copy(originalAtomPositions[index]));
     }
+    currentStructure.atoms.forEach(atom => {
+        atom.fractional = cartesianToFractional(atom.position, currentStructure.lattice);
+    });
     
     // Reset drag state
-    Object.assign(vacuumDragState, {
-        isDragging: false,
-        dragHandle: null,
-        dragExtendAxis: null,
-        originalLattice: null,
-        originalAtomPositions: null
-    });
+    resetVacuumDragState();
+    updateDirtyIndicator();
     
     clearVacuumHighlight();
     
@@ -5544,9 +5674,10 @@ function endVacuumDrag() {
     if (currentStructure && axis) {
         const newLen = getLatticeVector(currentStructure.lattice, axisToIndex(axis)).length();
         renderStructure(currentStructure, true);
+        updateUI(currentStructure);
         updateVacuumHandles();
-        statusText.textContent = `Cell ${axis}-axis set to ${newLen.toFixed(3)} Å`;
-        statusText.className = 'success';
+        statusText.textContent = changed ? `Cell ${axis}-axis set to ${newLen.toFixed(3)} Å` : 'Cell geometry unchanged';
+        statusText.className = changed ? 'success' : '';
     }
 }
 
@@ -5669,6 +5800,9 @@ function exportStructure() {
         statusText.textContent = 'No structure to export';
         statusText.className = '';
         return;
+    }
+    if (draggedAtom || vacuumDragState.isDragging) {
+        onMouseUp({ button: 0, pointerId: activeEditPointerId });
     }
     
     let content, filename;

@@ -3,6 +3,11 @@
 Status: **in progress**. The two-hour run has not yet completed. This document
 records confirmed findings and will be finalized from the campaign logs.
 
+Latest full verification at 2026-10-04 16:09 UTC: **141 unit tests and 51 browser
+tests passed**. Both stress campaigns were still running. This result covers
+the current app fixes and expanded scenario/history regressions; it is not a
+claim that the sustained campaign has finished.
+
 The campaign uses isolated Chromium contexts with software WebGL, synthetic
 molecular/cubic/tilted/partially periodic structures, and a supplied hydrogen
 trajectory. It does not modify the user's open document. No app controls were

@@ -438,6 +438,90 @@ test('loading an example hides the picker and restores focus to its trigger', ()
     assert.equal(context.document.activeElement, examplesButton);
 });
 
+function loadingApp() {
+    const context = app();
+    context.console = { error() {} };
+    vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
+    return context;
+}
+
+function deferred() {
+    let resolve, reject;
+    const promise = new Promise((resolvePromise, rejectPromise) => { resolve = resolvePromise; reject = rejectPromise; });
+    return { promise, resolve, reject };
+}
+
+test('a slow example response cannot replace a newer document or its edits', async () => {
+    const context = loadingApp();
+    const slowBody = deferred();
+    const bodyStarted = deferred();
+    context.fetch = async path => ({
+        ok: true,
+        text: () => path === 'slow.xyz'
+            ? (bodyStarted.resolve(), slowBody.promise)
+            : Promise.resolve(example('examples/xyz/CH4.xyz'))
+    });
+    const slowLoad = context.loadExampleFile('slow.xyz');
+    await bodyStarted.promise;
+    assert.equal(await context.loadExampleFile('new.xyz'), true);
+    context.pushUndo({ type: 'add_atom', index: 0 });
+    const newStatus = context.document.getElementById('statusText').textContent;
+    slowBody.resolve(example('examples/xyz/H2O.xyz'));
+    assert.equal(await slowLoad, false);
+    assert.equal(vm.runInContext('currentFilename', context), 'new.xyz');
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 5);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), true);
+    assert.equal(context.document.getElementById('statusText').textContent, newStatus);
+});
+
+test('local opens supersede pending examples and stale file callbacks', async () => {
+    const context = loadingApp();
+    const slowResponse = deferred();
+    context.fetch = () => slowResponse.promise;
+    const readers = [];
+    context.FileReader = class {
+        constructor() { readers.push(this); }
+        readAsText() {}
+    };
+    const slowExample = context.loadExampleFile('slow.xyz');
+    context.handleFile({ name: 'old-local.xyz' });
+    context.handleFile({ name: 'new-local.xyz' });
+    readers[1].onload({ target: { result: example('examples/xyz/H2O.xyz') } });
+    const newStatus = context.document.getElementById('statusText').textContent;
+    readers[0].onload({ target: { result: example('examples/xyz/CH4.xyz') } });
+    readers[0].error = new Error('Old read failed');
+    readers[0].onerror();
+    slowResponse.reject(new Error('Old fetch failed'));
+    assert.equal(await slowExample, false);
+    assert.equal(vm.runInContext('currentFilename', context), 'new-local.xyz');
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 3);
+    assert.equal(context.document.getElementById('statusText').textContent, newStatus);
+});
+
+test('file read failures preserve the current document and undo history', () => {
+    for (const synchronous of [false, true]) {
+        const context = loadingApp();
+        context.loadStructureFromText(example('examples/xyz/H2O.xyz'), 'current.xyz');
+        context.pushUndo({ type: 'add_atom', index: 0 });
+        let reader;
+        context.FileReader = class {
+            constructor() { reader = this; }
+            readAsText() { if (synchronous) throw new Error('Access denied'); }
+        };
+        context.handleFile({ name: 'unreadable.xyz' });
+        if (!synchronous) {
+            reader.error = new Error('Access denied');
+            reader.onerror();
+        }
+        assert.equal(vm.runInContext('currentFilename', context), 'current.xyz');
+        assert.equal(vm.runInContext('currentStructure.atoms.length', context), 3);
+        assert.equal(vm.runInContext('undoStack.length', context), 1);
+        assert.equal(context.hasUnsavedEdits(), true);
+        assert.match(context.document.getElementById('statusText').textContent, /Could not read unreadable\.xyz: Access denied/);
+    }
+});
+
 test('trajectory controls announce the frame and next playback action', () => {
     const context = app();
     vm.runInContext('currentStructure = { isXDATCAR: true, totalFrames: 16, currentFrameIndex: 4 }; animationState.isPlaying = false;', context);

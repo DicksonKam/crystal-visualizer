@@ -111,6 +111,7 @@ let structureGroup, measurementGroup;
 let currentStructure = null;
 let currentFilename = null;
 let currentSourceText = null;
+let latestLoadRequest = 0;
 let lastJumpAtomNumber = null;
 
 // Axes HUD (separate scene rendered in corner)
@@ -4429,7 +4430,9 @@ const EXAMPLE_CATALOG = [
     }
 ];
 
-function loadStructureFromText(content, filename) {
+function loadStructureFromText(content, filename, requestId = null) {
+    if (requestId !== null && requestId !== latestLoadRequest) return false;
+    if (requestId === null) latestLoadRequest++;
     const nameLower = (filename || '').toLowerCase();
     let nextStructure;
     if (nameLower.endsWith('.xdatcar') || isXDATCARFormat(content)) {
@@ -4507,35 +4510,63 @@ function loadStructureFromText(content, filename) {
     return true;
 }
 
+function beginStructureLoad(filename) {
+    const requestId = ++latestLoadRequest;
+    statusText.textContent = `Loading ${filename}...`;
+    statusText.className = '';
+    return requestId;
+}
+
 function handleFile(file) {
+    const requestId = beginStructureLoad(file.name);
     const reader = new FileReader();
     reader.onload = (e) => {
+        if (requestId !== latestLoadRequest) return;
         try {
-            loadStructureFromText(e.target.result, file.name);
+            loadStructureFromText(e.target.result, file.name, requestId);
         } catch (error) {
             console.error('Error parsing file:', error);
             statusText.textContent = `Error: ${error.message}`;
             statusText.className = 'error';
         }
     };
-    reader.readAsText(file);
+    const reportReadFailure = error => {
+        if (requestId !== latestLoadRequest) return;
+        statusText.textContent = `Could not read ${file.name}: ${error?.message || 'File read failed'}`;
+        statusText.className = 'error';
+    };
+    reader.onerror = () => reportReadFailure(reader.error);
+    reader.onabort = () => {
+        if (requestId !== latestLoadRequest) return;
+        statusText.textContent = `Opening ${file.name} canceled`;
+        statusText.className = '';
+    };
+    try {
+        reader.readAsText(file);
+    } catch (error) {
+        reportReadFailure(error);
+    }
 }
 
 async function loadExampleFile(path) {
     const filename = path.split('/').pop();
-    statusText.textContent = `Loading ${filename}...`;
-    statusText.className = '';
+    const requestId = beginStructureLoad(filename);
     try {
         const response = await fetch(path);
+        if (requestId !== latestLoadRequest) return false;
         if (!response.ok) {
             throw new Error(`Could not fetch ${filename} (${response.status})`);
         }
         const content = await response.text();
-        loadStructureFromText(content, filename);
+        return loadStructureFromText(content, filename, requestId);
     } catch (error) {
+        if (requestId !== latestLoadRequest) return false;
         console.error('Error loading example:', error);
-        statusText.textContent = `Error loading ${filename}. Open this app over http (GitHub Pages or a local server), not as a raw file.`;
+        statusText.textContent = window.location?.protocol === 'file:'
+            ? `Could not load ${filename}. Open this app over HTTP using GitHub Pages or a local server.`
+            : `Could not load ${filename}: ${error.message}`;
         statusText.className = 'error';
+        return false;
     }
 }
 

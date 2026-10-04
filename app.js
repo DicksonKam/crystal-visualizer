@@ -2816,40 +2816,35 @@ function deleteSelectedAtoms() {
     statusText.className = 'success';
 }
 
+function applySelectiveDynamicsChanges(changes) {
+    const changed = changes.filter(({ index, oldSD, newSD }) =>
+        currentStructure.atoms[index] && oldSD.some((value, axis) => value !== newSD[axis]));
+    if (changed.length === 0) return 0;
+    pushUndo({ type: 'fix_atoms', changes: changed });
+    changed.forEach(({ index, newSD }) => {
+        currentStructure.atoms[index].selectiveDynamics = [...newSD];
+    });
+    currentStructure.hasSelectiveDynamics = currentStructure.atoms.some(atom =>
+        atom.selectiveDynamics?.some(value => value === false));
+    renderStructure(currentStructure, true);
+    updateUI(currentStructure);
+    updateEditUI();
+    return changed.length;
+}
+
 // Set selected atoms as fixed or active
 function setSelectedAtomsFixed(isFixed) {
     if (selectedAtoms.length === 0 || !currentStructure) return;
-    
     const newValue = isFixed ? [false, false, false] : [true, true, true];
-    
-    // Save old values for undo (unified undo stack)
-    const changes = selectedAtoms.map(atom => ({
+    const changes = selectedAtoms.filter(atom => !atom.isGhost && currentStructure.atoms[atom.index]).map(atom => ({
         index: atom.index,
-        oldSD: [...(currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true])],
+        oldSD: [...(currentStructure.atoms[atom.index].selectiveDynamics || [true, true, true])],
         newSD: [...newValue]
     }));
-    pushUndo({
-        type: 'fix_atoms',
-        changes: changes
-    });
-    
-    selectedAtoms.forEach(atom => {
-        if (currentStructure.atoms[atom.index]) {
-            currentStructure.atoms[atom.index].selectiveDynamics = [...newValue];
-        }
-    });
-    
-    // Mark that structure has selective dynamics
-    currentStructure.hasSelectiveDynamics = true;
-    
-    // Re-render to update indicators
-    renderStructure(currentStructure, true);
-    updateUI(currentStructure); // Update Structure Info and Atoms panels
-    updateEditUI();
-    
+    const changedCount = applySelectiveDynamicsChanges(changes);
     const action = isFixed ? 'Fixed' : 'Unfixed';
-    statusText.textContent = `${action} ${selectedAtoms.length} atom(s)`;
-    statusText.className = 'success';
+    statusText.textContent = changedCount ? `${action} ${changedCount} atom(s)` : 'Selected atoms already have those constraints';
+    statusText.className = changedCount ? 'success' : '';
 }
 
 // Fix atoms below z threshold (common for surface slabs)
@@ -2857,7 +2852,13 @@ function fixAtomsByZThreshold() {
     if (!currentStructure) return;
     
     const thresholdInput = document.getElementById('fixZThreshold');
-    const threshold = parseFloat(thresholdInput?.value || 0);
+    const thresholdText = thresholdInput?.value?.trim() || '';
+    const threshold = Number(thresholdText);
+    if (!thresholdText || !Number.isFinite(threshold)) {
+        statusText.textContent = 'Enter a finite z threshold';
+        statusText.className = 'error';
+        return;
+    }
     
     // Remember the user's threshold value
     lastZThreshold = threshold;
@@ -2868,31 +2869,12 @@ function fixAtomsByZThreshold() {
         oldSD: [...(atom.selectiveDynamics || [true, true, true])],
         newSD: atom.position.z < threshold ? [false, false, false] : [true, true, true]
     }));
-    pushUndo({
-        type: 'fix_atoms',
-        changes: changes
-    });
-    
-    let fixedCount = 0;
-    currentStructure.atoms.forEach(atom => {
-        if (atom.position.z < threshold) {
-            atom.selectiveDynamics = [false, false, false];
-            fixedCount++;
-        } else {
-            atom.selectiveDynamics = [true, true, true];
-        }
-    });
-    
-    // Mark that structure has selective dynamics
-    currentStructure.hasSelectiveDynamics = true;
-    
-    // Re-render
-    renderStructure(currentStructure, true);
-    updateUI(currentStructure); // Update Structure Info and Atoms panels
-    updateEditUI();
-    
-    statusText.textContent = `Fixed ${fixedCount} atoms below z = ${threshold.toFixed(2)} Å`;
-    statusText.className = 'success';
+    const changedCount = applySelectiveDynamicsChanges(changes);
+    const fixedCount = currentStructure.atoms.filter(atom => atom.position.z < threshold).length;
+    statusText.textContent = changedCount
+        ? `Fixed ${fixedCount} atoms below z = ${threshold.toFixed(2)} Å`
+        : 'Atoms already have those z-threshold constraints';
+    statusText.className = changedCount ? 'success' : '';
 }
 
 // Unfix all atoms
@@ -2905,24 +2887,9 @@ function unfixAllAtoms() {
         oldSD: [...(atom.selectiveDynamics || [true, true, true])],
         newSD: [true, true, true]
     }));
-    pushUndo({
-        type: 'fix_atoms',
-        changes: changes
-    });
-    
-    currentStructure.atoms.forEach(atom => {
-        atom.selectiveDynamics = [true, true, true];
-    });
-    
-    currentStructure.hasSelectiveDynamics = false;
-    
-    // Re-render
-    renderStructure(currentStructure, true);
-    updateUI(currentStructure); // Update Structure Info and Atoms panels
-    updateEditUI();
-    
-    statusText.textContent = 'All atoms set to active';
-    statusText.className = 'success';
+    const changedCount = applySelectiveDynamicsChanges(changes);
+    statusText.textContent = changedCount ? 'All atoms set to active' : 'All atoms are already active';
+    statusText.className = changedCount ? 'success' : '';
 }
 
 // Get default z threshold (midpoint of z-range)

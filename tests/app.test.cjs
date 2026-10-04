@@ -854,6 +854,48 @@ test('center in cell moves a boundary-spanning cluster to the middle of a tilted
     assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].fractional[0]', context) - 0.49) < 1e-10);
 });
 
+test('constraint controls reject invalid thresholds and skip unchanged atoms', () => {
+    const context = app();
+    context.structure = { lattice: [[2, 0, 0], [0, 2, 0], [0, 0, 2]], atoms: [
+        { element: 'H', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
+        { element: 'H', position: new Vector3(0, 0, 1), selectiveDynamics: [true, true, true] }
+    ] };
+    vm.runInContext(`
+        currentStructure = structure;
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = () => {};
+        updateUI_forCurrentMode = () => {};
+        updateSupercellButtonState = () => {};
+    `, context);
+    const input = context.document.getElementById('fixZThreshold');
+    input.value = '0.5oops';
+    context.fixAtomsByZThreshold();
+    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.deepEqual(context.structure.atoms[0].selectiveDynamics, [true, true, true]);
+    assert.match(context.document.getElementById('statusText').textContent, /finite z threshold/);
+
+    input.value = '0.5';
+    context.fixAtomsByZThreshold();
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.deepEqual(Array.from(context.structure.atoms[0].selectiveDynamics), [false, false, false]);
+    assert.deepEqual(context.structure.atoms[1].selectiveDynamics, [true, true, true]);
+    context.fixAtomsByZThreshold();
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    context.performUndo();
+    assert.deepEqual(Array.from(context.structure.atoms[0].selectiveDynamics), [true, true, true]);
+    context.performRedo();
+    assert.deepEqual(Array.from(vm.runInContext('currentStructure.atoms[0].selectiveDynamics', context)), [false, false, false]);
+
+    vm.runInContext('selectedAtoms = [{ index: 0, isGhost: false }]', context);
+    context.setSelectedAtomsFixed(true);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    context.unfixAllAtoms();
+    assert.equal(vm.runInContext('undoStack.length', context), 2);
+    context.unfixAllAtoms();
+    assert.equal(vm.runInContext('undoStack.length', context), 2);
+});
+
 test('multi-atom shift validates every result before changing any atom', () => {
     const context = app();
     context.structure = { isXYZ: true, hasExplicitLattice: false, atoms: [

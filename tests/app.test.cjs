@@ -462,6 +462,20 @@ function loadingApp() {
     return context;
 }
 
+test('a malformed XYZ property schema preserves the open document, source, and edit history', () => {
+    const context = loadingApp();
+    const source = '1\noriginal\nH 0 0 0\n';
+    context.loadStructureFromText(source, 'original.xyz');
+    vm.runInContext('currentStructure.atoms[0].position.x = 0.5; pushUndo({ type: "move_atom", index: 0 });', context);
+    const structure = vm.runInContext('currentStructure', context);
+    assert.throws(() => context.loadStructureFromText('1\nProperties=species:S:1:pos:X:3\nH 1 2 3\n', 'invalid.xyz'), /unknown Properties type/);
+    assert.equal(vm.runInContext('currentStructure', context), structure);
+    assert.equal(vm.runInContext('currentFilename', context), 'original.xyz');
+    assert.equal(vm.runInContext('currentSourceText', context), source);
+    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(context.hasUnsavedEdits(), true);
+});
+
 function deferred() {
     let resolve, reject;
     const promise = new Promise((resolvePromise, rejectPromise) => { resolve = resolvePromise; reject = rejectPromise; });

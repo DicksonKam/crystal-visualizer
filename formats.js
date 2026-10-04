@@ -360,7 +360,7 @@
                 if (/Lattice\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed Lattice field');
                 return null;
             }
-            const nums = match[1].trim().split(/\s+/).map(Number);
+            const nums = match[1].trim().split(/\s+/).map(parseXYZReal);
             if (nums.length !== 9 || nums.some(n => !Number.isFinite(n))) {
                 throw new Error('Invalid extended XYZ: Lattice must contain nine finite numbers');
             }
@@ -369,6 +369,11 @@
                 [nums[3], nums[4], nums[5]],
                 [nums[6], nums[7], nums[8]]
             ];
+        }
+
+        function parseXYZReal(value) {
+            if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eEdD][+-]?\d+)?$/.test(value)) return NaN;
+            return Number(value.replace(/[dD]/, 'e'));
         }
 
         const xyzPbcField = /\bpbc\s*=\s*(?:"([^"]*)"|'([^']*)'|\[([^\]]*)\]|\{([^}]*)\}|(\S+))/gi;
@@ -393,30 +398,51 @@
             const match = comment.match(/Properties\s*=\s*(?:"([^"]+)"|(\S+))/i);
             if (!match) {
                 if (/Properties\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed Properties field');
-                return { species: 0, position: [1, 2, 3], columns: 4 };
+                return { species: 0, position: [1, 2, 3], positionTypes: ['R', 'R', 'R'], columns: 4 };
             }
             const tokens = (match[1] || match[2]).split(':');
             if (tokens.length % 3 !== 0) throw new Error('Invalid extended XYZ: Properties must use name:type:count triples');
             let columns = 0;
             let species = null;
             let position = null;
+            let positionTypes = null;
             const coordinates = {};
+            const names = new Set();
             for (let i = 0; i < tokens.length; i += 3) {
                 const name = tokens[i].toLowerCase();
+                const type = tokens[i + 1];
                 const count = Number(tokens[i + 2]);
-                if (!Number.isSafeInteger(count) || count < 1) throw new Error('Invalid extended XYZ: invalid Properties column count');
-                if ((name === 'species' || name === 'element') && count === 1) species = columns;
-                if (name === 'pos' && count === 3) position = [columns, columns + 1, columns + 2];
-                if (['x', 'y', 'z'].includes(name) && count === 1) coordinates[name] = columns;
+                if (!name || names.has(tokens[i])) throw new Error('Invalid extended XYZ: missing or duplicate Properties name');
+                names.add(tokens[i]);
+                if (!['S', 'I', 'R', 'L'].includes(type)) throw new Error(`Invalid extended XYZ: unknown Properties type for ${name}`);
+                if (!/^\d+$/.test(tokens[i + 2]) || !Number.isSafeInteger(count) || count < 1
+                    || !Number.isSafeInteger(columns + count)) throw new Error('Invalid extended XYZ: invalid Properties column count');
+                if (name === 'species' || name === 'element') {
+                    if (type !== 'S' || count !== 1 || species !== null) throw new Error('Invalid extended XYZ: species must be one string column');
+                    species = columns;
+                }
+                if (name === 'pos') {
+                    if (!['R', 'I'].includes(type) || count !== 3 || position !== null) throw new Error('Invalid extended XYZ: pos must be three numeric columns');
+                    position = [columns, columns + 1, columns + 2];
+                    positionTypes = [type, type, type];
+                }
+                if (['x', 'y', 'z'].includes(name) && tokens[i] !== 'Z') coordinates[name] = { column: columns, type, count };
                 columns += count;
             }
             if (!position && ['x', 'y', 'z'].every(axis => coordinates[axis] !== undefined)) {
-                position = ['x', 'y', 'z'].map(axis => coordinates[axis]);
+                position = ['x', 'y', 'z'].map(axis => {
+                    const coordinate = coordinates[axis];
+                    if (!['R', 'I'].includes(coordinate.type) || coordinate.count !== 1) {
+                        throw new Error(`Invalid extended XYZ: ${axis} must be one numeric column`);
+                    }
+                    return coordinate.column;
+                });
+                positionTypes = ['x', 'y', 'z'].map(axis => coordinates[axis].type);
             }
             if (species === null || !position) {
                 throw new Error('Invalid extended XYZ: Properties must include species and three position columns');
             }
-            return { species, position, columns };
+            return { species, position, positionTypes, columns };
         }
 
         function latticeFromCartesianAtoms(positions, vacuum = 5) {
@@ -474,7 +500,10 @@
                     throw new Error(`Invalid XYZ element on atom line ${parsed + 1}`);
                 }
                 const element = parts[properties.species].replace(/\d+$/, '');
-                const [x, y, z] = properties.position.map(index => Number(parts[index]));
+                const [x, y, z] = properties.position.map((index, axis) => {
+                    if (properties.positionTypes[axis] === 'I' && !/^[+-]?\d+$/.test(parts[index])) return NaN;
+                    return parseXYZReal(parts[index]);
+                });
                 if ([x, y, z].some(n => !Number.isFinite(n))) {
                     throw new Error(`Invalid XYZ coordinates on atom line ${parsed + 1}`);
                 }

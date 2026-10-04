@@ -132,3 +132,33 @@ test('XYZ reads per-axis periodicity and preserves it in edited exports', () => 
     assert.throws(() => strictFormats.parseXYZ(`1\n${header} pbc="T T T" pbc="F F F"\nH 0 0 0\n`), /duplicate/);
     assert.throws(() => strictFormats.parseXYZ('1\npbc="T F F"\nH 0 0 0\n'), /require a Lattice/);
 });
+
+test('XYZ validates property declarations before interpreting atom columns', () => {
+    const parse = schema => strictFormats.parseXYZ(`1\nProperties=${schema}\nH 0 0 0 1 2 3\n`);
+    for (const schema of [
+        'species:S:1:pos:X:3', 'species:S:1:pos:S:3', 'species:R:1:pos:R:3',
+        'species:S:2:pos:R:3', 'species:S:1:pos:R:2', 'species:S:1:pos:R:3:pos:R:3',
+        'species:S:1:element:S:1:pos:R:3', 'species:S:1:pos:R:3::R:1',
+        'species:S:1:pos:R:3:charge:Q:1', 'species:S:1:pos:R:3:charge:R:1e0',
+        'species:S:1:pos:R:3:charge:R:9007199254740991',
+        'species:S:1:x:R:1:y:R:1:z:S:1'
+    ]) assert.throws(() => parse(schema), /Invalid extended XYZ/);
+    const structure = strictFormats.parseXYZ('1\nProperties=species:S:1:pos:I:3:Z:I:1:flag:L:1:charge:R:1:tag:S:1\nH 1 2 3 1 T 0.5 example\n');
+    assert.equal(structure.atoms[0].position.z, 3);
+    assert.equal(structure.hasAdditionalProperties, true);
+    assert.throws(() => strictFormats.parseXYZ('1\nProperties=species:S:1:pos:I:3\nH 0.5 2 3\n'), /coordinates/);
+    const separate = strictFormats.parseXYZ('1\nProperties=z:R:1:species:S:1:x:I:1:y:R:1:Z:I:1\n3 H 1 2 1\n');
+    assert.deepEqual([separate.atoms[0].position.x, separate.atoms[0].position.y, separate.atoms[0].position.z], [1, 2, 3]);
+});
+
+test('XYZ scientific numbers accept D exponents and reject non-decimal syntax', () => {
+    const source = '1\nLattice="1D1 0 0 0 1d1 0 0 0 1E1" Properties=species:S:1:pos:R:3\nH +1D-1 -.2d+1 .3E1\n';
+    const structure = strictFormats.parseXYZ(source);
+    assert.deepEqual(structure.lattice, [[10, 0, 0], [0, 10, 0], [0, 0, 10]]);
+    assert.deepEqual([structure.atoms[0].position.x, structure.atoms[0].position.y, structure.atoms[0].position.z], [0.1, -2, 3]);
+    assert.equal(strictFormats.parseXYZ(strictFormats.generateXYZ(structure)).atoms[0].position.x, 0.1);
+    for (const value of ['0x10', '0b11', '1_000', '1D', 'Infinity', '1e999']) {
+        assert.throws(() => strictFormats.parseXYZ(`1\nsample\nH ${value} 0 0\n`), /coordinates/);
+        assert.throws(() => strictFormats.parseXYZ(`1\nLattice="${value} 0 0 0 10 0 0 0 10"\nH 0 0 0\n`), /nine finite numbers/);
+    }
+});

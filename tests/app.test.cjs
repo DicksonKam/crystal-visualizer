@@ -271,6 +271,47 @@ test('XDATCAR export preserves every frame and its fractional coordinates', () =
     }
 });
 
+test('trajectory frames reuse atom meshes and update periodic copies', () => {
+    const context = app();
+    const structure = context.parseXDATCAR(example('examples/xdatcar/H2_vibration.xdatcar'));
+    const calls = { bonds: 0, renders: 0, measurements: 0 };
+    context.structure = structure;
+    context.calls = calls;
+    vm.runInContext(`
+        currentStructure = structure;
+        settings.periodic = { a: 2, b: 1, c: 1 };
+        atomMeshes = structure.atoms.map(atom => ({
+            position: atom.position.clone(), userData: { isGhost: false },
+            getWorldPosition(target) { return target.copy(this.position); }
+        }));
+        const ghost = {
+            position: structure.atoms[0].position.clone().add(new THREE.Vector3(...structure.lattice[0])),
+            userData: { isGhost: true, originalIndex: 0, cellOffset: { a: 1, b: 0, c: 0 } }
+        };
+        atomMeshes.push(ghost);
+        selectedAtoms = [{ mesh: atomMeshes[0], position: atomMeshes[0].position.clone() }];
+        structureGroup = { children: [{ userData: { isAtomLabel: true, atomIndex: 0 }, position: atomMeshes[0].position.clone() }] };
+        settings.showLabels = true;
+        rebuildBonds = () => { calls.bonds++; };
+        renderStructure = () => { calls.renders++; };
+        updateSelectionVisualPositions = () => {};
+        updateMeasurements = () => { calls.measurements++; };
+        updateMeasurementUI = () => {};
+        updateTimelineUI = () => {};
+        updateSidebarFrameDisplay = () => {};
+        switchToFrame(1);
+    `, context);
+    assert.equal(calls.renders, 0);
+    assert.equal(calls.bonds, 1);
+    assert.equal(calls.measurements, 1);
+    assert.ok(vm.runInContext('atomMeshes[0].position.distanceTo(currentStructure.frames[1].positions[0])', context) < 1e-10);
+    assert.ok(vm.runInContext('atomMeshes[2].position.distanceTo(atomMeshes[0].position.clone().add(new THREE.Vector3(...currentStructure.lattice[0])))', context) < 1e-10);
+    assert.ok(vm.runInContext('selectedAtoms[0].position.distanceTo(atomMeshes[0].position)', context) < 1e-10);
+    assert.ok(vm.runInContext('structureGroup.children[0].position.distanceTo(atomMeshes[0].position)', context) < 1e-10);
+    vm.runInContext('currentStructure.frames[2].lattice[0][0] += 1; switchToFrame(2)', context);
+    assert.equal(calls.renders, 1);
+});
+
 test('a successful replacement clears undo history; a failed parse preserves it', () => {
     const context = app();
     vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);

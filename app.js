@@ -5780,6 +5780,10 @@ function switchToFrame(frameIndex) {
     if (frameIndex < 0 || frameIndex >= currentStructure.totalFrames) return;
     
     const frame = currentStructure.frames[frameIndex];
+    const sameLattice = currentStructure.lattice.every((vector, axis) =>
+        vector.every((value, component) => value === frame.lattice[axis][component]));
+    const canReuseMeshes = sameLattice && atomMeshes.length >= currentStructure.atoms.length
+        && currentStructure.atoms.every((_, index) => atomMeshes[index] && !atomMeshes[index].userData.isGhost);
     currentStructure.currentFrameIndex = frameIndex;
     
     // Restore the lattice stored with this frame.
@@ -5789,10 +5793,32 @@ function switchToFrame(frameIndex) {
     for (let i = 0; i < currentStructure.atoms.length; i++) {
         currentStructure.atoms[i].position.copy(frame.positions[i]);
         currentStructure.atoms[i].fractional = frame.fractional[i];
+        if (canReuseMeshes) atomMeshes[i].position.copy(frame.positions[i]);
     }
     
-    // Re-render structure (preserve camera and selection)
-    renderStructure(currentStructure, true);
+    if (canReuseMeshes) {
+        atomMeshes.forEach(mesh => {
+            if (!mesh.userData.isGhost) return;
+            const { originalIndex, cellOffset } = mesh.userData;
+            mesh.position.copy(currentStructure.atoms[originalIndex].position);
+            ['a', 'b', 'c'].forEach((axis, index) => {
+                mesh.position.addScaledVector(new THREE.Vector3(...frame.lattice[index]), cellOffset[axis]);
+            });
+        });
+        rebuildBonds();
+        if (settings.showLabels) {
+            structureGroup.children.forEach(child => {
+                if (child.userData.isAtomLabel) child.position.copy(atomMeshes[child.userData.atomIndex].position);
+            });
+        }
+        updateSelectionVisualPositions();
+        selectedAtoms.forEach(atom => atom.mesh.getWorldPosition(atom.position));
+        if (selectedAtoms.length > 0) updateMeasurements();
+        requestRender();
+    } else {
+        // A changed lattice also changes the cell and axes, so rebuild that frame.
+        renderStructure(currentStructure, true);
+    }
     
     // Update timeline UI (slider + frame counter)
     updateTimelineUI();

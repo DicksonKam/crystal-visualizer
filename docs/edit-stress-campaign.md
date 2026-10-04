@@ -1,7 +1,25 @@
 # Edit-mode stress campaign
 
-Status: **in progress**. The two-hour run has not yet completed. This document
-records confirmed findings and will be finalized from the campaign logs.
+Status: **complete**. Six retained runs contain **65,160 passing action steps
+across 402 scenarios**, including a 1,000-step single-document session. Three
+confirmed app bugs were fixed and covered by regressions; the current app passed
+**141 unit tests and 55 browser tests**. No buttons or panels were added, and
+nothing was pushed.
+
+The duration proof uses two nonoverlapping core portions: **4872.100 seconds**
+through the original run's last passing seed, plus **2363.153 seconds** for the
+completed continuation, totaling **7235.254 seconds (2 hours 35 seconds)**.
+The original run ended on an interaction timeout, so this is not a claim of an
+uninterrupted successful two-hour core run. The failed scenario is excluded
+from passing steps and the duration proof; overlapping supplementary runs are
+also excluded from that duration. `campaign-summary.json` in the evidence
+directory records the aggregate counts and verified log hashes.
+
+Of the passing steps, **26,880 used the final three-fix app** (`1026b32a…`),
+and 38,280 used the version with the first two fixes (`29c04b47…`). The final
+core continuation passed seeds 145–195 (8,160 steps); its log and summary are
+retained as `core-followup-completed.jsonl` and
+`core-followup-completed-summary.json`.
 
 The extended follow-up completed successfully after **5425.848 seconds
 (90 minutes 26 seconds)**: 172 seeds (82–253), **27,520 action steps**.
@@ -76,7 +94,7 @@ The original core run stopped on a five-second Add Atom click timeout at seed
 The saved HTML reports “Added O atom” and no JavaScript error was captured;
 the timed-out action appears to have completed. Seed 145 passed all 160 steps
 in 73.780 seconds after the full browser suite closed, with two other campaigns
-still live. The 39-minute continuation remains active. This is recorded as an
+still live. The continuation subsequently completed without failure. This is recorded as an
 intermittent interaction timeout with no reproduced state defect, rather than
 a confirmed app bug. Reduced concurrency is a plausible explanation; pointer
 timing and state-dependent actions can vary between seeded replays. Retained
@@ -159,6 +177,37 @@ Runs sample sequences rather than exhaustively exploring every combination.
 Document size is capped at 48 atoms; periodic copies can increase displayed
 size. Resize camera alignment is prepared programmatically before real pointer
 actions. Pointer timing can affect replay. Software WebGL and Chromium do not
-cover every GPU, browser, touch device, or large structure. Duration and final
-coverage totals remain pending; overlapping runs will not be added together to
-claim elapsed wall-clock hours.
+cover every GPU, browser, touch device, or large structure. Passing logs retain
+seeds and counts, not a screenshot and complete state history for every step.
+The suite samples combinations; a completed campaign does not prove that the
+app has no remaining bugs.
+
+## Completion audit
+
+- **Duration:** the original core log's last passing event and the continuation's
+  terminal completion event prove 7235.254 nonoverlapping seconds. Both source
+  logs and summaries are retained; the aggregate verifier checked hashes,
+  terminal events, seed ranges and passing-step totals.
+- **Requested combinations:** `edit-scenario.cjs` mixes real pointer and form
+  actions for selection, mode/measurement preservation, dragging, coordinates,
+  add/delete, constraints, cell resizing, periodic display and supercells,
+  Escape, Undo/Redo and branching. Four initial fixture types cover molecular,
+  ordinary periodic, tilted and partially periodic cells. Extended runs add
+  loading, invalid/declined replacements, downloads and trajectory frames.
+  All ten actual history operation types occurred in the retained campaigns.
+- **State checks:** after each action, document/species identity and counts,
+  finite coordinates, fractional cache validity, render agreement, selection
+  attachment and positions, marker counts, measurement endpoints and known
+  history transitions are checked. Immutable actions also compare geometry;
+  new operations check that the redo branch is cleared.
+- **Failures and fixes:** three root causes, failing evidence, local fix commits
+  and targeted regressions are recorded above. Both original failing seeds
+  for the first two bugs passed after correction. The periodic-copy shift
+  regressions cover copy-only and mixed selections and unchanged state.
+  The separate Add Atom interaction timeout remains documented with its
+  successful full-seed replay and qualified explanation.
+- **Validation and preservation:** the full 141-unit/55-browser verification
+  covers the final app hash retained in `campaign-summary.json`; the browser
+  runner's last-run status is passed with no failed tests. All campaign browsers
+  were isolated from the user's tab. Source changes and evidence are saved in
+  local Git commits; no push or new app controls were part of this work.

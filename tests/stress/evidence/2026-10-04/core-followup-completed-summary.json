@@ -1,0 +1,63 @@
+{
+  "status": "complete",
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T17:29:38.588Z",
+    "seconds": 2340,
+    "initialSeed": 145,
+    "steps": 160,
+    "extended": false,
+    "includeGhosts": false,
+    "harnessHash": "70d48620739bae851ed80d26a9274651732899ed6f6e55f0eed6dfda1845c69d",
+    "appHash": "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526"
+  },
+  "elapsedSeconds": 2363.1534979169996,
+  "passedSeeds": 51,
+  "firstSeed": 145,
+  "lastSeed": 195,
+  "actionSteps": 8160,
+  "performedActionCounts": {
+    "rotate": 537,
+    "resize": 202,
+    "clear": 297,
+    "supercell": 71,
+    "export": 565,
+    "mode": 535,
+    "drag": 244,
+    "reset": 544,
+    "click": 553,
+    "jump": 533,
+    "coordinates": 82,
+    "invalid": 88,
+    "periodic": 362,
+    "shift": 254,
+    "fix": 42,
+    "redo": 89,
+    "undo": 532,
+    "cancel": 229,
+    "add": 274,
+    "delete": 98
+  },
+  "recordedOperationCounts": {
+    "move_atom": 255,
+    "select_atom": 1009,
+    "shift_atoms": 254,
+    "clear_selection": 547,
+    "vacuum_drag": 153,
+    "make_supercell": 71,
+    "fix_atoms": 27,
+    "add_atom": 274,
+    "delete_atoms": 98,
+    "deselect_atom": 45
+  },
+  "appHashes": [
+    "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526"
+  ],
+  "retainedLog": "tests/stress/evidence/2026-10-04/core-followup-completed.jsonl",
+  "logSha256": "a6235a9042253c969ab39ac81b42a1068d9e6be3fabe7a3de09baca7dc45c643",
+  "notes": [
+    "Resumed from the original core run terminal interaction timeout; that run is retained separately.",
+    "No failure occurred in this continuation.",
+    "Original core last passing elapsed 4872.100287208 seconds plus this continuation exceeds 7200 seconds, with no overlap between these core runs."
+  ]
+}

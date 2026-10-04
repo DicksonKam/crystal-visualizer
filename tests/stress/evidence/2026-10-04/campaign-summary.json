@@ -1,0 +1,124 @@
+{
+  "status": "complete",
+  "passedActionSteps": 65160,
+  "passedScenarios": 402,
+  "nonoverlappingCoreTestingSeconds": 7235.253785125,
+  "durationMethod": "Original core last-passing elapsed plus completed continuation; other campaigns overlap and are excluded from duration proof. Original failed scenario is excluded.",
+  "currentAppSha256": "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526",
+  "currentHarnessSha256": "70d48620739bae851ed80d26a9274651732899ed6f6e55f0eed6dfda1845c69d",
+  "passedStepsByAppHash": {
+    "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b": 38280,
+    "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526": 26880
+  },
+  "performedActionCounts": {
+    "mode": 3235,
+    "cancel": 1469,
+    "delete": 559,
+    "undo": 2993,
+    "resize": 1036,
+    "periodic": 2455,
+    "reset": 3632,
+    "redo": 496,
+    "rotate": 3518,
+    "supercell": 337,
+    "clear": 1648,
+    "add": 1590,
+    "jump": 3536,
+    "export": 3658,
+    "fix": 254,
+    "shift": 1575,
+    "click": 3528,
+    "drag": 1499,
+    "coordinates": 466,
+    "invalid": 488,
+    "download": 1730,
+    "invalid_load": 1683,
+    "display": 1384,
+    "decline_load": 535,
+    "replace": 1663,
+    "batch_fix": 328,
+    "center": 265,
+    "frame": 296,
+    "ghost": 37
+  },
+  "recordedOperationCounts": {
+    "add_atom": 1590,
+    "select_atom": 6511,
+    "clear_selection": 3146,
+    "shift_atoms": 1807,
+    "vacuum_drag": 833,
+    "move_atom": 1580,
+    "make_supercell": 337,
+    "delete_atoms": 559,
+    "deselect_atom": 320,
+    "fix_atoms": 430
+  },
+  "runs": [
+    {
+      "retainedLog": "tests/stress/evidence/2026-10-04/core-interrupted.jsonl",
+      "passedScenarios": 106,
+      "passedSteps": 16960,
+      "lastPassingElapsedSeconds": 4872.100287208,
+      "terminalEvent": "failure",
+      "elapsedSeconds": 4949.522294916001
+    },
+    {
+      "retainedLog": "tests/stress/evidence/2026-10-04/extended-completed.jsonl",
+      "passedScenarios": 55,
+      "passedSteps": 8800,
+      "lastPassingElapsedSeconds": 1805.042755,
+      "terminalEvent": "complete",
+      "elapsedSeconds": 1805.0952028339998
+    },
+    {
+      "retainedLog": "tests/stress/evidence/2026-10-04/single-document-1000-completed.jsonl",
+      "passedScenarios": 1,
+      "passedSteps": 1000,
+      "lastPassingElapsedSeconds": 525.725792625,
+      "terminalEvent": "complete",
+      "elapsedSeconds": 526.054242875
+    },
+    {
+      "retainedLog": "tests/stress/evidence/2026-10-04/ghost-click-completed.jsonl",
+      "passedScenarios": 17,
+      "passedSteps": 2720,
+      "lastPassingElapsedSeconds": 926.562076959,
+      "terminalEvent": "complete",
+      "elapsedSeconds": 926.636402375
+    },
+    {
+      "retainedLog": "tests/stress/evidence/2026-10-04/extended-followup-completed.jsonl",
+      "passedScenarios": 172,
+      "passedSteps": 27520,
+      "lastPassingElapsedSeconds": 5425.724263541,
+      "terminalEvent": "complete",
+      "elapsedSeconds": 5425.847517083001
+    },
+    {
+      "retainedLog": "tests/stress/evidence/2026-10-04/core-followup-completed.jsonl",
+      "passedScenarios": 51,
+      "passedSteps": 8160,
+      "lastPassingElapsedSeconds": 2362.8982217079997,
+      "terminalEvent": "complete",
+      "elapsedSeconds": 2363.1534979169996
+    }
+  ],
+  "confirmedAppFixes": [
+    "b7c62eb",
+    "cc5f442",
+    "3062f5d"
+  ],
+  "validation": {
+    "unitTestsPassed": 141,
+    "browserTestsPassed": 55,
+    "appSha256": "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526",
+    "browserLastRunStatus": "passed"
+  },
+  "limitations": [
+    "One original terminal Add Atom click timeout; saved action appeared completed and full failing seed passed on replay.",
+    "Not an uninterrupted two-hour successful core run; two nonoverlapping core portions prove duration.",
+    "Counts include valid no-op actions; actual history operations are recorded separately.",
+    "Seeded choices are reproducible; actual pointer timing and state-dependent outcomes may vary.",
+    "Synthetic structures capped at 48 document atoms, Chromium software WebGL; not exhaustive combinations or GPU/browser/performance coverage."
+  ]
+}

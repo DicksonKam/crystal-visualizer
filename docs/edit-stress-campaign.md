@@ -3,6 +3,21 @@
 Status: **in progress**. The two-hour run has not yet completed. This document
 records confirmed findings and will be finalized from the campaign logs.
 
+The extended campaign completed successfully after **1805.095 seconds
+(30 minutes 5 seconds)**: 55 seeds (27–81), each with 160 steps, totaling
+**8,800 action steps**. Its log and verified totals are retained in
+`tests/stress/evidence/2026-10-04/extended-completed.jsonl` and
+`extended-completed-summary.json` beside it. All scenarios used the current
+fixed app hash. The core campaign is still active; this extended duration
+overlaps it and does not add to its elapsed time.
+
+The extended run exercised 413 downloads, 377 valid replacements, 391 invalid
+loads, 120 declined replacement actions, and 83 trajectory frame actions.
+These are performed action counts and can include valid no-ops; the retained
+summary separately records actual history operations. All ten operation types
+were recorded, including 72 cell resizes, 25 supercells, 157 atom moves and
+87 constraint changes. No failure occurred in this completed run.
+
 Latest full verification: **141 unit tests passed** at 2026-10-04 16:09 UTC and
 **52 browser tests passed** at 16:23 UTC. The app code was unchanged between
 those runs. Both stress campaigns were still running. This result covers

@@ -1,0 +1,72 @@
+{
+  "status": "complete",
+  "sourceLog": "/private/tmp/crystal-edit-extended/2026-10-04T15-58-10-922Z.jsonl",
+  "retainedLog": "tests/stress/evidence/2026-10-04/extended-completed.jsonl",
+  "logSha256": "01fe9e351087bf2f61e5430ec5f7352ca4270fa67739a59e6a7c83a2bbdcf662",
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T15:58:10.923Z",
+    "seconds": 1800,
+    "initialSeed": 27,
+    "steps": 160,
+    "extended": true,
+    "harnessHash": "cae3d9fe117976967f999ffdc609f764e7216b8c8a9f6f6ff0397ccb56ecb021",
+    "appHash": "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b"
+  },
+  "elapsedSeconds": 1805.0952028339998,
+  "passedSeeds": 55,
+  "firstSeed": 27,
+  "lastSeed": 81,
+  "actionSteps": 8800,
+  "performedActionCounts": {
+    "rotate": 390,
+    "undo": 309,
+    "download": 413,
+    "redo": 47,
+    "clear": 176,
+    "jump": 378,
+    "periodic": 269,
+    "reset": 448,
+    "mode": 348,
+    "invalid": 46,
+    "add": 178,
+    "invalid_load": 391,
+    "export": 376,
+    "display": 337,
+    "decline_load": 120,
+    "delete": 45,
+    "click": 397,
+    "resize": 80,
+    "fix": 25,
+    "drag": 156,
+    "replace": 377,
+    "batch_fix": 83,
+    "shift": 152,
+    "center": 69,
+    "frame": 83,
+    "supercell": 25,
+    "coordinates": 41,
+    "cancel": 120
+  },
+  "recordedOperationCounts": {
+    "select_atom": 699,
+    "add_atom": 178,
+    "vacuum_drag": 72,
+    "clear_selection": 291,
+    "shift_atoms": 213,
+    "deselect_atom": 35,
+    "move_atom": 157,
+    "fix_atoms": 87,
+    "make_supercell": 25,
+    "delete_atoms": 45
+  },
+  "appHashes": [
+    "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b"
+  ],
+  "notes": [
+    "Duration is this run alone, not added to overlapping core-run duration.",
+    "Performed action counts may include valid no-ops; recorded operation counts are actual newly recorded history operations.",
+    "This completed run used a harness revision preceding the later history-capacity oracle correction. The current harness adds that correction without changing the action generator.",
+    "Seed replay depends on pointer timing and browser environment; successful seeds retain coverage counts and manifests, not complete state snapshots."
+  ]
+}

@@ -288,18 +288,19 @@
             // XDATCAR has multiple "Direct configuration=" lines or multiple "Direct" lines
             // after the header
             const lines = content.trim().split('\n');
+            if (/^\d+$/.test((lines[0] || '').trim())) return false; // XYZ atom count
             let directCount = 0;
 
             for (let i = 7; i < lines.length; i++) {
                 const line = lines[i].trim().toLowerCase();
+                if (/^direct\s+configuration\s*=\s*\d+$/.test(line)) return true;
                 if (line.startsWith('direct')) {
                     directCount++;
                     if (directCount > 1) return true; // Multiple Direct lines = XDATCAR
                 }
             }
 
-            // Also check for "configuration=" which is definitive
-            return content.toLowerCase().includes('configuration=');
+            return false;
         }
 
         // Detect standard / extended XYZ (first line = atom count, later lines = Element x y z)

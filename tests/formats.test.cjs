@@ -23,3 +23,15 @@ test('format parsers run without a browser or rendering engine', () => {
     assert.equal(molecule.hasExplicitLattice, false);
     assert.equal(formats.parseXYZ(formats.generateXYZ(molecule)).atoms[0].position.x, 0.1);
 });
+
+test('XYZ comments and POSCAR titles do not masquerade as trajectory headers', () => {
+    const xyz = '1\nconfiguration=1 sample\nH 0 0 0\n';
+    assert.equal(formats.isXDATCARFormat(xyz), false);
+    assert.equal(formats.isXYZFormat(xyz), true);
+    const poscar = [
+        'configuration=1 static cell', '1', '2 0 0', '0 2 0', '0 0 2',
+        'H', '1', 'Direct', '0 0 0'
+    ].join('\n');
+    assert.equal(formats.isXDATCARFormat(poscar), false);
+    assert.equal(formats.parsePOSCAR(poscar).atoms.length, 1);
+});

@@ -100,3 +100,19 @@ test('coincident and collinear selections remain finite, with correct zero and s
     assert.ok(large.pairs.every(pair => !pair.unavailable));
     close(large.angle.angleDeg, 90);
 });
+
+test('the silicon example keeps the reported 2.352 Å, 3.840 Å and 90° values in one connected image frame', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const THREE = require('three');
+    const { createFormats } = require('../formats.js');
+    const silicon = createFormats(THREE.Vector3, geometry.cartesianToFractional).parsePOSCAR(
+        fs.readFileSync(path.resolve(__dirname, '../examples/poscar/Si_diamond.poscar'), 'utf8'));
+    const result = measurements.resolve([1, 6, 4].map(index => silicon.atoms[index]), { lattice: silicon.lattice, nearest: true });
+    assert.equal(result.pairs[0].distance.toFixed(3), '2.352');
+    assert.equal(result.pairs[1].distance.toFixed(3), '3.840');
+    assert.equal(result.angle.angleDeg.toFixed(1), '90.0');
+    assert.deepEqual(result.points[0].offset, [0, 0, 1]);
+    assert.strictEqual(result.angle.vertex, result.pairs[0].end);
+    assert.strictEqual(result.pairs[0].end, result.pairs[1].start);
+});

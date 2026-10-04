@@ -1,6 +1,6 @@
 # Document and editing contract
 
-The app remains a static site. Its scripts load in dependency order: geometry, document, formats, structure, history, camera, then the browser adapter. Each domain module also exports CommonJS functions for direct unit testing. The domain modules must not import `app.js`, inspect the DOM, or store renderer objects.
+The app remains a static site. Its scripts load in dependency order: geometry, document, formats, structure, history, camera, measurement, then the browser adapter. Each domain module also exports CommonJS functions for direct unit testing. The domain modules must not import `app.js`, inspect the DOM, or store renderer objects.
 
 ## Authoritative document state
 
@@ -44,3 +44,13 @@ Rebuilding a structure clears detector and highlighted-edge references before di
 Camera policy and transitions live in `camera.js`, driven by the existing render loop. There are no settling timers or separate snap animation loops. All camera actions use its cancellation revision; the browser adapter explicitly discards TrackballControls inertia before programmed movement. See [the camera contract](camera.md) for action semantics, signed lattice directions, thresholds, timing, and regression evidence.
 
 The cell-frame browser regressions compare actual WebGL pixels with and without detectors at the same camera position, across signed axes, alignment thresholds, zoom levels, and cubic/skewed cells. Additional cases verify picking, bounds, scene rebuilds, mode/cell visibility, real pointer resizing, Escape, undo/redo, and interrupted alignment. These tests check that interaction geometry cannot affect the image; they do not require twelve separately visible edges in views where projection overlaps them.
+
+## Measurement geometry
+
+`CrystalMeasurements.createMeasurements(CrystalGeometry)` resolves one topology for the selected atoms. The second selected atom stays at its displayed position and acts as the common anchor, for both two-atom and three-atom measurements. In Nearest periodic mode, each non-ghost outer atom is resolved once to its nearest allowed periodic copy around that anchor. Explicit ghost selections and Selected images mode retain displayed copies. Adding the third atom never changes the first resolved arm, including ties at half a cell. Equally short images are chosen deterministically by the existing nearest-image solver; an angle at a tie describes that chosen set of neighbors rather than a unique crystallographic angle.
+
+Each result includes resolved points and their actual lattice offsets, consecutive pairs with signed displacements, and an angle referencing the same points. A pair's relative offset preserves 1→2 or 2→3 displacement semantics; image annotations describe the actual shifted endpoint. The renderer and both measurement panels consume this resolver instead of independently choosing images for the distance and angle. Collinear arms have valid 0°/180° values and a deterministic arc plane; a coincident arm has no defined angle. Unreliable periodic work remains Unavailable, omits its line/copy/angle, and preserves the warning instead of drawing a fallback measurement.
+
+Translated endpoints receive hollow prime-numbered sprite markers with their lattice shifts. These are non-pickable annotations in `measurementGroup`, outside structure fitting bounds, document data, and export. All derived lines, arcs, labels, and image markers share the `isMeasurementVisual` lifecycle flag so mode changes and redraws dispose their materials and textures together while preserving selection badges. Clearing, undoing, and redoing a selection reconstructs the measurement from current selection descriptors. No buttons, panels, layout changes, or document edits are introduced.
+
+`tests/measurement.test.cjs` covers shared point identity, signed deltas and offsets, two-to-three selection stability, half-cell ties, skewed/mixed-periodicity cells, explicit ghosts, molecules, solver failure, coincident/collinear arms, and the silicon example's 2.352 Å / 3.840 Å / 90° combination. `tests/browser/measurement.spec.cjs` checks actual line/arc endpoints, image marker placement and picking exclusion, panel notes, unchanged bounds/document/revision, camera rotation, mode changes, resource disposal, clear/undo/redo, document replacement, and unavailable arms.

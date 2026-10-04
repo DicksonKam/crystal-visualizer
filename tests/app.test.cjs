@@ -8,6 +8,7 @@ const CrystalFormats = require('../formats.js');
 const CrystalStructure = require('../structure.js');
 const CrystalDocument = require('../document.js');
 const CrystalHistory = require('../history.js');
+const CrystalMeasurements = require('../measurement.js');
 
 const root = path.resolve(__dirname, '..');
 
@@ -56,7 +57,7 @@ function app() {
             return elements.get(id);
         }
     };
-    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, CrystalFormats, CrystalStructure, CrystalDocument, CrystalHistory, console });
+    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, CrystalFormats, CrystalStructure, CrystalDocument, CrystalHistory, CrystalMeasurements, console });
     const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8').replace(/\ninit\(\);\s*$/, '');
     vm.runInContext(source, context);
     return context;

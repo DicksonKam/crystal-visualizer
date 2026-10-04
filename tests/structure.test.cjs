@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { buildSupercell, summarizeConstraints, zMidpoint } = require('../structure.js');
+const { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint } = require('../structure.js');
 const { fractionalToCartesian } = require('../geometry.js');
 
 test('supercells prepare tilted-cell copies with current fractional coordinates and independent constraints', () => {
@@ -62,4 +62,30 @@ test('z midpoint remains finite for extreme coordinates and handles empty or one
     assert.equal(midpoint([1e308, 1.2e308]), 1.1e308);
     assert.equal(midpoint([-1e308, -1.2e308]), -1.1e308);
     assert.equal(midpoint([-1e308, 1e308]), 0);
+});
+
+test('cell resize cannot collapse or reverse a cell with atoms outside its bounds', () => {
+    const lattice = [[10, 0, 0], [0, 10, 0], [0, 0, 10]];
+    const structure = { lattice, atoms: [{ position: { x: -2, y: 0, z: 0 } }] };
+    const before = JSON.stringify(structure);
+    for (const delta of [-10, -100]) {
+        const prepared = prepareCellResize(structure, lattice, structure.atoms.map(atom => atom.position), 0, 'far', delta);
+        assert.equal(prepared.lattice[0][0], 0.001);
+        assert.ok(prepared.updates[0].fractional.every(Number.isFinite));
+    }
+    const near = prepareCellResize(structure, lattice, [{ x: 20, y: 0, z: 0 }], 0, 'near', -100);
+    assert.equal(near.lattice[0][0], 0.001);
+    assert.equal(JSON.stringify(structure), before);
+});
+
+test('cell resize validates every proposed position before committing a tilted near-face shift', () => {
+    const lattice = [[3, 4, 0], [0, 10, 0], [0, 0, 10]];
+    const structure = { lattice, atoms: [{ position: { x: 3, y: 4, z: 1 } }] };
+    const prepared = prepareCellResize(structure, lattice, structure.atoms.map(atom => atom.position), 0, 'near', 5);
+    assert.deepEqual(prepared.lattice[0], [6, 8, 0]);
+    assert.deepEqual(prepared.updates[0].position, { x: 6, y: 8, z: 1 });
+    assert.throws(() => prepareCellResize(structure, lattice, structure.atoms.map(atom => atom.position), 0, 'far', Infinity), /Invalid cell resize/);
+    const extreme = { lattice: [[1e102, 0, 0], [0, 1e102, 0], [0, 0, 1e102]], atoms: [] };
+    assert.throws(() => prepareCellResize(extreme, extreme.lattice, [], 0, 'far', 1e308), /volume is not finite/);
+    assert.deepEqual(structure.atoms[0].position, { x: 3, y: 4, z: 1 });
 });

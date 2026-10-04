@@ -1040,8 +1040,16 @@ body.edit-mode-active .panel-title {
 }
 
 #statusText.warning,
+.geometry-warning,
 .info-warning {
     color: var(--accent-yellow);
+}
+
+.geometry-warning:not([hidden]) {
+    display: block;
+    margin-top: 0.25rem;
+    max-width: 70ch;
+    line-height: 1.4;
 }
 
 .info-warning {

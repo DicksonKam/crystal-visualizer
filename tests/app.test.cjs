@@ -7,6 +7,7 @@ const CrystalGeometry = require('../geometry.js');
 const CrystalFormats = require('../formats.js');
 const CrystalStructure = require('../structure.js');
 const CrystalDocument = require('../document.js');
+const CrystalHistory = require('../history.js');
 
 const root = path.resolve(__dirname, '..');
 
@@ -55,7 +56,7 @@ function app() {
             return elements.get(id);
         }
     };
-    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, CrystalFormats, CrystalStructure, CrystalDocument, console });
+    const context = vm.createContext({ document, window: { confirm: () => true }, THREE: { Vector3, Vector2: class {}, Plane: class {}, MathUtils: { radToDeg: radians => radians * 180 / Math.PI } }, CrystalGeometry, CrystalFormats, CrystalStructure, CrystalDocument, CrystalHistory, console });
     const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8').replace(/\ninit\(\);\s*$/, '');
     vm.runInContext(source, context);
     return context;
@@ -437,9 +438,9 @@ test('a successful replacement clears undo history; a failed parse preserves it'
     vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
     context.pushUndo({ type: 'add_atom', index: 0 });
     assert.throws(() => context.loadStructureFromText('invalid', 'POSCAR'));
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     context.loadStructureFromText(example('examples/xyz/H2O.xyz'), 'H2O.xyz');
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
 });
 
 test('loading an example hides the picker and restores focus to its trigger', () => {
@@ -473,7 +474,7 @@ test('a malformed XYZ property schema preserves the open document, source, and e
     assert.equal(vm.runInContext('currentStructure', context), structure);
     assert.equal(vm.runInContext('currentFilename', context), 'original.xyz');
     assert.equal(vm.runInContext('currentSourceText', context), source);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), true);
 });
 
@@ -502,7 +503,7 @@ test('a slow example response cannot replace a newer document or its edits', asy
     assert.equal(await slowLoad, false);
     assert.equal(vm.runInContext('currentFilename', context), 'new.xyz');
     assert.equal(vm.runInContext('currentStructure.atoms.length', context), 5);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), true);
     assert.equal(context.document.getElementById('statusText').textContent, newStatus);
 });
@@ -548,7 +549,7 @@ test('file read failures preserve the current document and undo history', () => 
         }
         assert.equal(vm.runInContext('currentFilename', context), 'current.xyz');
         assert.equal(vm.runInContext('currentStructure.atoms.length', context), 3);
-        assert.equal(vm.runInContext('undoStack.length', context), 1);
+        assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
         assert.equal(context.hasUnsavedEdits(), true);
         assert.match(context.document.getElementById('statusText').textContent, /Could not read unreadable\.xyz: Access denied/);
     }
@@ -580,7 +581,7 @@ test('canceling a replacement preserves unsaved structure and history', () => {
     const kept = context.loadStructureFromText(example('examples/xyz/CH4.xyz'), 'CH4.xyz');
     assert.equal(kept, false);
     assert.equal(vm.runInContext('currentStructure.atoms.length', context), 3);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), true);
     context.window.confirm = () => true;
     assert.equal(context.loadStructureFromText(example('examples/xyz/CH4.xyz'), 'CH4.xyz'), true);
@@ -738,7 +739,7 @@ test('deleting every atom remains reversible and exports only after atoms are re
         context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
         context.deleteSelectedAtoms();
         assert.equal(vm.runInContext('currentStructure.atoms.length', context), 0);
-        assert.equal(vm.runInContext('undoStack.length', context), 1);
+        assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
         context.exportStructure();
         assert.equal(downloads.length, 0);
         assert.equal(context.hasUnsavedEdits(), true);
@@ -808,7 +809,7 @@ test('undo and redo restore an edit; a new edit invalidates redo', () => {
     assert.equal(context.hasUnsavedEdits(), true);
     context.performUndo();
     context.pushUndo({ type: 'move_atom', index: 0, oldPosition: new Vector3() });
-    assert.equal(vm.runInContext('redoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.redoStack.length', context), 0);
 });
 
 test('redoing regular and periodic-image selections reuses atom meshes', () => {
@@ -924,11 +925,11 @@ test('failed supercell preparation preserves structure, preview, selections, and
             if (currentStructure.lattice[0][0] > 1e200) settings.periodic.a = 2;
             selectedAtoms = [{ index: 0, element: 'H' }];
             pushUndo({ type: 'select_atom', atomData: { index: 0 } });
-            redoStack = [{ operation: { type: 'clear_selection' } }];
-            globalThis.beforeState = JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack, redoStack });
+            editHistory.redoStack = [{ operation: { type: 'clear_selection' } }];
+            globalThis.beforeState = JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack: editHistory.undoStack, redoStack: editHistory.redoStack });
         `, context);
         assert.equal(context.convertToSupercell(), false);
-        assert.equal(vm.runInContext('JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack, redoStack })', context), context.beforeState);
+        assert.equal(vm.runInContext('JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack: editHistory.undoStack, redoStack: editHistory.redoStack })', context), context.beforeState);
         assert.equal(context.hasUnsavedEdits(), false);
         assert.match(context.document.getElementById('statusText').textContent, /Cannot create supercell/);
         assert.equal(vm.runInContext('currentSourceText', context), source);
@@ -997,7 +998,7 @@ test('overflowing exact coordinates leave the atom and undo history unchanged', 
     const oldPosition = context.structure.atoms[0].position.clone();
     assert.equal(context.applyExactAtomCoordinates(), false);
     assert.equal(context.structure.atoms[0].position.distanceTo(oldPosition), 0);
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
     assert.match(context.document.getElementById('editAtomError').textContent, /cannot be represented/);
 });
 
@@ -1051,7 +1052,7 @@ test('atom drag keeps tilted-cell coordinates current and skips a stationary dra
         assert.ok(Math.abs(context.structure.atoms[0].fractional[0] - (moved ? 0.4 : 0.2)) < 1e-10);
         assert.equal(context.hasUnsavedEdits(), moved);
         context.onMouseUp({ button: 0, pointerId: 7 });
-        assert.equal(vm.runInContext('undoStack.length', context), moved ? 1 : 0);
+        assert.equal(vm.runInContext('editHistory.undoStack.length', context), moved ? 1 : 0);
         assert.equal(context.hasUnsavedEdits(), moved);
         assert.equal(vm.runInContext('draggedAtom', context), null);
         assert.equal(vm.runInContext('controls.enabled', context), true);
@@ -1065,7 +1066,7 @@ test('canceled atom drag restores coordinates, history, and pointer control', ()
     vm.runInContext(`
         draggedAtom = { index: 0, mesh: { position: new THREE.Vector3(1.5, 0, 0) }, startPosition: new THREE.Vector3(1, 0, 0) };
         isDragging = true;
-        redoStack = [{ operation: { type: 'select_atom' } }];
+        editHistory.redoStack = [{ operation: { type: 'select_atom' } }];
     `, context);
     assert.equal(context.hasUnsavedEdits(), true);
     context.cancelEditDrag({ pointerId: 8 });
@@ -1074,8 +1075,8 @@ test('canceled atom drag restores coordinates, history, and pointer control', ()
     context.cancelEditDrag({ pointerId: 7 });
     assert.equal(context.structure.atoms[0].position.x, 1);
     assert.deepEqual(Array.from(context.structure.atoms[0].fractional), [0.5, 0, 0]);
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
-    assert.equal(vm.runInContext('redoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.redoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), false);
     assert.equal(vm.runInContext('controls.enabled && !isDragging && draggedAtom === null', context), true);
     assert.equal(captured.size, 0);
@@ -1090,7 +1091,7 @@ test('undo cancels an unfinished drag before touching existing history', () => {
     `, context);
     context.performUndo();
     assert.equal(context.structure.atoms[0].position.x, 1);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), false);
 });
 
@@ -1108,7 +1109,7 @@ test('export finishes a live drag and saves the moved coordinates with undo inta
     `, context);
     context.exportStructure();
     assert.match(download, /H 2\.000000000 0\.000000000 0\.000000000/);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), false);
     assert.equal(captured.size, 0);
     context.performUndo();
@@ -1130,7 +1131,7 @@ test('cell drags update fractional coordinates, skip no changes, and roll back c
         else context.onMouseUp({ button: 0, pointerId: 7 });
         assert.equal(context.structure.lattice[0][0], action === 'commit' ? 4 : 2);
         assert.equal(context.structure.atoms[0].fractional[0], action === 'commit' ? 0.25 : 0.5);
-        assert.equal(vm.runInContext('undoStack.length', context), action === 'commit' ? 1 : 0);
+        assert.equal(vm.runInContext('editHistory.undoStack.length', context), action === 'commit' ? 1 : 0);
         assert.equal(vm.runInContext('lastUiLattice', context), action === 'commit' ? 4 : 2);
         assert.equal(captured.size, 0);
         if (action === 'commit') {
@@ -1150,6 +1151,39 @@ test('cell drags update fractional coordinates, skip no changes, and roll back c
             assert.equal(vm.runInContext('currentStructure.atoms[0].fractional[0]', context), 0.25);
         }
     }
+});
+
+test('cell drag proposals stay valid and rejected proposals preserve preview and history', () => {
+    const context = app();
+    context.structure = context.parsePOSCAR('cell\n1\n10 0 0\n0 10 0\n0 0 10\nH\n1\nCartesian\n-2 0 0\n');
+    vm.runInContext(`
+        currentStructure = structure;
+        Object.assign(vacuumDragState, { isDragging: true, dragExtendAxis: 'a', dragHandle: 'far',
+            originalLattice: currentStructure.lattice.map(vector => [...vector]),
+            originalAtomPositions: currentStructure.atoms.map(atom => atom.position.clone()) });
+        renderStructure = () => {};
+        createDragFaceHighlight = () => {};
+        calculateDragDelta = () => -10;
+        updateVacuumDrag({});
+    `, context);
+    assert.equal(context.structure.lattice[0][0], 0.001);
+    assert.ok(context.structure.atoms[0].fractional.every(Number.isFinite));
+    const preview = JSON.stringify(context.structure);
+    vm.runInContext('calculateDragDelta = () => Infinity; updateVacuumDrag({});', context);
+    assert.equal(JSON.stringify(context.structure), preview);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.currentEditRevision', context), 0);
+    assert.match(context.document.getElementById('statusText').textContent, /Cell resize stopped/);
+});
+
+test('coordinate edit proposals reject every invalid atom before changing document or history', () => {
+    const context = app();
+    context.structure = context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));
+    vm.runInContext('currentStructure = structure;', context);
+    const before = JSON.stringify(context.structure);
+    assert.throws(() => context.commitGeometryEdit({ type: 'shift_atoms' }, [{ index: 0, position: new Vector3(1, 2, 3) }, { index: 1, position: new Vector3(Infinity, 0, 0) }]), /finite/);
+    assert.equal(JSON.stringify(context.structure), before);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
 });
 
 test('shift form rejects invalid moves atomically and keeps success feedback visible', () => {
@@ -1178,21 +1212,21 @@ test('shift form rejects invalid moves atomically and keeps success feedback vis
     const original = context.structure.atoms[0].position.clone();
     context.document.getElementById('shiftA').value = '1oops';
     context.applyGlobalPeriodicShift();
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
     assert.equal(context.structure.atoms[0].position.distanceTo(original), 0);
     assert.match(context.document.getElementById('shiftError').textContent, /finite shift/);
 
     mode = 'fractional';
     context.document.getElementById('shiftA').value = '1e308';
     context.applyGlobalPeriodicShift();
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
     assert.equal(context.structure.atoms[0].position.distanceTo(original), 0);
     assert.match(context.document.getElementById('shiftError').textContent, /cannot be represented/);
 
     mode = 'cartesian';
     context.document.getElementById('shiftA').value = '0.25';
     context.applyGlobalPeriodicShift();
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.ok(Math.abs(context.structure.atoms[0].position.x - 0.25) < 1e-10);
     assert.equal(vm.runInContext('renderedShift.a', context), 0.25);
     assert.match(context.document.getElementById('shiftError').textContent, /Shifted all atoms/);
@@ -1225,13 +1259,13 @@ test('add atom form rejects partial numbers and shows feedback after rebuilding'
     context.document.getElementById('addAtomZ').value = '2';
     context.addAtomFromInput();
     assert.equal(context.structure.atoms.length, 3);
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
     assert.match(context.document.getElementById('addAtomError').textContent, /Invalid coordinates/);
 
     context.document.getElementById('addAtomX').value = '1';
     context.addAtomFromInput();
     assert.equal(context.structure.atoms.length, 4);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.match(context.document.getElementById('addAtomError').textContent, /Added H/);
 });
 
@@ -1285,7 +1319,7 @@ test('center in cell moves a boundary-spanning cluster to the middle of a tilted
     assert.ok(Math.abs(centered[1][0] - 0.51) < 1e-10);
     assert.ok(centered.every(frac => Math.abs(frac[1] - 0.5) < 1e-10 && Math.abs(frac[2] - 0.5) < 1e-10));
     context.centerStructureInCell();
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.match(context.document.getElementById('shiftError').textContent, /already centered/);
     context.performUndo();
     assert.ok(Math.abs(context.cartesianToFractional(context.structure.atoms[0].position, lattice)[0] - 0.99) < 1e-10);
@@ -1304,15 +1338,15 @@ test('whole-cell periodic shifts preserve exact positions, redo history, and the
     context.document.querySelector = () => ({ value: 'fractional' });
     vm.runInContext(`
         currentStructure = structure;
-        redoStack = [{ operation: { type: 'select_atom' } }];
+        editHistory.redoStack = [{ operation: { type: 'select_atom' } }];
         renderStructure = () => { throw new Error('unchanged shift rebuilt the structure'); };
     `, context);
     assert.equal(context.applyPeriodicShiftByFractional(1, 0, 0).changedCount, 0);
     context.document.getElementById('shiftA').value = '1';
     context.applyGlobalPeriodicShift();
     context.structure.atoms.forEach((atom, index) => assert.equal(atom.position.distanceTo(originalPositions[index]), 0));
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
-    assert.equal(vm.runInContext('redoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.redoStack.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), false);
     assert.match(context.document.getElementById('shiftError').textContent, /positions unchanged/);
 });
@@ -1410,17 +1444,17 @@ test('constraint controls reject invalid thresholds and skip unchanged atoms', (
     const input = context.document.getElementById('fixZThreshold');
     input.value = '0.5oops';
     context.fixAtomsByZThreshold();
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
     assert.deepEqual(context.structure.atoms[0].selectiveDynamics, [true, true, true]);
     assert.match(context.document.getElementById('statusText').textContent, /finite z threshold/);
 
     input.value = '0.5';
     context.fixAtomsByZThreshold();
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     assert.deepEqual(Array.from(context.structure.atoms[0].selectiveDynamics), [false, false, false]);
     assert.deepEqual(context.structure.atoms[1].selectiveDynamics, [true, true, true]);
     context.fixAtomsByZThreshold();
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     context.performUndo();
     assert.deepEqual(Array.from(context.structure.atoms[0].selectiveDynamics), [true, true, true]);
     context.performRedo();
@@ -1428,11 +1462,11 @@ test('constraint controls reject invalid thresholds and skip unchanged atoms', (
 
     vm.runInContext('selectedAtoms = [{ index: 0, isGhost: false }]', context);
     context.setSelectedAtomsFixed(true);
-    assert.equal(vm.runInContext('undoStack.length', context), 1);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
     context.unfixAllAtoms();
-    assert.equal(vm.runInContext('undoStack.length', context), 2);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 2);
     context.unfixAllAtoms();
-    assert.equal(vm.runInContext('undoStack.length', context), 2);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 2);
 });
 
 test('XYZ and trajectory constraint calls leave atoms, history, and dirty state unchanged', () => {
@@ -1442,7 +1476,7 @@ test('XYZ and trajectory constraint calls leave atoms, history, and dirty state 
         vm.runInContext(`
             currentStructure = structure;
             selectedAtoms = [{ index: 0, isGhost: false }];
-            redoStack = [{ operation: { type: 'select_atom' } }];
+            editHistory.redoStack = [{ operation: { type: 'select_atom' } }];
             renderStructure = () => { throw new Error('Unsupported constraint edit rendered'); };
         `, context);
         context.document.getElementById('fixZThreshold').value = '1';
@@ -1451,8 +1485,8 @@ test('XYZ and trajectory constraint calls leave atoms, history, and dirty state 
         assert.equal(context.applySelectiveDynamicsChanges([{ index: 0, oldSD: [true, true, true], newSD: [false, false, false] }]), 0);
         context.unfixAllAtoms();
         assert.deepEqual(context.structure.atoms[0].selectiveDynamics, [true, true, true]);
-        assert.equal(vm.runInContext('undoStack.length', context), 0);
-        assert.equal(vm.runInContext('redoStack.length', context), 1);
+        assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
+        assert.equal(vm.runInContext('editHistory.redoStack.length', context), 1);
         assert.equal(context.hasUnsavedEdits(), false);
         assert.equal(context.getSelectiveDynamicsStats(), '');
     }
@@ -1571,7 +1605,7 @@ test('multi-atom shift validates every result before changing any atom', () => {
     assert.equal(context.applyPeriodicShiftByCartesian(1e308, 0, 0), false);
     assert.equal(context.structure.atoms[0].position.x, 0);
     assert.equal(context.structure.atoms[1].position.x, 1e308);
-    assert.equal(vm.runInContext('undoStack.length', context), 0);
+    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
 });
 
 test('bond rebuild uses one policy for normal and periodic atoms', () => {

@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
+const { boundaryTranslationRanges, GeometryWorkLimitError } = require('../geometry.js');
 
 test('cell validation and coordinate conversion reject non-finite results', () => {
     assert.equal(requireFiniteCell([[2, 0, 0], [0, 3, 0], [0, 0, -4]]), -24);
@@ -116,4 +117,39 @@ test('periodic bond segments clip at cell faces in cubic and tilted cells', () =
     const clipped = clipSegmentToCell([3.2, 1.8, 0], [3.8, 2.2, 0], tilted, [1, 1, 1]);
     assert.ok(Math.hypot(...clipped[1].map((x, i) => x - edge[i])) < 1e-10);
     assert.equal(clipSegmentToCell([-2, 0, 0], [-1, 0, 0], cubic, [1, 1, 1]), null);
+});
+
+test('near-degenerate periodic distances complete within a bounded process deadline', () => {
+    const { execFileSync } = require('node:child_process');
+    const output = execFileSync(process.execPath, ['-e', `
+        const g = require('./geometry.js');
+        const lattice = [[1, 0, 0], [1, 1e-8, 0], [0, 0, 1]];
+        g.requireFiniteCell(lattice);
+        console.log(JSON.stringify(g.nearestImageBetween([0, 0, 0], [.5, .25, 0], lattice)));
+    `], { cwd: require('node:path').resolve(__dirname, '..'), timeout: 1500, encoding: 'utf8' });
+    const result = JSON.parse(output);
+    assert.equal(result.distance, 0.5);
+    assert.deepEqual(result.delta, [0.5, 0, 0]);
+    assert.deepEqual(result.offset, [25000000, -25000000, 0]);
+});
+
+test('reduced-basis measurements preserve exact distances and offsets in the source basis', () => {
+    const lattice = [[1, 0, 0], [1000000, 1, 0], [3000001, 3, 1]];
+    for (let sample = 0; sample < 40; sample++) {
+        const point = [sample * 0.123 - 2, sample * 0.197 - 3, sample * 0.217 - 4];
+        const result = nearestImageBetween([0, 0, 0], point, lattice);
+        const expected = Math.hypot(...point.map(value => value - Math.round(value)));
+        assert.ok(Math.abs(result.distance - expected) < 1e-8);
+        const translation = fractionalToCartesian(result.offset, lattice);
+        result.delta.forEach((value, axis) => assert.ok(Math.abs(value - point[axis] - translation[axis]) < 1e-8));
+    }
+    assert.throws(() => nearestImageBetween([0, 0, 0], [1e20, 0, 0], [[1, 0, 0], [0, 1, 0], [0, 0, 1]]), GeometryWorkLimitError);
+});
+
+test('boundary bond workload is rejected before allocating huge ranges', () => {
+    const thin = [[1, 0, 0], [1, 1e-8, 0], [0, 0, 1]];
+    assert.throws(() => boundaryTranslationRanges([[0, 0, 0]], thin, [1, 1, 1], [true, true, true], 2.5), /work limit/);
+    const ordinary = boundaryTranslationRanges([[0.1, 0, 0]], [[10, 0, 0], [0, 10, 0], [0, 0, 10]], [1, 1, 1], [true, false, false], 2.5);
+    assert.deepEqual(ordinary, [[[0, 1], [0, 0], [0, 0]]]);
+    assert.throws(() => boundaryTranslationRanges([[1e20, 0, 0]], [[10, 0, 0], [0, 10, 0], [0, 0, 10]], [1, 1, 1], [true, true, true], 2.5), /integer precision/);
 });

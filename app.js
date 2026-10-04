@@ -309,12 +309,7 @@ let animationState = {
 // Unified Undo System (Cmd+Z / Ctrl+Z)
 // ============================================
 // All reversible operations push to this stack
-let undoStack = [];
-let redoStack = [];
-const MAX_UNDO_HISTORY = 50;
-let nextEditRevision = 0;
-let currentEditRevision = 0;
-let savedEditRevision = 0;
+const editHistory = CrystalHistory.createHistory(50);
 
 // Operation types:
 // - 'move_atom': { index, oldPosition, newPosition }
@@ -329,27 +324,19 @@ let savedEditRevision = 0;
 // - 'clear_selection': { selectedAtoms: [...], isMeasurementSelection }
 
 function pushUndo(operation) {
-    operation.beforeRevision = currentEditRevision;
-    operation.afterRevision = isSelectionOperation(operation) ? currentEditRevision : ++nextEditRevision;
-    currentEditRevision = operation.afterRevision;
-    undoStack.push(operation);
-    redoStack = [];
-    // Limit stack size
-    if (undoStack.length > MAX_UNDO_HISTORY) {
-        undoStack.shift();
-    }
+    editHistory.record(operation);
     updateUndoButton();
     updateDirtyIndicator();
 }
 
 function isSelectionOperation(operation) {
-    return ['select_atom', 'deselect_atom', 'clear_selection'].includes(operation.type);
+    return CrystalHistory.isSelectionOperation(operation);
 }
 
 function hasUnsavedEdits() {
     const pendingAtomMove = isDragging && draggedAtom && currentStructure?.atoms[draggedAtom.index]
         && currentStructure.atoms[draggedAtom.index].position.distanceTo(draggedAtom.startPosition) >= 1e-10;
-    return currentEditRevision !== savedEditRevision || Boolean(pendingAtomMove) || hasVacuumDragChanges();
+    return editHistory.dirty || Boolean(pendingAtomMove) || hasVacuumDragChanges();
 }
 
 function updateDirtyIndicator() {
@@ -360,9 +347,9 @@ function updateDirtyIndicator() {
 
 function updateUndoButton() {
     const button = document.getElementById('undoBtn');
-    if (button) button.disabled = undoStack.length === 0;
+    if (button) button.disabled = editHistory.undoStack.length === 0;
     const redoButton = document.getElementById('redoBtn');
-    if (redoButton) redoButton.disabled = redoStack.length === 0;
+    if (redoButton) redoButton.disabled = editHistory.redoStack.length === 0;
 }
 
 function snapshotStructure(structure) {
@@ -422,12 +409,12 @@ function performRedo() {
         cancelEditDrag();
         return;
     }
-    if (redoStack.length === 0) {
+    if (editHistory.redoStack.length === 0) {
         statusText.textContent = 'Nothing to redo';
         statusText.className = '';
         return;
     }
-    const { operation, state } = redoStack.pop();
+    const { operation, state } = editHistory.redoStack.pop();
     if (isSelectionOperation(operation)) {
         selectedAtoms.forEach(atom => unhighlightAtomMesh(atom.mesh));
         selectedAtoms = restoreSelectedAtoms(state.selected);
@@ -450,8 +437,7 @@ function performRedo() {
         updateUI_forCurrentMode();
         updateSupercellButtonState();
     }
-    undoStack.push(operation);
-    currentEditRevision = operation.afterRevision;
+    editHistory.completeRedo(operation);
     updateUndoButton();
     updateDirtyIndicator();
     statusText.textContent = 'Redid last action';
@@ -463,13 +449,13 @@ function performUndo() {
         cancelEditDrag();
         return;
     }
-    if (undoStack.length === 0) {
+    if (editHistory.undoStack.length === 0) {
         statusText.textContent = 'Nothing to undo';
         statusText.className = '';
         return;
     }
     
-    const op = undoStack.pop();
+    const op = editHistory.undoStack.pop();
     const redoState = captureRedoState(op);
     
     switch (op.type) {
@@ -506,8 +492,7 @@ function performUndo() {
         default:
             console.warn('Unknown undo operation type:', op.type);
     }
-    redoStack.push({ operation: op, state: redoState });
-    currentEditRevision = op.beforeRevision;
+    editHistory.completeUndo(op, redoState);
     updateUndoButton();
     updateDirtyIndicator();
 }
@@ -1304,6 +1289,20 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
     return `<${tag} id="selectedAtomCoords${atomIndex}" class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</${closingTag}>`;
 }
 
+const geometryWarnings = new Map();
+function setGeometryWarning(kind, message) {
+    if (message) geometryWarnings.set(kind, message);
+    else geometryWarnings.delete(kind);
+    const warning = document.getElementById('geometryWarning');
+    if (warning) {
+        warning.textContent = [...geometryWarnings.values()].join(' ');
+        warning.hidden = geometryWarnings.size === 0;
+    }
+}
+function formatMeasuredDistance(pair) {
+    return pair.unavailable ? 'Unavailable' : `${pair.distance.toFixed(4)} Å`;
+}
+
 function getMeasurementPair(atomA, atomB) {
     const start = atomA.position.clone();
     let end = atomB.position.clone();
@@ -1311,7 +1310,13 @@ function getMeasurementPair(atomA, atomB) {
     const nearest = measurementMode === 'nearest' && isPeriodicStructure(currentStructure)
         && !atomA.isGhost && !atomB.isGhost;
     if (nearest) {
-        const result = CrystalGeometry.nearestImageBetween(start, end, currentStructure.lattice, getPeriodicAxes(currentStructure));
+        let result;
+        try {
+            result = CrystalGeometry.nearestImageBetween(start, end, currentStructure.lattice, getPeriodicAxes(currentStructure));
+        } catch (error) {
+            setGeometryWarning('measurement', `${error.message}. Use Selected images to measure displayed copies.`);
+            return { start, end, offset, distance: null, nearest: false, unavailable: true };
+        }
         offset = result.offset;
         end = start.clone().add(new THREE.Vector3(...result.delta));
     }
@@ -1322,6 +1327,7 @@ function getMeasurementAngle() {
     if (selectedAtoms.length !== 3) return null;
     const first = getMeasurementPair(selectedAtoms[1], selectedAtoms[0]);
     const third = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
+    if (first.unavailable || third.unavailable) return null;
     const v1 = first.end.clone().sub(first.start);
     const v2 = third.end.clone().sub(third.start);
     if (v1.length() < 1e-10 || v2.length() < 1e-10) return null;
@@ -1359,6 +1365,7 @@ function setupMeasurementModeToggle() {
 function computeDeltas(atomA, atomB) {
     if (!currentStructure || !currentStructure.lattice) return null;
     const pair = getMeasurementPair(atomA, atomB);
+    if (pair.unavailable) return null;
     const delta = pair.end.clone().sub(pair.start);
     if (!hasLattice(currentStructure) || selectedAtomCoordMode !== 'fractional') {
         return { da: delta.x, db: delta.y, dc: delta.z, dp: 2, unit: 'Å' };
@@ -2275,12 +2282,12 @@ function updateEditUI() {
                 // Show measurement values
                 if (selectedAtoms.length >= 2) {
                     const pair = getMeasurementPair(selectedAtoms[0], selectedAtoms[1]);
-                    html += `<div class="preserved-measurement-value">Distance (1—2): <strong>${pair.distance.toFixed(4)} Å</strong></div>`;
+                    html += `<div class="preserved-measurement-value">Distance (1—2): <strong>${formatMeasuredDistance(pair)}</strong></div>`;
                     html += formatDeltaCompact(selectedAtoms[0], selectedAtoms[1]);
                 }
                 if (selectedAtoms.length === 3) {
                     const pair = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
-                    html += `<div class="preserved-measurement-value">Distance (2—3): <strong>${pair.distance.toFixed(4)} Å</strong></div>`;
+                    html += `<div class="preserved-measurement-value">Distance (2—3): <strong>${formatMeasuredDistance(pair)}</strong></div>`;
                     html += formatDeltaCompact(selectedAtoms[1], selectedAtoms[2]);
                     const angle = getMeasurementAngle();
                     if (angle) html += `<div class="preserved-measurement-value">Angle (1—2—3): <strong>${angle.angleDeg.toFixed(2)}°</strong></div>`;
@@ -2635,15 +2642,27 @@ function applyExactAtomCoordinates() {
     const atom = currentStructure.atoms[index];
     if (atom.position.distanceTo(position) < 1e-10) return false;
     const oldPosition = atom.position.clone();
-    pushUndo({ type: 'move_atom', index, oldPosition, newPosition: position.clone() });
-    atom.position.copy(position);
-    atom.fractional = fractional;
+    commitGeometryEdit({ type: 'move_atom', index, oldPosition, newPosition: position.clone() }, [{ index, position }]);
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateEditUI();
     statusText.textContent = `Set coordinates for atom #${index + 1}`;
     statusText.className = 'success';
     return true;
+}
+
+// All discrete coordinate edits validate the complete proposal before writing
+// positions or recording history. Drag previews use the same document validator.
+function commitGeometryEdit(operation, updates, lattice = null) {
+    const prepared = CrystalDocument.preparePositions(currentStructure, updates.map(update => update.position), lattice || currentStructure.lattice);
+    if (updates.some(({ index }) => !Number.isInteger(index) || !currentStructure.atoms[index])) throw new Error('Unknown atom in edit');
+    if (lattice) currentStructure.lattice = lattice;
+    prepared.forEach(({ position, fractional }, offset) => {
+        const atom = currentStructure.atoms[updates[offset].index];
+        atom.position.copy(position);
+        atom.fractional = fractional;
+    });
+    pushUndo(operation);
 }
 
 // Rebuild bonds based on current atom positions
@@ -2692,6 +2711,7 @@ function rebuildBonds() {
 }
 
 function addBondsFromAtomMeshes() {
+    setGeometryWarning('bonds', '');
     if (!settings.showBonds) return;
     const dense = displayedAtomCount > DENSE_VIEW_ATOMS;
     const solidSegments = [];
@@ -2774,28 +2794,18 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
     const preview = getPeriodicRepeats(currentStructure);
     const repeats = [preview.a, preview.b, preview.c];
     const periodicAxes = getPeriodicAxes(currentStructure);
-    const reciprocalColumns = [
-        new THREE.Vector3(1, 0, 0),
-        new THREE.Vector3(0, 1, 0),
-        new THREE.Vector3(0, 0, 1)
-    ].map(axis => cartesianToFractional(axis, lattice));
-    if (reciprocalColumns.some(column => !column)) return;
-    // A Cartesian cutoff becomes this distance in each fractional direction.
-    // Only copies near the corresponding faces need an outside neighbor.
-    const margins = [0, 1, 2].map(axis => settings.bondThreshold * Math.hypot(
-        reciprocalColumns[0][axis], reciprocalColumns[1][axis], reciprocalColumns[2][axis]
-    ) + 1e-9);
-
-    for (const atom of atomMeshes) {
-        const fractional = cartesianToFractional(atom.position, lattice);
-        if (!fractional) continue;
-        const shifts = [0, 1, 2].map(axis => {
-            if (!periodicAxes[axis]) return [0];
-            // A tilted, non-reduced basis can need a translation larger than
-            // one cell along this axis to reach a nearby Cartesian neighbor.
+    let plans;
+    try {
+        plans = CrystalGeometry.boundaryTranslationRanges(atomMeshes.map(atom => atom.position), lattice, repeats, periodicAxes, settings.bondThreshold);
+        setGeometryWarning('bonds', '');
+    } catch (error) {
+        setGeometryWarning('bonds', error.message);
+        return;
+    }
+    for (let index = 0; index < atomMeshes.length; index++) {
+        const atom = atomMeshes[index];
+        const shifts = plans[index].map(([first, last], axis) => {
             const values = [];
-            const first = Math.ceil((-margins[axis] - fractional[axis]) / repeats[axis]);
-            const last = Math.floor((repeats[axis] + margins[axis] - fractional[axis]) / repeats[axis]);
             for (let count = first; count <= last; count++) values.push(count * repeats[axis]);
             return values;
         });
@@ -3172,16 +3182,12 @@ function applyCartesianShift(shiftCartesian, atomIndices) {
         return { changedCount: 0 };
     }
     const oldPositions = changedUpdates.map(({ index }) => currentStructure.atoms[index].position.clone());
-    pushUndo({
+    commitGeometryEdit({
         type: 'shift_atoms',
         atomIndices: changedUpdates.map(({ index }) => index),
         shiftVector: shiftCartesian.clone(),
         oldPositions
-    });
-    changedUpdates.forEach(({ index, position, fractional }) => {
-        currentStructure.atoms[index].position.copy(position);
-        currentStructure.atoms[index].fractional = fractional;
-    });
+    }, changedUpdates);
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateEditUI();
@@ -3743,38 +3749,18 @@ function updateMeasurements() {
         disposeObject3D(obj);
     });
     
-    if (selectedAtoms.length >= 2) {
-        const pair = getMeasurementPair(selectedAtoms[0], selectedAtoms[1]);
-        drawMeasurementLine(pair.start, pair.end, 0x00f5d4);
-        
-        // Add floating distance label at midpoint
-        const midpoint = new THREE.Vector3().addVectors(
-            pair.start,
-            pair.end
-        ).multiplyScalar(0.5);
+    setGeometryWarning('measurement', '');
+    for (let index = 0; index < Math.min(2, selectedAtoms.length - 1); index++) {
+        const pair = getMeasurementPair(selectedAtoms[index], selectedAtoms[index + 1]);
+        if (pair.unavailable) continue;
+        drawMeasurementLine(pair.start, pair.end, index === 0 ? 0x00f5d4 : 0xf15bb5);
+        const midpoint = pair.start.clone().add(pair.end).multiplyScalar(0.5);
         createFloatingDistanceLabel(midpoint, pair.distance);
     }
-    
     if (selectedAtoms.length === 3) {
-        // Draw line between atoms 2-3
-        const pair = getMeasurementPair(selectedAtoms[1], selectedAtoms[2]);
-        drawMeasurementLine(pair.start, pair.end, 0xf15bb5);
-        
-        // Add floating distance label for 2-3 at midpoint
-        const midpoint23 = new THREE.Vector3().addVectors(
-            pair.start,
-            pair.end
-        ).multiplyScalar(0.5);
-        createFloatingDistanceLabel(midpoint23, pair.distance);
-        
-        // Draw angle arc at vertex and get label position
         const angle = getMeasurementAngle();
         const arcData = angle ? drawAngleArc(angle.first, angle.vertex, angle.third) : null;
-        
-        // Add floating angle label near the arc
-        if (arcData) {
-            createFloatingAngleLabel(arcData.labelPosition, arcData.angleDeg);
-        }
+        if (arcData) createFloatingAngleLabel(arcData.labelPosition, arcData.angleDeg);
     }
     requestRender();
 }
@@ -4017,7 +4003,7 @@ function updateMeasurementUI() {
                     </div>
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label1}—${label2})</span>
-                        <span class="meas-value">${pair.distance.toFixed(4)} Å</span>
+                        <span class="meas-value">${formatMeasuredDistance(pair)}</span>
                         ${pair.nearest && formatImageShift(pair.offset) ? `<span class="meas-note">Atom ${label2} image ${formatImageShift(pair.offset)}</span>` : ''}
                         ${deltaHtml12}
                     </div>
@@ -4047,7 +4033,7 @@ function updateMeasurementUI() {
                     </div>
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label2}—${label3})</span>
-                        <span class="meas-value">${pair.distance.toFixed(4)} Å</span>
+                        <span class="meas-value">${formatMeasuredDistance(pair)}</span>
                         ${pair.nearest && formatImageShift(pair.offset) ? `<span class="meas-note">Atom ${label3} image ${formatImageShift(pair.offset)}</span>` : ''}
                         ${deltaHtml23}
                     </div>
@@ -4474,11 +4460,7 @@ function loadStructureFromText(content, filename, requestId = null) {
 
     cancelEditDrag();
     stopAnimation();
-    undoStack = [];
-    redoStack = [];
-    nextEditRevision = 0;
-    currentEditRevision = 0;
-    savedEditRevision = 0;
+    editHistory.reset();
     updateUndoButton();
     updateDirtyIndicator();
     settings.periodic = { a: 1, b: 1, c: 1 };
@@ -4486,6 +4468,8 @@ function loadStructureFromText(content, filename, requestId = null) {
         document.getElementById(`periodic${axis}`).value = 1;
         document.getElementById(`periodic${axis}Display`).textContent = 1;
     });
+    geometryWarnings.clear();
+    setGeometryWarning('measurement', '');
     currentStructure = nextStructure;
     currentSourceText = nextStructure.isXYZ || nextStructure.hasAdditionalSections ? content : null;
     lastJumpAtomNumber = null;
@@ -5557,22 +5541,6 @@ function startVacuumDrag(handleInfo, event) {
     return true;
 }
 
-// Scale lattice vector by a factor
-function scaleLatticeVector(lattice, axisIdx, scale) {
-    return lattice[axisIdx].map(v => v * scale);
-}
-
-// Restore atoms and lattice to original state
-function restoreOriginalState(axisIdx) {
-    const { originalLattice, originalAtomPositions } = vacuumDragState;
-    
-    currentStructure.atoms.forEach((atom, i) => {
-        const orig = originalAtomPositions[i];
-        atom.position.set(orig.x, orig.y, orig.z);
-    });
-    currentStructure.lattice[axisIdx] = [...originalLattice[axisIdx]];
-}
-
 // Calculate drag delta from mouse movement
 function calculateDragDelta(event) {
     const { screenDir, dragHandle, startX, startY } = vacuumDragState;
@@ -5587,46 +5555,22 @@ function calculateDragDelta(event) {
 function updateVacuumDrag(event) {
     if (!vacuumDragState.isDragging) return;
     
-    const { dragExtendAxis: axis, dragHandle, originalLattice, originalAtomPositions, startLatticeLen: originalLen } = vacuumDragState;
+    const { dragExtendAxis: axis, dragHandle, originalLattice, originalAtomPositions } = vacuumDragState;
     const axisIdx = axisToIndex(axis);
-    const originalVec = getLatticeVector(originalLattice, axisIdx);
-    const latticeDir = originalVec.clone().normalize();
-    
-    // Restore original state before applying new transformation
-    restoreOriginalState(axisIdx);
-    
-    // Calculate new length from mouse movement
-    const deltaLen = calculateDragDelta(event);
-    let newLen = originalLen + deltaLen;
-    
-    // Get atom extent for bounds checking (use atom center coordinates, no padding)
-    const { min: minProj, max: maxProj } = getAtomExtentAlongDirection(latticeDir, originalAtomPositions);
-    
-    // Minimum length: boundary must not pass through any atom's coordinate
-    // Use a tiny epsilon to prevent floating point issues, not visual padding
-    const epsilon = 0.001;
-    
-    if (dragHandle === 'far') {
-        // Far face: boundary moves, atoms stay in place
-        // Minimum: boundary must be beyond the farthest atom's coordinate
-        newLen = Math.max(maxProj + epsilon, newLen);
-        currentStructure.lattice[axisIdx] = scaleLatticeVector(originalLattice, axisIdx, newLen / originalLen);
-    } else {
-        // Near face: atoms shift with origin
-        // After shift, the nearest atom must still be at or beyond the origin
-        const minAllowedLen = originalLen + (epsilon - minProj);
-        newLen = Math.max(minAllowedLen, newLen);
-        
-        currentStructure.lattice[axisIdx] = scaleLatticeVector(originalLattice, axisIdx, newLen / originalLen);
-        
-        // Shift atoms in lattice direction
-        const shiftVec = latticeDir.clone().multiplyScalar(newLen - originalLen);
-        currentStructure.atoms.forEach(atom => atom.position.add(shiftVec));
+    let prepared;
+    try {
+        prepared = CrystalStructure.prepareCellResize(currentStructure, originalLattice, originalAtomPositions,
+            axisIdx, dragHandle, calculateDragDelta(event));
+    } catch (error) {
+        statusText.textContent = `Cell resize stopped: ${error.message}`;
+        statusText.className = 'warning';
+        return false;
     }
-    
-    // Re-render and show drag highlight
-    currentStructure.atoms.forEach(atom => {
-        atom.fractional = cartesianToFractional(atom.position, currentStructure.lattice);
+    // Commit only after every coordinate and the cell pass validation.
+    currentStructure.lattice = prepared.lattice;
+    prepared.updates.forEach(({ position, fractional }, index) => {
+        currentStructure.atoms[index].position.copy(position);
+        currentStructure.atoms[index].fractional = fractional;
     });
     updateDirtyIndicator();
     renderStructure(currentStructure, true);
@@ -5867,12 +5811,16 @@ function exportStructure() {
         content = generateXDATCAR();
         filename = `${stem}_edited.xdatcar`;
     } else if (currentStructure.isXYZ) {
-        if (currentEditRevision === 0 && currentSourceText !== null) {
+        if (editHistory.currentEditRevision === 0 && currentSourceText !== null) {
             content = currentSourceText;
         } else {
-            if (currentStructure.hasAdditionalProperties) {
-                if (!window.confirm('This XYZ has additional atom data, such as charges or forces. The edited export will omit that data. Export species and positions only?')) {
-                    statusText.textContent = 'Export canceled; additional XYZ atom data was not discarded';
+            const staleMetadata = crystalFormats.omittedXYZMetadata(currentStructure);
+            if (currentStructure.hasAdditionalProperties || staleMetadata.length) {
+                const reasons = [];
+                if (currentStructure.hasAdditionalProperties) reasons.push('This XYZ has additional atom data, such as charges or forces. The edited export will omit that data.');
+                if (staleMetadata.length) reasons.push(`Geometry has changed. The edited export will omit source metadata (${[...new Set(staleMetadata.map(field => field.key))].join(', ')}) because it may no longer describe this structure.`);
+                if (!window.confirm(`${reasons.join(' ')} Export species and positions only?`)) {
+                    statusText.textContent = 'Export canceled; source XYZ data was not discarded';
                     statusText.className = 'warning';
                     return;
                 }
@@ -5882,7 +5830,7 @@ function exportStructure() {
         }
         filename = `${stem}_edited.xyz`;
     } else {
-        if (currentStructure.hasAdditionalSections && currentEditRevision === 0 && currentSourceText !== null) {
+        if (currentStructure.hasAdditionalSections && editHistory.currentEditRevision === 0 && currentSourceText !== null) {
             content = currentSourceText;
         } else {
             if (currentStructure.hasAdditionalSections) {
@@ -5922,7 +5870,7 @@ function exportStructure() {
             URL.revokeObjectURL(url);
         }, 60000);
     }
-    savedEditRevision = currentEditRevision;
+    editHistory.markSaved();
     updateDirtyIndicator();
     
     const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ ? 'XYZ' : 'POSCAR');

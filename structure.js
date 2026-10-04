@@ -1,6 +1,34 @@
 // Structure operations independent of the renderer and browser UI.
 (function (root) {
     const geometry = typeof module !== 'undefined' && module.exports ? require('./geometry.js') : root.CrystalGeometry;
+    const documentModel = typeof module !== 'undefined' && module.exports ? require('./document.js') : root.CrystalDocument;
+
+    function prepareCellResize(structure, originalLattice, originalPositions, axis, handle, delta) {
+        if (![0, 1, 2].includes(axis) || !['near', 'far'].includes(handle) || !Number.isFinite(delta)) {
+            throw new Error('Invalid cell resize');
+        }
+        const vector = originalLattice[axis];
+        const length = Math.hypot(...vector);
+        if (!Number.isFinite(length) || length <= 0) throw new Error('Invalid original cell length');
+        const direction = vector.map(value => value / length);
+        const projections = originalPositions.map(pos => direction[0] * pos.x + direction[1] * pos.y + direction[2] * pos.z);
+        if (!projections.every(Number.isFinite)) throw new Error('Atom extent cannot be represented');
+        const epsilon = 0.001;
+        const extent = projections.length ? (handle === 'far' ? Math.max(...projections) + epsilon
+            : length + epsilon - Math.min(...projections)) : epsilon;
+        // Atom coordinates may lie outside the cell. Their extent alone must
+        // never allow a zero or reversed cell vector.
+        const newLength = Math.max(epsilon, extent, length + delta);
+        if (!Number.isFinite(newLength)) throw new Error('Cell length cannot be represented');
+        const lattice = originalLattice.map((vec, index) => index === axis
+            ? vec.map(value => value * (newLength / length)) : [...vec]);
+        const positions = originalPositions.map(pos => ({
+            x: pos.x + (handle === 'near' ? direction[0] * (newLength - length) : 0),
+            y: pos.y + (handle === 'near' ? direction[1] * (newLength - length) : 0),
+            z: pos.z + (handle === 'near' ? direction[2] * (newLength - length) : 0)
+        }));
+        return { lattice, updates: documentModel.preparePositions(structure, positions, lattice) };
+    }
 
     // Prepare every copy before the caller replaces the document or records history.
     function buildSupercell(structure, repeats) {
@@ -61,7 +89,7 @@
         return min / 2 + max / 2;
     }
 
-    const api = { buildSupercell, summarizeConstraints, zMidpoint };
+    const api = { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalStructure = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -338,22 +338,67 @@
             }
         }
 
-        function parseExtendedXYZLattice(comment) {
-            if (!comment) return null;
-            const match = comment.match(/Lattice\s*=\s*"([^"]+)"/i);
-            if (!match) {
-                if (/Lattice\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed Lattice field');
-                return null;
+        // Read top-level key/value spans; quoted strings may themselves contain
+        // words such as pbc= or Properties=. Those are values, not new fields.
+        function xyzHeaderFields(comment) {
+            const fields = [];
+            let index = 0;
+            function token() {
+                const start = index;
+                const open = comment[index];
+                if (open === '"' || open === "'") {
+                    index++;
+                    while (index < comment.length) {
+                        if (comment[index] === '\\') index += 2;
+                        else if (comment[index++] === open) return comment.slice(start, index);
+                    }
+                    throw new Error('Invalid extended XYZ: unterminated quoted field');
+                }
+                if (open === '[' || open === '{') {
+                    const close = open === '[' ? ']' : '}';
+                    index++;
+                    while (index < comment.length && comment[index] !== close) {
+                        if ('"\''.includes(comment[index])) token();
+                        else index++;
+                    }
+                    if (index >= comment.length) throw new Error('Invalid extended XYZ: unterminated array field');
+                    index++;
+                    return comment.slice(start, index);
+                }
+                while (index < comment.length && !/[\s=]/.test(comment[index])) index++;
+                return comment.slice(start, index);
             }
-            const nums = match[1].trim().split(/\s+/).map(parseXYZReal);
+            while (index < comment.length) {
+                if (/\s/.test(comment[index])) { index++; continue; }
+                const start = index;
+                const rawKey = token();
+                if (!rawKey) { index++; continue; }
+                while (/\s/.test(comment[index] || '') && index < comment.length) index++;
+                if (comment[index] !== '=') continue;
+                index++;
+                while (/\s/.test(comment[index] || '') && index < comment.length) index++;
+                const rawValue = token();
+                if (!rawValue) throw new Error('Invalid extended XYZ: missing field value');
+                const unwrap = value => /^["'\[{]/.test(value) ? value.slice(1, -1) : value;
+                fields.push({ key: unwrap(rawKey), value: unwrap(rawValue), raw: comment.slice(start, index), start, end: index });
+            }
+            return fields;
+        }
+
+        function xyzField(comment, name) {
+            const matches = xyzHeaderFields(comment).filter(field => field.key.toLowerCase() === name.toLowerCase());
+            if (matches.length > 1) throw new Error(`Invalid extended XYZ: duplicate ${name} fields`);
+            return matches[0];
+        }
+
+        function parseExtendedXYZLattice(comment) {
+            const field = xyzField(comment, 'Lattice');
+            if (!field) return null;
+            const nums = field.value.trim().split(/[\s,]+/).map(parseXYZReal);
             if (nums.length !== 9 || nums.some(n => !Number.isFinite(n))) {
                 throw new Error('Invalid extended XYZ: Lattice must contain nine finite numbers');
             }
-            return [
-                [nums[0], nums[1], nums[2]],
-                [nums[3], nums[4], nums[5]],
-                [nums[6], nums[7], nums[8]]
-            ];
+            return [nums.slice(0, 3), nums.slice(3, 6), nums.slice(6, 9)];
         }
 
         function parseXYZReal(value) {
@@ -361,16 +406,10 @@
             return Number(value.replace(/[dD]/, 'e'));
         }
 
-        const xyzPbcField = /\bpbc\s*=\s*(?:"([^"]*)"|'([^']*)'|\[([^\]]*)\]|\{([^}]*)\}|(\S+))/gi;
-
         function parseXYZPeriodicity(comment, hasLattice) {
-            const matches = [...comment.matchAll(xyzPbcField)];
-            if (matches.length === 0) {
-                if (/\bpbc\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed pbc field');
-                return [hasLattice, hasLattice, hasLattice];
-            }
-            if (matches.length !== 1) throw new Error('Invalid extended XYZ: duplicate pbc fields');
-            const values = matches[0].slice(1).find(value => value !== undefined).trim().split(/[\s,]+/);
+            const field = xyzField(comment, 'pbc');
+            if (!field) return [hasLattice, hasLattice, hasLattice];
+            const values = field.value.trim().split(/[\s,]+/);
             if (values.length !== 3 || values.some(value => !/^(T|F|true|false)$/i.test(value))) {
                 throw new Error('Invalid extended XYZ: pbc must contain three boolean flags');
             }
@@ -380,12 +419,9 @@
         }
 
         function parseExtendedXYZProperties(comment) {
-            const match = comment.match(/Properties\s*=\s*(?:"([^"]+)"|(\S+))/i);
-            if (!match) {
-                if (/Properties\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed Properties field');
-                return { species: 0, position: [1, 2, 3], positionTypes: ['R', 'R', 'R'], columns: 4 };
-            }
-            const tokens = (match[1] || match[2]).split(':');
+            const field = xyzField(comment, 'Properties');
+            if (!field) return { species: 0, position: [1, 2, 3], positionTypes: ['R', 'R', 'R'], columns: 4 };
+            const tokens = field.value.split(':');
             if (tokens.length % 3 !== 0) throw new Error('Invalid extended XYZ: Properties must use name:type:count triples');
             let columns = 0;
             let species = null;
@@ -529,13 +565,13 @@
                 });
             }
 
-            // Show the human description rather than metadata tokens in the sidebar
-            // and in POSCAR exports converted from extended XYZ.
-            const comment = rawComment
-                .replace(/Lattice\s*=\s*"[^"]*"/gi, '')
-                .replace(/Properties\s*=\s*(?:"[^"]*"|\S+)/gi, '')
-                .replace(xyzPbcField, '')
-                .trim() || 'XYZ structure';
+            const fields = xyzHeaderFields(rawComment);
+            const structuralKeys = new Set(['lattice', 'properties', 'pbc']);
+            const xyzMetadata = fields.filter(field => !structuralKeys.has(field.key.toLowerCase()))
+                .map(({ key, raw }) => ({ key, raw }));
+            let description = rawComment;
+            for (const field of [...fields].reverse()) description = description.slice(0, field.start) + description.slice(field.end);
+            const comment = description.trim() || 'XYZ structure';
 
             const order = [];
             const countsMap = Object.create(null);
@@ -547,7 +583,7 @@
                 countsMap[atom.element]++;
             });
 
-            return documentModel.initialize({
+            const structure = documentModel.initialize({
                 comment,
                 scale: 1,
                 lattice,
@@ -560,8 +596,11 @@
                 isXYZ: true,
                 hasExplicitLattice,
                 pbc,
-                hasAdditionalProperties
+                hasAdditionalProperties,
+                xyzMetadata
             });
+            structure.xyzSourceGeometry = documentModel.geometrySignature(structure);
+            return structure;
         }
         // Generate POSCAR content from current structure
         function generatePOSCAR(structure) {
@@ -615,13 +654,21 @@
             return lines.join('\n');
         }
 
+        const descriptiveXYZKeys = new Set(['name', 'label', 'comment', 'config_type']);
+        function omittedXYZMetadata(structure) {
+            if (!structure.xyzSourceGeometry || structure.xyzSourceGeometry === documentModel.geometrySignature(structure)) return [];
+            return (structure.xyzMetadata || []).filter(field => !descriptiveXYZKeys.has(field.key.toLowerCase()));
+        }
+
         function generateXYZ(structure) {
             if (!structure) return null;
             const description = structure.comment || 'Exported from Crystal Visualizer';
             const metadata = structure.hasExplicitLattice
                 ? `Lattice="${structure.lattice.flat().map(value => value.toFixed(12)).join(' ')}" Properties=species:S:1:pos:R:3 pbc="${(structure.pbc || [true, true, true]).map(value => value ? 'T' : 'F').join(' ')}"`
                 : '';
-            const lines = [String(structure.atoms.length), [description, metadata].filter(Boolean).join(' ')];
+            const omitted = new Set(omittedXYZMetadata(structure).map(field => field.key));
+            const retained = (structure.xyzMetadata || []).filter(field => !omitted.has(field.key)).map(field => field.raw);
+            const lines = [String(structure.atoms.length), [description, ...retained, metadata].filter(Boolean).join(' ')];
             structure.atoms.forEach(atom => {
                 const { x, y, z } = atom.position;
                 lines.push(`${atom.element} ${x.toFixed(9)} ${y.toFixed(9)} ${z.toFixed(9)}`);
@@ -667,7 +714,7 @@
             return lines.join('\n');
         }
 
-        return { parsePOSCAR, parseXDATCAR, isXDATCARFormat, isXYZFormat, parseXYZ, generatePOSCAR, generateXYZ, generateXDATCAR };
+        return { parsePOSCAR, parseXDATCAR, isXDATCARFormat, isXYZFormat, parseXYZ, generatePOSCAR, generateXYZ, generateXDATCAR, omittedXYZMetadata };
     }
 
     const api = { createFormats };

@@ -175,3 +175,30 @@ test('XYZ scientific numbers accept D exponents and reject non-decimal syntax', 
         assert.throws(() => strictFormats.parseXYZ(`1\nLattice="${value} 0 0 0 10 0 0 0 10"\nH 0 0 0\n`), /nine finite numbers/);
     }
 });
+
+test('edited XYZ drops geometry-dependent and unknown metadata but retains descriptions', () => {
+    const source = '2\nLattice="10 0 0 0 10 0 0 0 10" Properties=species:S:1:pos:R:3 energy=-1.23 stress="1 0 0 0 1 0 0 0 1" custom_result=7 config_type="sample" note="pbc=F Properties=bad"\nH 0 0 0\nH 1 0 0\n';
+    const structure = strictFormats.parseXYZ(source);
+    assert.equal(structure.hasAdditionalProperties, false);
+    assert.match(strictFormats.generateXYZ(structure), /energy=-1.23/);
+    assert.deepEqual(structure.pbc, [true, true, true]);
+    structure.atoms[1].position.x = 2;
+    assert.deepEqual(strictFormats.omittedXYZMetadata(structure).map(field => field.key), ['energy', 'stress', 'custom_result', 'note']);
+    const edited = strictFormats.generateXYZ(structure);
+    assert.doesNotMatch(edited, /energy=|stress=|custom_result=|note=/);
+    assert.match(edited, /config_type="sample"/);
+    assert.equal(strictFormats.parseXYZ(edited).atoms[1].position.x, 2);
+    structure.atoms[1].position.x = 1;
+    assert.deepEqual(strictFormats.omittedXYZMetadata(structure), []);
+    assert.match(strictFormats.generateXYZ(structure), /energy=-1.23/);
+    structure.lattice[0][0] = 11;
+    assert.ok(strictFormats.omittedXYZMetadata(structure).length > 0);
+});
+
+test('XYZ header fields honor quoted keys and values and reject duplicate structural fields', () => {
+    const structure = strictFormats.parseXYZ('1\n"Properties" = "species:S:1:pos:R:3" label="OtherLattice=garbage pbc=F"\nH 0 0 0\n');
+    assert.equal(structure.hasExplicitLattice, false);
+    assert.deepEqual(structure.pbc, [false, false, false]);
+    assert.throws(() => strictFormats.parseXYZ('1\nProperties=species:S:1:pos:R:3 Properties=species:S:1:pos:R:3\nH 0 0 0\n'), /duplicate Properties/);
+    assert.throws(() => strictFormats.parseXYZ('1\nenergy="broken\nH 0 0 0\n'), /unterminated/);
+});

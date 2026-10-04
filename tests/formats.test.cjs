@@ -91,3 +91,16 @@ test('POSCAR identifies additional data after atom positions without flagging bl
     assert.equal(strictFormats.parsePOSCAR(`${structure}\n\n`).hasAdditionalSections, false);
     assert.equal(strictFormats.parsePOSCAR(`${structure}\n\nCartesian\n0.1 0.2 0.3\n`).hasAdditionalSections, true);
 });
+
+test('counts-only POSCAR export does not invent species names', () => {
+    const source = ['unnamed cell', '1', '2 0 0', '0 2 0', '0 0 2', '1', 'Direct', '0.25 0.5 0.75'].join('\n');
+    const structure = strictFormats.parsePOSCAR(source);
+    assert.equal(structure.hasElementSymbols, false);
+    assert.equal(structure.elements[0], 'Atom1');
+    const exported = strictFormats.generatePOSCAR(structure);
+    assert.equal(exported.split('\n')[5], '1');
+    assert.ok(!exported.includes('Atom1'));
+    const reparsed = strictFormats.parsePOSCAR(exported);
+    assert.equal(reparsed.hasElementSymbols, false);
+    assert.equal(reparsed.atoms[0].position.x, 0.5);
+});

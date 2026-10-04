@@ -60,6 +60,7 @@
             const line5Parts = lines[5].split(/\s+/).filter(p => p);
             let elements = [];
             let counts = [];
+            let hasElementSymbols = true;
 
             if (!/^\d+$/.test(line5Parts[0] || '')) {
                 // VASP 5+ format: line 5 has element symbols
@@ -68,6 +69,7 @@
                 elementLine = 7;
             } else {
                 // VASP 4 format: no element symbols, only counts
+                hasElementSymbols = false;
                 counts = line5Parts.map(Number);
                 elements = counts.map((_, i) => `Atom${i + 1}`);
                 elementLine = 6;
@@ -168,6 +170,7 @@
                 lattice,
                 elements,
                 counts,
+                hasElementSymbols,
                 atoms,
                 isDirect,
                 hasSelectiveDynamics,
@@ -539,8 +542,8 @@
                 lines.push(`  ${vec[0].toFixed(9)}  ${vec[1].toFixed(9)}  ${vec[2].toFixed(9)}`);
             });
             
-            // Line 6: Element symbols
-            lines.push(structure.elements.join(' '));
+            // Keep the counts-only layout when the source omitted species names.
+            if (structure.hasElementSymbols !== false) lines.push(structure.elements.join(' '));
             
             // Line 7: Number of atoms per element
             lines.push(structure.counts.join(' '));

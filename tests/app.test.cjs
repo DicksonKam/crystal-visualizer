@@ -418,6 +418,23 @@ test('loading an example hides the picker and restores focus to its trigger', ()
     assert.equal(context.document.activeElement, examplesButton);
 });
 
+test('trajectory controls announce the frame and next playback action', () => {
+    const context = app();
+    vm.runInContext('currentStructure = { isXDATCAR: true, totalFrames: 16, currentFrameIndex: 4 }; animationState.isPlaying = false;', context);
+    context.updateTimelineUI();
+    const slider = context.document.getElementById('frameSlider');
+    assert.equal(slider.value, 4);
+    assert.equal(slider.max, 15);
+    assert.equal(slider.getAttribute('aria-valuetext'), 'Frame 5 of 16');
+    context.updatePlayPauseButton();
+    const button = context.document.getElementById('playPause');
+    assert.equal(button.getAttribute('aria-label'), 'Play trajectory');
+    vm.runInContext('animationState.isPlaying = true;', context);
+    context.updatePlayPauseButton();
+    assert.equal(button.getAttribute('aria-label'), 'Pause trajectory');
+    assert.equal(button.classList.contains('playing'), true);
+});
+
 test('canceling a replacement preserves unsaved structure and history', () => {
     const context = app();
     vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);

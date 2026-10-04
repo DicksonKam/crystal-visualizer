@@ -264,7 +264,7 @@
         <div id="timelinePanel" class="timeline-panel hidden">
             <div class="timeline-controls">
                 <!-- Play/Pause button -->
-                <button id="playPause" class="timeline-btn play-btn" title="Play/Pause (Space)">
+                <button id="playPause" class="timeline-btn play-btn" title="Play (Space)" aria-label="Play trajectory">
                     <svg class="play-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                         <path d="M8 5v14l11-7z"/>
                     </svg>
@@ -275,7 +275,7 @@
                 
                 <!-- Timeline slider -->
                 <div class="timeline-slider-container">
-                    <input type="range" id="frameSlider" class="timeline-slider" min="0" max="0" value="0">
+                    <input type="range" id="frameSlider" class="timeline-slider" min="0" max="0" value="0" aria-label="Trajectory frame" aria-valuetext="Frame 1 of 1">
                 </div>
                 
                 <!-- Frame info and options -->
@@ -319,6 +319,6 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TrackballControls.js"></script>
     <script src="geometry.js?v=2"></script>
     <script src="formats.js?v=5"></script>
-    <script src="app.js?v=128"></script>
+    <script src="app.js?v=129"></script>
 </body>
 </html>

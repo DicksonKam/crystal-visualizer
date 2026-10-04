@@ -5827,6 +5827,7 @@ function updateTimelineUI() {
     if (slider) {
         slider.max = currentStructure.totalFrames - 1;
         slider.value = currentStructure.currentFrameIndex;
+        slider.setAttribute('aria-valuetext', `Frame ${currentStructure.currentFrameIndex + 1} of ${currentStructure.totalFrames}`);
     }
     
     if (display) {
@@ -5975,6 +5976,8 @@ function updatePlayPauseButton() {
     const btn = document.getElementById('playPause');
     if (btn) {
         btn.classList.toggle('playing', animationState.isPlaying);
+        btn.setAttribute('aria-label', animationState.isPlaying ? 'Pause trajectory' : 'Play trajectory');
+        btn.title = animationState.isPlaying ? 'Pause (Space)' : 'Play (Space)';
     }
 }
 

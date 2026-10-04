@@ -27,6 +27,15 @@ in the same evidence directory. The command's one-second minimum caused the
 runner to stop after that entire scenario; it does not describe the measured
 testing duration. This run also overlaps the core campaign.
 
+The optional ghost-click campaign passed **926.636 seconds (15 minutes
+27 seconds)**: seeds 5–21, **2,720 steps**, and 37 performed pointer actions
+aimed at periodic copies. Its log and totals are retained as
+`ghost-click-completed.jsonl` and `ghost-click-completed-summary.json`. These
+counts describe pointer targets; occlusion and toggles can affect the selected
+copy. The bounded seed-5 regression separately asserts an actual target-copy
+selection. This entire campaign used the third fixed app version and completed
+without failure; its duration overlaps the other runs.
+
 Latest full verification: **141 unit tests passed** at 2026-10-04 16:09 UTC and
 **52 browser tests passed** at 16:23 UTC. The app code was unchanged between
 those runs. Both stress campaigns were still running. This result covers

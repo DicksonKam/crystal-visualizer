@@ -1,0 +1,64 @@
+{
+  "status": "complete",
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T17:22:12.442Z",
+    "seconds": 900,
+    "initialSeed": 5,
+    "steps": 160,
+    "extended": false,
+    "includeGhosts": true,
+    "harnessHash": "70d48620739bae851ed80d26a9274651732899ed6f6e55f0eed6dfda1845c69d",
+    "appHash": "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526"
+  },
+  "elapsedSeconds": 926.636402375,
+  "passedSeeds": 17,
+  "firstSeed": 5,
+  "lastSeed": 21,
+  "actionSteps": 2720,
+  "performedActionCounts": {
+    "export": 176,
+    "supercell": 22,
+    "click": 182,
+    "jump": 183,
+    "periodic": 105,
+    "resize": 55,
+    "mode": 173,
+    "add": 74,
+    "drag": 91,
+    "redo": 28,
+    "clear": 93,
+    "reset": 164,
+    "rotate": 182,
+    "delete": 39,
+    "shift": 95,
+    "ghost": 37,
+    "undo": 163,
+    "invalid": 24,
+    "fix": 18,
+    "coordinates": 24,
+    "cancel": 81
+  },
+  "recordedOperationCounts": {
+    "select_atom": 375,
+    "deselect_atom": 15,
+    "add_atom": 74,
+    "move_atom": 98,
+    "clear_selection": 195,
+    "vacuum_drag": 41,
+    "delete_atoms": 39,
+    "shift_atoms": 91,
+    "make_supercell": 22,
+    "fix_atoms": 11
+  },
+  "appHashes": [
+    "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526"
+  ],
+  "retainedLog": "tests/stress/evidence/2026-10-04/ghost-click-completed.jsonl",
+  "logSha256": "d640c14bbbe72092b3196c830641d379ab803e29d29bdbaf9a8413a845832195",
+  "notes": [
+    "Ghost counts are performed pointer actions aimed at a periodic-copy mesh; occlusion and no-op toggles can affect the actual selected identity.",
+    "The bounded seed-5 regression explicitly verifies that at least one deliberate ghost click selects the target copy.",
+    "This run overlaps other campaigns and does not add to elapsed wall-clock duration."
+  ]
+}

@@ -64,3 +64,13 @@ npm run test:all
 ```
 
 The GitHub Actions workflow runs the same unit and Chromium checks on pushes and pull requests, and retains traces/screenshots when browser checks fail. Adding this workflow locally does not run GitHub Actions until the changes are pushed.
+
+The browser suite includes four bounded seeded Edit-mode scenarios. For an opt-in soak run, keep the local server running at port 4173 in a separate terminal, then run:
+
+```sh
+node tests/browser/server.cjs
+# In another terminal:
+node tests/stress/edit-campaign.cjs --seconds 7200 --seed 1 --steps 160 --out /tmp/crystal-edit-stress
+```
+
+The campaign uses isolated browser contexts and public synthetic structures. It mixes real pointer/keyboard/form actions across molecules, cubic/tilted cells, and partially periodic XYZ structures. State checks cover atom/species identity, counts, fractional caches, selected positions and markers, measurement endpoints, document/mesh agreement, export ordering, and known undo/redo transitions. Camera alignment is prepared programmatically for resize actions; export round-trips are checked through the parsers. Inapplicable actions are skipped and action counts are reported. A failure stops the campaign and saves its seed, full action/state log, screenshot, and page HTML. Replaying the same seed is useful for diagnosis; pointer timing and available actions can still depend on the browser environment. Longer runs provide broader sampled coverage, not proof that every possible sequence is correct.

@@ -1631,8 +1631,7 @@ function cancelEditDrag(event) {
 
 // Store drag plane info
 let dragPlaneNormal = null;
-let dragPlaneConstant = 0;
-let dragPolygonVertices = []; // Vertices of the bounded polygon (in world coords)
+let dragPlaneOrigin = null; // World-space anchor for stable plane coordinates
 let dragPlaneRight = null; // Local X axis on plane
 let dragPlaneUp = null; // Local Y axis on plane
 let dragPolygon2D = []; // Polygon vertices in 2D plane coords
@@ -1644,89 +1643,24 @@ function createDragGuidePlane() {
     removeDragGuidePlane();
     if (!hasLattice(currentStructure)) return;
     
-    const lattice = currentStructure.lattice;
-    const a = new THREE.Vector3(...lattice[0]);
-    const b = new THREE.Vector3(...lattice[1]);
-    const c = new THREE.Vector3(...lattice[2]);
-    
-    // Get camera direction (this is the plane normal)
-    dragPlaneNormal = new THREE.Vector3();
-    camera.getWorldDirection(dragPlaneNormal);
-    
-    // Atom world position
-    const atomWorldPos = draggedAtom.mesh.position.clone().add(structureGroup.position);
-    
-    // Plane constant (distance from origin along normal)
-    dragPlaneConstant = dragPlaneNormal.dot(atomWorldPos);
-    
-    // Find intersection of camera-perpendicular plane with unit cell edges
-    const cellOrigin = structureGroup.position.clone();
-    const corners = [
-        cellOrigin.clone(),
-        cellOrigin.clone().add(a),
-        cellOrigin.clone().add(b),
-        cellOrigin.clone().add(c),
-        cellOrigin.clone().add(a).add(b),
-        cellOrigin.clone().add(a).add(c),
-        cellOrigin.clone().add(b).add(c),
-        cellOrigin.clone().add(a).add(b).add(c)
-    ];
-    
-    // 12 edges of the unit cell
-    const edges = [
-        [0, 1], [0, 2], [0, 3],
-        [1, 4], [1, 5],
-        [2, 4], [2, 6],
-        [3, 5], [3, 6],
-        [4, 7], [5, 7], [6, 7]
-    ];
-    
-    // Find intersection points
-    const intersections = [];
-    edges.forEach(([i, j]) => {
-        const p1 = corners[i];
-        const p2 = corners[j];
-        const d1 = dragPlaneNormal.dot(p1) - dragPlaneConstant;
-        const d2 = dragPlaneNormal.dot(p2) - dragPlaneConstant;
-        
-        if (d1 * d2 < 0) {
-            const t = d1 / (d1 - d2);
-            const intersection = p1.clone().lerp(p2, t);
-            intersections.push(intersection);
-        }
+    // Use the plane captured at pointer-down for both movement and its guide.
+    dragPlaneNormal = dragPlane.normal.clone();
+    dragPlaneOrigin = draggedAtom.startWorldPosition.clone();
+    const localOrigin = dragPlaneOrigin.clone().sub(structureGroup.position);
+    const intersections = CrystalGeometry.cellPlaneSection(
+        currentStructure.lattice, localOrigin, dragPlaneNormal
+    ).map(point => new THREE.Vector3(...point).add(structureGroup.position));
+
+    const up = Math.abs(dragPlaneNormal.y) > 0.9
+        ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+    dragPlaneRight = new THREE.Vector3().crossVectors(up, dragPlaneNormal).normalize();
+    dragPlaneUp = new THREE.Vector3().crossVectors(dragPlaneNormal, dragPlaneRight).normalize();
+    dragPolygon2D = intersections.map(point => {
+        const relative = point.clone().sub(dragPlaneOrigin);
+        return { x: relative.dot(dragPlaneRight), y: relative.dot(dragPlaneUp) };
     });
-    
+
     if (intersections.length >= 3) {
-        const centroid = new THREE.Vector3();
-        intersections.forEach(p => centroid.add(p));
-        centroid.divideScalar(intersections.length);
-        
-        // Create local coordinate system on the plane
-        const up = new THREE.Vector3(0, 1, 0);
-        if (Math.abs(dragPlaneNormal.dot(up)) > 0.9) {
-            up.set(1, 0, 0);
-        }
-        dragPlaneRight = new THREE.Vector3().crossVectors(up, dragPlaneNormal).normalize();
-        dragPlaneUp = new THREE.Vector3().crossVectors(dragPlaneNormal, dragPlaneRight).normalize();
-        
-        // Sort by angle
-        intersections.sort((a, b) => {
-            const da = a.clone().sub(centroid);
-            const db = b.clone().sub(centroid);
-            const angleA = Math.atan2(da.dot(dragPlaneUp), da.dot(dragPlaneRight));
-            const angleB = Math.atan2(db.dot(dragPlaneUp), db.dot(dragPlaneRight));
-            return angleA - angleB;
-        });
-        
-        // Store polygon vertices for constraint checking
-        dragPolygonVertices = intersections.slice();
-        
-        // Convert to 2D for point-in-polygon tests
-        dragPolygon2D = intersections.map(p => ({
-            x: p.dot(dragPlaneRight),
-            y: p.dot(dragPlaneUp)
-        }));
-        
         // Create polygon geometry
         const vertices = [];
         for (let i = 1; i < intersections.length - 1; i++) {
@@ -1766,7 +1700,7 @@ function removeDragGuidePlane() {
         requestRender();
     }
     dragPlaneNormal = null;
-    dragPolygonVertices = [];
+    dragPlaneOrigin = null;
     dragPolygon2D = [];
     dragPlaneRight = null;
     dragPlaneUp = null;
@@ -1799,7 +1733,8 @@ function closestPointOnPolygon2D(px, py, polygon) {
         // Project point onto line segment
         const abx = bx - ax, aby = by - ay;
         const apx = px - ax, apy = py - ay;
-        const t = Math.max(0, Math.min(1, (apx * abx + apy * aby) / (abx * abx + aby * aby)));
+        const lengthSquared = abx * abx + aby * aby;
+        const t = lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, (apx * abx + apy * aby) / lengthSquared));
         
         const closestX = ax + t * abx;
         const closestY = ay + t * aby;
@@ -1816,14 +1751,15 @@ function closestPointOnPolygon2D(px, py, polygon) {
 
 // Constrain position to the drag polygon (on the plane)
 function constrainToPolygon(worldPos) {
-    if (!dragPlaneNormal || dragPolygon2D.length < 3) return worldPos;
+    if (!dragPlaneNormal || !dragPolygon2D.length) return worldPos;
     
     // Project to 2D plane coordinates
-    const px = worldPos.dot(dragPlaneRight);
-    const py = worldPos.dot(dragPlaneUp);
+    const relative = worldPos.clone().sub(dragPlaneOrigin);
+    const px = relative.dot(dragPlaneRight);
+    const py = relative.dot(dragPlaneUp);
     
     // Check if inside polygon
-    if (pointInPolygon2D(px, py, dragPolygon2D)) {
+    if (dragPolygon2D.length >= 3 && pointInPolygon2D(px, py, dragPolygon2D)) {
         return worldPos; // Already inside
     }
     
@@ -1831,8 +1767,7 @@ function constrainToPolygon(worldPos) {
     const closest = closestPointOnPolygon2D(px, py, dragPolygon2D);
     
     // Convert back to 3D
-    const pn = dragPlaneConstant; // distance along normal
-    const result = dragPlaneNormal.clone().multiplyScalar(pn)
+    const result = dragPlaneOrigin.clone()
         .add(dragPlaneRight.clone().multiplyScalar(closest.x))
         .add(dragPlaneUp.clone().multiplyScalar(closest.y));
     

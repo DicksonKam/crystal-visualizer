@@ -261,7 +261,47 @@
         ];
     }
 
-    const api = { requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell, boundaryTranslationRanges, GeometryWorkLimitError };
+    // Section of a cell by a plane, in cell-local Cartesian coordinates.
+    // Include coplanar endpoints as well as strict crossings: a boundary face
+    // consists entirely of these endpoints. Project numerical near-hits onto
+    // the plane and merge duplicates before sorting the convex section.
+    function cellPlaneSection(lattice, point, direction) {
+        const normal = scale(components(direction), 1 / length(components(direction)));
+        const origin = components(point);
+        const tolerance = Math.max(...lattice.map(length)) * 1e-10;
+        const corners = Array.from({ length: 8 }, (_, mask) =>
+            [0, 1, 2].map(axis => lattice.reduce((sum, vector, index) =>
+                sum + ((mask & (1 << index)) ? vector[axis] : 0), 0)));
+        const vertices = [];
+        const distance = vertex => dot(normal, subtract(vertex, origin));
+        function add(vertex) {
+            const projected = subtract(vertex, scale(normal, distance(vertex)));
+            if (!vertices.some(existing => length(subtract(existing, projected)) <= tolerance)) vertices.push(projected);
+        }
+        for (let mask = 0; mask < 8; mask++) {
+            for (let axis = 0; axis < 3; axis++) {
+                if (mask & (1 << axis)) continue;
+                const a = corners[mask], b = corners[mask | (1 << axis)];
+                const da = distance(a), db = distance(b);
+                const onA = Math.abs(da) <= tolerance, onB = Math.abs(db) <= tolerance;
+                if (onA) add(a);
+                if (onB) add(b);
+                if (!onA && !onB && ((da < 0) !== (db < 0))) {
+                    const t = da / (da - db);
+                    add(a.map((value, index) => value + t * (b[index] - value)));
+                }
+            }
+        }
+        if (vertices.length < 3) return vertices;
+        const center = [0, 1, 2].map(axis => vertices.reduce((sum, vertex) => sum + vertex[axis], 0) / vertices.length);
+        const reference = Math.abs(normal[1]) > 0.9 ? [1, 0, 0] : [0, 1, 0];
+        const right = cross(reference, normal);
+        const up = cross(normal, right);
+        const angle = vertex => Math.atan2(dot(subtract(vertex, center), up), dot(subtract(vertex, center), right));
+        return vertices.sort((a, b) => angle(a) - angle(b));
+    }
+
+    const api = { cellPlaneSection, requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell, boundaryTranslationRanges, GeometryWorkLimitError };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalGeometry = api;
 })(globalThis);

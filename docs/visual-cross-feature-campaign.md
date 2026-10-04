@@ -117,3 +117,14 @@ Fresh seeds resume at 728 for 900 seconds, supplementing the interrupted
 905.6-second run; this is a segmented campaign, not an uninterrupted 30-minute
 pass. Thirteen affected stress/selection browser tests are running after the
 oracle change. Production source hashes remain unchanged.
+
+A third confirmed visual defect was found in the tilted-cell preview: the
+constraint threshold unit wrapped alone at intermediate panel widths. A
+container-scoped grid keeps input and unit together below the label. The new
+220/240/260-pixel regression failed against the previous stylesheet (32.29-pixel
+vertical separation) and passes after the fix; all seven sidebar tests pass.
+Both images were opened and retained. The earlier full 64-test result predates
+this CSS-only change; the seven-test sidebar rerun validates its affected scope.
+Fresh campaign seeds record both stylesheet hashes as the change takes effect.
+Partial-periodicity and tilted initial/preview images were also inspected and
+retained.

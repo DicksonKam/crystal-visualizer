@@ -68,6 +68,11 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     const {sourceFor}=require('../stress/edit-scenario.cjs');
     await upload(page,sourceFor(2).content,'tilted.poscar');
     await page.locator('[data-mode="edit"]').click();
+    const threshold=await page.locator('#fixZThreshold').boundingBox();
+    const unit=await page.locator('.sd-batch-row > span').boundingBox();
+    expect(Math.abs((threshold.y+threshold.height/2)-(unit.y+unit.height/2))).toBeLessThan(2);
+    await page.locator('#fixZThreshold').scrollIntoViewIfNeeded();
+    await page.screenshot({path:testInfo.outputPath('narrow-constraint-unit.png')});
     await page.locator('#addAtomX').fill('.5');
     await page.getByRole('button',{name:'Increase c periodic images',exact:true}).click();
     await page.screenshot({path:testInfo.outputPath('narrow-controls.png')});
@@ -83,4 +88,20 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     const preserved=await page.locator('.sidebar').evaluate(e=>({left:e.scrollLeft,width:e.clientWidth,content:e.scrollWidth}));
     expect(preserved.left).toBe(0); expect(preserved.content).toBeLessThanOrEqual(preserved.width+1);
     await page.screenshot({path:testInfo.outputPath('narrow-preserved-measurement.png')});
+});
+
+
+test('constraint threshold and its unit stay together across intermediate panel widths', async ({page},testInfo) => {
+    await page.setViewportSize({width:900,height:760});
+    const {sourceFor}=require('../stress/edit-scenario.cjs');
+    await upload(page,sourceFor(2).content,'tilted.poscar');
+    await page.locator('[data-mode="edit"]').click();
+    for (const width of [220,240,260]) {
+        await dragDivider(page,width);
+        await page.locator('#fixZThreshold').scrollIntoViewIfNeeded();
+        const field=await page.locator('#fixZThreshold').boundingBox();
+        const unit=await page.locator('.sd-batch-row > span').boundingBox();
+        await page.screenshot({path:testInfo.outputPath(`constraint-unit-${width}.png`)});
+        expect(Math.abs((field.y+field.height/2)-(unit.y+unit.height/2))).toBeLessThan(2);
+    }
 });

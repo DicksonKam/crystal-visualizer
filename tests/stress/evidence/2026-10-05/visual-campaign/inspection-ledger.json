@@ -77,5 +77,35 @@
     "openedAndInspected": true,
     "originalPath": "/private/tmp/crystal-cross-visual-followup-709/seed-723/seed-723-step-108-periodic-after.png",
     "finding": "Minimum atom-size and bond-length settings; projected largest atom radius 0.3493 pixels after periodic-image refit. Visibility limitation, no automatic setting change."
+  },
+  {
+    "file": "partial-periodicity-inspected.png",
+    "sha256": "653314e730e071861f2b9e84215fdde5b56d04c044b475bbb3ccaaeb2d958ca1",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-final-728/seed-731/seed-731-step--1-load-initial.png"
+  },
+  {
+    "file": "tilted-narrow-initial-inspected.png",
+    "sha256": "b1d4a8af422f834ec4dda7366b30f54e158ea52dc166b367418326df86b22a7b",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-final-728/seed-734/seed-734-step--1-load-initial.png"
+  },
+  {
+    "file": "tilted-periodic-preview-inspected.png",
+    "sha256": "52fc2d3748bad954e308a0be449f7467f65221d6c8f667775e57f66d15fff7d6",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-final-728/seed-734/seed-734-step-56-drag-atom-preview.png"
+  },
+  {
+    "file": "constraint-unit-before-inspected.png",
+    "sha256": "c97c4b8a44393fc7dd2605634ae632bb5df43b31cff9f47950ce94d6de49bacb",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-unit-before-results/crystal-unit-before-constr-32ee6-s-intermediate-panel-widths-chromium/constraint-unit-220.png"
+  },
+  {
+    "file": "constraint-unit-after-inspected.png",
+    "sha256": "512cfd4180d6c80ab80dfe34650b3b2b52afb69cdfdeae08b664a8bb31c08a27",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-browser-results/sidebar-layout-constraint--a098a-s-intermediate-panel-widths-chromium/constraint-unit-220.png"
   }
 ]

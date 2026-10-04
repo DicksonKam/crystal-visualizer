@@ -1886,6 +1886,8 @@ body.edit-mode-active .panel-title {
     .info-value { text-align: left; }
     .periodic-row, .add-atom-coord-type, .add-atom-coords, .shift-coords,
     .sd-buttons, .sd-batch-buttons, .sd-batch-row { flex-wrap: wrap; }
+    .sd-batch-row { display: grid; grid-template-columns: 70px max-content; }
+    .sd-batch-row label { grid-column: 1 / -1; }
     .periodic-axis { flex: 1 1 74px; min-width: 74px; }
     .coord-input-group, .shift-input-group { flex: 1 1 60px; min-width: 0; }
     .element-select { min-width: 0; }

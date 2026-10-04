@@ -1,0 +1,5324 @@
+{
+  "classification": "intermittent interaction timeout; no reproduced state defect",
+  "seed": 145,
+  "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#addAtomBtn')\u001b[22m\n\u001b[2m    - locator resolved to <button id=\"addAtomBtn\" class=\"btn btn-add-atom\">+ Add Atom</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\n    at runScenario (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:141:55)\n    at async /Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-campaign.cjs:36:30",
+  "errors": [],
+  "rawEvidencePath": "/private/tmp/crystal-edit-stress/2026-10-04T16-00-41-227Z-seed-145.json",
+  "rawEvidenceSha256": "82fca58361ec1ce03c6770e5d7765539389e1e9aec7ca60ea9283ba4d922fb7f",
+  "actionSequence": [
+    {
+      "step": 0,
+      "action": "rotate",
+      "delta": [
+        3,
+        10
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 1,
+      "action": "resize",
+      "performed": false
+    },
+    {
+      "step": 2,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 3,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 4,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 5,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 6,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 7,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 8,
+      "action": "drag",
+      "index": 4,
+      "pointer": {
+        "x": 630.8083416975819,
+        "y": 302.6555688909598
+      },
+      "delta": [
+        14,
+        12
+      ],
+      "performed": true
+    },
+    {
+      "step": 9,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 10,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 11,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 12,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 13,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 14,
+      "action": "rotate",
+      "delta": [
+        4,
+        2
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 15,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 16,
+      "action": "click",
+      "index": 0,
+      "pointer": {
+        "x": 711.8485474816025,
+        "y": 442.80926387959227
+      },
+      "performed": true
+    },
+    {
+      "step": 17,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 18,
+      "action": "jump",
+      "number": 1,
+      "performed": true
+    },
+    {
+      "step": 19,
+      "action": "coordinates",
+      "values": [
+        "1.362380",
+        "1.711376",
+        "1.915739"
+      ],
+      "performed": true
+    },
+    {
+      "step": 20,
+      "action": "invalid",
+      "values": [
+        "",
+        "1",
+        "2"
+      ],
+      "performed": true
+    },
+    {
+      "step": 21,
+      "action": "invalid",
+      "values": [
+        "",
+        "1",
+        "2"
+      ],
+      "performed": true
+    },
+    {
+      "step": 22,
+      "action": "periodic",
+      "axis": "a",
+      "increase": true,
+      "performed": true
+    },
+    {
+      "step": 23,
+      "action": "shift",
+      "values": [
+        "0.115069",
+        "-0.090530",
+        "0.145800"
+      ],
+      "performed": true
+    },
+    {
+      "step": 24,
+      "action": "coordinates",
+      "values": [
+        "0.192734",
+        "1.389286",
+        "1.587809"
+      ],
+      "performed": true
+    },
+    {
+      "step": 25,
+      "action": "rotate",
+      "delta": [
+        3,
+        11
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 26,
+      "action": "coordinates",
+      "values": [
+        "2.870177",
+        "2.945599",
+        "0.745548"
+      ],
+      "performed": true
+    },
+    {
+      "step": 27,
+      "action": "invalid",
+      "values": [
+        "",
+        "1",
+        "2"
+      ],
+      "performed": true
+    },
+    {
+      "step": 28,
+      "action": "coordinates",
+      "values": [
+        "1.016534",
+        "3.414964",
+        "1.691647"
+      ],
+      "performed": true
+    },
+    {
+      "step": 29,
+      "action": "clear",
+      "performed": true
+    },
+    {
+      "step": 30,
+      "action": "coordinates",
+      "performed": false
+    },
+    {
+      "step": 31,
+      "action": "periodic",
+      "axis": "a",
+      "increase": false,
+      "performed": true
+    },
+    {
+      "step": 32,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 33,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 34,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 35,
+      "action": "fix",
+      "performed": false
+    },
+    {
+      "step": 36,
+      "action": "drag",
+      "index": 4,
+      "pointer": {
+        "x": 644.6186942350804,
+        "y": 316.1373407098133
+      },
+      "delta": [
+        18,
+        9
+      ],
+      "performed": true
+    },
+    {
+      "step": 37,
+      "action": "coordinates",
+      "performed": false
+    },
+    {
+      "step": 38,
+      "action": "jump",
+      "number": 3,
+      "performed": true
+    },
+    {
+      "step": 39,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 40,
+      "action": "fix",
+      "performed": true
+    },
+    {
+      "step": 41,
+      "action": "redo",
+      "performed": false
+    },
+    {
+      "step": 42,
+      "action": "clear",
+      "performed": true
+    },
+    {
+      "step": 43,
+      "action": "shift",
+      "values": [
+        "-0.072347",
+        "-0.118834",
+        "0.037225"
+      ],
+      "performed": true
+    },
+    {
+      "step": 44,
+      "action": "resize",
+      "sign": -1,
+      "pointer": {
+        "x": 691.8203388233333,
+        "y": 293.2764237625107,
+        "dx": -2.2818285722464152e-15,
+        "dy": -12
+      },
+      "performed": true
+    },
+    {
+      "step": 45,
+      "action": "shift",
+      "values": [
+        "0.021543",
+        "0.105259",
+        "0.091109"
+      ],
+      "performed": true
+    },
+    {
+      "step": 46,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 47,
+      "action": "rotate",
+      "delta": [
+        7,
+        -12
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 48,
+      "action": "invalid",
+      "performed": false
+    },
+    {
+      "step": 49,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 50,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 51,
+      "action": "redo",
+      "performed": true
+    },
+    {
+      "step": 52,
+      "action": "redo",
+      "performed": false
+    },
+    {
+      "step": 53,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 54,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 55,
+      "action": "periodic",
+      "axis": "c",
+      "increase": true,
+      "performed": true
+    },
+    {
+      "step": 56,
+      "action": "resize",
+      "performed": false
+    },
+    {
+      "step": 57,
+      "action": "periodic",
+      "axis": "a",
+      "increase": true,
+      "performed": true
+    },
+    {
+      "step": 58,
+      "action": "click",
+      "index": 1,
+      "pointer": {
+        "x": 695.853490257228,
+        "y": 409.6022875013599
+      },
+      "performed": true
+    },
+    {
+      "step": 59,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 60,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 61,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 62,
+      "action": "resize",
+      "sign": 1,
+      "pointer": {
+        "x": 691.4148931766667,
+        "y": 414.4999894817352,
+        "dx": 2.2973493026633726e-15,
+        "dy": -12
+      },
+      "performed": true
+    },
+    {
+      "step": 63,
+      "action": "jump",
+      "number": 3,
+      "performed": true
+    },
+    {
+      "step": 64,
+      "action": "supercell",
+      "performed": true
+    },
+    {
+      "step": 65,
+      "action": "shift",
+      "values": [
+        "-0.031057",
+        "0.094901",
+        "-0.142559"
+      ],
+      "performed": true
+    },
+    {
+      "step": 66,
+      "action": "click",
+      "index": 4,
+      "pointer": {
+        "x": 633.6596547559941,
+        "y": 453.05463524529597
+      },
+      "performed": true
+    },
+    {
+      "step": 67,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 68,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 69,
+      "action": "rotate",
+      "delta": [
+        3,
+        7
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 70,
+      "action": "rotate",
+      "delta": [
+        -3,
+        -7
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 71,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 72,
+      "action": "redo",
+      "performed": false
+    },
+    {
+      "step": 73,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 74,
+      "action": "drag",
+      "index": 16,
+      "performed": false
+    },
+    {
+      "step": 75,
+      "action": "coordinates",
+      "performed": false
+    },
+    {
+      "step": 76,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 77,
+      "action": "rotate",
+      "delta": [
+        -5,
+        -11
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 78,
+      "action": "shift",
+      "values": [
+        "0.047235",
+        "0.100703",
+        "0.121088"
+      ],
+      "performed": true
+    },
+    {
+      "step": 79,
+      "action": "fix",
+      "performed": true
+    },
+    {
+      "step": 80,
+      "action": "clear",
+      "performed": true
+    },
+    {
+      "step": 81,
+      "action": "coordinates",
+      "performed": false
+    },
+    {
+      "step": 82,
+      "action": "cancel",
+      "index": 7,
+      "pointer": {
+        "x": 684.7707923653488,
+        "y": 403.29448577113635
+      },
+      "delta": [
+        2,
+        10
+      ],
+      "performed": true
+    },
+    {
+      "step": 83,
+      "action": "cancel",
+      "index": 2,
+      "pointer": {
+        "x": 684.019595228161,
+        "y": 414.03069356236443
+      },
+      "delta": [
+        -18,
+        15
+      ],
+      "performed": true
+    },
+    {
+      "step": 84,
+      "action": "shift",
+      "values": [
+        "-0.030599",
+        "-0.087227",
+        "0.018417"
+      ],
+      "performed": true
+    },
+    {
+      "step": 85,
+      "action": "add",
+      "element": "O",
+      "values": [
+        "0.86207",
+        "0.23827",
+        "0.28693"
+      ],
+      "performed": true
+    },
+    {
+      "step": 86,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 87,
+      "action": "cancel",
+      "index": 6,
+      "pointer": {
+        "x": 688.7530877987601,
+        "y": 287.358651889601
+      },
+      "delta": [
+        -12,
+        -3
+      ],
+      "performed": true
+    },
+    {
+      "step": 88,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 89,
+      "action": "shift",
+      "values": [
+        "0.005611",
+        "-0.061938",
+        "-0.048437"
+      ],
+      "performed": true
+    },
+    {
+      "step": 90,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 91,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 92,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 93,
+      "action": "jump",
+      "number": 17,
+      "performed": true
+    },
+    {
+      "step": 94,
+      "action": "rotate",
+      "delta": [
+        -14,
+        -14
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 95,
+      "action": "jump",
+      "number": 11,
+      "performed": true
+    },
+    {
+      "step": 96,
+      "action": "periodic",
+      "axis": "a",
+      "increase": true,
+      "performed": true
+    },
+    {
+      "step": 97,
+      "action": "clear",
+      "performed": true
+    },
+    {
+      "step": 98,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 99,
+      "action": "resize",
+      "performed": false
+    },
+    {
+      "step": 100,
+      "action": "rotate",
+      "delta": [
+        -7,
+        -13
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 101,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 102,
+      "action": "resize",
+      "sign": -1,
+      "pointer": {
+        "x": 689.9212790849999,
+        "y": 414.5000163617452,
+        "dx": -2.2973493026633726e-15,
+        "dy": -12
+      },
+      "performed": true
+    },
+    {
+      "step": 103,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 104,
+      "action": "rotate",
+      "delta": [
+        0,
+        -9
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 105,
+      "action": "jump",
+      "number": 6,
+      "performed": true
+    },
+    {
+      "step": 106,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 107,
+      "action": "redo",
+      "performed": false
+    },
+    {
+      "step": 108,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 109,
+      "action": "redo",
+      "performed": false
+    },
+    {
+      "step": 110,
+      "action": "jump",
+      "number": 7,
+      "performed": true
+    },
+    {
+      "step": 111,
+      "action": "resize",
+      "performed": false
+    },
+    {
+      "step": 112,
+      "action": "periodic",
+      "axis": "b",
+      "increase": true,
+      "performed": true
+    },
+    {
+      "step": 113,
+      "action": "redo",
+      "performed": false
+    },
+    {
+      "step": 114,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 115,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 116,
+      "action": "rotate",
+      "delta": [
+        -15,
+        -9
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 117,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 118,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 119,
+      "action": "undo",
+      "performed": true
+    },
+    {
+      "step": 120,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 121,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 122,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 123,
+      "action": "mode",
+      "performed": true
+    },
+    {
+      "step": 124,
+      "action": "click",
+      "index": 18,
+      "pointer": {
+        "x": 677.2896415575931,
+        "y": 413.8581273916055
+      },
+      "performed": true
+    },
+    {
+      "step": 125,
+      "action": "periodic",
+      "axis": "c",
+      "increase": true,
+      "performed": true
+    },
+    {
+      "step": 126,
+      "action": "delete",
+      "performed": true
+    },
+    {
+      "step": 127,
+      "action": "shift",
+      "values": [
+        "-0.110175",
+        "-0.074629",
+        "0.002313"
+      ],
+      "performed": true
+    },
+    {
+      "step": 128,
+      "action": "clear",
+      "performed": false
+    },
+    {
+      "step": 129,
+      "action": "export",
+      "exported": [],
+      "performed": true
+    },
+    {
+      "step": 130,
+      "action": "resize",
+      "sign": -1,
+      "pointer": {
+        "x": 552.135,
+        "y": 414.50001636174534,
+        "dx": -2.297349302663372e-15,
+        "dy": -12
+      },
+      "performed": true
+    },
+    {
+      "step": 131,
+      "action": "coordinates",
+      "performed": false
+    },
+    {
+      "step": 132,
+      "action": "supercell",
+      "performed": false
+    },
+    {
+      "step": 133,
+      "action": "rotate",
+      "delta": [
+        -5,
+        -5
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 134,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 135,
+      "action": "reset",
+      "performed": true
+    },
+    {
+      "step": 136,
+      "action": "rotate",
+      "delta": [
+        6,
+        -12
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true
+    },
+    {
+      "step": 137,
+      "action": "add",
+      "element": "O",
+      "values": [
+        "0.41037",
+        "0.75192",
+        "0.46279"
+      ]
+    }
+  ],
+  "finalStateRecords": [
+    {
+      "step": 133,
+      "action": "rotate",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      },
+      "delta": [
+        -5,
+        -5
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      }
+    },
+    {
+      "step": 134,
+      "action": "reset",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      }
+    },
+    {
+      "step": 135,
+      "action": "reset",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      }
+    },
+    {
+      "step": 136,
+      "action": "rotate",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      },
+      "delta": [
+        6,
+        -12
+      ],
+      "pointer": {
+        "x": 936,
+        "y": 202.4
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      }
+    },
+    {
+      "step": 137,
+      "action": "add",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              17.799999999999997,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "H"
+            },
+            {
+              "id": "species-2",
+              "element": "O"
+            }
+          ],
+          "elements": [
+            "H",
+            "O"
+          ],
+          "counts": [
+            12,
+            7
+          ],
+          "sd": true,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.8030570000000017,
+                4.414914,
+                5.036484000000003
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.528431543402373,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                0.8034129999999989,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                7.786879,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                3.7868790000000008,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                7.786879,
+                8.71931,
+                10.057955
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                2.5756665434023702,
+                6.158997177260555,
+                14.842083964678693
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                1.7496019999999968
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                0.057955000000000645
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                5.057955000000001
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                16.506878999999998,
+                8.71931,
+                0.057955000000000645
+              ],
+              "sd": [
+                true,
+                false,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                4.720995964678694
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                9.523412999999994,
+                3.1342739999999987,
+                11.749601999999996
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                16.506878999999998,
+                4.2193099999999975,
+                10.057955
+              ],
+              "sd": [
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "H",
+              "position": [
+                12.506878999999996,
+                4.2193099999999975,
+                15.057955
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-20",
+              "speciesId": "species-2",
+              "element": "O",
+              "position": [
+                11.248431543402369,
+                6.0582941772605565,
+                14.720995964678698
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": false,
+          "identities": []
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1,
+            "type": "move_atom"
+          },
+          {
+            "id": 2,
+            "type": "select_atom"
+          },
+          {
+            "id": 3,
+            "type": "move_atom"
+          },
+          {
+            "id": 4,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 5,
+            "type": "move_atom"
+          },
+          {
+            "id": 6,
+            "type": "move_atom"
+          },
+          {
+            "id": 7,
+            "type": "move_atom"
+          },
+          {
+            "id": 8,
+            "type": "clear_selection"
+          },
+          {
+            "id": 9,
+            "type": "move_atom"
+          },
+          {
+            "id": 10,
+            "type": "select_atom"
+          },
+          {
+            "id": 11,
+            "type": "clear_selection"
+          },
+          {
+            "id": 12,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 13,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 15,
+            "type": "select_atom"
+          },
+          {
+            "id": 16,
+            "type": "vacuum_drag"
+          },
+          {
+            "id": 17,
+            "type": "clear_selection"
+          },
+          {
+            "id": 18,
+            "type": "select_atom"
+          },
+          {
+            "id": 19,
+            "type": "make_supercell"
+          },
+          {
+            "id": 20,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 21,
+            "type": "select_atom"
+          },
+          {
+            "id": 23,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 24,
+            "type": "fix_atoms"
+          },
+          {
+            "id": 25,
+            "type": "clear_selection"
+          },
+          {
+            "id": 26,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 29,
+            "type": "select_atom"
+          },
+          {
+            "id": 30,
+            "type": "select_atom"
+          },
+          {
+            "id": 31,
+            "type": "clear_selection"
+          },
+          {
+            "id": 35,
+            "type": "select_atom"
+          },
+          {
+            "id": 36,
+            "type": "delete_atoms"
+          },
+          {
+            "id": 37,
+            "type": "shift_atoms"
+          },
+          {
+            "id": 38,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 22,
+        "atomCount": 19,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 2,
+          "b": 2,
+          "c": 2
+        }
+      },
+      "element": "O",
+      "values": [
+        "0.41037",
+        "0.75192",
+        "0.46279"
+      ]
+    }
+  ],
+  "savedHtmlStatus": [
+    "Added O atom"
+  ],
+  "savedHtmlAtomCount": [
+    "20"
+  ],
+  "replayEvidence": "tests/stress/evidence/2026-10-04/core-add-timeout-replay.json"
+}

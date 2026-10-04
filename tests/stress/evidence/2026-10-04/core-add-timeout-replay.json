@@ -1,0 +1,62 @@
+{
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T17:29:38.588Z",
+    "seconds": 2340,
+    "initialSeed": 145,
+    "steps": 160,
+    "extended": false,
+    "includeGhosts": false,
+    "harnessHash": "70d48620739bae851ed80d26a9274651732899ed6f6e55f0eed6dfda1845c69d",
+    "appHash": "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526"
+  },
+  "result": {
+    "event": "pass",
+    "seed": 145,
+    "steps": 160,
+    "appHash": "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526",
+    "scenarioSeconds": 73.77915566700001,
+    "elapsedSeconds": 73.780115208,
+    "actions": 160,
+    "counts": {
+      "rotate": 13,
+      "resize": 4,
+      "clear": 4,
+      "supercell": 1,
+      "export": 10,
+      "mode": 14,
+      "drag": 2,
+      "reset": 9,
+      "click": 5,
+      "jump": 7,
+      "coordinates": 4,
+      "invalid": 3,
+      "periodic": 9,
+      "shift": 8,
+      "fix": 2,
+      "redo": 1,
+      "undo": 8,
+      "cancel": 6,
+      "add": 3,
+      "delete": 1
+    },
+    "operations": {
+      "move_atom": 6,
+      "select_atom": 11,
+      "shift_atoms": 8,
+      "clear_selection": 6,
+      "vacuum_drag": 4,
+      "make_supercell": 1,
+      "fix_atoms": 1,
+      "add_atom": 3,
+      "delete_atoms": 1
+    }
+  },
+  "sourceLog": "/private/tmp/crystal-edit-core-followup/2026-10-04T17-29-38-575Z.jsonl",
+  "classification": "intermittent interaction timeout; no reproduced state defect",
+  "notes": [
+    "The original saved HTML reports Added O atom and total count 20 versus 19 before the timed-out click, with no captured JavaScript error.",
+    "The same 160-step seed passed after the full browser suite closed; two other campaigns remained live.",
+    "Reduced concurrency is a plausible explanation, not a proven root cause. Pointer timing and state-dependent actions can vary between seeded replays. No additional app fix was made for this timeout."
+  ]
+}

@@ -49,7 +49,20 @@ added and no commits were pushed.
 The third fix below was added during the sustained runs. Later scenarios record
 the updated app hash; final totals will distinguish the tested versions.
 After that fix, 141 unit tests and both focused periodic-copy shift regressions
-passed. The expanded full browser suite is pending.
+passed. The expanded full browser suite passed all **55 tests** at
+2026-10-04 17:28 UTC, including the seeded ghost-click outcome check.
+
+The original core run stopped on a five-second Add Atom click timeout at seed
+145, step 137, after 4949.522 seconds. Seeds 39–144 (16,960 action steps) passed.
+The saved HTML reports “Added O atom” and no JavaScript error was captured;
+the timed-out action appears to have completed. Seed 145 passed all 160 steps
+in 73.780 seconds after the full browser suite closed, with two other campaigns
+still live. The 39-minute continuation remains active. This is recorded as an
+intermittent interaction timeout with no reproduced state defect, rather than
+a confirmed app bug. Reduced concurrency is a plausible explanation; pointer
+timing and state-dependent actions can vary between seeded replays. Retained
+evidence includes the original core log/summary, compact failure states, and
+`core-add-timeout-replay.json` in the evidence directory.
 
 ## Confirmed app bugs
 
@@ -72,7 +85,8 @@ passed. The expanded full browser suite is pending.
    geometry commands. The existing hint and handler share the explanation to
    clear the measurement or make a supercell. No controls were added. Browser
    regressions cover copy-only and mixed real/copy selections, unchanged
-   geometry/history, and successful real-atom shifting after clearing.
+   geometry/history, and successful real-atom shifting after clearing. Commit
+   `3062f5d` saves the fix and optional ghost-click profile.
    Before-fix evidence is retained as `periodic-copy-shift-failure.json` and
    `periodic-copy-shift-before.png` in the evidence directory. This is a feedback
    and target-hint defect; it did not establish document corruption.

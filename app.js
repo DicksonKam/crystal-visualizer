@@ -1099,6 +1099,10 @@ function isPeriodicStructure(structure) {
     return Boolean(structure && (!structure.isXYZ || structure.hasExplicitLattice));
 }
 
+function supportsSelectiveDynamics(structure) {
+    return Boolean(structure && !structure.isXYZ && !structure.isXDATCAR);
+}
+
 // Create atom sphere
 // selectiveDynamics: [xActive, yActive, zActive] - true means movable, false means fixed
 function createAtom(element, position, atomIndex, selectiveDynamics = [true, true, true]) {
@@ -2269,7 +2273,7 @@ function updateEditUI() {
                             <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
                             <span class="sel-elem">${atom.element}</span>
                             <span class="sel-idx">#${atom.index + 1}</span>
-                            <span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>
+                            ${supportsSelectiveDynamics(currentStructure) ? `<span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>` : ''}
                             ${coordsHtml}
                         </div>
                     `;
@@ -2302,7 +2306,7 @@ function updateEditUI() {
                 }
                 
                 // Selective dynamics buttons for selected atoms
-                if (isPeriodicStructure(currentStructure)) html += `
+                if (supportsSelectiveDynamics(currentStructure)) html += `
                     <div class="sd-buttons">
                         <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms (F F F)">🔒 Fix</button>
                         <button id="unfixSelectedBtn" class="btn btn-unfix" title="Make selected atoms active (T T T)">🔓 Active</button>
@@ -2424,7 +2428,7 @@ function updateEditUI() {
         `;
         
         // Selective Dynamics section
-        if (isPeriodicStructure(currentStructure)) html += `
+        if (supportsSelectiveDynamics(currentStructure)) html += `
             <div class="sd-batch-section">
                 <div class="sd-batch-title">Selective Dynamics</div>
                 <div class="sd-batch-row">
@@ -2787,7 +2791,7 @@ function rebuildFixedIndicators() {
     });
     
     // Rebuild fixed indicators if enabled
-    if (settings.showFixedIndicators) {
+    if (settings.showFixedIndicators && supportsSelectiveDynamics(currentStructure)) {
         currentStructure.atoms.forEach((atom, index) => {
             const selectiveDynamics = atom.selectiveDynamics || [true, true, true];
             if (selectiveDynamics.some(v => v === false)) {
@@ -2922,6 +2926,7 @@ function deleteSelectedAtoms() {
 }
 
 function applySelectiveDynamicsChanges(changes) {
+    if (!supportsSelectiveDynamics(currentStructure)) return 0;
     const changed = changes.filter(({ index, oldSD, newSD }) =>
         currentStructure.atoms[index] && oldSD.some((value, axis) => value !== newSD[axis]));
     if (changed.length === 0) return 0;
@@ -2939,7 +2944,7 @@ function applySelectiveDynamicsChanges(changes) {
 
 // Set selected atoms as fixed or active
 function setSelectedAtomsFixed(isFixed) {
-    if (selectedAtoms.length === 0 || !currentStructure) return;
+    if (selectedAtoms.length === 0 || !supportsSelectiveDynamics(currentStructure)) return;
     const newValue = isFixed ? [false, false, false] : [true, true, true];
     const changes = selectedAtoms.filter(atom => !atom.isGhost && currentStructure.atoms[atom.index]).map(atom => ({
         index: atom.index,
@@ -2954,7 +2959,7 @@ function setSelectedAtomsFixed(isFixed) {
 
 // Fix atoms below z threshold (common for surface slabs)
 function fixAtomsByZThreshold() {
-    if (!currentStructure) return;
+    if (!supportsSelectiveDynamics(currentStructure)) return;
     
     const thresholdInput = document.getElementById('fixZThreshold');
     const thresholdText = thresholdInput?.value?.trim() || '';
@@ -2984,7 +2989,7 @@ function fixAtomsByZThreshold() {
 
 // Unfix all atoms
 function unfixAllAtoms() {
-    if (!currentStructure) return;
+    if (!supportsSelectiveDynamics(currentStructure)) return;
     
     // Save old values for undo (unified undo stack)
     const changes = currentStructure.atoms.map((atom, index) => ({
@@ -3010,7 +3015,7 @@ function getDefaultZThreshold() {
 
 // Get selective dynamics statistics
 function getSelectiveDynamicsStats() {
-    if (!currentStructure || currentStructure.atoms.length === 0) return '';
+    if (!supportsSelectiveDynamics(currentStructure) || currentStructure.atoms.length === 0) return '';
     
     let fixedCount = 0;
     let partialCount = 0;
@@ -4184,7 +4189,7 @@ function renderStructure(structure, preserveState = false) {
         atomMeshes.push(mesh);
         
         // Add fixed atom indicator if any axis is fixed and setting is enabled
-        if (settings.showFixedIndicators && selectiveDynamics.some(v => v === false)) {
+        if (settings.showFixedIndicators && supportsSelectiveDynamics(structure) && selectiveDynamics.some(v => v === false)) {
             const elemData = ELEMENT_DATA[atom.element] || ELEMENT_DATA.DEFAULT;
             const radius = elemData.radius * 0.4 * settings.atomScale;
             const indicator = createFixedAtomIndicator(atom.position, radius, selectiveDynamics);
@@ -4278,7 +4283,7 @@ function updateUI(structure) {
     // Count fixed/active atoms (only relevant for POSCAR with selective dynamics)
     let fixedCount = 0;
     let partialCount = 0;
-    if (!structure.isXDATCAR) {
+    if (supportsSelectiveDynamics(structure)) {
         structure.atoms.forEach(atom => {
             const sd = atom.selectiveDynamics || [true, true, true];
             if (sd.every(v => v === false)) fixedCount++;
@@ -4288,7 +4293,7 @@ function updateUI(structure) {
     const activeCount = structure.atoms.length - fixedCount - partialCount;
     
     // Show selective dynamics info if any atoms are fixed (POSCAR only)
-    const sdInfo = ((fixedCount > 0 || partialCount > 0) && !structure.isXDATCAR)
+    const sdInfo = ((fixedCount > 0 || partialCount > 0) && supportsSelectiveDynamics(structure))
         ? `<div class="info-item"><span class="info-label">Constraints</span><span class="info-value sd-info">${fixedCount} fixed / ${partialCount} partial / ${activeCount} free</span></div>`
         : '';
     const latticeInfo = isPeriodicStructure(structure) ? `
@@ -4318,7 +4323,7 @@ function updateUI(structure) {
         let elemFixedCount = 0;
         let elemPartialCount = 0;
         structure.atoms.forEach(atom => {
-            if (atom.element === elem) {
+            if (supportsSelectiveDynamics(structure) && atom.element === elem) {
                 const sd = atom.selectiveDynamics || [true, true, true];
                 if (sd.every(v => v === false)) elemFixedCount++;
                 else if (sd.some(v => v === false)) elemPartialCount++;
@@ -6207,6 +6212,10 @@ function updateModeToggleForFileType() {
     const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
     const exportBtn = document.getElementById('exportPoscar');
     const periodic = isPeriodicStructure(currentStructure);
+    const fixedIndicators = document.getElementById('showFixedIndicators');
+    fixedIndicators.disabled = !supportsSelectiveDynamics(currentStructure);
+    fixedIndicators.title = supportsSelectiveDynamics(currentStructure)
+        ? 'Show fixed atoms' : 'Selective dynamics are available in POSCAR files';
     const cellBtn = document.getElementById('toggleCell');
     const axesBtn = document.getElementById('toggleAxes');
     axesBtn.disabled = !periodic;

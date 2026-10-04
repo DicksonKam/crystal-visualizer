@@ -1208,6 +1208,70 @@ test('constraint controls reject invalid thresholds and skip unchanged atoms', (
     assert.equal(vm.runInContext('undoStack.length', context), 2);
 });
 
+test('XYZ and trajectory constraint calls leave atoms, history, and dirty state unchanged', () => {
+    for (const flags of [{ isXYZ: true, hasExplicitLattice: false }, { isXYZ: true, hasExplicitLattice: true }, { isXDATCAR: true }]) {
+        const context = app();
+        context.structure = { ...flags, atoms: [{ element: 'H', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] }] };
+        vm.runInContext(`
+            currentStructure = structure;
+            selectedAtoms = [{ index: 0, isGhost: false }];
+            redoStack = [{ operation: { type: 'select_atom' } }];
+            renderStructure = () => { throw new Error('Unsupported constraint edit rendered'); };
+        `, context);
+        context.document.getElementById('fixZThreshold').value = '1';
+        context.setSelectedAtomsFixed(true);
+        context.fixAtomsByZThreshold();
+        assert.equal(context.applySelectiveDynamicsChanges([{ index: 0, oldSD: [true, true, true], newSD: [false, false, false] }]), 0);
+        context.unfixAllAtoms();
+        assert.deepEqual(context.structure.atoms[0].selectiveDynamics, [true, true, true]);
+        assert.equal(vm.runInContext('undoStack.length', context), 0);
+        assert.equal(vm.runInContext('redoStack.length', context), 1);
+        assert.equal(context.hasUnsavedEdits(), false);
+        assert.equal(context.getSelectiveDynamicsStats(), '');
+    }
+});
+
+test('only POSCAR edit panels offer constraints while XYZ keeps coordinate editing', () => {
+    for (const isXYZ of [false, true]) {
+        const context = app();
+        context.structure = isXYZ
+            ? context.parseXYZ(example('examples/xyz/Si_diamond_extended.xyz'))
+            : context.parsePOSCAR(example('examples/poscar/Si_diamond.poscar'));
+        const originalGetElement = context.document.getElementById;
+        context.document.getElementById = id => {
+            const element = originalGetElement(id);
+            element.addEventListener = () => {};
+            return element;
+        };
+        context.document.querySelectorAll = () => [];
+        vm.runInContext(`
+            currentStructure = structure;
+            selectedAtoms = [{ index: 0, element: structure.atoms[0].element, position: structure.atoms[0].position }];
+            updateEditUI();
+        `, context);
+        const html = context.document.getElementById('measurementPanel').innerHTML;
+        assert.equal(html.includes('id="fixSelectedBtn"'), !isXYZ);
+        assert.equal(html.includes('id="fixByZBtn"'), !isXYZ);
+        assert.equal(html.includes('class="sel-status"'), !isXYZ);
+        assert.ok(html.includes('id="saveAtomCoordinates"'));
+        assert.ok(html.includes('id="applyShiftBtn"'));
+    }
+});
+
+test('POSCAR constraint edits survive export and undo restores the original flags', () => {
+    const context = loadingApp();
+    vm.runInContext('updateEditUI = () => {}', context);
+    context.loadStructureFromText(example('examples/poscar/Si_diamond.poscar'), 'Si_diamond.poscar');
+    vm.runInContext('selectedAtoms = [{ index: 0, isGhost: false }]', context);
+    context.setSelectedAtomsFixed(true);
+    const exported = context.generatePOSCAR();
+    assert.match(exported, /Selective Dynamics/);
+    assert.deepEqual(Array.from(context.parsePOSCAR(exported).atoms[0].selectiveDynamics), [false, false, false]);
+    context.performUndo();
+    assert.deepEqual(Array.from(vm.runInContext('currentStructure.atoms[0].selectiveDynamics', context)), [true, true, true]);
+    assert.equal(context.hasUnsavedEdits(), false);
+});
+
 test('multi-atom shift validates every result before changing any atom', () => {
     const context = app();
     context.structure = { isXYZ: true, hasExplicitLattice: false, atoms: [

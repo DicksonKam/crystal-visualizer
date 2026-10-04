@@ -624,6 +624,66 @@ test('POSCAR with extra data exports unchanged text and asks before a lossy edit
     assert.equal(context.hasUnsavedEdits(), false);
 });
 
+test('XYZ exports exact source until edited and asks before omitting extra atom data', () => {
+    const sources = [
+        '1\nLattice="2 0 0 0 2 0 0 0 2" Properties=charge:R:1:pos:R:3:species:S:1 sample\n0.314159 0.123456789123 0 0 H\n',
+        '1\nsample\nH 0.123456789123 0 0 0.314159\n'
+    ];
+    for (const source of sources) {
+        const context = loadingApp();
+        context.loadStructureFromText(source, 'charge.xyz');
+        assert.equal(context.document.getElementById('statusText').className, 'warning');
+        const downloads = [];
+        context.Blob = class { constructor(parts) { this.content = parts.join(''); } };
+        context.URL = { createObjectURL(blob) { downloads.push(blob.content); return 'blob:test'; }, revokeObjectURL() {} };
+        context.setTimeout = () => {};
+        context.document.body = { appendChild() {} };
+        context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
+        const confirmations = [];
+        context.window.confirm = message => { confirmations.push(message); return false; };
+        context.exportStructure();
+        assert.equal(downloads[0], source);
+        assert.equal(confirmations.length, 0);
+        vm.runInContext(`
+            const oldPosition = currentStructure.atoms[0].position.clone();
+            currentStructure.atoms[0].position.x = 0.25;
+            pushUndo({ type: 'move_atom', index: 0, oldPosition });
+        `, context);
+        context.exportStructure();
+        assert.equal(downloads.length, 1);
+        assert.match(confirmations[0], /charges or forces/);
+        assert.equal(context.hasUnsavedEdits(), true);
+        assert.match(context.document.getElementById('statusText').textContent, /Export canceled/);
+        context.window.confirm = () => true;
+        context.exportStructure();
+        assert.equal(downloads.length, 2);
+        assert.ok(!downloads[1].includes('0.314159'));
+        assert.equal(context.parseXYZ(downloads[1]).atoms[0].position.x, 0.25);
+        assert.equal(context.parseXYZ(downloads[1]).hasAdditionalProperties, false);
+        assert.equal(context.hasUnsavedEdits(), false);
+        assert.match(context.document.getElementById('statusText').textContent, /XYZ download without additional source data/);
+        context.performUndo();
+        context.window.confirm = () => { throw new Error('Restored source should not require confirmation'); };
+        context.exportStructure();
+        assert.equal(downloads[2], source);
+    }
+});
+
+test('unchanged geometry-only XYZ export preserves precision and a blank comment', () => {
+    const context = loadingApp();
+    const source = '1\n\nHe 0.12345678912345 0 0\n';
+    context.loadStructureFromText(source, 'precision.xyz');
+    const downloads = [];
+    context.Blob = class { constructor(parts) { this.content = parts.join(''); } };
+    context.URL = { createObjectURL(blob) { downloads.push(blob.content); return 'blob:test'; }, revokeObjectURL() {} };
+    context.setTimeout = () => {};
+    context.document.body = { appendChild() {} };
+    context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
+    context.window.confirm = () => { throw new Error('Geometry-only export should not require confirmation'); };
+    context.exportStructure();
+    assert.equal(downloads[0], source);
+});
+
 test('undo and redo restore an edit; a new edit invalidates redo', () => {
     const context = app();
     context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));

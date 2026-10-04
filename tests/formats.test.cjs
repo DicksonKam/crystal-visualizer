@@ -72,6 +72,14 @@ test('XYZ rejects a second frame instead of exporting only the first', () => {
     assert.equal(strictFormats.parseXYZ(`${firstFrame}\n`).atoms.length, 1);
 });
 
+test('XYZ detects atom data that a geometry-only edited export would omit', () => {
+    assert.equal(strictFormats.parseXYZ('1\nsample\nH 0 0 0\n').hasAdditionalProperties, false);
+    assert.equal(strictFormats.parseXYZ('1\nProperties=pos:R:3:species:S:1\n0 0 0 H\n').hasAdditionalProperties, false);
+    assert.equal(strictFormats.parseXYZ('1\nProperties=charge:R:1:pos:R:3:species:S:1\n0.3 0 0 0 H\n').hasAdditionalProperties, true);
+    assert.equal(strictFormats.parseXYZ('1\nsample\nH 0 0 0 0.3\n').hasAdditionalProperties, true);
+    assert.equal(strictFormats.parseXYZ('1\nProperties=species:S:1:pos:R:3\nH 0 0 0 extra\n').hasAdditionalProperties, true);
+});
+
 test('POSCAR applies three scale factors to lattice components and Cartesian positions', () => {
     const header = ['anisotropic cell', '2 3 4', '1 1 0', '0 2 1', '0 0 3', 'H', '1'];
     const cartesian = strictFormats.parsePOSCAR([...header, 'Cartesian', '0.5 0.25 0.5'].join('\n'));

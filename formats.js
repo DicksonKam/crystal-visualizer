@@ -439,6 +439,7 @@
             // Keep the comment even if blank: second raw line after the count
             const rawComment = (rawLines[countIndex + 1] || '').trim();
             const properties = parseExtendedXYZProperties(rawComment);
+            let hasAdditionalProperties = properties.columns > 4;
 
             const atoms = [];
             let parsed = 0;
@@ -450,6 +451,7 @@
                 if (parts.length < properties.columns) {
                     throw new Error(`Invalid XYZ atom line ${parsed + 1}: expected ${properties.columns} columns`);
                 }
+                if (parts.length > properties.columns) hasAdditionalProperties = true;
                 if (!/^[A-Za-z][A-Za-z0-9]*$/.test(parts[properties.species])) {
                     throw new Error(`Invalid XYZ element on atom line ${parsed + 1}`);
                 }
@@ -522,7 +524,8 @@
                 hasSelectiveDynamics: false,
                 isXDATCAR: false,
                 isXYZ: true,
-                hasExplicitLattice
+                hasExplicitLattice,
+                hasAdditionalProperties
             };
         }
         // Generate POSCAR content from current structure

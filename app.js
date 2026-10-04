@@ -4305,6 +4305,7 @@ function updateUI(structure) {
         ${frameInfo}
         ${sdInfo}
         ${structure.hasAdditionalSections ? '<p class="info-warning" role="note">This file has additional POSCAR data. An edited export will omit it.</p>' : ''}
+        ${structure.hasAdditionalProperties ? '<p class="info-warning" role="note">This file has additional XYZ atom data. An edited export will omit it.</p>' : ''}
     `;
     
     // Atom list - count fixed per element
@@ -4464,7 +4465,7 @@ function loadStructureFromText(content, filename, requestId = null) {
         document.getElementById(`periodic${axis}Display`).textContent = 1;
     });
     currentStructure = nextStructure;
-    currentSourceText = nextStructure.hasAdditionalSections ? content : null;
+    currentSourceText = nextStructure.isXYZ || nextStructure.hasAdditionalSections ? content : null;
     lastJumpAtomNumber = null;
     measurementMode = 'nearest';
     currentFilename = filename || 'Untitled';
@@ -4487,7 +4488,9 @@ function loadStructureFromText(content, filename, requestId = null) {
         statusText.textContent = `Loaded XDATCAR: ${filename} (${currentStructure.totalFrames} frames)`;
     } else if (currentStructure.isXYZ) {
         hideTimelinePanel();
-        statusText.textContent = `Loaded XYZ: ${filename} (${currentStructure.atoms.length} atoms)`;
+        statusText.textContent = currentStructure.hasAdditionalProperties
+            ? `Loaded XYZ: ${filename}. Additional atom data can only be preserved in an unchanged export.`
+            : `Loaded XYZ: ${filename} (${currentStructure.atoms.length} atoms)`;
     } else {
         hideTimelinePanel();
         statusText.textContent = currentStructure.hasAdditionalSections
@@ -4506,7 +4509,7 @@ function loadStructureFromText(content, filename, requestId = null) {
     const examplesBtn = document.getElementById('examplesBtn');
     examplesBtn?.setAttribute('aria-expanded', 'false');
     if (focusWasInDropZone) examplesBtn?.focus();
-    statusText.className = currentStructure.hasAdditionalSections ? 'warning' : 'success';
+    statusText.className = currentStructure.hasAdditionalSections || currentStructure.hasAdditionalProperties ? 'warning' : 'success';
     return true;
 }
 
@@ -5852,7 +5855,7 @@ function exportStructure() {
     }
     
     let content, filename;
-    let omittedAdditionalSections = false;
+    let omittedSourceData = false;
     const sourceName = (currentFilename || 'structure').replace(/[\\/]/g, '_');
     const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '') || 'structure';
     
@@ -5860,7 +5863,19 @@ function exportStructure() {
         content = generateXDATCAR();
         filename = `${stem}_edited.xdatcar`;
     } else if (currentStructure.isXYZ) {
-        content = generateXYZ();
+        if (currentEditRevision === 0 && currentSourceText !== null) {
+            content = currentSourceText;
+        } else {
+            if (currentStructure.hasAdditionalProperties) {
+                if (!window.confirm('This XYZ has additional atom data, such as charges or forces. The edited export will omit that data. Export species and positions only?')) {
+                    statusText.textContent = 'Export canceled; additional XYZ atom data was not discarded';
+                    statusText.className = 'warning';
+                    return;
+                }
+                omittedSourceData = true;
+            }
+            content = generateXYZ();
+        }
         filename = `${stem}_edited.xyz`;
     } else {
         if (currentStructure.hasAdditionalSections && currentEditRevision === 0 && currentSourceText !== null) {
@@ -5872,7 +5887,7 @@ function exportStructure() {
                     statusText.className = 'warning';
                     return;
                 }
-                omittedAdditionalSections = true;
+                omittedSourceData = true;
             }
             content = generatePOSCAR();
         }
@@ -5907,10 +5922,10 @@ function exportStructure() {
     updateDirtyIndicator();
     
     const fileType = currentStructure.isXDATCAR ? 'XDATCAR' : (currentStructure.isXYZ ? 'XYZ' : 'POSCAR');
-    statusText.textContent = omittedAdditionalSections
-        ? 'Started POSCAR download without additional source data'
+    statusText.textContent = omittedSourceData
+        ? `Started ${fileType} download without additional source data`
         : `Started ${fileType} download`;
-    statusText.className = omittedAdditionalSections ? 'warning' : 'success';
+    statusText.className = omittedSourceData ? 'warning' : 'success';
 }
 
 function generateXDATCAR() { return crystalFormats.generateXDATCAR(currentStructure); }

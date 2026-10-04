@@ -5824,12 +5824,15 @@ function setupTimelineControls() {
     const slider = document.getElementById('frameSlider');
     if (slider) {
         slider.addEventListener('input', (e) => {
+            // Every user scrub, including keyboard input, owns the chosen frame.
+            // Playback must not overwrite it on the next interval tick.
+            stopAnimation();
             const frameIndex = parseInt(e.target.value);
             switchToFrame(frameIndex);
         });
         
         // Stop animation when user interacts with slider
-        slider.addEventListener('mousedown', () => {
+        slider.addEventListener('pointerdown', () => {
             if (animationState.isPlaying) {
                 stopAnimation();
             }

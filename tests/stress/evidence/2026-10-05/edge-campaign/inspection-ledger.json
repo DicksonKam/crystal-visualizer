@@ -46,5 +46,23 @@
     "source": "/private/tmp/crystal-trajectory-edge-results/trajectory-interaction-vis-05a27-ht-pauses-playback-at-900px-chromium/visual/seed-905-step-1-keyboard-scrub-settled.png",
     "sha256": "67835ffdd44c4e5c908c682b86e625c0d9079f5a640465efb88d712ddeba7457",
     "openedAndInspected": true
+  },
+  {
+    "file": "keyboard-scrub-desktop-after.png",
+    "source": "/private/tmp/crystal-playback-edge-results/trajectory-interaction-vis-05a27-ht-pauses-playback-at-900px-chromium/visual/seed-905-step-1-keyboard-scrub-settled.png",
+    "sha256": "39e275870c84050a0df424eb04b1883dabe13f2cc33cdc7308d03418e0d3b785",
+    "openedAndInspected": true
+  },
+  {
+    "file": "keyboard-scrub-narrow-after.png",
+    "source": "/private/tmp/crystal-playback-edge-results/trajectory-interaction-vis-7a708-ht-pauses-playback-at-390px-chromium/visual/seed-905-step-1-keyboard-scrub-settled.png",
+    "sha256": "4a5035aa1b0e489023fd02002f8f2b692c53df98cf05a0961c5364f0d7952b6f",
+    "openedAndInspected": true
+  },
+  {
+    "file": "dense-playback-wide-sidebar.png",
+    "source": "/private/tmp/crystal-playback-edge-results/playback-rebuild-visual-de-ac96e-idebar-rebuild-combinations-chromium/visual/seed-907-step-18-playing-rebuild-settled.png",
+    "sha256": "99181e378767640f9214ae3d4421b3186dcbb1b479696871809dd01c8c9a7a42",
+    "openedAndInspected": true
   }
 ]

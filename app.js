@@ -2239,9 +2239,9 @@ function updateEditUI() {
         
         // Context-aware hint and button text
         const hasSelection = selectedAtoms.length > 0;
-        const shiftTargetHint = hasSelection 
+        const shiftTargetHint = getShiftSelectionError() || (hasSelection
             ? `Will shift ${selectedAtoms.length} selected atom${selectedAtoms.length > 1 ? 's' : ''}`
-            : `Will shift all ${currentStructure.atoms.length} atoms`;
+            : `Will shift all ${currentStructure.atoms.length} atoms`);
         const shiftBtnText = hasSelection 
             ? `Shift ${selectedAtoms.length} Selected`
             : 'Shift All';
@@ -2884,6 +2884,12 @@ function getSelectiveDynamicsStats() {
 // Global Periodic Shift Functions
 // ============================================
 
+function getShiftSelectionError() {
+    return selectedAtoms.some(atom => atom.isGhost)
+        ? 'Periodic copies cannot be moved. Clear the measurement or make a supercell first.'
+        : '';
+}
+
 // Apply global periodic shift from UI inputs
 // Context-aware periodic shift: shifts selected atoms if any, otherwise all atoms
 function applyGlobalPeriodicShift() {
@@ -2892,6 +2898,12 @@ function applyGlobalPeriodicShift() {
     const errorDiv = document.getElementById('shiftError');
     errorDiv.textContent = '';
     errorDiv.className = 'add-atom-error';
+
+    const selectionError = getShiftSelectionError();
+    if (selectionError) {
+        errorDiv.textContent = selectionError;
+        return;
+    }
     
     const values = ['shiftA', 'shiftB', 'shiftC'].map(id => document.getElementById(id).value.trim());
     const [val1, val2, val3] = values.map(value => value === '' ? 0 : Number(value));

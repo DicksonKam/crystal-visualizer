@@ -8,6 +8,7 @@ const { runScenario } = require('./edit-scenario.cjs');
 const argument = (key,fallback) => { const index=process.argv.indexOf(key); return index<0 ? fallback : process.argv[index+1]; };
 const seconds=Number(argument('--seconds','7200')), initialSeed=Number(argument('--seed','1')), steps=Number(argument('--steps','160'));
 const extended=argument('--extended','false') === 'true';
+const includeGhosts=argument('--ghosts','false') === 'true';
 const directory=path.resolve(argument('--out','/private/tmp/crystal-edit-stress'));
 if(!Number.isFinite(seconds) || seconds<=0 || !Number.isInteger(initialSeed) || !Number.isInteger(steps) || steps<=0) throw new Error('Invalid campaign arguments');
 (async () => {
@@ -16,7 +17,7 @@ if(!Number.isFinite(seconds) || seconds<=0 || !Number.isInteger(initialSeed) || 
     const file=path.join(directory,`${runId}.jsonl`);
     const emit=async record => { const line=JSON.stringify(record); await fs.appendFile(file,line+'\n'); process.stdout.write(line+'\n'); };
     const harnessHash=crypto.createHash('sha256').update(await fs.readFile(require.resolve('./edit-scenario.cjs'))).digest('hex');
-    await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,extended,harnessHash,appHash:crypto.createHash('sha256').update(await fs.readFile(path.resolve(__dirname,'../../app.js'))).digest('hex')});
+    await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,extended,includeGhosts,harnessHash,appHash:crypto.createHash('sha256').update(await fs.readFile(path.resolve(__dirname,'../../app.js'))).digest('hex')});
     const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
     const started=performance.now(); let seed=initialSeed, actions=0; const counts={};
     try {
@@ -33,7 +34,7 @@ if(!Number.isFinite(seconds) || seconds<=0 || !Number.isInteger(initialSeed) || 
                 const appHash=crypto.createHash('sha256').update(await fs.readFile(path.resolve(__dirname,'../../app.js'))).digest('hex');
                 await page.goto('http://127.0.0.1:4173/',{waitUntil:'domcontentloaded'});
                 await page.locator('canvas[aria-label^="3D structure"]').waitFor({timeout:30000});
-                const result=await runScenario(page,{seed,steps,log,extended});
+                const result=await runScenario(page,{seed,steps,log,extended,includeGhosts});
                 if(errors.length) throw new Error(`Uncaught browser errors: ${errors.join('; ')}`);
                 actions+=result.steps; for(const [key,count] of Object.entries(result.counts)) counts[key]=(counts[key]||0)+count;
                 await emit({event:'pass',seed,steps,appHash,scenarioSeconds:(performance.now()-scenarioStart)/1000,elapsedSeconds:(performance.now()-started)/1000,actions,counts:result.counts,operations:result.operations});

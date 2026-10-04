@@ -46,6 +46,11 @@ molecular/cubic/tilted/partially periodic structures, and a supplied hydrogen
 trajectory. It does not modify the user's open document. No app controls were
 added and no commits were pushed.
 
+The third fix below was added during the sustained runs. Later scenarios record
+the updated app hash; final totals will distinguish the tested versions.
+After that fix, 141 unit tests and both focused periodic-copy shift regressions
+passed. The expanded full browser suite is pending.
+
 ## Confirmed app bugs
 
 1. **Canceled drags left preserved measurement lines at the preview position.**
@@ -60,6 +65,17 @@ added and no commits were pushed.
    restores it only when preserved selections actually survive. Commit
    `cc5f442`; regression in `tests/browser/selection-history.spec.cjs` covers
    replacement, undo/redo, and periodic copies disappearing.
+3. **A preserved periodic-copy measurement gave a misleading shift error.**
+   A real click on a displayed copy, switching to Edit, and entering a valid
+   Cartesian shift produced “Shift cannot be represented in this cell.” The
+   adapter now checks editability before passing display-copy IDs to document
+   geometry commands. The existing hint and handler share the explanation to
+   clear the measurement or make a supercell. No controls were added. Browser
+   regressions cover copy-only and mixed real/copy selections, unchanged
+   geometry/history, and successful real-atom shifting after clearing.
+   Before-fix evidence is retained as `periodic-copy-shift-failure.json` and
+   `periodic-copy-shift-before.png` in the evidence directory. This is a feedback
+   and target-hint defect; it did not establish document corruption.
 
 Compact action sequences and final failure states are retained in
 `tests/stress/evidence/2026-10-04/confirmed-bugs.json`, with hashes and paths for
@@ -86,6 +102,11 @@ These failures were investigated and were not counted as app bugs:
 - A navigation timeout occurred before any action under concurrent browser
   load. Startup permits 30 seconds; individual interactions retain a five
   second allowance.
+- The new Cartesian POSCAR regression exposed an oracle assumption that source
+  fractional coordinates are always present. Cartesian source legitimately
+  stores null; the oracle now checks representability and any retained cache.
+  Real meshes also legitimately omit the ghost flag; the assertion normalizes
+  its boolean meaning.
 
 ## Coverage and limits
 

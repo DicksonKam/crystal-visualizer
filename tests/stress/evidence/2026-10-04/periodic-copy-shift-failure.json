@@ -1,0 +1,19 @@
+{
+  "title": "Preserved periodic-copy shift gives a misleading geometry error",
+  "appHash": "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b",
+  "steps": [
+    "Load one-atom cubic POSCAR",
+    "Increase a periodic images to two",
+    "Click the displayed periodic copy in Measure mode",
+    "Switch to Edit, preserving the measurement",
+    "Enter Cartesian shift (0.25, 0, 0)",
+    "Click the existing Shift Selected button"
+  ],
+  "expected": "Periodic copies cannot be moved; clear the measurement or make a supercell first.",
+  "actual": "Shift cannot be represented in this cell",
+  "rootCause": "The shift adapter passed a display-copy selection ID to a document-index command; generic geometry validation rejected it without an editability diagnosis. The target hint incorrectly promised to shift the copy.",
+  "test": "tests/browser/ghost-shift.spec.cjs",
+  "screenshot": "tests/stress/evidence/2026-10-04/periodic-copy-shift-before.png",
+  "screenshotSha256": "7def99fc6bfd4d96ecbab4cd584a596ec9d3460a31851ada5d3cea3a097b151f",
+  "limitation": "This is an incorrect hint/error diagnosis, not evidence of document corruption."
+}

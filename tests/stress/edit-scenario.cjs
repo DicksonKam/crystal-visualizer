@@ -39,7 +39,12 @@ async function capture(page) {
             if (!atom.position.toArray().every(Number.isFinite)) fail(`nonfinite atom ${index}`);
             if (hasLattice(currentStructure)) {
                 const frac = cartesianToFractional(atom.position, currentStructure.lattice);
-                if (!frac || !atom.fractional || frac.some((v, axis) => Math.abs(v - atom.fractional[axis]) > 1e-8)) fail(`stale fractional cache ${index}`);
+                // Cartesian POSCAR input intentionally has no source fractional
+                // coordinates. Validate representability and any retained cache.
+                if (!frac || frac.some(v => !Number.isFinite(v)) || (atom.fractional != null &&
+                    (!Array.isArray(atom.fractional) || atom.fractional.length !== 3 ||
+                    atom.fractional.some(v => !Number.isFinite(v)) ||
+                    frac.some((v, axis) => Math.abs(v - atom.fractional[axis]) > 1e-8)))) fail(`stale fractional cache ${index}`);
             }
             const mesh = atomMeshes[index];
             if (!mesh || mesh.userData.isGhost || mesh.position.distanceTo(atom.position) > 1e-8) fail(`render/document mismatch ${index}`);
@@ -77,7 +82,7 @@ function compareGeometry(actual, expected, label) {
     compare(actual, expected, 'geometry');
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
-async function runScenario(page, { seed, steps = 160, log = [], extended = false }) {
+async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false }) {
     page.setDefaultTimeout(5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
     const source = sourceFor(seed);
@@ -105,6 +110,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
         const choices = ['mode', 'jump', 'click', 'undo', 'redo', 'clear', 'reset', 'rotate', 'export'];
         if (previous.selection.mode === 'edit') choices.push('add', 'coordinates', 'shift', 'delete', 'fix', 'drag', 'cancel', 'invalid');
         if (previous.periodic) choices.push('periodic', 'supercell', 'resize');
+        if (includeGhosts && previous.periodic && previous.selection.mode === 'measure') choices.push('ghost');
         if (extended) choices.push('replace', 'invalid_load', 'decline_load', 'download', 'display', 'batch_fix', 'center');
         if (extended && previous.trajectory) choices.push('frame');
         const action = choices[integer(choices.length)];
@@ -235,19 +241,22 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                     if (!point) performed = false;
                     else { record.pointer = point; await page.mouse.move(point.x,point.y); await page.mouse.down(); await page.mouse.move(point.x+point.dx,point.y+point.dy,{steps:3}); await page.mouse.up(); }
                 }
-            } else if (['click','drag','cancel'].includes(action)) {
+            } else if (['click','drag','cancel','ghost'].includes(action)) {
                 const index = integer(Math.max(1,previous.atomCount)); record.index = index;
-                const point = await page.evaluate(index => {
-                    const mesh = atomMeshes[index]; if(!mesh) return null;
+                const ghostFraction = action === 'ghost' ? rng() : null;
+                const point = await page.evaluate(({index,ghostFraction}) => {
+                    const copies = ghostFraction === null ? [] : atomMeshes.filter(mesh => mesh.userData.isGhost);
+                    const mesh = ghostFraction === null ? atomMeshes[index] : copies[Math.floor(ghostFraction*copies.length)];
+                    if(!mesh) return null;
                     const p=mesh.getWorldPosition(new THREE.Vector3()).project(camera), r=renderer.domElement.getBoundingClientRect();
                     const x=r.left+(p.x+1)*r.width/2,y=r.top+(1-p.y)*r.height/2;
                     if(p.z < -1 || p.z>1 || x<r.left+5 || x>r.right-5 || y<r.top+5 || y>r.bottom-5) return null;
-                    return {x,y};
-                },index);
+                    return {x,y,displayedIndex:mesh.userData.atomIndex};
+                },{index,ghostFraction});
                 if (!point) performed=false;
                 else {
                     record.pointer=point; await page.mouse.move(point.x,point.y);
-                    if(action==='click') await page.mouse.click(point.x,point.y);
+                    if(action==='click' || action==='ghost') await page.mouse.click(point.x,point.y);
                     else { record.delta=[integer(41)-20,integer(41)-20]; await page.mouse.down(); await page.mouse.move(point.x+record.delta[0],point.y+record.delta[1],{steps:3});
                         if(action==='cancel') await page.keyboard.press('Escape'); await page.mouse.up(); }
                 }
@@ -272,7 +281,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if (!previous.undo.some(old => old.id === op.id)) operations[op.type] = (operations[op.type] || 0) + 1;
             }
             assert.deepEqual(after.violations, [], `seed ${seed}, step ${step}, ${action}`);
-            if (['invalid','invalid_load','decline_load','cancel','export','download','display','periodic','rotate','reset','mode'].includes(action)) compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
+            if (['invalid','invalid_load','decline_load','cancel','export','download','display','periodic','rotate','reset','mode','click','ghost'].includes(action)) compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
             if (action === 'invalid_load' || action === 'decline_load') { assert.deepEqual(after.undo,previous.undo); assert.deepEqual(after.redo,previous.redo); assert.deepEqual(after.selection,previous.selection); assert.equal(after.dirty,previous.dirty); }
             if (action === 'replace') { assert.equal(after.undo.length,0); assert.equal(after.redo.length,0); assert.equal(after.dirty,false); }
             if ((action === 'undo' || action === 'redo') && performed) {

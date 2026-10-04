@@ -3,6 +3,16 @@
 Status: **in progress**. The two-hour run has not yet completed. This document
 records confirmed findings and will be finalized from the campaign logs.
 
+The extended follow-up completed successfully after **5425.848 seconds
+(90 minutes 26 seconds)**: 172 seeds (82–253), **27,520 action steps**.
+`extended-followup-completed.jsonl` and its summary retain the terminal
+completion event, log hash, action counts and actual operation counts.
+Its scenarios performed 1,317 downloads, 1,286 valid replacements, 1,292 invalid
+loads, 415 declined replacement actions and 213 trajectory-frame actions.
+All ten history operation types occurred. Per-seed hashes show 13,600 steps
+on the two-fix app version and 13,920 on the three-fix version. This run overlaps
+the core campaigns; it does not add to wall-clock duration.
+
 The extended campaign completed successfully after **1805.095 seconds
 (30 minutes 5 seconds)**: 55 seeds (27–81), each with 160 steps, totaling
 **8,800 action steps**. Its log and verified totals are retained in

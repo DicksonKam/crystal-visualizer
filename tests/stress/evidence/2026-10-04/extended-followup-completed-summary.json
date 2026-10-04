@@ -1,0 +1,77 @@
+{
+  "status": "complete",
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T16:31:00.971Z",
+    "seconds": 5400,
+    "initialSeed": 82,
+    "steps": 160,
+    "extended": true,
+    "harnessHash": "8007764fbbfa0c1b39745865e2a2e14de5e37d1acd2a3cdeb359e219f0a2acf0",
+    "appHash": "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b"
+  },
+  "elapsedSeconds": 5425.847517083001,
+  "passedSeeds": 172,
+  "firstSeed": 82,
+  "lastSeed": 253,
+  "actionSteps": 27520,
+  "performedActionCounts": {
+    "decline_load": 415,
+    "replace": 1286,
+    "batch_fix": 245,
+    "reset": 1292,
+    "supercell": 100,
+    "download": 1317,
+    "undo": 874,
+    "jump": 1210,
+    "center": 196,
+    "periodic": 953,
+    "invalid_load": 1292,
+    "mode": 1018,
+    "invalid": 121,
+    "export": 1322,
+    "redo": 146,
+    "fix": 78,
+    "drag": 438,
+    "shift": 459,
+    "click": 1214,
+    "coordinates": 129,
+    "add": 459,
+    "clear": 495,
+    "cancel": 476,
+    "display": 1047,
+    "rotate": 1261,
+    "delete": 140,
+    "resize": 267,
+    "frame": 213
+  },
+  "recordedOperationCounts": {
+    "select_atom": 2192,
+    "move_atom": 429,
+    "shift_atoms": 633,
+    "add_atom": 459,
+    "clear_selection": 860,
+    "vacuum_drag": 244,
+    "make_supercell": 100,
+    "fix_atoms": 250,
+    "delete_atoms": 140,
+    "deselect_atom": 130
+  },
+  "coverageByAppHash": {
+    "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b": {
+      "passedSeeds": 85,
+      "actionSteps": 13600
+    },
+    "1026b32a9baeb29659dbf6b48b905ca82b534b057220262d48499d8f71350526": {
+      "passedSeeds": 87,
+      "actionSteps": 13920
+    }
+  },
+  "retainedLog": "tests/stress/evidence/2026-10-04/extended-followup-completed.jsonl",
+  "logSha256": "8fae8334d02a4b35ff73adc74f9831643c4dd61144a3cbc4e67924a32fa2e4bc",
+  "notes": [
+    "Minimum 90-minute follow-up completed with no failure.",
+    "Its duration overlaps the core campaigns; durations must not be summed to claim wall-clock hours.",
+    "The app changed during this campaign; per-seed hashes identify coverage of each version."
+  ]
+}

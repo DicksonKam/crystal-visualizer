@@ -160,6 +160,7 @@
                     atomIndex++;
                 }
             }
+            const hasAdditionalSections = lines.slice(atomIndex).some(Boolean);
 
             return {
                 comment,
@@ -170,6 +171,7 @@
                 atoms,
                 isDirect,
                 hasSelectiveDynamics,
+                hasAdditionalSections,
                 isXDATCAR: false
             };
         }

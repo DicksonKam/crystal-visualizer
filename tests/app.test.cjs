@@ -490,6 +490,36 @@ test('export keeps its Blob URL alive during download and preserves edits if cli
     }
 });
 
+test('POSCAR with extra data exports unchanged text and asks before a lossy edited export', () => {
+    const context = app();
+    const source = ['cell', '1', '2 0 0', '0 2 0', '0 0 2', 'H', '1', 'Direct', '0 0 0', '', 'Cartesian', '0.1 0.2 0.3', ''].join('\n');
+    vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
+    context.loadStructureFromText(source, 'velocity.poscar');
+    assert.equal(context.document.getElementById('statusText').className, 'warning');
+    const downloads = [];
+    context.Blob = class { constructor(parts) { this.content = parts.join(''); } };
+    context.URL = { createObjectURL(blob) { downloads.push(blob.content); return 'blob:test'; }, revokeObjectURL() {} };
+    context.setTimeout = () => {};
+    context.document.body = { appendChild() {} };
+    context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
+    let confirmations = 0;
+    context.window.confirm = () => { confirmations++; return false; };
+    context.exportStructure();
+    assert.equal(downloads[0], source);
+    assert.equal(confirmations, 0);
+    vm.runInContext('currentStructure.atoms[0].position.x = 0.25; pushUndo({ type: "move_atom", index: 0 });', context);
+    context.exportStructure();
+    assert.equal(downloads.length, 1);
+    assert.equal(confirmations, 1);
+    assert.equal(context.hasUnsavedEdits(), true);
+    context.window.confirm = () => { confirmations++; return true; };
+    context.exportStructure();
+    assert.equal(downloads.length, 2);
+    assert.ok(!downloads[1].includes('0.1 0.2 0.3'));
+    assert.match(downloads[1], /0\.250000000/);
+    assert.equal(context.hasUnsavedEdits(), false);
+});
+
 test('undo and redo restore an edit; a new edit invalidates redo', () => {
     const context = app();
     context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));

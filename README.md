@@ -14,7 +14,7 @@ The built-in examples use `fetch`, so opening `index.html` as a raw file will no
 
 ## File behavior
 
-- POSCAR accepts Direct and Cartesian coordinates, optional selective-dynamics flags, one positive scale factor, three positive Cartesian scale factors, or one negative target-volume factor. Exports use Cartesian coordinates and a scale of `1.0`.
+- POSCAR accepts Direct and Cartesian coordinates, optional selective-dynamics flags, one positive scale factor, three positive Cartesian scale factors, or one negative target-volume factor. Structure-only exports use Cartesian coordinates and a scale of `1.0`. When a POSCAR has additional data after the atom positions (such as velocities), an unchanged export preserves the original file exactly; an edited export warns and asks before omitting that data.
 - Ordinary XYZ files are treated as molecules. Their original Cartesian coordinates are retained, and cell/periodic controls are disabled. They export as XYZ. Multi-frame XYZ files are rejected because only one frame can be displayed and exported.
 - XYZ files with a `Lattice="..."` field are treated as periodic. Extended XYZ `Properties` may place species and positions in a different column order; other properties are ignored. They export as XYZ with the current lattice and a matching species/position column schema.
 - XDATCAR files display a timeline and export as XDATCAR. Editing is disabled. The header lattice is used for every frame, and export retains twelve decimal places for lattice vectors and fractional coordinates. Playback updates existing atom meshes and labels when the lattice is unchanged.

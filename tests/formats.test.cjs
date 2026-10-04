@@ -85,3 +85,9 @@ test('POSCAR applies three scale factors to lattice components and Cartesian pos
     assert.throws(() => strictFormats.parsePOSCAR([...header.slice(0, 1), '2 0 4', ...header.slice(2), 'Direct', '0 0 0'].join('\n')), /three positive factors/);
     assert.throws(() => strictFormats.parsePOSCAR([...header.slice(0, 1), '2 -3 4', ...header.slice(2), 'Direct', '0 0 0'].join('\n')), /three positive factors/);
 });
+
+test('POSCAR identifies additional data after atom positions without flagging blank lines', () => {
+    const structure = ['cell', '1', '2 0 0', '0 2 0', '0 0 2', 'H', '1', 'Direct', '0 0 0'].join('\n');
+    assert.equal(strictFormats.parsePOSCAR(`${structure}\n\n`).hasAdditionalSections, false);
+    assert.equal(strictFormats.parsePOSCAR(`${structure}\n\nCartesian\n0.1 0.2 0.3\n`).hasAdditionalSections, true);
+});

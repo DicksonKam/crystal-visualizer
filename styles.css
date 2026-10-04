@@ -1039,6 +1039,17 @@ body.edit-mode-active .panel-title {
     color: var(--accent-pink);
 }
 
+#statusText.warning,
+.info-warning {
+    color: var(--accent-yellow);
+}
+
+.info-warning {
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
 /* === Scrollbar === */
 ::-webkit-scrollbar {
     width: 8px;

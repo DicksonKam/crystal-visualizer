@@ -22,9 +22,10 @@
 
     // Average positions on each periodic axis. A linear average puts atoms at
     // 0.99 and 0.01 on opposite sides of the cell instead of beside each other.
-    function periodicFractionalCenter(positions) {
+    function periodicFractionalCenter(positions, periodicAxes = [true, true, true]) {
         if (!positions.length) return null;
         return [0, 1, 2].map(axis => {
+            if (!periodicAxes[axis]) return positions.reduce((sum, position) => sum + position[axis] / positions.length, 0);
             let sine = 0;
             let cosine = 0;
             let linear = 0;
@@ -46,15 +47,18 @@
 
     // Find the nearest translated copy of B to A. A QR-based integer search
     // handles tilted cells where rounding fractional coordinates is incorrect.
-    function nearestImageBetween(pointA, pointB, lattice) {
+    function nearestImageBetween(pointA, pointB, lattice, periodicAxes = [true, true, true]) {
         const a = components(pointA);
         const b = components(pointB);
         const delta = subtract(b, a);
-        const basis = lattice.map(vector => [...vector]);
+        const axes = [0, 1, 2].filter(axis => periodicAxes[axis]);
+        const dimension = axes.length;
+        if (!dimension) return { offset: [0, 0, 0], delta, distance: length(delta) };
+        const basis = axes.map(axis => [...lattice[axis]]);
         const q = [];
-        const r = [Array(3).fill(0), Array(3).fill(0), Array(3).fill(0)];
+        const r = Array.from({ length: dimension }, () => Array(dimension).fill(0));
 
-        for (let column = 0; column < 3; column++) {
+        for (let column = 0; column < dimension; column++) {
             let orthogonal = [...basis[column]];
             for (let row = 0; row < column; row++) {
                 r[row][column] = dot(q[row], basis[column]);
@@ -68,10 +72,10 @@
         }
 
         const target = q.map(axis => -dot(axis, delta));
-        const candidate = [0, 0, 0];
-        for (let row = 2; row >= 0; row--) {
+        const candidate = Array(dimension).fill(0);
+        for (let row = dimension - 1; row >= 0; row--) {
             let remainder = target[row];
-            for (let column = row + 1; column < 3; column++) {
+            for (let column = row + 1; column < dimension; column++) {
                 remainder -= r[row][column] * candidate[column];
             }
             candidate[row] = Math.round(remainder / r[row][row]);
@@ -84,13 +88,18 @@
         let bestOffset = [...candidate];
         let bestDelta = displacement(bestOffset);
         let bestSquared = dot(bestDelta, bestDelta);
-        const trial = [0, 0, 0];
+        let bestProjectedSquared = target.reduce((sum, value, row) => {
+            const residual = value - r[row].reduce((projection, coefficient, column) => projection + coefficient * candidate[column], 0);
+            return sum + residual * residual;
+        }, 0);
+        const trial = Array(dimension).fill(0);
 
         function search(row, partialSquared) {
             if (row < 0) {
                 const vector = displacement(trial);
                 const squared = dot(vector, vector);
-                if (squared < bestSquared - 1e-12) {
+                if (partialSquared < bestProjectedSquared - 1e-12) {
+                    bestProjectedSquared = partialSquared;
                     bestSquared = squared;
                     bestOffset = [...trial];
                     bestDelta = vector;
@@ -98,27 +107,29 @@
                 return;
             }
             let remainder = target[row];
-            for (let column = row + 1; column < 3; column++) {
+            for (let column = row + 1; column < dimension; column++) {
                 remainder -= r[row][column] * trial[column];
             }
             const center = remainder / r[row][row];
-            const radius = Math.sqrt(Math.max(0, bestSquared - partialSquared)) / r[row][row];
+            const radius = Math.sqrt(Math.max(0, bestProjectedSquared - partialSquared)) / r[row][row];
             for (let integer = Math.ceil(center - radius); integer <= Math.floor(center + radius); integer++) {
                 const residual = r[row][row] * (integer - center);
                 const nextSquared = partialSquared + residual * residual;
-                if (nextSquared <= bestSquared + 1e-12) {
+                if (nextSquared <= bestProjectedSquared + 1e-12) {
                     trial[row] = integer;
                     search(row - 1, nextSquared);
                 }
             }
         }
 
-        search(2, 0);
-        return { offset: bestOffset.map(value => value || 0), delta: bestDelta, distance: Math.sqrt(bestSquared) };
+        search(dimension - 1, 0);
+        const offset = [0, 0, 0];
+        axes.forEach((axis, index) => { offset[axis] = bestOffset[index] || 0; });
+        return { offset, delta: bestDelta, distance: Math.sqrt(bestSquared) };
     }
 
     // Clip a bond to the fractional bounds of the displayed cell or supercell.
-    function clipSegmentToCell(pointA, pointB, lattice, repeats) {
+    function clipSegmentToCell(pointA, pointB, lattice, repeats, periodicAxes = [true, true, true]) {
         const a = components(pointA);
         const b = components(pointB);
         const [u, v, w] = lattice;
@@ -129,6 +140,7 @@
         let enter = 0;
         let exit = 1;
         for (let axis = 0; axis < 3; axis++) {
+            if (!periodicAxes[axis]) continue;
             const first = dot(reciprocal[axis], a);
             const slope = dot(reciprocal[axis], direction);
             if (Math.abs(slope) < 1e-12) {

@@ -293,6 +293,22 @@ test('periodic measurements use nearest image unless selected images are request
     assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 9.8) < 1e-10);
 });
 
+test('XYZ nearest-image measurements translate only periodic axes', () => {
+    const context = app();
+    context.structure = context.parseXYZ('2\nLattice="10 0 0 0 10 0 0 0 10" pbc="T F F"\nH 1 1 1\nH 9 9 9\n');
+    vm.runInContext('currentStructure = structure; measurementMode = "nearest";', context);
+    const first = { position: context.structure.atoms[0].position };
+    const second = { position: context.structure.atoms[1].position };
+    const pair = context.getMeasurementPair(first, second);
+    assert.deepEqual(Array.from(pair.offset), [-1, 0, 0]);
+    assert.ok(Math.abs(pair.distance - Math.sqrt(132)) < 1e-10);
+    context.structure.pbc = [false, false, false];
+    assert.equal(context.hasLattice(context.structure), true);
+    assert.equal(context.isPeriodicStructure(context.structure), false);
+    assert.equal(context.getMeasurementPair(first, second).nearest, false);
+    assert.equal(context.measurementModeControlHTML(), '');
+});
+
 test('malformed coordinates and constraints report errors', () => {
     const context = app();
     const base = ['bad', '1', '1 0 0', '0 1 0', '0 0 1', 'H', '1', 'Direct', '0 0 x'].join('\n');
@@ -1167,6 +1183,82 @@ test('whole-cell periodic shifts preserve exact positions, redo history, and the
     assert.match(context.document.getElementById('shiftError').textContent, /positions unchanged/);
 });
 
+test('XYZ shifts wrap periodic axes and retain unrestricted coordinates through undo and export', () => {
+    const context = loadingApp();
+    vm.runInContext('updateEditUI = () => {}', context);
+    context.loadStructureFromText('1\nLattice="10 0 0 0 10 0 0 0 10" pbc="T F F"\nH 9 9 9\n', 'partial.xyz');
+    assert.equal(context.applyPeriodicShiftByFractional(0.3, 0.3, 0.3).changedCount, 1);
+    const shifted = context.parseXYZ(context.generateXYZ());
+    assert.ok(Math.abs(shifted.atoms[0].position.x - 2) < 1e-10);
+    assert.equal(shifted.atoms[0].position.y, 12);
+    assert.equal(shifted.atoms[0].position.z, 12);
+    assert.deepEqual(Array.from(shifted.pbc), [true, false, false]);
+    context.performUndo();
+    assert.equal(vm.runInContext('currentStructure.atoms[0].position.y', context), 9);
+    context.performRedo();
+    assert.equal(vm.runInContext('currentStructure.atoms[0].position.y', context), 12);
+    assert.deepEqual(Array.from(vm.runInContext('currentStructure.pbc', context)), [true, false, false]);
+    const outside = context.isPositionInCell(new Vector3(5, 20, -10), shifted.lattice, shifted.pbc);
+    assert.equal(outside.valid, true);
+    assert.deepEqual(Array.from(outside.fractional), [0.5, 2, -1]);
+});
+
+test('XYZ previews and supercells repeat only permitted axes', () => {
+    const context = loadingApp();
+    context.loadStructureFromText('1\nLattice="10 0 0 0 10 0 0 0 10" pbc="T F F"\nH 1 1 1\n', 'partial.xyz');
+    vm.runInContext('settings.periodic = { a: 2, b: 3, c: 4 };', context);
+    assert.equal(vm.runInContext('countDisplayedAtoms(currentStructure)', context), 2);
+    vm.runInContext(`
+        settings.showCell = false;
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        atomMeshes = [];
+        createGhostAtom = (element, position, originalIndex, cellOffset) => ({ position, cellOffset });
+        addPeriodicImages(currentStructure);
+    `, context);
+    assert.equal(vm.runInContext('atomMeshes.length', context), 1);
+    assert.deepEqual(Array.from(vm.runInContext('[atomMeshes[0].position.x, atomMeshes[0].position.y, atomMeshes[0].position.z]', context)), [11, 1, 1]);
+    assert.equal(context.convertToSupercell(), true);
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 2);
+    assert.deepEqual(Array.from(vm.runInContext('currentStructure.lattice.map(row => Math.hypot(...row))', context)), [20, 10, 10]);
+    assert.deepEqual(Array.from(vm.runInContext('currentStructure.pbc', context)), [true, false, false]);
+    context.performUndo();
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 1);
+    context.performRedo();
+    assert.equal(vm.runInContext('currentStructure.atoms.length', context), 2);
+    assert.deepEqual(Array.from(vm.runInContext('currentStructure.pbc', context)), [true, false, false]);
+});
+
+test('XYZ periodic controls disable individual axes while retaining the cell display', () => {
+    const context = app();
+    context.structure = context.parseXYZ('1\nLattice="10 0 0 0 10 0 0 0 10" pbc="T F F"\nH 1 1 1\n');
+    const buttons = ['a', 'b', 'c'].map(axis => ({ dataset: { axis } }));
+    context.document.querySelectorAll = () => buttons;
+    context.document.querySelector = () => ({});
+    context.document.getElementById('vacuumInfo').style = {};
+    vm.runInContext('currentStructure = structure;', context);
+    context.updateModeToggleForFileType();
+    assert.deepEqual(buttons.map(button => button.disabled), [false, true, true]);
+    assert.equal(context.document.getElementById('toggleCell').disabled, false);
+    context.structure.pbc = [false, false, false];
+    context.updateModeToggleForFileType();
+    assert.ok(buttons.every(button => button.disabled));
+    assert.equal(context.document.getElementById('toggleCell').disabled, false);
+});
+
+test('a nonperiodic XYZ cell translates without wrapping and centers using its actual coordinates', () => {
+    const context = loadingApp();
+    vm.runInContext('updateEditUI = () => {}', context);
+    context.loadStructureFromText('2\nLattice="10 0 0 0 10 0 0 0 10" pbc="F F F"\nH -10 -20 -30\nH 10 20 30\n', 'finite.xyz');
+    context.centerStructureInCell();
+    const centered = context.parseXYZ(context.generateXYZ());
+    assert.deepEqual([centered.atoms[0].position.x, centered.atoms[0].position.y, centered.atoms[0].position.z], [-5, -15, -25]);
+    assert.deepEqual([centered.atoms[1].position.x, centered.atoms[1].position.y, centered.atoms[1].position.z], [15, 25, 35]);
+    assert.equal(context.applyPeriodicShiftByFractional(1, 0, 0).changedCount, 2);
+    const moved = context.parseXYZ(context.generateXYZ());
+    assert.equal(moved.atoms[1].position.x, 25);
+    assert.deepEqual(Array.from(moved.pbc), [false, false, false]);
+});
+
 test('constraint controls reject invalid thresholds and skip unchanged atoms', () => {
     const context = app();
     context.structure = { lattice: [[2, 0, 0], [0, 2, 0], [0, 0, 2]], atoms: [
@@ -1472,6 +1564,28 @@ test('periodic bonds cross opposite cell faces without a long interior bond', ()
     assert.ok(endpoints.some(x => Math.abs(x) < 1e-10));
     assert.ok(endpoints.some(x => Math.abs(x - 10) < 1e-10));
     assert.ok(bonds.every(bond => bond.start.distanceTo(bond.end) <= 0.401));
+});
+
+test('XYZ boundary bonds do not cross a nonperiodic face', () => {
+    for (const axis of [0, 2]) {
+        const context = app();
+        const positions = [0.2, 9.2].map(value => {
+            const point = [5, 5, 5]; point[axis] = value;
+            return new Vector3(...point);
+        });
+        context.positions = positions;
+        vm.runInContext(`
+            currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]], pbc: [true, false, false], atoms: [] };
+            settings.useElementRadii = false;
+            settings.bondThreshold = 1.5;
+            atomMeshes = positions.map(position => ({ position, userData: { element: 'H' } }));
+            structureGroup = { children: [], add(child) { this.children.push(child); } };
+            createGhostBond = () => ({ userData: { isGhostBond: true } });
+            addBondsFromAtomMeshes();
+        `, context);
+        const count = vm.runInContext('structureGroup.children.length', context);
+        assert.equal(count, axis === 0 ? 2 : 0);
+    }
 });
 
 test('dense periodic boundary segments join the ghost batch', () => {

@@ -112,3 +112,23 @@ test('counts-only POSCAR export does not invent species names', () => {
     assert.equal(reparsed.hasElementSymbols, false);
     assert.equal(reparsed.atoms[0].position.x, 0.5);
 });
+
+test('XYZ reads per-axis periodicity and preserves it in edited exports', () => {
+    const header = 'Lattice="10 0 0 0 10 0 0 0 10" Properties=species:S:1:pos:R:3';
+    for (const field of ['pbc="T F F"', "pbc='True False False'", 'pbc=[T,F,F]', 'pbc={T F F}']) {
+        const structure = strictFormats.parseXYZ(`1\n${header} ${field} sample\nH 9 20 30\n`);
+        assert.deepEqual(structure.pbc, [true, false, false]);
+        assert.equal(structure.comment, 'sample');
+        structure.atoms[0].position.x = 8;
+        const output = strictFormats.generateXYZ(structure);
+        assert.match(output, /pbc="T F F"/);
+        assert.deepEqual(strictFormats.parseXYZ(output).pbc, [true, false, false]);
+    }
+    assert.deepEqual(strictFormats.parseXYZ(`1\n${header}\nH 0 0 0\n`).pbc, [true, true, true]);
+    assert.deepEqual(strictFormats.parseXYZ('1\nsample\nH 0 0 0\n').pbc, [false, false, false]);
+    assert.deepEqual(strictFormats.parseXYZ(`1\n${header} pbc="F F F"\nH 0 0 0\n`).pbc, [false, false, false]);
+    assert.throws(() => strictFormats.parseXYZ(`1\n${header} pbc="T F"\nH 0 0 0\n`), /three boolean flags/);
+    assert.throws(() => strictFormats.parseXYZ(`1\n${header} pbc="T 0 F"\nH 0 0 0\n`), /three boolean flags/);
+    assert.throws(() => strictFormats.parseXYZ(`1\n${header} pbc="T T T" pbc="F F F"\nH 0 0 0\n`), /duplicate/);
+    assert.throws(() => strictFormats.parseXYZ('1\npbc="T F F"\nH 0 0 0\n'), /require a Lattice/);
+});

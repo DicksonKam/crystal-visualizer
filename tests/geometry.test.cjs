@@ -11,6 +11,38 @@ test('coordinate conversion round-trips arrays and objects in a tilted cell', ()
     assert.equal(cartesianToFractional(position, [[1, 0, 0], [2, 0, 0], [0, 0, 1]]), null);
 });
 
+test('nearest images honor every periodic-axis mask in tilted cells', () => {
+    const lattice = [[4, 0, 0], [1.3, 3, 0], [0.4, 0.7, 5]];
+    for (let mask = 0; mask < 8; mask++) {
+        const axes = [0, 1, 2].map(axis => Boolean(mask & (1 << axis)));
+        for (let sample = 0; sample < 12; sample++) {
+            const a = fractionalToCartesian([sample * 0.137 - 0.4, 0.2, sample * 0.211], lattice);
+            const b = fractionalToCartesian([1.8 - sample * 0.117, sample * 0.193, -0.7], lattice);
+            const result = nearestImageBetween(a, b, lattice, axes);
+            let exhaustive = Infinity;
+            const ranges = axes.map(enabled => enabled ? [-4, -3, -2, -1, 0, 1, 2, 3, 4] : [0]);
+            for (const i of ranges[0]) for (const j of ranges[1]) for (const k of ranges[2]) {
+                const translated = fractionalToCartesian([i, j, k], lattice);
+                exhaustive = Math.min(exhaustive, Math.hypot(...b.map((value, axis) => value + translated[axis] - a[axis])));
+            }
+            assert.ok(Math.abs(result.distance - exhaustive) < 1e-10, `mask ${mask}, sample ${sample}`);
+            axes.forEach((enabled, axis) => { if (!enabled) assert.equal(result.offset[axis], 0); });
+        }
+    }
+    const distant = nearestImageBetween([0, 0, 0], [9, 1e12, 0], [[10, 0, 0], [0, 10, 0], [0, 0, 10]], [true, false, false]);
+    assert.deepEqual(distant.offset, [-1, 0, 0]);
+    assert.deepEqual(distant.delta, [-1, 1e12, 0]);
+});
+
+test('centering and bond clipping wrap only periodic axes', () => {
+    const center = periodicFractionalCenter([[0.99, -2, -1], [0.01, 2, 1]], [true, false, false]);
+    assert.ok(Math.abs(center[0]) < 1e-10 || Math.abs(center[0] - 1) < 1e-10);
+    assert.equal(center[1], 0);
+    assert.equal(center[2], 0);
+    const clipped = clipSegmentToCell([-1, 20, 0], [1, 20, 0], [[10, 0, 0], [0, 10, 0], [0, 0, 10]], [1, 1, 1], [true, false, false]);
+    assert.deepEqual(clipped, [[0, 20, 0], [1, 20, 0]]);
+});
+
 test('periodic center keeps atoms together across a cell boundary', () => {
     const center = periodicFractionalCenter([[0.99, 0.5, 0.5], [0.01, 0.5, 0.5]]);
     assert.ok(Math.min(center[0], 1 - center[0]) < 1e-12);

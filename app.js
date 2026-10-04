@@ -156,8 +156,8 @@ function requestRender() {
 
 function countDisplayedAtoms(structure) {
     if (!structure) return 0;
-    const copies = isPeriodicStructure(structure)
-        ? settings.periodic.a * settings.periodic.b * settings.periodic.c : 1;
+    const repeats = getPeriodicRepeats(structure);
+    const copies = repeats.a * repeats.b * repeats.c;
     return structure.atoms.length * copies;
 }
 
@@ -516,7 +516,7 @@ function performUndo() {
 
 function undoMoveAtom(op) {
     currentStructure.atoms[op.index].position.copy(op.oldPosition);
-    currentStructure.atoms[op.index].fractional = isPeriodicStructure(currentStructure)
+    currentStructure.atoms[op.index].fractional = hasLattice(currentStructure)
         ? cartesianToFractional(op.oldPosition, currentStructure.lattice) : null;
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
@@ -564,7 +564,7 @@ function undoShiftAtoms(op) {
         if (currentStructure.atoms[atomIdx]) {
             const atom = currentStructure.atoms[atomIdx];
             atom.position.copy(op.oldPositions[i]);
-            atom.fractional = isPeriodicStructure(currentStructure)
+            atom.fractional = hasLattice(currentStructure)
                 ? cartesianToFractional(atom.position, currentStructure.lattice) : null;
         }
     });
@@ -949,7 +949,7 @@ function animate(timestamp) {
     renderer.render(scene, camera);
     
     // Render axes HUD in bottom-left corner
-    if (settings.showAxes && isPeriodicStructure(currentStructure) && axesScene && axesCamera && axesGroup) {
+    if (settings.showAxes && hasLattice(currentStructure) && axesScene && axesCamera && axesGroup) {
         // Sync axes rotation with main camera
         axesGroup.quaternion.copy(camera.quaternion).invert();
         
@@ -1095,8 +1095,21 @@ function isXDATCARFormat(content) { return crystalFormats.isXDATCARFormat(conten
 function isXYZFormat(content) { return crystalFormats.isXYZFormat(content); }
 function parseXYZ(content) { return crystalFormats.parseXYZ(content); }
 
-function isPeriodicStructure(structure) {
+function hasLattice(structure) {
     return Boolean(structure && (!structure.isXYZ || structure.hasExplicitLattice));
+}
+
+function getPeriodicAxes(structure) {
+    return hasLattice(structure) ? structure.pbc || [true, true, true] : [false, false, false];
+}
+
+function isPeriodicStructure(structure) {
+    return getPeriodicAxes(structure).some(Boolean);
+}
+
+function getPeriodicRepeats(structure, requested = settings.periodic) {
+    const axes = getPeriodicAxes(structure);
+    return Object.fromEntries(['a', 'b', 'c'].map((axis, index) => [axis, axes[index] ? requested[axis] : 1]));
 }
 
 function supportsSelectiveDynamics(structure) {
@@ -1267,7 +1280,7 @@ function getOriginalAtomPosition(selectedAtom) {
 function formatAtomCoordinates(selectedAtom, atomIndex) {
     const originalPos = getOriginalAtomPosition(selectedAtom);
     
-    if (isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional') {
+    if (hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional') {
         // Get fractional coordinates
         const frac = cartesianToFractional(
             new THREE.Vector3(originalPos.x, originalPos.y, originalPos.z),
@@ -1283,10 +1296,10 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
     
     // Cartesian: cyan with parentheses (default fallback)
     const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
-    const toggle = isPeriodicStructure(currentStructure) ? 'clickable-coords' : '';
-    const title = isPeriodicStructure(currentStructure) ? 'Show fractional coordinates' : 'Cartesian coordinates (Å)';
-    const tag = isPeriodicStructure(currentStructure) ? 'button type="button"' : 'div';
-    const closingTag = isPeriodicStructure(currentStructure) ? 'button' : 'div';
+    const toggle = hasLattice(currentStructure) ? 'clickable-coords' : '';
+    const title = hasLattice(currentStructure) ? 'Show fractional coordinates' : 'Cartesian coordinates (Å)';
+    const tag = hasLattice(currentStructure) ? 'button type="button"' : 'div';
+    const closingTag = hasLattice(currentStructure) ? 'button' : 'div';
     return `<${tag} id="selectedAtomCoords${atomIndex}" class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</${closingTag}>`;
 }
 
@@ -1297,7 +1310,7 @@ function getMeasurementPair(atomA, atomB) {
     const nearest = measurementMode === 'nearest' && isPeriodicStructure(currentStructure)
         && !atomA.isGhost && !atomB.isGhost;
     if (nearest) {
-        const result = CrystalGeometry.nearestImageBetween(start, end, currentStructure.lattice);
+        const result = CrystalGeometry.nearestImageBetween(start, end, currentStructure.lattice, getPeriodicAxes(currentStructure));
         offset = result.offset;
         end = start.clone().add(new THREE.Vector3(...result.delta));
     }
@@ -1346,7 +1359,7 @@ function computeDeltas(atomA, atomB) {
     if (!currentStructure || !currentStructure.lattice) return null;
     const pair = getMeasurementPair(atomA, atomB);
     const delta = pair.end.clone().sub(pair.start);
-    if (!isPeriodicStructure(currentStructure) || selectedAtomCoordMode !== 'fractional') {
+    if (!hasLattice(currentStructure) || selectedAtomCoordMode !== 'fractional') {
         return { da: delta.x, db: delta.y, dc: delta.z, dp: 2, unit: 'Å' };
     }
     const fractional = cartesianToFractional(delta, currentStructure.lattice);
@@ -1367,7 +1380,7 @@ function formatDelta(atomA, atomB) {
         const val = Object.is(rounded, -0) ? 0 : rounded;
         return (val >= 0 ? '+' : '') + val.toFixed(d.dp);
     };
-    const periodic = isPeriodicStructure(currentStructure);
+    const periodic = hasLattice(currentStructure);
     const fractional = periodic && selectedAtomCoordMode === 'fractional';
     const colorClass = fractional ? 'delta-frac' : 'delta-cart';
     const title = !periodic ? 'Cartesian displacement (Å)' : fractional
@@ -1390,7 +1403,7 @@ function formatDeltaCompact(atomA, atomB) {
 
 // Toggle coordinate display mode and refresh UI
 function toggleCoordinateDisplayMode() {
-    if (!isPeriodicStructure(currentStructure)) return;
+    if (!hasLattice(currentStructure)) return;
     selectedAtomCoordMode = selectedAtomCoordMode === 'fractional' ? 'cartesian' : 'fractional';
     
     // Refresh the appropriate UI based on current mode
@@ -1477,7 +1490,7 @@ function createSupercellWireframe(lattice, na, nb, nc) {
 // Called during renderStructure, before centering
 function addPeriodicImages(structure) {
     if (!isPeriodicStructure(structure)) return;
-    const { a: na, b: nb, c: nc } = settings.periodic;
+    const { a: na, b: nb, c: nc } = getPeriodicRepeats(structure);
     
     // Skip if no periodic images
     if (na === 1 && nb === 1 && nc === 1) return;
@@ -1642,7 +1655,7 @@ function cancelEditDrag(event) {
     } else {
         const atom = currentStructure.atoms[draggedAtom.index];
         atom.position.copy(draggedAtom.startPosition);
-        atom.fractional = isPeriodicStructure(currentStructure)
+        atom.fractional = hasLattice(currentStructure)
             ? cartesianToFractional(atom.position, currentStructure.lattice) : null;
         draggedAtom.mesh.position.copy(atom.position);
         if (selectedAtoms.some(selected => selected.mesh === draggedAtom.mesh)) highlightAtomMesh(draggedAtom.mesh);
@@ -1681,7 +1694,7 @@ function createDragGuidePlane() {
     if (!currentStructure || !draggedAtom) return;
     
     removeDragGuidePlane();
-    if (!isPeriodicStructure(currentStructure)) return;
+    if (!hasLattice(currentStructure)) return;
     
     const lattice = currentStructure.lattice;
     const a = new THREE.Vector3(...lattice[0]);
@@ -1944,10 +1957,10 @@ function onMouseMove(event) {
             
             // Convert to local position
             const newLocalPos = newWorldPos.clone().sub(structureGroup.position);
-            const fractional = isPeriodicStructure(currentStructure)
+            const fractional = hasLattice(currentStructure)
                 ? cartesianToFractional(newLocalPos, currentStructure.lattice) : null;
             if (![newLocalPos.x, newLocalPos.y, newLocalPos.z].every(Number.isFinite)
-                || (isPeriodicStructure(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) return;
+                || (hasLattice(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) return;
             
             // Update atom position (both mesh and structure data for live readouts)
             draggedAtom.mesh.position.copy(newLocalPos);
@@ -2028,7 +2041,7 @@ function onMouseUp(event) {
             
             // Update structure data
             currentStructure.atoms[draggedAtom.index].position.copy(newPos);
-            currentStructure.atoms[draggedAtom.index].fractional = isPeriodicStructure(currentStructure)
+            currentStructure.atoms[draggedAtom.index].fractional = hasLattice(currentStructure)
                 ? cartesianToFractional(newPos, currentStructure.lattice) : null;
             
             // Rebuild all display options (bonds, fixed indicators, etc.)
@@ -2303,7 +2316,7 @@ function updateEditUI() {
 
                 if (selectedAtoms.length === 1 && !selectedAtoms[0].isGhost) {
                     const atom = currentStructure.atoms[selectedAtoms[0].index];
-                    const fractional = isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional';
+                    const fractional = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
                     const values = fractional ? cartesianToFractional(atom.position, currentStructure.lattice)
                         : [atom.position.x, atom.position.y, atom.position.z];
                     if (values) html += `
@@ -2312,7 +2325,7 @@ function updateEditUI() {
                             <label for="editAtomCoordMode">Coordinate system</label>
                             <select id="editAtomCoordMode" class="element-select">
                                 <option value="cartesian"${fractional ? '' : ' selected'}>Cartesian (Å)</option>
-                                ${isPeriodicStructure(currentStructure) ? `<option value="fractional"${fractional ? ' selected' : ''}>Fractional</option>` : ''}
+                                ${hasLattice(currentStructure) ? `<option value="fractional"${fractional ? ' selected' : ''}>Fractional</option>` : ''}
                             </select>
                             <div class="add-atom-coords">
                                 ${values.map((value, axis) => `<div class="coord-input-group">
@@ -2357,7 +2370,7 @@ function updateEditUI() {
         ).join('');
         
         // Use last coordinate type
-        const isCartesian = !isPeriodicStructure(currentStructure) || lastAddAtomCoordType === 'cartesian';
+        const isCartesian = !hasLattice(currentStructure) || lastAddAtomCoordType === 'cartesian';
         const step = isCartesian ? '0.1' : '0.01';
         
         html += `
@@ -2374,7 +2387,7 @@ function updateEditUI() {
                         <input type="radio" name="coordType" value="cartesian"${isCartesian ? ' checked' : ''}>
                         <span>Cartesian (Å)</span>
                     </label>
-                    ${isPeriodicStructure(currentStructure) ? `<label class="coord-type-label">
+                    ${hasLattice(currentStructure) ? `<label class="coord-type-label">
                         <input type="radio" name="coordType" value="fractional"${!isCartesian ? ' checked' : ''}>
                         <span>Fractional</span>
                     </label>` : ''}
@@ -2399,7 +2412,7 @@ function updateEditUI() {
         `;
         
         // Periodic Shift section (context-aware: selected atoms or all)
-        const shiftIsCartesian = !isPeriodicStructure(currentStructure) || lastShiftCoordType === 'cartesian';
+        const shiftIsCartesian = !hasLattice(currentStructure) || lastShiftCoordType === 'cartesian';
         const shiftStep = shiftIsCartesian ? '0.1' : '0.01';
         const shiftLabelX = shiftIsCartesian ? 'Δx' : 'Δa';
         const shiftLabelY = shiftIsCartesian ? 'Δy' : 'Δb';
@@ -2423,7 +2436,7 @@ function updateEditUI() {
                         <input type="radio" name="shiftCoordType" value="cartesian"${shiftIsCartesian ? ' checked' : ''}>
                         <span>Cartesian (Å)</span>
                     </label>
-                    ${isPeriodicStructure(currentStructure) ? `<label class="coord-type-label">
+                    ${hasLattice(currentStructure) ? `<label class="coord-type-label">
                         <input type="radio" name="shiftCoordType" value="fractional"${!shiftIsCartesian ? ' checked' : ''}>
                         <span>Fractional</span>
                     </label>` : ''}
@@ -2444,7 +2457,7 @@ function updateEditUI() {
                 </div>
                 <div id="shiftError" class="add-atom-error"></div>
                 <button id="applyShiftBtn" class="btn btn-shift">${shiftBtnText}</button>
-                ${!hasSelection && isPeriodicStructure(currentStructure) ? '<button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell" style="width: 100%; margin-top: 0.5rem;">Center in Cell</button>' : ''}
+                ${!hasSelection && hasLattice(currentStructure) ? '<button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell" style="width: 100%; margin-top: 0.5rem;">Center in Cell</button>' : ''}
             </div>
         `;
         
@@ -2599,13 +2612,13 @@ function applyExactAtomCoordinates() {
         error.textContent = 'Enter three finite coordinates';
         return false;
     }
-    const fractionalInput = isPeriodicStructure(currentStructure) && selectedAtomCoordMode === 'fractional';
+    const fractionalInput = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
     const position = fractionalInput ? fractionalToCartesian(values, currentStructure.lattice)
         : new THREE.Vector3(...values);
-    const fractional = isPeriodicStructure(currentStructure)
+    const fractional = hasLattice(currentStructure)
         ? (fractionalInput ? values : cartesianToFractional(position, currentStructure.lattice)) : null;
     if (![position.x, position.y, position.z].every(Number.isFinite)
-        || (isPeriodicStructure(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) {
+        || (hasLattice(currentStructure) && (!fractional || fractional.some(value => !Number.isFinite(value))))) {
         error.textContent = 'Coordinates cannot be represented in this cell';
         return false;
     }
@@ -2748,7 +2761,9 @@ function getBondLimit(elementA, elementB) {
 
 function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
     const lattice = currentStructure.lattice;
-    const repeats = [settings.periodic.a, settings.periodic.b, settings.periodic.c];
+    const preview = getPeriodicRepeats(currentStructure);
+    const repeats = [preview.a, preview.b, preview.c];
+    const periodicAxes = getPeriodicAxes(currentStructure);
     const reciprocalColumns = [
         new THREE.Vector3(1, 0, 0),
         new THREE.Vector3(0, 1, 0),
@@ -2765,6 +2780,7 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
         const fractional = cartesianToFractional(atom.position, lattice);
         if (!fractional) continue;
         const shifts = [0, 1, 2].map(axis => {
+            if (!periodicAxes[axis]) return [0];
             // A tilted, non-reduced basis can need a translation larger than
             // one cell along this axis to reach a nearby Cartesian neighbor.
             const values = [];
@@ -2788,7 +2804,7 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
                     const distance = translated.distanceTo(neighbor.position);
                     const limit = getBondLimit(atom.userData.element, neighbor.userData.element);
                     if (distance <= 0.5 || distance >= limit) continue;
-                    const clipped = CrystalGeometry.clipSegmentToCell(translated, neighbor.position, lattice, repeats);
+                    const clipped = CrystalGeometry.clipSegmentToCell(translated, neighbor.position, lattice, repeats, periodicAxes);
                     if (!clipped) continue;
                     addGhostBond(new THREE.Vector3(...clipped[0]), new THREE.Vector3(...clipped[1]));
                 }
@@ -3103,7 +3119,7 @@ function applyPeriodicShiftByCartesian(deltaX, deltaY, deltaZ, atomIndices = nul
 // Apply periodic shift by fractional coordinates
 // atomIndices: optional array of indices to shift (null = shift all)
 function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = null) {
-    if (!currentStructure || !isPeriodicStructure(currentStructure)) return false;
+    if (!currentStructure || !hasLattice(currentStructure)) return false;
     
     const lattice = currentStructure.lattice;
     
@@ -3121,7 +3137,8 @@ function applyPeriodicShiftByFractional(deltaA, deltaB, deltaC, atomIndices = nu
 function applyCartesianShift(shiftCartesian, atomIndices) {
     if (!currentStructure || ![shiftCartesian.x, shiftCartesian.y, shiftCartesian.z].every(Number.isFinite)) return false;
     const indicesToShift = atomIndices ? [...new Set(atomIndices)] : currentStructure.atoms.map((_, index) => index);
-    const periodic = isPeriodicStructure(currentStructure);
+    const periodic = hasLattice(currentStructure);
+    const periodicAxes = getPeriodicAxes(currentStructure);
     const updates = [];
     for (const index of indicesToShift) {
         const atom = currentStructure.atoms[index];
@@ -3132,7 +3149,7 @@ function applyCartesianShift(shiftCartesian, atomIndices) {
         if (periodic) {
             fractional = cartesianToFractional(position, currentStructure.lattice);
             if (!fractional || fractional.some(value => !Number.isFinite(value))) return false;
-            fractional = fractional.map(value => ((value % 1) + 1) % 1);
+            fractional = fractional.map((value, axis) => periodicAxes[axis] ? ((value % 1) + 1) % 1 : value);
             position = fractionalToCartesian(fractional, currentStructure.lattice);
             if (![position.x, position.y, position.z].every(Number.isFinite)) return false;
         }
@@ -3166,7 +3183,7 @@ function applyCartesianShift(shiftCartesian, atomIndices) {
 
 // Center structure in the unit cell
 function centerStructureInCell() {
-    if (!isPeriodicStructure(currentStructure) || currentStructure.atoms.length === 0) return;
+    if (!hasLattice(currentStructure) || currentStructure.atoms.length === 0) return;
     
     const lattice = currentStructure.lattice;
     const fractionalPositions = currentStructure.atoms.map(atom => {
@@ -3178,7 +3195,7 @@ function centerStructureInCell() {
         statusText.className = 'error';
         return;
     }
-    const center = CrystalGeometry.periodicFractionalCenter(fractionalPositions);
+    const center = CrystalGeometry.periodicFractionalCenter(fractionalPositions, getPeriodicAxes(currentStructure));
     const [deltaA, deltaB, deltaC] = center.map(value => 0.5 - value);
     
     const shifted = applyPeriodicShiftByFractional(deltaA, deltaB, deltaC);
@@ -3237,9 +3254,9 @@ function addAtomFromInput() {
     let fractionalPos;
     
     if (coordType === 'fractional') {
-        // Validate fractional coordinates are in [0, 1]
-        if (x < 0 || x > 1 || y < 0 || y > 1 || z < 0 || z > 1) {
-            errorDiv.textContent = 'Fractional coords must be in [0, 1]';
+        // Only periodic axes wrap into the unit cell.
+        if ([x, y, z].some((value, axis) => getPeriodicAxes(currentStructure)[axis] && (value < 0 || value > 1))) {
+            errorDiv.textContent = 'Periodic fractional coords must be in [0, 1]';
             return;
         }
         
@@ -3249,8 +3266,8 @@ function addAtomFromInput() {
         // Cartesian coordinates - validate within cell
         cartesianPos = new THREE.Vector3(x, y, z);
         
-        if (isPeriodicStructure(currentStructure)) {
-            const validation = isPositionInCell(cartesianPos, currentStructure.lattice);
+        if (hasLattice(currentStructure)) {
+            const validation = isPositionInCell(cartesianPos, currentStructure.lattice, getPeriodicAxes(currentStructure));
             if (!validation.valid) {
                 errorDiv.textContent = validation.message;
                 return;
@@ -3316,7 +3333,7 @@ function cartesianToFractional(pos, lattice) {
 }
 
 // Check if Cartesian position is within unit cell (fractional coords in [0, 1])
-function isPositionInCell(pos, lattice) {
+function isPositionInCell(pos, lattice, periodicAxes = [true, true, true]) {
     const frac = cartesianToFractional(pos, lattice);
     
     if (!frac) {
@@ -3327,22 +3344,18 @@ function isPositionInCell(pos, lattice) {
     const [fx, fy, fz] = frac;
     
     // Check if fractional coordinates are in [0, 1] with small tolerance
-    if (fx < -tolerance || fx > 1 + tolerance) {
+    if (periodicAxes[0] && (fx < -tolerance || fx > 1 + tolerance)) {
         return { valid: false, message: `Outside cell: x (frac=${fx.toFixed(3)})` };
     }
-    if (fy < -tolerance || fy > 1 + tolerance) {
+    if (periodicAxes[1] && (fy < -tolerance || fy > 1 + tolerance)) {
         return { valid: false, message: `Outside cell: y (frac=${fy.toFixed(3)})` };
     }
-    if (fz < -tolerance || fz > 1 + tolerance) {
+    if (periodicAxes[2] && (fz < -tolerance || fz > 1 + tolerance)) {
         return { valid: false, message: `Outside cell: z (frac=${fz.toFixed(3)})` };
     }
     
     // Clamp to [0, 1] for atoms exactly on boundary
-    const clampedFrac = [
-        Math.max(0, Math.min(1, fx)),
-        Math.max(0, Math.min(1, fy)),
-        Math.max(0, Math.min(1, fz))
-    ];
+    const clampedFrac = frac.map((value, axis) => periodicAxes[axis] ? Math.max(0, Math.min(1, value)) : value);
     
     return { valid: true, fractional: clampedFrac };
 }
@@ -4208,7 +4221,7 @@ function renderStructure(structure, preserveState = false) {
     });
     
     // Add unit cell
-    if (settings.showCell && isPeriodicStructure(structure)) {
+    if (settings.showCell && hasLattice(structure)) {
         const unitCell = createUnitCell(structure.lattice);
         structureGroup.add(unitCell);
     }
@@ -4292,7 +4305,7 @@ function updateUI(structure) {
     const sdInfo = constraints && (constraints.fixed > 0 || constraints.partial > 0)
         ? `<div class="info-item"><span class="info-label">Constraints</span><span class="info-value sd-info">${constraints.fixed} fixed / ${constraints.partial} partial / ${constraints.free} free</span></div>`
         : '';
-    const latticeInfo = isPeriodicStructure(structure) ? `
+    const latticeInfo = hasLattice(structure) ? `
         <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
         <div class="info-item"><span class="info-label">b</span><span class="info-value">${latticeB} Å</span></div>
         <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>` : '';
@@ -4303,6 +4316,7 @@ function updateUI(structure) {
         <div class="info-item"><span class="info-label">Title</span><span class="info-value" title="${escapeHTML(structure.comment)}">${escapeHTML(structure.comment.substring(0, 20))}</span></div>
         <div class="info-item"><span class="info-label">Total Atoms</span><span class="info-value">${structure.atoms.length}</span></div>
         ${latticeInfo}
+        ${structure.isXYZ && structure.hasExplicitLattice ? `<div class="info-item"><span class="info-label">Periodic axes</span><span class="info-value">${['a', 'b', 'c'].filter((_, axis) => getPeriodicAxes(structure)[axis]).join(', ') || 'None'}</span></div>` : ''}
         ${frameInfo}
         ${sdInfo}
         ${structure.hasAdditionalSections ? '<p class="info-warning" role="note">This file has additional POSCAR data. An edited export will omit it.</p>' : ''}
@@ -4463,12 +4477,12 @@ function loadStructureFromText(content, filename, requestId = null) {
     lastJumpAtomNumber = null;
     measurementMode = 'nearest';
     currentFilename = filename || 'Untitled';
-    selectedAtomCoordMode = isPeriodicStructure(currentStructure) ? 'fractional' : 'cartesian';
+    selectedAtomCoordMode = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastAddAtomElement = null;
     lastAddAtomCoords = { x: 0, y: 0, z: 0 };
     lastShiftCoords = { a: 0, b: 0, c: 0 };
     lastZThreshold = null;
-    lastAddAtomCoordType = isPeriodicStructure(currentStructure) ? 'fractional' : 'cartesian';
+    lastAddAtomCoordType = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastShiftCoordType = lastAddAtomCoordType;
     if (currentStructure.isXDATCAR) {
 
@@ -4806,7 +4820,7 @@ function updateSupercellButtonState() {
     const makeSupercellBtn = document.getElementById('makeSupercellBtn');
     if (!makeSupercellBtn) return;
     
-    const { a, b, c } = settings.periodic;
+    const { a, b, c } = getPeriodicRepeats(currentStructure);
     const hasPeriodicImages = a > 1 || b > 1 || c > 1;
     
     makeSupercellBtn.disabled = !isPeriodicStructure(currentStructure) || !hasPeriodicImages;
@@ -4824,7 +4838,7 @@ function setupPeriodicControls() {
         const a = parseInt(document.getElementById('periodicA').value) || 1;
         const b = parseInt(document.getElementById('periodicB').value) || 1;
         const c = parseInt(document.getElementById('periodicC').value) || 1;
-        const next = { a: Math.max(1, Math.min(20, a)), b: Math.max(1, Math.min(20, b)), c: Math.max(1, Math.min(20, c)) };
+        const next = getPeriodicRepeats(currentStructure, { a: Math.max(1, Math.min(20, a)), b: Math.max(1, Math.min(20, b)), c: Math.max(1, Math.min(20, c)) });
         if (currentStructure && currentStructure.atoms.length * next.a * next.b * next.c > 3000) {
             ['A', 'B', 'C'].forEach(axis => {
                 document.getElementById(`periodic${axis}`).value = settings.periodic[axis.toLowerCase()];
@@ -4914,7 +4928,7 @@ function setupPeriodicControls() {
 function convertToSupercell() {
     if (!currentStructure) return false;
     
-    const { a: na, b: nb, c: nc } = settings.periodic;
+    const { a: na, b: nb, c: nc } = getPeriodicRepeats(currentStructure);
     
     // Skip if already 1×1×1
     if (na === 1 && nb === 1 && nc === 1) return false;
@@ -5149,7 +5163,7 @@ function getValidUpVectors(viewDir, baseUp) {
 // Check if camera is close to an orthogonal direction and snap if needed
 // Uses visual depth criterion: snap when projected depth is small relative to average cell size
 function checkAndSnapToAxis() {
-    if (!snapSettings.enabled || isSnapping || !isPeriodicStructure(currentStructure)) return;
+    if (!snapSettings.enabled || isSnapping || !hasLattice(currentStructure)) return;
     if (isPerspective) return; // Only snap in orthographic mode
     
     const directions = getOrthogonalDirections();
@@ -5425,7 +5439,7 @@ function getFaceCornerPoints(lattice, extendAxisIdx, handleType) {
 function updateVacuumHandles() {
     cleanupVacuumHandles();
     
-    if (currentMode !== 'edit' || !isPeriodicStructure(currentStructure)) {
+    if (currentMode !== 'edit' || !hasLattice(currentStructure)) {
         vacuumDragState.active = false;
         updateVacuumHintUI(null);
         return;
@@ -6200,7 +6214,7 @@ function setupTimelineControls() {
 function updateModeToggleForFileType() {
     const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
     const exportBtn = document.getElementById('exportPoscar');
-    const periodic = isPeriodicStructure(currentStructure);
+    const periodic = hasLattice(currentStructure);
     const fixedIndicators = document.getElementById('showFixedIndicators');
     fixedIndicators.disabled = !supportsSelectiveDynamics(currentStructure);
     fixedIndicators.title = supportsSelectiveDynamics(currentStructure)
@@ -6211,8 +6225,11 @@ function updateModeToggleForFileType() {
     axesBtn.title = periodic ? 'Toggle Axes' : 'No lattice axes in a molecule';
     cellBtn.disabled = !periodic;
     cellBtn.title = periodic ? 'Toggle Unit Cell' : 'No unit cell in a molecule';
-    document.querySelectorAll('#periodicControls .stepper-btn').forEach(button => { button.disabled = !periodic; });
-    document.getElementById('periodicControls').classList.toggle('disabled', !periodic);
+    const periodicAxes = getPeriodicAxes(currentStructure);
+    document.querySelectorAll('#periodicControls .stepper-btn').forEach(button => {
+        button.disabled = !periodicAxes[['a', 'b', 'c'].indexOf(button.dataset.axis)];
+    });
+    document.getElementById('periodicControls').classList.toggle('disabled', !periodicAxes.some(Boolean));
     document.getElementById('vacuumInfo').style.display = periodic ? '' : 'none';
     
     if (currentStructure && currentStructure.isXDATCAR) {

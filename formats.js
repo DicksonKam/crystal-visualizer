@@ -371,6 +371,24 @@
             ];
         }
 
+        const xyzPbcField = /\bpbc\s*=\s*(?:"([^"]*)"|'([^']*)'|\[([^\]]*)\]|\{([^}]*)\}|(\S+))/gi;
+
+        function parseXYZPeriodicity(comment, hasLattice) {
+            const matches = [...comment.matchAll(xyzPbcField)];
+            if (matches.length === 0) {
+                if (/\bpbc\s*=/i.test(comment)) throw new Error('Invalid extended XYZ: malformed pbc field');
+                return [hasLattice, hasLattice, hasLattice];
+            }
+            if (matches.length !== 1) throw new Error('Invalid extended XYZ: duplicate pbc fields');
+            const values = matches[0].slice(1).find(value => value !== undefined).trim().split(/[\s,]+/);
+            if (values.length !== 3 || values.some(value => !/^(T|F|true|false)$/i.test(value))) {
+                throw new Error('Invalid extended XYZ: pbc must contain three boolean flags');
+            }
+            const axes = values.map(value => /^(T|true)$/i.test(value));
+            if (!hasLattice && axes.some(Boolean)) throw new Error('Invalid extended XYZ: periodic axes require a Lattice field');
+            return axes;
+        }
+
         function parseExtendedXYZProperties(comment) {
             const match = comment.match(/Properties\s*=\s*(?:"([^"]+)"|(\S+))/i);
             if (!match) {
@@ -481,6 +499,7 @@
 
             let lattice = parseExtendedXYZLattice(rawComment);
             const hasExplicitLattice = Boolean(lattice);
+            const pbc = parseXYZPeriodicity(rawComment, hasExplicitLattice);
             if (!lattice) {
                 const box = latticeFromCartesianAtoms(atoms.map(a => a.position));
                 lattice = box.lattice;
@@ -501,6 +520,7 @@
             const comment = rawComment
                 .replace(/Lattice\s*=\s*"[^"]*"/gi, '')
                 .replace(/Properties\s*=\s*(?:"[^"]*"|\S+)/gi, '')
+                .replace(xyzPbcField, '')
                 .trim() || 'XYZ structure';
 
             const order = [];
@@ -525,6 +545,7 @@
                 isXDATCAR: false,
                 isXYZ: true,
                 hasExplicitLattice,
+                pbc,
                 hasAdditionalProperties
             };
         }
@@ -601,7 +622,7 @@
             if (!structure) return null;
             const description = structure.comment || 'Exported from Crystal Visualizer';
             const metadata = structure.hasExplicitLattice
-                ? `Lattice="${structure.lattice.flat().map(value => value.toFixed(12)).join(' ')}" Properties=species:S:1:pos:R:3`
+                ? `Lattice="${structure.lattice.flat().map(value => value.toFixed(12)).join(' ')}" Properties=species:S:1:pos:R:3 pbc="${(structure.pbc || [true, true, true]).map(value => value ? 'T' : 'F').join(' ')}"`
                 : '';
             const lines = [String(structure.atoms.length), [description, metadata].filter(Boolean).join(' ')];
             structure.atoms.forEach(atom => {

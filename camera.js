@@ -7,10 +7,12 @@
         tieDegrees: 0.25,
         intentNoiseDegrees: 0.25,
         meaningfulDegrees: 0.25,
+        historyNoiseDegrees: 0.02,
         historyMilliseconds: 150,
         durationMilliseconds: 300,
         fitPadding: 1.15,
-        controlsStepMilliseconds: 1000 / 60
+        controlsStepMilliseconds: 1000 / 60,
+        controlsCatchUpMilliseconds: 250
     });
 
     function createMath(THREE) {
@@ -162,7 +164,7 @@
                 if (gesture?.kind === 'rotate') {
                     gesture.maxMotion = Math.max(gesture.maxMotion, math.degrees(math.angularDistance(gesture.start, pose.quaternion)));
                     const last = gesture.samples[gesture.samples.length - 1];
-                    if (math.degrees(math.angularDistance(last.quaternion, pose.quaternion)) > 0.02) {
+                    if (math.degrees(math.angularDistance(last.quaternion, pose.quaternion)) > policy.historyNoiseDegrees) {
                         gesture.samples.push({ time, quaternion: pose.quaternion.clone() });
                         if (gesture.samples.length > 120) gesture.samples.shift();
                     }

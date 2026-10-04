@@ -36,14 +36,16 @@ Selective-dynamics controls and fixed-atom indicators are available for POSCAR f
 Releasing an atom or cell-edge drag outside the canvas completes the edit. Press Escape to cancel a drag; interrupted drags restore the original geometry, and drags that leave geometry unchanged do not add undo entries.
 Cell resize proposals validate the cell and every atom before changing the live preview. Cell-vector lengths stay positive even when atoms lie outside the cell. An invalid proposal keeps the last valid preview and adds no history entry.
 
-Use **Find atom by number** in the Atoms panel to select and center an atom that is hard to click. In Edit mode, selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
+The **View** panel offers **Auto Snap**, initially on, and signed **±a/±b/±c** lattice views. “View from +a” places the camera on the positive a side looking toward the current pivot; tilted-cell axes are not face normals. Automatic alignment applies only after a meaningful approaching rotation settles, with at most 5° of total orientation correction. Zoom, pan, and clicks do not trigger it. A new action interrupts alignment. **Fit View** retains the current orientation and fits the visible structure; the header’s **Reset View** restores a consistent default orientation and recenters. Lattice controls are disabled for molecules. See [the camera contract](docs/camera.md) for defaults and conventions.
+
+Use **Find atom by number** in the Atoms panel to select and center an atom that is hard to click. Focusing an atom moves the camera and pivot together, preserving orientation and zoom while canceling alignment. In Edit mode, selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
 Keyboard focus stays on coordinate and measurement controls when their panels refresh. Clearing a selection returns focus to Find atom by number.
 Shift and add-atom inputs reject invalid or unrepresentable coordinates without changing the structure or undo history.
 **Center in Cell** uses periodic coordinates, so a cluster that crosses a cell boundary stays together when moved to the middle.
 
 ## Code and tests
 
-`index.html` contains the UI and `styles.css` contains the styling. `geometry.js` handles coordinate conversion and bounded periodic geometry. `document.js` owns document identity, species groups, capabilities, geometry validation, and snapshots. `formats.js` handles file parsing, metadata provenance, and export. `structure.js` prepares cell resizes and supercells without mutating the document. `history.js` owns bounded history and saved/edit revisions. These modules run without the browser or Three.js renderer. `app.js` adapts them to Three.js, rendering, selection, and DOM events. See [the document and editing contract](docs/architecture.md) before adding an operation or format.
+`index.html` contains the UI and `styles.css` contains the styling. `geometry.js` handles coordinate conversion and bounded periodic geometry. `document.js` owns document identity, species groups, capabilities, geometry validation, and snapshots. `formats.js` handles file parsing, metadata provenance, and export. `structure.js` prepares cell resizes and supercells without mutating the document. `history.js` owns bounded history and saved/edit revisions. These document modules run without the browser or Three.js renderer. `camera.js` contains deterministic camera math and action policy, receiving Three.js as an injected math dependency and requiring no DOM or renderer. `app.js` adapts them to Three.js, rendering, selection, and DOM events. See [the document and editing contract](docs/architecture.md) before adding an operation or format.
 
 The renderer reuses sphere geometry and element materials across atoms, reuses bond geometry, and caches the smallest atom radius during redraws. Views above 500 displayed atoms use simpler spheres, batch atoms by element and ghost state while retaining their picking/editing meshes, batch solid and ghost bonds, skip shadows, and cap active rendering at 30 fps. Idle views render at a lower rate, while edits request an immediate redraw. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
 
@@ -53,7 +55,7 @@ Run the focused tests with:
 node --test tests/*.test.cjs
 ```
 
-The browser suite exercises the actual DOM and WebGL renderer, file uploads/downloads, species groups, cell previews, export warnings, undo/redo, skew-cell measurements, and trajectory playback. It serves the pinned Three.js dependency from local test packages, so CDN availability and fonts cannot affect the result.
+The browser suite exercises the actual DOM and WebGL renderer, file uploads/downloads, species groups, cell previews, export warnings, undo/redo, skew-cell measurements, trajectory playback, and real damped camera gestures, fitting, alignment, and cancellation. The camera tests include timestamped input at 30, 60, and 120 Hz. It serves the pinned Three.js dependency from local test packages, so CDN availability and fonts cannot affect the result.
 
 ```sh
 npm ci

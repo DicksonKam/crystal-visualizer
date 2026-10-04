@@ -1,6 +1,6 @@
 # Document and editing contract
 
-The app remains a static site. Its scripts load in dependency order: geometry, document, formats, structure, history, then the browser controller. Each domain module also exports CommonJS functions for direct unit testing. The domain modules must not import `app.js`, inspect the DOM, or store renderer objects.
+The app remains a static site. Its scripts load in dependency order: geometry, document, formats, structure, history, camera, then the browser adapter. Each domain module also exports CommonJS functions for direct unit testing. The domain modules must not import `app.js`, inspect the DOM, or store renderer objects.
 
 ## Authoritative document state
 
@@ -41,6 +41,6 @@ Cell resize detectors belong to `CELL_PICKING_LAYER`, which is enabled on the ra
 
 Rebuilding a structure clears detector and highlighted-edge references before disposing old meshes, then recreates detectors from the current lattice only when a visible cell is aligned in Edit mode. Detectors are suspended during camera interaction, snapping, and cell dragging. Picking updates world matrices explicitly so it works before the next render. Use the common cleanup and rebuild functions rather than maintaining independent detector lifecycles.
 
-Camera settling timers and snap animations share a revision. A new camera interaction, view reset, structure rebuild, mode change, or cell drag invalidates pending alignment work. Obsolete callbacks must never reposition a newer view or recreate handles for an old document.
+Camera policy and transitions live in `camera.js`, driven by the existing render loop. There are no settling timers or separate snap animation loops. All camera actions use its cancellation revision; the browser adapter explicitly discards TrackballControls inertia before programmed movement. See [the camera contract](camera.md) for action semantics, signed lattice directions, thresholds, timing, and regression evidence.
 
 The cell-frame browser regressions compare actual WebGL pixels with and without detectors at the same camera position, across signed axes, alignment thresholds, zoom levels, and cubic/skewed cells. Additional cases verify picking, bounds, scene rebuilds, mode/cell visibility, real pointer resizing, Escape, undo/redo, and interrupted alignment. These tests check that interaction geometry cannot affect the image; they do not require twelve separately visible edges in views where projection overlaps them.

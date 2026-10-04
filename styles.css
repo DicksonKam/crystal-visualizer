@@ -132,7 +132,8 @@ body {
 }
 
 .camera-panel button:focus-visible,
-.camera-auto-snap input:focus-visible {
+.camera-auto-snap input:focus-visible,
+#resetView:focus-visible {
     outline: 2px solid var(--accent-cyan);
     outline-offset: 2px;
 }
@@ -1306,6 +1307,17 @@ body.edit-mode-active .panel-title {
 
 /* === Responsive === */
 @media (max-width: 768px) {
+    .header {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .header-controls {
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
     .sidebar {
         width: 240px;
         min-width: 240px;

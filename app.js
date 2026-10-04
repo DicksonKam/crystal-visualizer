@@ -5167,7 +5167,7 @@ function updateCamera(time) {
         // The legacy controls damping is per-update. A fixed simulation step
         // keeps its decay consistent across display rates, with bounded catch-up.
         const step = CrystalCamera.POLICY.controlsStepMilliseconds;
-        if (time - manualCameraTickAt > 250) manualCameraTickAt = time - step;
+        if (time - manualCameraTickAt > CrystalCamera.POLICY.controlsCatchUpMilliseconds) manualCameraTickAt = time - step;
         while (time - manualCameraTickAt >= step && !cameraController.transitioning) {
             controls.update();
             manualCameraTickAt += step;

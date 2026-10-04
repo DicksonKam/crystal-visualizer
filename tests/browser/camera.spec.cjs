@@ -181,10 +181,12 @@ test('Fit View fits narrow large scenes and Reset restores deterministic roll', 
     expect(second.zoom).toBeCloseTo(first.zoom, 9);
     await page.setViewportSize({ width: 430, height: 850 });
     await page.locator('#fitView').click();
-    for (const selector of ['#autoSnap', '#fitView', '[data-camera-axis="+a"]']) {
+    for (const selector of ['#autoSnap', '#fitView', '[data-camera-axis="+a"]', '#resetView']) {
         const rect = await page.locator(selector).boundingBox();
         expect(rect.width).toBeGreaterThan(0); expect(rect.x).toBeGreaterThanOrEqual(0); expect(rect.x + rect.width).toBeLessThanOrEqual(430);
     }
+    await page.getByRole('button', { name: 'Reset View', exact: true }).click();
+    nearArray((await pose(page)).q, first.q);
 });
 
 test('reduced motion, keyboard axis controls and molecule navigation remain accessible', async ({ page }) => {

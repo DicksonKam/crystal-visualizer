@@ -1790,7 +1790,7 @@ body.edit-mode-active .panel-title {
 }
 
 /* Edit mode disabled indicator for XDATCAR */
-.mode-btn[data-mode="edit"].disabled {
+.mode-btn[data-mode="edit"]:disabled {
     opacity: 0.4;
     cursor: not-allowed;
     pointer-events: none;

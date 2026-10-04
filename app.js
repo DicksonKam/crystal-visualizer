@@ -4616,6 +4616,7 @@ function setupControls() {
     document.getElementById('toggleAxes').addEventListener('click', (e) => {
         settings.showAxes = !settings.showAxes;
         e.currentTarget.classList.toggle('active', settings.showAxes);
+        e.currentTarget.setAttribute('aria-pressed', String(settings.showAxes));
         // Axes HUD visibility is controlled in animate() loop via settings.showAxes
         requestRender();
     });
@@ -4624,6 +4625,7 @@ function setupControls() {
     document.getElementById('toggleCell').addEventListener('click', (e) => {
         settings.showCell = !settings.showCell;
         e.currentTarget.classList.toggle('active', settings.showCell);
+        e.currentTarget.setAttribute('aria-pressed', String(settings.showCell));
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
         }
@@ -4909,8 +4911,7 @@ function setupModeToggle() {
             currentMode = mode;
             
             // Update button states
-            modeBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            updateModeButtonState();
             
             // Update panel title
             if (panelTitle) {
@@ -4961,6 +4962,14 @@ function setupModeToggle() {
             // Update vacuum handles (only visible in edit mode when aligned to axis)
             updateVacuumHandles();
         });
+    });
+}
+
+function updateModeButtonState() {
+    document.querySelectorAll('#modeToggle .mode-btn').forEach(button => {
+        const active = button.dataset.mode === currentMode;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
     });
 }
 
@@ -6005,9 +6014,9 @@ function setupTimelineControls() {
     
     // Keyboard shortcuts for timeline
     document.addEventListener('keydown', (e) => {
-        // Only handle if XDATCAR is loaded and not in an input field
+        // Only handle shortcuts when the user is not operating another control.
         if (!currentStructure || !currentStructure.isXDATCAR) return;
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        if (e.altKey || e.ctrlKey || e.metaKey || e.target.closest?.('button, input, select, textarea, a[href], [contenteditable="true"]')) return;
         
         switch (e.key) {
             case ' ': // Space - play/pause
@@ -6052,7 +6061,7 @@ function updateModeToggleForFileType() {
     if (currentStructure && currentStructure.isXDATCAR) {
         // Disable edit mode for XDATCAR
         if (editBtn) {
-            editBtn.classList.add('disabled');
+            editBtn.disabled = true;
             editBtn.title = 'Edit mode disabled for trajectory files';
         }
         // Update export button for XDATCAR
@@ -6062,7 +6071,7 @@ function updateModeToggleForFileType() {
     } else {
         // Enable edit mode for POSCAR
         if (editBtn) {
-            editBtn.classList.remove('disabled');
+            editBtn.disabled = false;
             editBtn.title = 'Edit Mode';
         }
         // Update export button for POSCAR
@@ -6078,12 +6087,7 @@ function switchToMeasureMode() {
     
     currentMode = 'measure';
     
-    // Update button visuals
-    const measureBtn = document.querySelector('.mode-btn[data-mode="measure"]');
-    const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
-    
-    if (measureBtn) measureBtn.classList.add('active');
-    if (editBtn) editBtn.classList.remove('active');
+    updateModeButtonState();
     
     // Update body class
     document.body.classList.remove('edit-mode-active');

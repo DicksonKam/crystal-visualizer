@@ -18,6 +18,15 @@ summary separately records actual history operations. All ten operation types
 were recorded, including 72 cell resizes, 25 supercells, 157 atom moves and
 87 constraint changes. No failure occurred in this completed run.
 
+A supplementary **1,000-step single-document session** (seed 1001) passed in
+**526.054 seconds (8 minutes 46 seconds)**. It kept one browser context and
+document through repeated editing and history changes, without file replacement.
+Its complete log and operation totals are retained as
+`single-document-1000-completed.jsonl` and `single-document-1000-summary.json`
+in the same evidence directory. The command's one-second minimum caused the
+runner to stop after that entire scenario; it does not describe the measured
+testing duration. This run also overlaps the core campaign.
+
 Latest full verification: **141 unit tests passed** at 2026-10-04 16:09 UTC and
 **52 browser tests passed** at 16:23 UTC. The app code was unchanged between
 those runs. Both stress campaigns were still running. This result covers

@@ -1,0 +1,60 @@
+{
+  "status": "complete",
+  "sourceLog": "/private/tmp/crystal-edit-long-session/2026-10-04T16-41-51-604Z.jsonl",
+  "retainedLog": "tests/stress/evidence/2026-10-04/single-document-1000-completed.jsonl",
+  "logSha256": "3600203658f6737798432788bb3288f60a292abc4410aa2450650e447730c88b",
+  "manifest": {
+    "event": "start",
+    "timestamp": "2026-10-04T16:41:51.608Z",
+    "seconds": 1,
+    "initialSeed": 1001,
+    "steps": 1000,
+    "extended": false,
+    "harnessHash": "8007764fbbfa0c1b39745865e2a2e14de5e37d1acd2a3cdeb359e219f0a2acf0",
+    "appHash": "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b"
+  },
+  "elapsedSeconds": 526.054242875,
+  "seed": 1001,
+  "actionSteps": 1000,
+  "performedActionCounts": {
+    "jump": 64,
+    "rotate": 61,
+    "supercell": 3,
+    "export": 64,
+    "redo": 10,
+    "reset": 59,
+    "clear": 30,
+    "periodic": 70,
+    "undo": 57,
+    "mode": 50,
+    "add": 28,
+    "invalid": 10,
+    "cancel": 35,
+    "fix": 9,
+    "resize": 48,
+    "delete": 22,
+    "coordinates": 9,
+    "click": 57,
+    "drag": 29,
+    "shift": 26
+  },
+  "recordedOperationCounts": {
+    "select_atom": 115,
+    "clear_selection": 61,
+    "add_atom": 28,
+    "fix_atoms": 5,
+    "vacuum_drag": 42,
+    "delete_atoms": 22,
+    "make_supercell": 3,
+    "move_atom": 29,
+    "shift_atoms": 26,
+    "deselect_atom": 1
+  },
+  "appHash": "29c04b47cdd5ffb9809325b4ee56e15450fd78c4e261ac21458b4503623f3e8b",
+  "notes": [
+    "One isolated context and one initial document were used throughout all 1,000 steps; there were no file replacement actions.",
+    "The one-second CLI duration is a minimum threshold: the runner completes the entire 1,000-step scenario before testing that threshold. Actual measured duration was over eight minutes.",
+    "This supplementary run overlaps the core run; it does not add to elapsed wall-clock testing time.",
+    "Action counts include valid no-ops; operation counts record actual newly recorded history operations."
+  ]
+}

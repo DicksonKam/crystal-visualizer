@@ -7,9 +7,9 @@ The extended campaign completed successfully after **1805.095 seconds
 (30 minutes 5 seconds)**: 55 seeds (27–81), each with 160 steps, totaling
 **8,800 action steps**. Its log and verified totals are retained in
 `tests/stress/evidence/2026-10-04/extended-completed.jsonl` and
-`extended-completed-summary.json` beside it. All scenarios used the current
-fixed app hash. The core campaign is still active; this extended duration
-overlaps it and does not add to its elapsed time.
+`extended-completed-summary.json` beside it. All scenarios used the app version
+with the first two fixes (`29c04b47…`). This extended duration overlaps the
+original core run and does not add to its elapsed time.
 
 The extended run exercised 413 downloads, 377 valid replacements, 391 invalid
 loads, 120 declined replacement actions, and 83 trajectory frame actions.
@@ -36,11 +36,11 @@ copy. The bounded seed-5 regression separately asserts an actual target-copy
 selection. This entire campaign used the third fixed app version and completed
 without failure; its duration overlaps the other runs.
 
-Latest full verification: **141 unit tests passed** at 2026-10-04 16:09 UTC and
+Before the third fix, **141 unit tests passed** at 2026-10-04 16:09 UTC and
 **52 browser tests passed** at 16:23 UTC. The app code was unchanged between
 those runs. Both stress campaigns were still running. This result covers
-the current app fixes and expanded scenario/history regressions; it is not a
-claim that the sustained campaign has finished.
+the first two fixes and expanded scenario/history regressions; it is not a
+claim that the sustained campaign had finished.
 
 An additional focused browser test passed eight complete deletion/refill cycles,
 including blocked empty export, species creation, Undo/Redo and history branching.

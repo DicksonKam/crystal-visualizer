@@ -2493,6 +2493,9 @@ function rebuildDisplayOptions() {
     rebuildFixedIndicators();
     rebuildLabels();
     updateSelectionVisualPositions();
+    // Measurements are derived from the refreshed positions too, including
+    // rollback after Escape and periodic-copy updates at drag completion.
+    if (selectedAtoms.length > 0 && (currentMode === 'measure' || isMeasurementSelection)) updateMeasurements();
     requestRender();
 }
 

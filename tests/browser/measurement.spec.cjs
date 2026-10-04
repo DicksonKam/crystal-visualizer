@@ -125,3 +125,31 @@ test('explicit ghost selections measure their world positions without substituti
     await expect(page.locator('#measurementPanel')).toContainText(`${distance.toFixed(4)} Å`);
     await expect(page.locator('#measurementPanel')).toContainText('Distance (1—2′)');
 });
+
+test('canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry', async ({ page }) => {
+    await upload(page, '3\nrollback\nH 0 0 0\nH 2 0 0\nH 2 2 0\n', 'rollback.xyz');
+    for (const n of [1, 2, 3]) await select(page, n);
+    await page.locator('[data-mode="edit"]').click();
+    const before = await state(page);
+    const historyBefore = await page.evaluate(() => editHistory.undoStack.length);
+    const point = await page.evaluate(() => {
+        cancelCameraAlignment(); controls.staticMoving = true;
+        const anchor = selectedAtoms[1].mesh.getWorldPosition(new THREE.Vector3());
+        camera.position.copy(controls.target).add(new THREE.Vector3(0, 0, 20)); camera.up.set(0, 1, 0);
+        camera.zoom = .8; camera.updateProjectionMatrix(); camera.lookAt(controls.target);
+        controls.update(); camera.updateWorldMatrix(true, false); requestRender();
+        const p = anchor.project(camera), r = renderer.domElement.getBoundingClientRect();
+        return { x: r.left + (p.x+1)*r.width/2, y: r.top + (1-p.y)*r.height/2 };
+    });
+    await page.mouse.move(point.x, point.y); await page.mouse.down();
+    await page.mouse.move(point.x-40, point.y+30, {steps:4});
+    expect(await page.evaluate(() => isDragging)).toBe(true);
+    expect((await state(page)).points).not.toEqual(before.points);
+    await page.keyboard.press('Escape'); await page.mouse.up();
+    const after = await state(page);
+    expect(after.points).toEqual(before.points); expect(after.lines).toEqual(before.lines);
+    expect(after.arc).toEqual(before.arc); expect(after.angle).toBe(before.angle);
+    expect(after.source).toBe(before.source); expect(after.dirty).toBe(false);
+    expect(await page.evaluate(() => editHistory.undoStack.length)).toBe(historyBefore);
+    await expect(page.locator('#measurementPanel')).toContainText('2.0000 Å');
+});

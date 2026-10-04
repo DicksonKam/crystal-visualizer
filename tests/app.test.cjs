@@ -1273,6 +1273,37 @@ test('POSCAR constraint edits survive export and undo restores the original flag
     assert.equal(context.hasUnsavedEdits(), false);
 });
 
+test('panel refresh retains keyboard focus, falls back for removed controls, and leaves outside focus alone', () => {
+    const context = app();
+    let pendingFocus;
+    context.requestAnimationFrame = callback => { pendingFocus = callback; };
+    context.document.body = {};
+    const oldControl = { id: 'editAtomCoordMode' };
+    const outsideControl = { id: 'exportPoscar' };
+    const replacement = context.document.getElementById(oldControl.id);
+    const fallback = context.document.getElementById('atomJumpInput');
+    const panel = { contains: control => control === oldControl };
+    context.document.activeElement = oldControl;
+    context.replacePanelHTML(panel, '<select id="editAtomCoordMode"></select>', 'atomJumpInput');
+    assert.equal(context.document.activeElement, replacement);
+    context.document.activeElement = context.document.body;
+    pendingFocus();
+    assert.equal(context.document.activeElement, replacement);
+    context.document.activeElement = outsideControl;
+    pendingFocus();
+    assert.equal(context.document.activeElement, outsideControl);
+
+    const getElement = context.document.getElementById;
+    context.document.getElementById = id => id === oldControl.id ? null : getElement(id);
+    context.document.activeElement = oldControl;
+    context.replacePanelHTML(panel, '<p>No atoms selected</p>', 'atomJumpInput');
+    assert.equal(context.document.activeElement, fallback);
+
+    context.document.activeElement = outsideControl;
+    context.replacePanelHTML(panel, '<p>No atoms selected</p>', 'atomJumpInput');
+    assert.equal(context.document.activeElement, outsideControl);
+});
+
 test('default constraint threshold handles large structures without overflowing the call stack', () => {
     const context = app();
     context.structure = { atoms: Array.from({ length: 200000 }, (_, index) => ({ position: { z: index === 0 ? -2 : 10 } })) };

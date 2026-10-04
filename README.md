@@ -30,6 +30,7 @@ Selective-dynamics controls and fixed-atom indicators are available for POSCAR f
 Releasing an atom or cell-edge drag outside the canvas completes the edit. Press Escape to cancel a drag; interrupted drags restore the original geometry, and drags that leave geometry unchanged do not add undo entries.
 
 Use **Find atom by number** in the Atoms panel to select and center an atom that is hard to click. In Edit mode, selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
+Keyboard focus stays on coordinate and measurement controls when their panels refresh. Clearing a selection returns focus to Find atom by number.
 Shift and add-atom inputs reject invalid or unrepresentable coordinates without changing the structure or undo history.
 **Center in Cell** uses periodic coordinates, so a cluster that crosses a cell boundary stays together when moved to the middle.
 

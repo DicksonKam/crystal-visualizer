@@ -1277,7 +1277,7 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
         if (frac) {
             // Fractional: yellow/gold with square brackets
             const coordStr = `[${frac[0].toFixed(3)}, ${frac[1].toFixed(3)}, ${frac[2].toFixed(3)}]`;
-            return `<button type="button" class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Show Cartesian coordinates">${coordStr}</button>`;
+            return `<button type="button" id="selectedAtomCoords${atomIndex}" class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Show Cartesian coordinates">${coordStr}</button>`;
         }
     }
     
@@ -1287,7 +1287,7 @@ function formatAtomCoordinates(selectedAtom, atomIndex) {
     const title = isPeriodicStructure(currentStructure) ? 'Show fractional coordinates' : 'Cartesian coordinates (Å)';
     const tag = isPeriodicStructure(currentStructure) ? 'button type="button"' : 'div';
     const closingTag = isPeriodicStructure(currentStructure) ? 'button' : 'div';
-    return `<${tag} class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</${closingTag}>`;
+    return `<${tag} id="selectedAtomCoords${atomIndex}" class="sel-coords sel-coords-cart ${toggle}" data-atom-idx="${atomIndex}" title="${title}">${coordStr}</${closingTag}>`;
 }
 
 function getMeasurementPair(atomA, atomB) {
@@ -1376,7 +1376,7 @@ function formatDelta(atomA, atomB) {
     
     const tag = periodic ? 'button type="button"' : 'div';
     const closingTag = periodic ? 'button' : 'div';
-    return `<${tag} class="meas-delta ${periodic ? 'clickable-delta' : ''} ${colorClass}" title="${title}">` +
+    return `<${tag} id="deltaCoords${escapeHTML(atomA.index)}_${escapeHTML(atomB.index)}" class="meas-delta ${periodic ? 'clickable-delta' : ''} ${colorClass}" title="${title}">` +
         `<span class="delta-item"><span class="delta-label delta-a">Δ${fractional ? 'a' : 'x'}</span> ${fmt(d.da)}</span>` +
         `<span class="delta-item"><span class="delta-label delta-b">Δ${fractional ? 'b' : 'y'}</span> ${fmt(d.db)}</span>` +
         `<span class="delta-item"><span class="delta-label delta-c">Δ${fractional ? 'c' : 'z'}</span> ${fmt(d.dc)}</span>` +
@@ -2215,6 +2215,27 @@ function createEditSelectionMarker(atomMesh, selectionNumber) {
     selectionRings.push(sprite);
 }
 
+// Keep keyboard focus when a panel rebuild replaces the active control.
+function restorePanelFocus(focusedId, fallbackId) {
+    const restoreFocus = () => {
+        const replacement = focusedId && document.getElementById(focusedId);
+        (replacement || document.getElementById(fallbackId))?.focus();
+    };
+    restoreFocus();
+    // A native select popup can clear focus after its change handler ends.
+    requestAnimationFrame(() => {
+        if (document.activeElement === document.body) restoreFocus();
+    });
+}
+
+function replacePanelHTML(panel, html, fallbackId) {
+    const active = document.activeElement;
+    const hadFocus = Boolean(active && panel.contains(active));
+    const focusedId = hadFocus ? active.id : null;
+    panel.innerHTML = html;
+    if (hadFocus) restorePanelFocus(focusedId, fallbackId);
+}
+
 // Update edit mode UI
 function updateEditUI() {
     const panel = document.getElementById('measurementPanel');
@@ -2445,12 +2466,14 @@ function updateEditUI() {
         `;
     }
     
-    panel.innerHTML = html;
+    replacePanelHTML(panel, html, 'atomJumpInput');
     setupMeasurementModeToggle();
     const coordinateMode = document.getElementById('editAtomCoordMode');
     if (coordinateMode) coordinateMode.addEventListener('change', event => {
         selectedAtomCoordMode = event.target.value;
         updateEditUI();
+        // Some native popups clear activeElement before firing change.
+        restorePanelFocus('editAtomCoordMode', 'atomJumpInput');
     });
     const saveCoordinates = document.getElementById('saveAtomCoordinates');
     if (saveCoordinates) saveCoordinates.addEventListener('click', applyExactAtomCoordinates);
@@ -4024,7 +4047,7 @@ function updateMeasurementUI() {
         html += `<button id="clearSelectionBtn" class="btn btn-clear">Clear Selection</button>`;
     }
     
-    panel.innerHTML = html;
+    replacePanelHTML(panel, html, 'atomJumpInput');
     setupMeasurementModeToggle();
     
     // Add clear button listener

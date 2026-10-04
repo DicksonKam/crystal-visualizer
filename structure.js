@@ -13,6 +13,7 @@
         const lattice = structure.lattice.map((vector, axis) => vector.map(value => value * repeats[axis]));
         geometry.requireFiniteCell(lattice, 'supercell');
         const atoms = [];
+        let nextAtomId = structure.nextAtomId || structure.atoms.length + 1;
         for (let a = 0; a < repeats[0]; a++) for (let b = 0; b < repeats[1]; b++) for (let c = 0; c < repeats[2]; c++) {
             const translation = geometry.fractionalToCartesian([a, b, c], structure.lattice);
             for (const atom of structure.atoms) {
@@ -25,10 +26,11 @@
                 if (![position.x, position.y, position.z].every(Number.isFinite) || !fractional) {
                     throw new Error('Supercell atom coordinates cannot be represented in this cell');
                 }
-                atoms.push({ ...atom, position, fractional, selectiveDynamics: [...(atom.selectiveDynamics || [true, true, true])] });
+                const id = a === 0 && b === 0 && c === 0 ? atom.id : `atom-${nextAtomId++}`;
+                atoms.push({ ...atom, id, position, fractional, selectiveDynamics: [...(atom.selectiveDynamics || [true, true, true])] });
             }
         }
-        return { lattice, atoms };
+        return { lattice, atoms, nextAtomId };
     }
     function summarizeConstraints(atoms) {
         const summary = { fixed: 0, partial: 0, free: 0, byElement: new Map() };

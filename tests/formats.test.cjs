@@ -11,6 +11,19 @@ class Vector3 {
 const formats = createFormats(Vector3, () => [0, 0, 0]);
 const strictFormats = createFormats(Vector3, cartesianToFractional);
 
+test('POSCAR duplicate species groups round-trip positions and constraints exactly once', () => {
+    const source = 'two hydrogen groups\n1\n10 0 0\n0 10 0\n0 0 10\nH H\n1 1\nSelective Dynamics\nCartesian\n0 0 0 F T F\n1 0 0 T F T\n';
+    const structure = strictFormats.parsePOSCAR(source);
+    const exported = strictFormats.generatePOSCAR(structure);
+    const loaded = strictFormats.parsePOSCAR(exported);
+    assert.deepEqual(loaded.elements, ['H', 'H']);
+    assert.deepEqual(loaded.counts, [1, 1]);
+    assert.equal(loaded.atoms.length, 2);
+    assert.equal(loaded.hasAdditionalSections, false);
+    assert.deepEqual(loaded.atoms.map(atom => [atom.position.x, atom.selectiveDynamics]), [[0, [false, true, false]], [1, [true, false, true]]]);
+    assert.notEqual(structure.atoms[0].speciesId, structure.atoms[1].speciesId);
+});
+
 test('format parsers run without a browser or rendering engine', () => {
     const poscar = [
         'Hydrogen cell', '1', '2 0 0', '0 2 0', '0 0 2',

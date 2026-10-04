@@ -1,6 +1,7 @@
 // File parsing independent of rendering and browser state.
 (function (root) {
     const { requireFiniteCell } = typeof module !== 'undefined' && module.exports ? require('./geometry.js') : root.CrystalGeometry;
+    const documentModel = typeof module !== 'undefined' && module.exports ? require('./document.js') : root.CrystalDocument;
     function createFormats(Vector3, cartesianToFractional) {
         // Parse POSCAR file
         function parsePOSCAR(content) {
@@ -148,7 +149,7 @@
             }
             const hasAdditionalSections = lines.slice(atomIndex).some(Boolean);
 
-            return {
+            return documentModel.initialize({
                 comment,
                 scale,
                 lattice,
@@ -160,7 +161,7 @@
                 hasSelectiveDynamics,
                 hasAdditionalSections,
                 isXDATCAR: false
-            };
+            });
         }
 
         // Parse XDATCAR file format (multi-frame trajectory)
@@ -284,7 +285,7 @@
                 });
             }
 
-            return {
+            return documentModel.initialize({
                 comment,
                 scale,
                 lattice: frames[0].lattice, // Current lattice (from current frame)
@@ -297,7 +298,7 @@
                 frames: frames,
                 currentFrameIndex: 0,
                 totalFrames: frames.length
-            };
+            });
         }
 
         // Detect if content is XDATCAR format
@@ -546,7 +547,7 @@
                 countsMap[atom.element]++;
             });
 
-            return {
+            return documentModel.initialize({
                 comment,
                 scale: 1,
                 lattice,
@@ -560,7 +561,7 @@
                 hasExplicitLattice,
                 pbc,
                 hasAdditionalProperties
-            };
+            });
         }
         // Generate POSCAR content from current structure
         function generatePOSCAR(structure) {
@@ -582,8 +583,9 @@
             // Keep the counts-only layout when the source omitted species names.
             if (structure.hasElementSymbols !== false) lines.push(structure.elements.join(' '));
             
-            // Line 7: Number of atoms per element
-            lines.push(structure.counts.join(' '));
+            // Species groups remain distinct even when their labels match.
+            const groups = documentModel.groupedAtoms(structure);
+            lines.push(groups.map(group => group.atoms.length).join(' '));
             
             // Check if any atoms actually have fixed axes (not just if original had Selective Dynamics)
             // Only output Selective Dynamics if at least one atom has a fixed axis
@@ -599,35 +601,17 @@
             // Line 9 (or 8): Coordinate type (Cartesian)
             lines.push('Cartesian');
             
-            // Atom positions - group by element, preserving selective dynamics
-            const atomsByElement = Object.create(null);
-            structure.elements.forEach(elem => {
-                atomsByElement[elem] = [];
-            });
-            
-            structure.atoms.forEach(atom => {
-                atomsByElement[atom.element].push({
-                    position: atom.position,
-                    selectiveDynamics: atom.selectiveDynamics || [true, true, true]
-                });
-            });
-            
-            // Write positions in element order
-            structure.elements.forEach(elem => {
-                atomsByElement[elem].forEach(atomData => {
-                    const pos = atomData.position;
-                    let line = `  ${pos.x.toFixed(9)}  ${pos.y.toFixed(9)}  ${pos.z.toFixed(9)}`;
-                    
-                    // Add selective dynamics flags only if there are fixed atoms
-                    if (hasAnyFixedAtoms) {
-                        const sd = atomData.selectiveDynamics;
-                        line += `  ${sd[0] ? 'T' : 'F'} ${sd[1] ? 'T' : 'F'} ${sd[2] ? 'T' : 'F'}`;
-                    }
-                    
-                    lines.push(line);
-                });
-            });
-            
+            // Each atom belongs to one group; never group solely by label.
+            for (const group of groups) for (const atom of group.atoms) {
+                const pos = atom.position;
+                let line = `  ${pos.x.toFixed(9)}  ${pos.y.toFixed(9)}  ${pos.z.toFixed(9)}`;
+                if (hasAnyFixedAtoms) {
+                    const sd = atom.selectiveDynamics || [true, true, true];
+                    line += `  ${sd[0] ? 'T' : 'F'} ${sd[1] ? 'T' : 'F'} ${sd[2] ? 'T' : 'F'}`;
+                }
+                lines.push(line);
+            }
+
             return lines.join('\n');
         }
 

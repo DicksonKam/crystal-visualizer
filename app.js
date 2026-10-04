@@ -366,7 +366,7 @@ function updateUndoButton() {
 }
 
 function snapshotStructure(structure) {
-    return JSON.parse(JSON.stringify(structure));
+    return CrystalDocument.snapshot(structure);
 }
 
 function restoreStructure(snapshot) {
@@ -529,6 +529,7 @@ function undoDeleteAtoms(op) {
     // Restore atoms in order (sorted by index ascending)
     op.deletedAtoms.sort((a, b) => a.index - b.index).forEach(item => {
         currentStructure.atoms.splice(item.index, 0, {
+            ...item.atom,
             element: item.atom.element,
             position: new THREE.Vector3(
                 item.atom.position.x,
@@ -1096,11 +1097,11 @@ function isXYZFormat(content) { return crystalFormats.isXYZFormat(content); }
 function parseXYZ(content) { return crystalFormats.parseXYZ(content); }
 
 function hasLattice(structure) {
-    return Boolean(structure && (!structure.isXYZ || structure.hasExplicitLattice));
+    return CrystalDocument.capabilities(structure).cell;
 }
 
 function getPeriodicAxes(structure) {
-    return hasLattice(structure) ? structure.pbc || [true, true, true] : [false, false, false];
+    return CrystalDocument.capabilities(structure).periodicAxes;
 }
 
 function isPeriodicStructure(structure) {
@@ -1113,7 +1114,7 @@ function getPeriodicRepeats(structure, requested = settings.periodic) {
 }
 
 function supportsSelectiveDynamics(structure) {
-    return Boolean(structure && !structure.isXYZ && !structure.isXDATCAR);
+    return CrystalDocument.capabilities(structure).constraints;
 }
 
 // Create atom sphere
@@ -2382,6 +2383,14 @@ function updateEditUI() {
                         ${elementOptions}
                     </select>
                 </div>
+                ${(currentStructure.speciesGroups || []).filter(group => group.element === selectedElement).length > 1 ? `
+                <div class="add-atom-row">
+                    <label for="addAtomSpecies">Species group</label>
+                    <select id="addAtomSpecies" class="element-select">
+                        ${currentStructure.speciesGroups.map((group, index) => group.element === selectedElement
+                            ? `<option value="${group.id}">${group.element} — group ${index + 1}</option>` : '').join('')}
+                    </select>
+                </div>` : ''}
                 <div class="add-atom-coord-type">
                     <label class="coord-type-label">
                         <input type="radio" name="coordType" value="cartesian"${isCartesian ? ' checked' : ''}>
@@ -2571,6 +2580,7 @@ function updateEditUI() {
     if (addAtomElement) {
         addAtomElement.addEventListener('change', (e) => {
             lastAddAtomElement = e.target.value;
+            updateEditUI();
         });
     }
     
@@ -3296,7 +3306,17 @@ function addAtomFromInput() {
         selectiveDynamics: [true, true, true] // New atoms are active by default
     };
     
-    currentStructure.atoms.push(newAtom);
+    let prepared;
+    try {
+        prepared = CrystalDocument.prepareNewAtom(currentStructure, newAtom, document.getElementById('addAtomSpecies')?.value || null);
+    } catch (error) {
+        errorDiv.textContent = error.message;
+        return;
+    }
+    if (prepared.newGroup) currentStructure.speciesGroups.push(prepared.newGroup);
+    currentStructure.nextAtomId = prepared.nextAtomId;
+    currentStructure.nextSpeciesId = prepared.nextSpeciesId;
+    currentStructure.atoms.push(prepared.atom);
     const newIndex = currentStructure.atoms.length - 1;
     
     // Save for undo (unified undo stack)
@@ -3362,13 +3382,7 @@ function isPositionInCell(pos, lattice, periodicAxes = [true, true, true]) {
 
 // Recalculate element counts after deletion
 function recalculateElementCounts() {
-    const elementMap = Object.create(null);
-    currentStructure.atoms.forEach(atom => {
-        elementMap[atom.element] = (elementMap[atom.element] || 0) + 1;
-    });
-    
-    currentStructure.elements = Object.keys(elementMap);
-    currentStructure.counts = currentStructure.elements.map(e => elementMap[e]);
+    CrystalDocument.recalculateCounts(currentStructure);
 }
 
 // Select an atom (mode-aware)
@@ -4956,6 +4970,7 @@ function convertToSupercell() {
     // Update structure
     currentStructure.atoms = newAtoms;
     currentStructure.lattice = prepared.lattice;
+    currentStructure.nextAtomId = prepared.nextAtomId;
     currentStructure.comment = `${currentStructure.comment} (${na}×${nb}×${nc} supercell)`;
     
     // Recalculate element counts

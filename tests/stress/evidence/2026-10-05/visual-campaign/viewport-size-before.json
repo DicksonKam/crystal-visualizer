@@ -1,0 +1,14 @@
+{
+  "seed": 701,
+  "error": "AssertionError [ERR_ASSERTION]: canvas must follow panel/window sizing\n+ actual - expected\n\n  [\n    195,\n+   652\n-   670\n  ]\n\n    at observe (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-observer.cjs:49:16)\n    at async runScenario (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:109:18)\n    at async /Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-campaign.cjs:33:40",
+  "errors": [],
+  "sourceHashes": {
+    "app.js": "a368fcb67ccb8f804f6e5d701ac1e3f9fd86888aa4ead1cecb60e568102bea2a",
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "styles.css": "b37cc107e9d157ad326a332c3bffde0525af06e84de86674d7285c1f77ca9c62",
+    "index.html": "f5da762098de6fafa60ca691eb2e96ce30542e38d3342407a3bffcf105e72698",
+    "tests/stress/edit-scenario.cjs": "997dd64791a87f51f7b1195a01b66e5d940ce06be6af3465696ddfd779f25d3d",
+    "tests/stress/visual-observer.cjs": "fb2750a69ba3d89bf144ae6fd35e854edfefc73fe76de3688026c187cec36bb2"
+  },
+  "log": []
+}

@@ -779,6 +779,10 @@ function initScene() {
     // Handle resize
     window.addEventListener('resize', onWindowResize);
     CrystalLayout.initSidebar(onWindowResize);
+    // Header/footer content and fonts can resize the view without a window
+    // event. Follow the actual viewport, not only the gestures that affect it.
+    const viewportResizeObserver = new ResizeObserver(onWindowResize);
+    viewportResizeObserver.observe(viewport);
     
     // Handle mouse events for atom selection and dragging
     // Use capture phase to ensure we handle events before OrbitControls/TrackballControls

@@ -82,10 +82,10 @@ function compareGeometry(actual, expected, label) {
     compare(actual, expected, 'geometry');
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
-async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false }) {
+async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null }) {
     page.setDefaultTimeout(5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
-    const source = sourceFor(seed);
+    const source = sourceOverride || sourceFor(seed);
     let acceptDialogs = true;
     const handleDialog = async dialog => { log.push({ dialog: dialog.message(), response: acceptDialogs ? 'accept' : 'dismiss' }); if(acceptDialogs) await dialog.accept(); else await dialog.dismiss(); };
     if (extended) {
@@ -106,6 +106,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
     const known = new Map(); const counts = {}, operations = {};
     let previous = await capture(page);
     assert.deepEqual(previous.violations, []);
+    if (observe) await observe({ stage: 'initial', step: -1, action: 'load', state: previous });
     for (let step = 0; step < steps; step++) {
         const choices = ['mode', 'jump', 'click', 'undo', 'redo', 'clear', 'reset', 'rotate', 'export'];
         if (previous.selection.mode === 'edit') choices.push('add', 'coordinates', 'shift', 'delete', 'fix', 'drag', 'cancel', 'invalid');
@@ -113,12 +114,38 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
         if (includeGhosts && previous.periodic && previous.selection.mode === 'measure') choices.push('ghost');
         if (extended) choices.push('replace', 'invalid_load', 'decline_load', 'download', 'display', 'batch_fix', 'center');
         if (extended && previous.trajectory) choices.push('frame');
+        if (visual) choices.push('panel','zoom','pan','viewport','scale','bond_length');
+        if (visual && previous.trajectory) choices.push('playback');
         const action = choices[integer(choices.length)];
         const record = { step, action, before: previous }; log.push(record);
         let performed = true;
         const click = async selector => { if (!await visible(page, selector)) { performed = false; return false; } await page.locator(selector).click(); return true; };
         try {
-            if (action === 'mode') await click(`[data-mode="${previous.selection.mode === 'edit' ? 'measure' : 'edit'}"]`);
+            if (visual && !['panel','zoom','pan','rotate','viewport','mode','undo','redo','reset','replace','invalid_load','decline_load','frame','playback','export','download','click','ghost','drag','cancel','resize'].includes(action)
+                && await page.locator('.sidebar').getAttribute('aria-hidden') === 'true') {
+                await page.locator('#sidebarDivider').focus(); await page.keyboard.press('ArrowRight'); record.panelReopened = true;
+            }
+            if (action === 'panel') {
+                const box=await page.locator('#sidebarDivider').boundingBox();
+                record.width=[0,240,420][integer(3)];
+                await page.mouse.move(box.x+box.width/2,box.y+box.height/2); await page.mouse.down();
+                await page.mouse.move(record.width,box.y+box.height/2,{steps:5});
+                if(observe) record.preview=await observe({stage:'panel-preview',step,action,state:previous});
+                await page.mouse.up();
+            } else if (action === 'viewport') {
+                record.viewport=[{width:390,height:844},{width:900,height:760},{width:1440,height:900}][integer(3)];
+                await page.setViewportSize(record.viewport);
+            } else if (action === 'scale' || action === 'bond_length') {
+                const slider=page.locator(action==='scale'?'#atomScale':'#bondThreshold');
+                record.key=integer(2)?'Home':'End'; await slider.focus(); await slider.press(record.key);
+            } else if (action === 'playback') {
+                await page.locator('#playPause').click(); await page.waitForTimeout(180);
+                await page.locator('#playPause').click();
+            } else if (action === 'zoom') {
+                const r=await page.locator('canvas[aria-label^="3D structure"]').boundingBox();
+                await page.mouse.move(r.x+r.width/2,r.y+r.height/2); record.delta=integer(2)?120:-120;
+                await page.mouse.wheel(0,record.delta);
+            } else if (action === 'mode') await click(`[data-mode="${previous.selection.mode === 'edit' ? 'measure' : 'edit'}"]`);
             else if (action === 'jump') {
                 if (!previous.atomCount) performed = false;
                 else { const number = integer(previous.atomCount)+1; record.number = number; await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
@@ -231,7 +258,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                         const direction = getLatticeVector(currentStructure.lattice, 2).normalize().multiplyScalar(sign);
                         camera.position.copy(controls.target).addScaledVector(direction, 40);
                         camera.up.copy(getLatticeVector(currentStructure.lattice, 0).normalize()); camera.zoom = .65;
-                        camera.updateProjectionMatrix(); controls.update(); camera.updateWorldMatrix(true,false); updateVacuumHandles(); requestRender();
+                        camera.updateProjectionMatrix(); controls.update(); camera.updateWorldMatrix(true,false); updateCameraClipping(); updateVacuumHandles(); requestRender();
                         const handle = vacuumDragState.handles.find(h => h.userData.extendAxis === 'a' && h.userData.handleType === 'far');
                         if (!handle) return null;
                         const p = handle.getWorldPosition(new THREE.Vector3()).project(camera), rect = renderer.domElement.getBoundingClientRect();
@@ -239,7 +266,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                         return { x:rect.left+(p.x+1)*rect.width/2, y:rect.top+(1-p.y)*rect.height/2, dx:d.x*12, dy:-d.y*12 };
                     }, sign);
                     if (!point) performed = false;
-                    else { record.pointer = point; await page.mouse.move(point.x,point.y); await page.mouse.down(); await page.mouse.move(point.x+point.dx,point.y+point.dy,{steps:3}); await page.mouse.up(); }
+                    else { record.pointer = point; await page.mouse.move(point.x,point.y); await page.mouse.down(); await page.mouse.move(point.x+point.dx,point.y+point.dy,{steps:3}); if(observe) record.preview=await observe({stage:'cell-preview',step,action,state:previous}); await page.mouse.up(); }
                 }
             } else if (['click','drag','cancel','ghost'].includes(action)) {
                 const index = integer(Math.max(1,previous.atomCount)); record.index = index;
@@ -258,9 +285,10 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                     record.pointer=point; await page.mouse.move(point.x,point.y);
                     if(action==='click' || action==='ghost') await page.mouse.click(point.x,point.y);
                     else { record.delta=[integer(41)-20,integer(41)-20]; await page.mouse.down(); await page.mouse.move(point.x+record.delta[0],point.y+record.delta[1],{steps:3});
+                        if(observe) record.preview=await observe({stage:'atom-preview',step,action,state:previous});
                         if(action==='cancel') await page.keyboard.press('Escape'); await page.mouse.up(); }
                 }
-            } else if (action === 'rotate') {
+            } else if (action === 'rotate' || action === 'pan') {
                 record.delta=[integer(31)-15,integer(31)-15];
                 const background = await page.evaluate(() => {
                     camera.updateWorldMatrix(true,false); structureGroup.updateWorldMatrix(true,true);
@@ -273,7 +301,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 });
                 if(!background) performed=false;
                 else { record.pointer=background; const {x,y}=background;
-                    await page.mouse.move(x,y); await page.mouse.down(); await page.mouse.move(x+record.delta[0],y+record.delta[1],{steps:3}); await page.mouse.up(); }
+                    await page.mouse.move(x,y); const button=action==='pan'?'right':'left'; await page.mouse.down({button}); await page.mouse.move(x+record.delta[0],y+record.delta[1],{steps:3}); await page.mouse.up({button}); }
             }
             const after = await capture(page); record.performed=performed; record.after=after;
             counts[action] = (counts[action] || 0) + Number(performed);
@@ -281,7 +309,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if (!previous.undo.some(old => old.id === op.id)) operations[op.type] = (operations[op.type] || 0) + 1;
             }
             assert.deepEqual(after.violations, [], `seed ${seed}, step ${step}, ${action}`);
-            if (['invalid','invalid_load','decline_load','cancel','export','download','display','periodic','rotate','reset','mode','click','ghost'].includes(action)) compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
+            if (['invalid','invalid_load','decline_load','cancel','export','download','display','periodic','rotate','reset','mode','click','ghost','panel','viewport','zoom','pan','scale','bond_length'].includes(action)) compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
             if (action === 'invalid_load' || action === 'decline_load') { assert.deepEqual(after.undo,previous.undo); assert.deepEqual(after.redo,previous.redo); assert.deepEqual(after.selection,previous.selection); assert.equal(after.dirty,previous.dirty); }
             if (action === 'replace') { assert.equal(after.undo.length,0); assert.equal(after.redo.length,0); assert.equal(after.dirty,false); }
             if ((action === 'undo' || action === 'redo') && performed) {
@@ -315,6 +343,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                     }
                 }
             }
+            if(observe) record.visual=await observe({stage:'after',step,action,state:after,performed});
             previous=after;
         } catch(error) { error.message=`Seed ${seed}, step ${step}, action ${action}: ${error.message}`; throw error; }
     }

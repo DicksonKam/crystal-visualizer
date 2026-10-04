@@ -53,3 +53,12 @@ test('divider keyboard controls and canceled drag restore presentation state', a
     await page.setViewportSize({width:600,height:700}); await canvasMatches(page);
 });
 
+
+test('file-load status wrapping resizes the canvas without a window or divider gesture', async ({page}) => {
+    await page.setViewportSize({width:390,height:844});
+    await upload(page, source, 'cell.poscar');
+    await canvasMatches(page);
+    // A longer status changes the footer height and therefore the viewport.
+    await page.evaluate(()=>{statusText.textContent='Loaded: a very long structure filename and status that wraps over several lines on a narrow screen';});
+    await canvasMatches(page);
+});

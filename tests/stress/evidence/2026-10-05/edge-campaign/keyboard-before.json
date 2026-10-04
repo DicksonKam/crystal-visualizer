@@ -1,0 +1,14 @@
+{
+  "sourceHash": "4a38eadea93e814bd2c3557f3fafb285286d3eaf1d0bb1c5a1dd5e8970ff9cf9",
+  "testedKeys": [
+    "ArrowRight",
+    "Home",
+    "End"
+  ],
+  "widths": [
+    900,
+    390
+  ],
+  "failed": 6,
+  "failure": "animationState.isPlaying remained true after keyboard input; inspected button still shows Pause"
+}

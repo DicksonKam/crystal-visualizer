@@ -1,0 +1,50 @@
+[
+  {
+    "file": "load-drag-preview.png",
+    "source": "/private/tmp/crystal-load-race-results/load-edit-race-visual-dela-4d1a0--right-document-and-visuals-chromium/visual/seed-902-step-0-drag-preview.png",
+    "sha256": "b98d0065799ea45d0e97d88b81e513c45c457052135d57afad266a386f706511",
+    "openedAndInspected": true
+  },
+  {
+    "file": "load-decline-settled.png",
+    "source": "/private/tmp/crystal-load-race-results/load-edit-race-visual-dela-4d1a0--right-document-and-visuals-chromium/visual/seed-902-step-1-decline-settled.png",
+    "sha256": "d29c72734a233d3bcfb529b5f440829102bfaba35fda1a1f9a0c6ed91bdc3aa2",
+    "openedAndInspected": true
+  },
+  {
+    "file": "load-superseded-settled.png",
+    "source": "/private/tmp/crystal-load-race-results/load-edit-race-visual-dela-ccf00--right-document-and-visuals-chromium/visual/seed-902-step-1-superseded-settled.png",
+    "sha256": "f8bd4a14be77c77b03147cbdf4efd9521825484180d4e77dba0db0151579be41",
+    "openedAndInspected": true
+  },
+  {
+    "file": "empty-periodic.png",
+    "source": "/private/tmp/crystal-rebuild-edge-results/rebuild-edge-visual-empty--07fbc-ll-through-history-branches-chromium/visual/seed-903-step-0-delete-all-settled.png",
+    "sha256": "502a4a80b6677e27ea2f94983de16e34b323658ee951b542c5ea1794e3957680",
+    "openedAndInspected": true
+  },
+  {
+    "file": "empty-refill.png",
+    "source": "/private/tmp/crystal-rebuild-edge-results/rebuild-edge-visual-empty--07fbc-ll-through-history-branches-chromium/visual/seed-903-step-1-refill-settled.png",
+    "sha256": "c5b6370932732cc09af519304805e55af53313a58f812ebca6a2e370cf0a89c1",
+    "openedAndInspected": true
+  },
+  {
+    "file": "mixed-dense-supercell.png",
+    "source": "/private/tmp/crystal-rebuild-edge-results/rebuild-edge-visual-mixed--c1616-ort-survive-rebuild-history-chromium/visual/seed-904-step-2-supercell-settled.png",
+    "sha256": "9813f370de9788544332c9da0a535236a50bfcb0bd8d0fe6c6e23f4b0f1c11bf",
+    "openedAndInspected": true
+  },
+  {
+    "file": "keyboard-scrub-narrow-before.png",
+    "source": "/private/tmp/crystal-trajectory-edge-results/trajectory-interaction-vis-4abd9-nd-pauses-playback-at-390px-chromium/visual/seed-905-step-1-keyboard-scrub-settled.png",
+    "sha256": "4d0629a29f40b9406568bd106754b20d7105b6798a27b031d7d75ebdc8fa8ed0",
+    "openedAndInspected": true
+  },
+  {
+    "file": "keyboard-scrub-desktop-before.png",
+    "source": "/private/tmp/crystal-trajectory-edge-results/trajectory-interaction-vis-05a27-ht-pauses-playback-at-900px-chromium/visual/seed-905-step-1-keyboard-scrub-settled.png",
+    "sha256": "67835ffdd44c4e5c908c682b86e625c0d9079f5a640465efb88d712ddeba7457",
+    "openedAndInspected": true
+  }
+]

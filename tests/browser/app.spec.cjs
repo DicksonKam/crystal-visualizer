@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect, upload } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 const { createFormats } = require('../../formats.js');
 const { cartesianToFractional } = require('../../geometry.js');
@@ -10,28 +10,6 @@ const formats = createFormats(Vector3, cartesianToFractional);
 const groups = 'two groups\n1\n10 0 0\n0 10 0\n0 0 10\nH H\n1 1\nCartesian\n0 0 0\n1 0 0\n';
 const xyz = '2\nLattice="10 0 0 0 10 0 0 0 10" Properties=species:S:1:pos:R:3 energy=-1.23 stress="1 0 0 0 1 0 0 0 1" config_type="sample"\nH 0 0 0\nH 1 0 0\n';
 
-test.beforeEach(async ({ page }) => {
-    // Use the actual pinned renderer and controls, with no dependency on CDNs.
-    await page.route('https://cdnjs.cloudflare.com/**/three.min.js', route => route.fulfill({ path: require.resolve('three/build/three.min.js'), contentType: 'text/javascript' }));
-    await page.route('https://cdn.jsdelivr.net/**/OrbitControls.js', route => route.fulfill({ path: require.resolve('three/examples/js/controls/OrbitControls.js'), contentType: 'text/javascript' }));
-    await page.route('https://cdn.jsdelivr.net/**/TrackballControls.js', route => route.fulfill({ path: require.resolve('three/examples/js/controls/TrackballControls.js'), contentType: 'text/javascript' }));
-    await page.route('https://fonts.googleapis.com/**', route => route.abort());
-    await page.route('https://fonts.gstatic.com/**', route => route.abort());
-    const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
-    page._appErrors = errors;
-    await page.goto('/');
-    await expect(page.locator('canvas[aria-label^="3D structure"]')).toBeVisible();
-});
-
-test.afterEach(async ({ page }) => {
-    expect(page._appErrors).toEqual([]);
-});
-
-async function upload(page, content, name) {
-    await page.locator('#fileInput').setInputFiles({ name, mimeType: 'text/plain', buffer: Buffer.from(content) });
-    await expect(page.locator('#statusText')).toContainText('Loaded');
-}
 async function selectAtom(page, number) {
     await page.locator('#atomJumpInput').fill(String(number));
     await page.locator('#atomJumpInput').press('Enter');

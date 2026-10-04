@@ -34,3 +34,13 @@ For a new format, define its capabilities and provenance rules, initialize docum
 Regression tests should prove observable invariants: atom counts and group ordering survive round trips; committed geometry is valid; rejected operations leave state untouched; undo restores geometry and source-metadata eligibility; and expensive accepted inputs finish or report a bounded failure. The browser suite also verifies actual upload/download behavior, DOM updates, WebGL rendering, and trajectories. GitHub Actions runs the unit and browser suites with pinned dependencies.
 
 Rendering and UI still share the browser controller. Extract additional adapters incrementally when a feature introduces a clear boundary; domain validation and document identity must remain in the standalone modules.
+
+## Interaction geometry and alignment
+
+Cell resize detectors belong to `CELL_PICKING_LAYER`, which is enabled on the raycaster and excluded from both structure cameras. They remain children of the structure to inherit its transform, but must not contribute to document bounds. Their materials disable color and depth writes as a safeguard; zero opacity alone does not make geometry harmless to rendering. Actual cell lines and hover/drag outlines remain visible scene objects with their normal depth testing.
+
+Rebuilding a structure clears detector and highlighted-edge references before disposing old meshes, then recreates detectors from the current lattice only when a visible cell is aligned in Edit mode. Detectors are suspended during camera interaction, snapping, and cell dragging. Picking updates world matrices explicitly so it works before the next render. Use the common cleanup and rebuild functions rather than maintaining independent detector lifecycles.
+
+Camera settling timers and snap animations share a revision. A new camera interaction, view reset, structure rebuild, mode change, or cell drag invalidates pending alignment work. Obsolete callbacks must never reposition a newer view or recreate handles for an old document.
+
+The cell-frame browser regressions compare actual WebGL pixels with and without detectors at the same camera position, across signed axes, alignment thresholds, zoom levels, and cubic/skewed cells. Additional cases verify picking, bounds, scene rebuilds, mode/cell visibility, real pointer resizing, Escape, undo/redo, and interrupted alignment. These tests check that interaction geometry cannot affect the image; they do not require twelve separately visible edges in views where projection overlaps them.

@@ -149,6 +149,7 @@ let lastCameraMotionAt = -Infinity;
 
 const DENSE_VIEW_ATOMS = 500;
 const ATOM_PICKING_LAYER = 1;
+const CELL_PICKING_LAYER = 2; // Raycasting only; neither structure camera renders this layer.
 
 function requestRender() {
     renderPending = true;
@@ -829,32 +830,18 @@ function initScene() {
     
     // Hide vacuum handles when camera starts moving
     controls.addEventListener('start', () => {
-        // Clear vacuum handles and highlight immediately when user starts rotating
         if (!vacuumDragState.isDragging) {
-            clearVacuumHighlight();
-            if (vacuumDragState.handles.length > 0) {
-                vacuumDragState.handles.forEach(h => {
-                    if (h.parent) h.parent.remove(h);
-                    if (h.geometry) h.geometry.dispose();
-                    if (h.material) h.material.dispose();
-                });
-                vacuumDragState.handles = [];
-            }
-            vacuumDragState.active = false;
+            cameraInteractionActive = true;
+            cancelCameraAlignment();
+            cleanupVacuumHandles();
             updateVacuumHintUI(null);
         }
     });
     
     // Check for axis snap on end of camera rotation
     controls.addEventListener('end', () => {
-        // Small delay to let damping settle a bit
-        setTimeout(() => {
-            if (!isSnapping) {
-                checkAndSnapToAxis();
-            }
-            // Update vacuum handles based on current alignment
-            updateVacuumHandles();
-        }, 100);
+        cameraInteractionActive = false;
+        scheduleCameraAlignment();
     });
     
     // Lighting
@@ -882,6 +869,7 @@ function initScene() {
     // Raycaster for atom selection
     raycaster = new THREE.Raycaster();
     raycaster.layers.enable(ATOM_PICKING_LAYER);
+    raycaster.layers.enable(CELL_PICKING_LAYER);
     mouse = new THREE.Vector2();
     
     // Initialize axes HUD
@@ -1679,7 +1667,6 @@ function cancelEditDrag(event) {
     releaseEditPointer();
     if (wasVacuumDrag) {
         renderStructure(currentStructure, true);
-        updateVacuumHandles();
         updateUI(currentStructure);
     } else {
         rebuildDisplayOptions();
@@ -4177,6 +4164,10 @@ function createUnitCell(lattice) {
 // Render the structure
 // preserveState: if true, keeps selections and camera position (for display option changes)
 function renderStructure(structure, preserveState = false) {
+    cancelCameraAlignment();
+    // Remove interaction references before disposing the old scene objects.
+    cleanupVacuumHandles();
+    unitCellEdgeLines = [];
     smallestAtomRadiusCache = null;
     configureRenderQuality(structure);
     // Save current selection info including ghost atoms
@@ -4241,7 +4232,7 @@ function renderStructure(structure, preserveState = false) {
     addBondsFromAtomMeshes();
     
     // Center the structure (includes ghost atoms now)
-    const box = new THREE.Box3().setFromObject(structureGroup);
+    const box = getStructureBounds();
     const center = box.getCenter(new THREE.Vector3());
     structureGroup.position.sub(center);
     
@@ -4263,14 +4254,28 @@ function renderStructure(structure, preserveState = false) {
         } else {
             updateEditUI();
         }
+        updateVacuumHandles();
     } else {
         fitStructureToView();
     }
     requestRender();
 }
 
+// Picking volumes must not change the apparent size or center of the document.
+function getStructureBounds() {
+    structureGroup.updateWorldMatrix(true, false);
+    const box = new THREE.Box3();
+    const childBox = new THREE.Box3();
+    structureGroup.children.forEach(child => {
+        if (!child.userData.vacuumEdge) box.union(childBox.setFromObject(child));
+    });
+    return box;
+}
+
 function fitStructureToView(preserveOrientation = false) {
-    const box = new THREE.Box3().setFromObject(structureGroup);
+    cancelCameraAlignment();
+    cleanupVacuumHandles();
+    const box = getStructureBounds();
     const size = Math.max(box.getSize(new THREE.Vector3()).length(), 1);
     const direction = preserveOrientation
         ? camera.position.clone().sub(controls.target).normalize()
@@ -4282,6 +4287,8 @@ function fitStructureToView(preserveOrientation = false) {
     orthographicCamera.updateProjectionMatrix();
     controls.target.set(0, 0, 0);
     controls.update();
+    updateVacuumHandles();
+    requestRender();
 }
 
 function escapeHTML(value) {
@@ -5001,6 +5008,8 @@ function setupModeToggle() {
             }
             
             // Update mode
+            cancelEditDrag();
+            cancelCameraAlignment();
             currentMode = mode;
             
             // Update button states
@@ -5082,6 +5091,30 @@ const snapSettings = {
 
 let isSnapping = false;
 let snapAnimation = null;
+let cameraInteractionActive = false;
+let cameraAlignmentTimer = null;
+let cameraAlignmentRevision = 0;
+
+// Invalidate both settling timers and animation callbacks when their view changes.
+function cancelCameraAlignment() {
+    cameraAlignmentRevision++;
+    if (cameraAlignmentTimer !== null) clearTimeout(cameraAlignmentTimer);
+    if (snapAnimation !== null) cancelAnimationFrame(snapAnimation);
+    cameraAlignmentTimer = null;
+    snapAnimation = null;
+    isSnapping = false;
+}
+
+function scheduleCameraAlignment() {
+    if (cameraAlignmentTimer !== null) clearTimeout(cameraAlignmentTimer);
+    const revision = cameraAlignmentRevision;
+    cameraAlignmentTimer = setTimeout(() => {
+        cameraAlignmentTimer = null;
+        if (revision !== cameraAlignmentRevision || cameraInteractionActive || vacuumDragState.isDragging) return;
+        checkAndSnapToAxis();
+        updateVacuumHandles();
+    }, 100);
+}
 
 // Get orthogonal view directions based on lattice vectors
 function getOrthogonalDirections() {
@@ -5148,7 +5181,7 @@ function getValidUpVectors(viewDir, baseUp) {
 // Check if camera is close to an orthogonal direction and snap if needed
 // Uses visual depth criterion: snap when projected depth is small relative to average cell size
 function checkAndSnapToAxis() {
-    if (!snapSettings.enabled || isSnapping || !hasLattice(currentStructure)) return;
+    if (!snapSettings.enabled || isSnapping || cameraInteractionActive || vacuumDragState.isDragging || !hasLattice(currentStructure)) return;
     if (isPerspective) return; // Only snap in orthographic mode
     
     const directions = getOrthogonalDirections();
@@ -5211,6 +5244,8 @@ function checkAndSnapToAxis() {
 function animateSnapToDirection(targetDir, targetUp, axisName) {
     if (isSnapping) return;
     isSnapping = true;
+    cleanupVacuumHandles();
+    const revision = cameraAlignmentRevision;
     
     const distance = camera.position.distanceTo(controls.target);
     
@@ -5245,6 +5280,7 @@ function animateSnapToDirection(targetDir, targetUp, axisName) {
     const startTime = performance.now();
     
     function animateFrame() {
+        if (revision !== cameraAlignmentRevision) return;
         const elapsed = performance.now() - startTime;
         const progress = Math.min(elapsed / snapSettings.animationDuration, 1);
         
@@ -5375,6 +5411,8 @@ function cleanupVacuumHandles() {
         if (h.material) h.material.dispose();
     });
     vacuumDragState.handles = [];
+    vacuumDragState.active = false;
+    vacuumDragState.currentAxis = null;
 }
 
 // Create edge detector box for vacuum drag
@@ -5386,10 +5424,14 @@ function createEdgeDetector(edgeStart, edgeVec, extendAxisName, handleType, face
     const material = new THREE.MeshBasicMaterial({
         transparent: true,
         opacity: 0,
+        // Defense in depth: even accidental rendering cannot obscure cell lines.
+        depthWrite: false,
+        colorWrite: false,
         side: THREE.DoubleSide
     });
     
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.layers.set(CELL_PICKING_LAYER);
     mesh.position.copy(edgeStart.clone().add(edgeVec.clone().multiplyScalar(0.5)));
     mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), edgeVec.clone().normalize());
     
@@ -5424,8 +5466,8 @@ function getFaceCornerPoints(lattice, extendAxisIdx, handleType) {
 function updateVacuumHandles() {
     cleanupVacuumHandles();
     
-    if (currentMode !== 'edit' || !hasLattice(currentStructure)) {
-        vacuumDragState.active = false;
+    if (currentMode !== 'edit' || !settings.showCell || isSnapping || cameraInteractionActive
+        || vacuumDragState.isDragging || !hasLattice(currentStructure)) {
         updateVacuumHintUI(null);
         return;
     }
@@ -5530,6 +5572,7 @@ function getVacuumDragCursor(extendAxis) {
 // Start vacuum drag operation
 function startVacuumDrag(handleInfo, event) {
     if (!vacuumDragState.active || currentMode !== 'edit' || !handleInfo) return false;
+    cancelCameraAlignment();
     
     const axisIdx = axisToIndex(handleInfo.extendAxis);
     const axisVec = getLatticeVector(currentStructure.lattice, axisIdx);
@@ -5677,7 +5720,6 @@ function endVacuumDrag() {
         const newLen = getLatticeVector(currentStructure.lattice, axisToIndex(axis)).length();
         renderStructure(currentStructure, true);
         updateUI(currentStructure);
-        updateVacuumHandles();
         statusText.textContent = changed ? `Cell ${axis}-axis set to ${newLen.toFixed(3)} Å` : 'Cell geometry unchanged';
         statusText.className = changed ? 'success' : '';
     }
@@ -5690,6 +5732,9 @@ function checkVacuumHandleIntersection(event, showHighlight = false) {
         return null;
     }
     
+    // New handles must be pickable before the next (possibly throttled) render.
+    camera.updateWorldMatrix(true, false);
+    vacuumDragState.handles.forEach(handle => handle.updateWorldMatrix(true, false));
     raycaster.setFromCamera(getMouseNDC(event), camera);
     const intersects = raycaster.intersectObjects(vacuumDragState.handles);
     
@@ -6212,7 +6257,9 @@ function updateModeToggleForFileType() {
 // Helper function to switch to measure mode (used when loading XDATCAR)
 function switchToMeasureMode() {
     if (currentMode === 'measure') return;
-    
+    cancelEditDrag();
+    cancelCameraAlignment();
+    cleanupVacuumHandles();
     currentMode = 'measure';
     
     updateModeButtonState();

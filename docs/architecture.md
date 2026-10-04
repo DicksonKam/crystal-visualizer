@@ -45,6 +45,8 @@ Camera policy and transitions live in `camera.js`, driven by the existing render
 
 The cell-frame browser regressions compare actual WebGL pixels with and without detectors at the same camera position, across signed axes, alignment thresholds, zoom levels, and cubic/skewed cells. Additional cases verify picking, bounds, scene rebuilds, mode/cell visibility, real pointer resizing, Escape, undo/redo, and interrupted alignment. These tests check that interaction geometry cannot affect the image; they do not require twelve separately visible edges in views where projection overlaps them.
 
+The corner axes are a second scene drawn over the main framebuffer. That pass disables automatic clearing temporarily and clears depth only within its scissor rectangle, preserving both the opaque main background and any structure behind the axes. Restore automatic clearing, scissor state, and the full viewport in a `finally` block. Matching colors alone is insufficient because clearing would still erase scene content. `tests/browser/axes-overlay.spec.cjs` reads actual framebuffers before and after this pass at device pixel ratios 1/2 and wide/narrow sizes, checking opacity, axes visibility, content preservation, and renderer-state restoration.
+
 ## Measurement geometry
 
 `CrystalMeasurements.createMeasurements()` resolves one geometry from the actual selected world positions, with no lattice dependency or nearest-image substitution. Selecting an explicit ghost measures that copy. Adding a third atom does not change the first arm. The second selected atom is the shared angle vertex.

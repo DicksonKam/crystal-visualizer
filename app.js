@@ -909,13 +909,18 @@ function animate(timestamp) {
         renderer.setScissor(10, 10, axesSize, axesSize);
         renderer.setScissorTest(true);
         
-        // Clear depth buffer so axes render on top
-        renderer.clearDepth();
-        renderer.render(axesScene, axesCamera);
-        
-        // Reset viewport to full size
-        renderer.setScissorTest(false);
-        renderer.setViewport(0, 0, viewport.clientWidth, viewport.clientHeight);
+        // Overlay the axes on the existing color buffer. A second automatic
+        // clear would erase this square and expose the CSS background beneath.
+        const autoClear = renderer.autoClear;
+        renderer.autoClear = false;
+        try {
+            renderer.clearDepth();
+            renderer.render(axesScene, axesCamera);
+        } finally {
+            renderer.autoClear = autoClear;
+            renderer.setScissorTest(false);
+            renderer.setViewport(0, 0, viewport.clientWidth, viewport.clientHeight);
+        }
     }
 }
 

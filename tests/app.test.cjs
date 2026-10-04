@@ -835,7 +835,7 @@ test('redoing regular and periodic-image selections reuses atom meshes', () => {
                 cellOffset: isGhost ? { a: 1, b: 0, c: 0 } : null
             }];
             isMeasurementSelection = true;
-            pushUndo({ type: 'select_atom', atomData: { index: selectedAtoms[0].index, isGhost } });
+            pushUndo({ type: 'select_atom', selectionBefore: { selected: [], isMeasurementSelection: false, mode: currentMode } });
         `, context);
         context.performUndo();
         assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
@@ -867,6 +867,7 @@ test('redoing cleared selections does not rebuild the structure', () => {
         clearMeasurementVisuals = () => {};
         highlightAtomMesh = () => {};
         unhighlightAtomMesh = () => {};
+        isMeasurementSelection = true;
         clearSelection();
     `, context);
     assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
@@ -914,7 +915,7 @@ test('failed supercell preparation preserves structure, preview, selections, and
             settings.periodic = { a: 20, b: currentStructure.lattice[0][0] < 1e200 ? 20 : 1, c: 1 };
             if (currentStructure.lattice[0][0] > 1e200) settings.periodic.a = 2;
             selectedAtoms = [{ index: 0, element: 'H' }];
-            pushUndo({ type: 'select_atom', atomData: { index: 0 } });
+            pushUndo({ type: 'select_atom', selectionBefore: { selected: [], isMeasurementSelection: false, mode: currentMode } });
             editHistory.redoStack = [{ operation: { type: 'clear_selection' } }];
             globalThis.beforeState = JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack: editHistory.undoStack, redoStack: editHistory.redoStack });
         `, context);
@@ -952,6 +953,7 @@ test('exact fractional coordinates update one atom and round-trip through undo',
     const oldPosition = context.structure.atoms[0].position.clone();
     vm.runInContext(`
         currentStructure = structure;
+        currentMode = 'edit';
         selectedAtoms = [{ index: 0, isGhost: false, element: 'Si' }];
         selectedAtomCoordMode = 'fractional';
         renderStructure = () => {};
@@ -1075,7 +1077,7 @@ test('canceled atom drag restores coordinates, history, and pointer control', ()
 test('undo cancels an unfinished drag before touching existing history', () => {
     const { context } = prepareDragContext({ isXYZ: true, atoms: [{ element: 'H', position: new Vector3(2, 0, 0) }] });
     vm.runInContext(`
-        pushUndo({ type: 'select_atom', atomData: { index: 0 } });
+        pushUndo({ type: 'select_atom', selectionBefore: { selected: [], isMeasurementSelection: false, mode: currentMode } });
         draggedAtom = { index: 0, mesh: { position: new THREE.Vector3(2, 0, 0) }, startPosition: new THREE.Vector3(1, 0, 0) };
         isDragging = true;
     `, context);

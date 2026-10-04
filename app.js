@@ -324,9 +324,8 @@ const editHistory = CrystalHistory.createHistory(50);
 // - 'fix_atoms': { changes: [{ index, oldSD, newSD }] }
 // - 'make_supercell': { oldStructure } (deep copy)
 // - 'vacuum_drag': { oldLattice, oldAtomPositions }
-// - 'select_atom': { atomData } (for deselecting)
-// - 'deselect_atom': { atomData, selectionIndex } (for reselecting)
-// - 'clear_selection': { selectedAtoms: [...], isMeasurementSelection }
+// - 'select_atom', 'deselect_atom', 'clear_selection': { selectionBefore }
+//   selectionBefore: ordered identities, measurement purpose, and interaction mode
 
 function pushUndo(operation) {
     editHistory.record(operation);
@@ -369,10 +368,9 @@ function restoreStructure(snapshot) {
     return structure;
 }
 
-function captureRedoState(operation) {
+// Selection history stores ordered identities and purpose, never cached positions.
+function captureSelectionState() {
     return {
-        structure: isSelectionOperation(operation) ? null : snapshotStructure(currentStructure),
-        periodic: { ...settings.periodic },
         selected: selectedAtoms.map(atom => ({
             index: atom.index,
             originalIndex: atom.originalIndex,
@@ -380,12 +378,40 @@ function captureRedoState(operation) {
             cellOffset: atom.cellOffset ? { ...atom.cellOffset } : null,
             element: atom.element
         })),
-        isMeasurementSelection
+        isMeasurementSelection,
+        mode: currentMode
     };
 }
 
+function captureRedoState(operation) {
+    return {
+        structure: isSelectionOperation(operation) ? null : snapshotStructure(currentStructure),
+        periodic: { ...settings.periodic },
+        ...captureSelectionState()
+    };
+}
+
+// Restore edit selections in their editing context rather than interpreting an
+// arbitrary multi-selection as a measurement or silently discarding its atoms.
+function restoreSelectionContext(state) {
+    const mode = state.mode;
+    setInteractionMode(mode, true);
+    isMeasurementSelection = Boolean(state.selected.length && (state.isMeasurementSelection || mode === 'measure'));
+}
+
+function applySelectionState(state) {
+    selectedAtoms.forEach(atom => unhighlightAtomMesh(atom.mesh));
+    restoreSelectionContext(state);
+    selectedAtoms = restoreSelectedAtoms(state.selected);
+    if (!selectedAtoms.length) isMeasurementSelection = false;
+    rebuildSelectionVisuals();
+    updateUI_forCurrentMode();
+    requestRender();
+}
+
 function restoreSelectedAtoms(savedSelections) {
-    return savedSelections.map(saved => {
+    const seen = new Set();
+    const restored = savedSelections.map(saved => {
         const mesh = saved.isGhost
             ? atomMeshes.find(candidate => saved.cellOffset && candidate.userData.isGhost
                 && candidate.userData.originalIndex === saved.originalIndex
@@ -394,7 +420,8 @@ function restoreSelectedAtoms(savedSelections) {
                 && candidate.userData.cellOffset.b === saved.cellOffset.b
                 && candidate.userData.cellOffset.c === saved.cellOffset.c)
             : atomMeshes[saved.index];
-        if (!mesh || (!saved.isGhost && mesh.userData.isGhost)) return null;
+        if (!mesh || (!saved.isGhost && mesh.userData.isGhost) || seen.has(mesh)) return null;
+        seen.add(mesh);
         const position = new THREE.Vector3();
         mesh.getWorldPosition(position);
         return {
@@ -407,6 +434,7 @@ function restoreSelectedAtoms(savedSelections) {
             cellOffset: saved.cellOffset
         };
     }).filter(Boolean);
+    return currentMode === 'measure' || isMeasurementSelection ? restored.slice(0, 3) : restored;
 }
 
 function performRedo() {
@@ -421,12 +449,7 @@ function performRedo() {
     }
     const { operation, state } = editHistory.redoStack.pop();
     if (isSelectionOperation(operation)) {
-        selectedAtoms.forEach(atom => unhighlightAtomMesh(atom.mesh));
-        selectedAtoms = restoreSelectedAtoms(state.selected);
-        isMeasurementSelection = state.isMeasurementSelection;
-        rebuildSelectionVisuals();
-        updateUI_forCurrentMode();
-        requestRender();
+        applySelectionState(state);
     } else {
         currentStructure = restoreStructure(state.structure);
         settings.periodic = { ...state.periodic };
@@ -435,8 +458,8 @@ function performRedo() {
             document.getElementById(`periodic${upper}`).value = settings.periodic[axis];
             document.getElementById(`periodic${upper}Display`).textContent = settings.periodic[axis];
         });
+        restoreSelectionContext(state);
         selectedAtoms = state.selected;
-        isMeasurementSelection = state.isMeasurementSelection;
         renderStructure(currentStructure, true);
         updateUI(currentStructure);
         updateUI_forCurrentMode();
@@ -486,13 +509,19 @@ function performUndo() {
             undoVacuumDrag(op);
             break;
         case 'select_atom':
-            undoSelectAtom(op);
+            applySelectionState(op.selectionBefore);
+            statusText.textContent = 'Undid atom selection';
+            statusText.className = '';
             break;
         case 'deselect_atom':
-            undoDeselectAtom(op);
+            applySelectionState(op.selectionBefore);
+            statusText.textContent = 'Restored atom selection';
+            statusText.className = '';
             break;
         case 'clear_selection':
-            undoClearSelection(op);
+            applySelectionState(op.selectionBefore);
+            statusText.textContent = 'Restored atom selection';
+            statusText.className = '';
             break;
         default:
             console.warn('Unknown undo operation type:', op.type);
@@ -619,111 +648,6 @@ function undoVacuumDrag(op) {
     updateUI_forCurrentMode();
     statusText.textContent = 'Undid cell resize';
     statusText.className = 'success';
-}
-
-function undoSelectAtom(op) {
-    // Find and deselect the atom that was selected
-    const idx = selectedAtoms.findIndex(a => 
-        a.index === op.atomData.index && a.isGhost === op.atomData.isGhost
-    );
-    if (idx !== -1) {
-        const atom = selectedAtoms[idx];
-        if (atom && atom.mesh) {
-            unhighlightAtomMesh(atom.mesh);
-        }
-        selectedAtoms.splice(idx, 1);
-        if (selectedAtoms.length === 0) {
-            isMeasurementSelection = false;
-        }
-        rebuildSelectionVisuals();
-        updateUI_forCurrentMode();
-    }
-    statusText.textContent = 'Undid atom selection';
-    statusText.className = '';
-}
-
-function undoDeselectAtom(op) {
-    // Re-select the atom that was deselected
-    // We need to find the mesh again
-    const atomData = op.atomData;
-    let mesh = null;
-    
-    if (atomData.isGhost) {
-        // Find ghost atom mesh
-        structureGroup.children.forEach(child => {
-            if (child.userData.isGhost && 
-                child.userData.originalIndex === atomData.originalIndex &&
-                child.userData.cellOffset &&
-                child.userData.cellOffset.a === atomData.cellOffset.a &&
-                child.userData.cellOffset.b === atomData.cellOffset.b &&
-                child.userData.cellOffset.c === atomData.cellOffset.c) {
-                mesh = child;
-            }
-        });
-    } else {
-        mesh = atomMeshes[atomData.index];
-    }
-    
-    if (mesh) {
-        // Insert at the original position in the selection
-        const insertIdx = Math.min(op.selectionIndex, selectedAtoms.length);
-        selectedAtoms.splice(insertIdx, 0, {
-            mesh: mesh,
-            index: atomData.index,
-            originalIndex: atomData.originalIndex,
-            element: atomData.element,
-            position: new THREE.Vector3(atomData.position.x, atomData.position.y, atomData.position.z),
-            isGhost: atomData.isGhost,
-            cellOffset: atomData.cellOffset
-        });
-        highlightAtomMesh(mesh);
-        if (currentMode === 'measure') {
-            isMeasurementSelection = true;
-        }
-        rebuildSelectionVisuals();
-        updateUI_forCurrentMode();
-    }
-    statusText.textContent = 'Undid atom deselection';
-    statusText.className = '';
-}
-
-function undoClearSelection(op) {
-    // Restore the cleared selection
-    op.savedSelection.forEach(atomData => {
-        let mesh = null;
-        if (atomData.isGhost) {
-            structureGroup.children.forEach(child => {
-                if (child.userData.isGhost && 
-                    child.userData.originalIndex === atomData.originalIndex &&
-                    child.userData.cellOffset &&
-                    child.userData.cellOffset.a === atomData.cellOffset.a &&
-                    child.userData.cellOffset.b === atomData.cellOffset.b &&
-                    child.userData.cellOffset.c === atomData.cellOffset.c) {
-                    mesh = child;
-                }
-            });
-        } else {
-            mesh = atomMeshes[atomData.index];
-        }
-        
-        if (mesh) {
-            selectedAtoms.push({
-                mesh: mesh,
-                index: atomData.index,
-                originalIndex: atomData.originalIndex,
-                element: atomData.element,
-                position: new THREE.Vector3(atomData.position.x, atomData.position.y, atomData.position.z),
-                isGhost: atomData.isGhost,
-                cellOffset: atomData.cellOffset
-            });
-            highlightAtomMesh(mesh);
-        }
-    });
-    isMeasurementSelection = op.wasMeasurementSelection;
-    rebuildSelectionVisuals();
-    updateUI_forCurrentMode();
-    statusText.textContent = `Restored ${op.savedSelection.length} selected atom(s)`;
-    statusText.className = '';
 }
 
 // Setup keyboard listeners for undo and redo.
@@ -3275,6 +3199,9 @@ function recalculateElementCounts() {
 // Select an atom (mode-aware)
 // For ghost atoms, atomIndex is a string like "ghost_0_100"
 function selectAtom(mesh, atomIndex, skipUndo = false) {
+    if (selectedAtoms.some(atom => atom.mesh === mesh)) return;
+    if ((currentMode === 'measure' || isMeasurementSelection) && selectedAtoms.length >= 3) return;
+    const selectionBefore = captureSelectionState();
     const isGhost = mesh.userData.isGhost;
     let element, originalIndex, cellOffset;
     
@@ -3308,14 +3235,7 @@ function selectAtom(mesh, atomIndex, skipUndo = false) {
     if (!skipUndo) {
         pushUndo({
             type: 'select_atom',
-            atomData: {
-                index: atomIndex,
-                originalIndex: originalIndex,
-                element: element,
-                position: { x: worldPos.x, y: worldPos.y, z: worldPos.z },
-                isGhost: isGhost,
-                cellOffset: cellOffset ? { a: cellOffset.a, b: cellOffset.b, c: cellOffset.c } : null
-            }
+            selectionBefore
         });
     }
     
@@ -3388,6 +3308,8 @@ function updateSelectionVisualPositions() {
 
 // Deselect an atom by its index in selectedAtoms array
 function deselectAtom(selectedIndex, skipUndo = false) {
+    if (!selectedAtoms[selectedIndex]) return;
+    const selectionBefore = captureSelectionState();
     // Remove highlight from deselected atom
     const atom = selectedAtoms[selectedIndex];
     if (atom && atom.mesh) {
@@ -3398,19 +3320,12 @@ function deselectAtom(selectedIndex, skipUndo = false) {
     if (!skipUndo && atom) {
         pushUndo({
             type: 'deselect_atom',
-            atomData: {
-                index: atom.index,
-                originalIndex: atom.originalIndex,
-                element: atom.element,
-                position: { x: atom.position.x, y: atom.position.y, z: atom.position.z },
-                isGhost: atom.isGhost,
-                cellOffset: atom.cellOffset ? { a: atom.cellOffset.a, b: atom.cellOffset.b, c: atom.cellOffset.c } : null
-            },
-            selectionIndex: selectedIndex
+            selectionBefore
         });
     }
     
     selectedAtoms.splice(selectedIndex, 1);
+    if (!selectedAtoms.length) isMeasurementSelection = false;
     rebuildSelectionVisuals();
 }
 
@@ -3418,20 +3333,7 @@ function deselectAtom(selectedIndex, skipUndo = false) {
 function clearSelection(skipUndo = false) {
     // Only save to undo if there's something to clear
     if (!skipUndo && selectedAtoms.length > 0) {
-        // Save for undo (unified undo stack)
-        const savedSelection = selectedAtoms.map(atom => ({
-            index: atom.index,
-            originalIndex: atom.originalIndex,
-            element: atom.element,
-            position: { x: atom.position.x, y: atom.position.y, z: atom.position.z },
-            isGhost: atom.isGhost,
-            cellOffset: atom.cellOffset ? { a: atom.cellOffset.a, b: atom.cellOffset.b, c: atom.cellOffset.c } : null
-        }));
-        pushUndo({
-            type: 'clear_selection',
-            savedSelection: savedSelection,
-            wasMeasurementSelection: isMeasurementSelection
-        });
+        pushUndo({ type: 'clear_selection', selectionBefore: captureSelectionState() });
     }
     
     // Remove highlight from all selected atoms
@@ -4826,80 +4728,75 @@ function convertToSupercell() {
 
 // Setup mode toggle
 function setupModeToggle() {
-    const modeToggle = document.getElementById('modeToggle');
-    const modeBtns = modeToggle.querySelectorAll('.mode-btn');
-    const panelTitle = document.getElementById('actionPanelTitle');
-    
-    modeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const mode = btn.dataset.mode;
-            if (mode === currentMode) return;
-            
-            // Block edit mode for XDATCAR files
-            if (mode === 'edit' && currentStructure && !CrystalDocument.capabilities(currentStructure).editable) {
-                statusText.textContent = 'Edit mode is disabled for trajectory files (XDATCAR)';
-                statusText.className = '';
-                return;
-            }
-            
-            // Update mode
-            cancelEditDrag();
-            cancelCameraAlignment();
-            currentMode = mode;
-            
-            // Update button states
-            updateModeButtonState();
-            
-            // Update panel title
-            if (panelTitle) {
-                panelTitle.textContent = mode === 'measure' ? '📐 Measurements' : '✏️ Edit Actions';
-            }
-            
-            // Preserve measurement selection when switching modes
-            // If switching FROM measure mode with a selection, mark it as preserved measurement
-            if (mode === 'edit' && selectedAtoms.length > 0) {
-                isMeasurementSelection = true;
-                // Keep measurement visuals visible - don't clear
-            } else if (mode === 'measure') {
-                // Switching to measure mode - keep selection if it's a preserved measurement
-                if (!isMeasurementSelection) {
-                    // If we had an edit selection (not measurement), clear it
-                    clearSelection();
-                }
-                // Rebuild visuals for measure mode
-                rebuildSelectionVisuals();
-            }
-            
-            // Update UI for the new mode
-            updateUI_forCurrentMode();
-            
-            // Update body class for CSS styling
-            if (mode === 'measure') {
-                document.body.classList.remove('edit-mode-active');
-            } else {
-                document.body.classList.add('edit-mode-active');
-            }
-            
-            // Show/hide Edit Mode controls (Make Supercell, etc.)
-            const editModeControls = document.getElementById('editModeControls');
-            if (editModeControls) {
-                editModeControls.style.display = (mode === 'edit') ? 'block' : 'none';
-            }
-            
-            // Periodicity controls are now enabled in both modes
-            // Ghost atoms are visible but not editable in Edit mode
-            
-            // Update status
-            if (statusText.textContent.indexOf('supercell') === -1) {
-                statusText.textContent = mode === 'measure' 
-                    ? 'Measure mode: Click atoms to measure distances/angles' 
-                    : 'Edit mode: Click to select, drag to move atoms';
-            }
-            
-            // Update vacuum handles (only visible in edit mode when aligned to axis)
-            updateVacuumHandles();
-        });
+    document.getElementById('modeToggle').querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => setInteractionMode(btn.dataset.mode));
     });
+}
+
+function setInteractionMode(mode, restoringSelection = false) {
+    const panelTitle = document.getElementById('actionPanelTitle');
+    if (mode === currentMode) return;
+
+    // Block edit mode for XDATCAR files
+    if (mode === 'edit' && currentStructure && !CrystalDocument.capabilities(currentStructure).editable) {
+        statusText.textContent = 'Edit mode is disabled for trajectory files (XDATCAR)';
+        statusText.className = '';
+        return;
+    }
+
+    // Update mode
+    cancelEditDrag();
+    cancelCameraAlignment();
+    // Record a mode-induced clear in the context that owns the selection.
+    if (!restoringSelection && mode === 'measure' && !isMeasurementSelection) clearSelection();
+    currentMode = mode;
+
+    // Update button states
+    updateModeButtonState();
+
+    // Update panel title
+    if (panelTitle) {
+        panelTitle.textContent = mode === 'measure' ? '📐 Measurements' : '✏️ Edit Actions';
+    }
+
+    // Preserve measurement selection when switching modes
+    // If switching FROM measure mode with a selection, mark it as preserved measurement
+    if (!restoringSelection && mode === 'edit' && selectedAtoms.length > 0) {
+        isMeasurementSelection = true;
+        // Keep measurement visuals visible - don't clear
+    } else if (!restoringSelection && mode === 'measure') {
+        // Rebuild visuals for the preserved measurement.
+        rebuildSelectionVisuals();
+    }
+
+    // Update UI for the new mode
+    updateUI_forCurrentMode();
+
+    // Update body class for CSS styling
+    if (mode === 'measure') {
+        document.body.classList.remove('edit-mode-active');
+    } else {
+        document.body.classList.add('edit-mode-active');
+    }
+
+    // Show/hide Edit Mode controls (Make Supercell, etc.)
+    const editModeControls = document.getElementById('editModeControls');
+    if (editModeControls) {
+        editModeControls.style.display = (mode === 'edit') ? 'block' : 'none';
+    }
+
+    // Periodicity controls are now enabled in both modes
+    // Ghost atoms are visible but not editable in Edit mode
+
+    // Update status
+    if (statusText.textContent.indexOf('supercell') === -1) {
+        statusText.textContent = mode === 'measure'
+            ? 'Measure mode: Click atoms to measure distances/angles'
+            : 'Edit mode: Click to select, drag to move atoms';
+    }
+
+    // Update vacuum handles (only visible in edit mode when aligned to axis)
+    updateVacuumHandles();
 }
 
 function updateModeButtonState() {

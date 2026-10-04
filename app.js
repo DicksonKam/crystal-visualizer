@@ -2221,7 +2221,7 @@ function updateEditUI() {
     html += '<div class="edit-instructions">Click to select • Drag to move</div>';
     
     if (selectedAtoms.length === 0) {
-        html += '<p class="placeholder-text">No edits yet</p>';
+        html += `<p class="placeholder-text">${currentStructure ? 'No atoms selected' : 'Load a structure to start editing'}</p>`;
     } else {
         if (selectedAtoms.length > 0) {
             // Check if this is a preserved measurement from Measure mode

@@ -1418,6 +1418,15 @@ function getMouseNDC(event) {
     );
 }
 
+// Atoms take priority over invisible cell-resize hitboxes, regardless of the
+// hitbox's depth. Refresh transforms so picking agrees with the current view.
+function getAtomIntersection(event) {
+    camera.updateWorldMatrix(true, false);
+    structureGroup.updateWorldMatrix(true, true);
+    raycaster.setFromCamera(getMouseNDC(event), camera);
+    return raycaster.intersectObjects(atomMeshes, false)[0] || null;
+}
+
 // Mouse down handler
 function onMouseDown(event) {
     if (!currentStructure) return;
@@ -1431,38 +1440,30 @@ function onMouseDown(event) {
     mouse.copy(mouseNDC);
     dragStartMouse.copy(mouseNDC);
     
-    // Check for vacuum handle drag first (edit mode only)
-    // ONLY start vacuum drag if the edge is already highlighted (user is hovering over it)
-    // This prevents accidental vacuum drag when user intends to rotate the camera
-    if (currentMode === 'edit' && vacuumDragState.active && vacuumDragState.hoveredEdge) {
-        const handleInfo = {
-            extendAxis: vacuumDragState.hoveredEdge.userData.extendAxis,
-            handleType: vacuumDragState.hoveredEdge.userData.handleType
-        };
-        
-        // IMPORTANT: Disable controls IMMEDIATELY to prevent rotation
-        controls.enabled = false;
-        event.preventDefault();
-        event.stopPropagation();
-        
-        if (startVacuumDrag(handleInfo, event)) {
-            captureEditPointer(event);
-            return; // Vacuum drag started, don't process atom selection
-        } else {
-            // If drag didn't start, re-enable controls
+    const atomHit = getAtomIntersection(event);
+    // Keep the existing highlighted-handle requirement, but resolve the target
+    // again at pointer-down rather than trusting a cached hover mesh.
+    if (!atomHit && currentMode === 'edit' && vacuumDragState.active && vacuumDragState.hoveredEdge) {
+        const handleInfo = checkVacuumHandleIntersection(event);
+        if (handleInfo) {
+            controls.enabled = false;
+            event.preventDefault();
+            event.stopPropagation();
+            if (startVacuumDrag(handleInfo, event)) {
+                captureEditPointer(event);
+                return;
+            }
             controls.enabled = true;
         }
     }
-    
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(atomMeshes);
-    
+    if (atomHit && currentMode === 'edit') clearVacuumHighlight();
+
     // Reset drag state
     isDragging = false;
     draggedAtom = null;
     
-    if (intersects.length > 0 && currentMode === 'edit') {
-        const clickedMesh = intersects[0].object;
+    if (atomHit && currentMode === 'edit') {
+        const clickedMesh = atomHit.object;
         const atomIndex = clickedMesh.userData.atomIndex;
         const isGhost = clickedMesh.userData.isGhost;
         
@@ -5388,6 +5389,13 @@ function checkVacuumHandleIntersection(event, showHighlight = false) {
         return null;
     }
     
+    // A rendered atom (including a noneditable ghost) owns its visible pixels.
+    // A larger invisible resize detector must never intercept them.
+    if (getAtomIntersection(event)) {
+        if (showHighlight) clearVacuumHighlight();
+        return null;
+    }
+
     // New handles must be pickable before the next (possibly throttled) render.
     camera.updateWorldMatrix(true, false);
     vacuumDragState.handles.forEach(handle => handle.updateWorldMatrix(true, false));

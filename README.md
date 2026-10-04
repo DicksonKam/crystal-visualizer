@@ -19,6 +19,8 @@ The built-in examples use `fetch`, so opening `index.html` as a raw file will no
 - XYZ files with a `Lattice="..."` field are treated as periodic. Extended XYZ `Properties` may place species and positions in a different column order; other properties are ignored. They export as XYZ with the current lattice and a matching species/position column schema.
 - XDATCAR files display a timeline and export as XDATCAR. Editing is disabled. The header lattice is used for every frame, and export retains twelve decimal places for lattice vectors and fractional coordinates. Playback updates existing atom meshes and labels when the lattice is unchanged.
 
+Malformed files with non-finite scaled coordinates, invalid cell volumes, or impossible atom counts are rejected before rendering.
+
 The Bond Length slider sets an absolute maximum. “Use Atomic Radii” is on by default and also limits bonds using covalent radii; turn it off to use distance alone.
 For periodic structures, bonds crossing a cell face are shown as faint segments ending at the face. Measurements default to the nearest periodic image, including tilted cells. Use the measurement mode button to measure the displayed copies instead; selecting a ghost copy always measures that explicit image.
 Changing the number of periodic images refits the preview while keeping its viewing direction.

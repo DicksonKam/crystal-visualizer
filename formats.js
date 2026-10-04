@@ -1,6 +1,23 @@
 // File parsing independent of rendering and browser state.
 (function (root) {
     function createFormats(Vector3, cartesianToFractional) {
+        function cellVolume(lattice) {
+            const [a, b, c] = lattice;
+            return a[0] * (b[1] * c[2] - b[2] * c[1])
+                - a[1] * (b[0] * c[2] - b[2] * c[0])
+                + a[2] * (b[0] * c[1] - b[1] * c[0]);
+        }
+
+        function requireFiniteCell(lattice, format) {
+            if (lattice.some(vector => vector.some(value => !Number.isFinite(value)))) {
+                throw new Error(`Invalid ${format}: lattice has non-finite coordinates`);
+            }
+            const volume = cellVolume(lattice);
+            if (!Number.isFinite(volume)) throw new Error(`Invalid ${format}: lattice volume is not finite`);
+            if (Math.abs(volume) < 1e-10) throw new Error(`Invalid ${format}: lattice has zero volume`);
+            return volume;
+        }
+
         // Parse POSCAR file
         function parsePOSCAR(content) {
             const lines = content.trim().split('\n').map(line => line.trim());
@@ -23,12 +40,10 @@
                 lattice.push(parts.slice(0, 3));
             }
             // A negative scale specifies the desired cell volume in Å³.
-            const determinant = lattice[0][0] * (lattice[1][1] * lattice[2][2] - lattice[1][2] * lattice[2][1])
-                - lattice[0][1] * (lattice[1][0] * lattice[2][2] - lattice[1][2] * lattice[2][0])
-                + lattice[0][2] * (lattice[1][0] * lattice[2][1] - lattice[1][1] * lattice[2][0]);
-            if (Math.abs(determinant) < 1e-10) throw new Error('Invalid POSCAR: lattice has zero volume');
+            const determinant = requireFiniteCell(lattice, 'POSCAR');
             const lengthScale = scale > 0 ? scale : Math.cbrt(-scale / Math.abs(determinant));
             lattice.forEach(vector => vector.forEach((value, index) => { vector[index] = value * lengthScale; }));
+            requireFiniteCell(lattice, 'POSCAR');
 
             // Line 5: Element symbols (VASP 5+ format)
             // Line 6: Number of atoms per element
@@ -50,7 +65,7 @@
                 elements = counts.map((_, i) => `Atom${i + 1}`);
                 elementLine = 6;
             }
-            if (!counts.length || counts.length !== elements.length || counts.some(n => !Number.isInteger(n) || n < 0) || counts.every(n => n === 0)) {
+            if (!counts.length || counts.length !== elements.length || counts.some(n => !Number.isSafeInteger(n) || n < 0) || counts.every(n => n === 0)) {
                 throw new Error('Invalid POSCAR: element counts are missing or invalid');
             }
             if (elements.some(element => !/^[A-Za-z][A-Za-z0-9]*$/.test(element))) {
@@ -69,6 +84,9 @@
             const coordType = (lines[elementLine] || '').toLowerCase();
             if (!/^[dcfk]/.test(coordType)) throw new Error('Invalid POSCAR: expected Direct or Cartesian coordinates');
             const isDirect = coordType.startsWith('d') || coordType.startsWith('f');
+            if (counts.reduce((sum, count) => sum + count, 0) > lines.length - elementLine - 1) {
+                throw new Error('Invalid POSCAR: fewer atom lines than the element counts require');
+            }
 
             // Parse atomic positions
             const atoms = [];
@@ -121,6 +139,9 @@
                         y *= lengthScale;
                         z *= lengthScale;
                     }
+                    if (![x, y, z].every(Number.isFinite)) {
+                        throw new Error(`Invalid POSCAR: scaled coordinates on line ${atomIndex + 1} are not finite`);
+                    }
 
                     atoms.push({
                         element: elements[i],
@@ -167,9 +188,7 @@
                 }
                 baseLattice.push(parts.slice(0, 3).map(v => v * scale));
             }
-            if (!cartesianToFractional(new Vector3(), baseLattice)) {
-                throw new Error('Invalid XDATCAR: lattice has zero volume');
-            }
+            requireFiniteCell(baseLattice, 'XDATCAR');
 
             // Line 5: Element symbols
             const elements = lines[5].split(/\s+/).filter(p => p);
@@ -179,10 +198,13 @@
 
             // Line 6: Number of atoms per element
             const counts = lines[6].split(/\s+/).filter(p => p).map(Number);
-            if (counts.length !== elements.length || counts.some(n => !Number.isInteger(n) || n < 0) || counts.every(n => n === 0)) {
+            if (counts.length !== elements.length || counts.some(n => !Number.isSafeInteger(n) || n < 0) || counts.every(n => n === 0)) {
                 throw new Error('Invalid XDATCAR: element counts are missing or invalid');
             }
             const totalAtoms = counts.reduce((a, b) => a + b, 0);
+            if (!Number.isSafeInteger(totalAtoms) || totalAtoms > lines.length - 8) {
+                throw new Error('Invalid XDATCAR: fewer atom lines than the element counts require');
+            }
 
             // Build element array for each atom
             const atomElements = [];
@@ -244,6 +266,9 @@
                     const cartX = fx * frameLattice[0][0] + fy * frameLattice[1][0] + fz * frameLattice[2][0];
                     const cartY = fx * frameLattice[0][1] + fy * frameLattice[1][1] + fz * frameLattice[2][1];
                     const cartZ = fx * frameLattice[0][2] + fy * frameLattice[1][2] + fz * frameLattice[2][2];
+                    if (![cartX, cartY, cartZ].every(Number.isFinite)) {
+                        throw new Error(`Invalid XDATCAR: Cartesian coordinates on line ${lineIndex + 1} are not finite`);
+                    }
 
                     positions.push(new Vector3(cartX, cartY, cartZ));
                     lineIndex++;
@@ -442,13 +467,15 @@
             if (!lattice) {
                 const box = latticeFromCartesianAtoms(atoms.map(a => a.position));
                 lattice = box.lattice;
-            } else if (!cartesianToFractional(new Vector3(0, 0, 0), lattice)) {
-                throw new Error('Invalid extended XYZ: lattice has zero volume');
             }
+            requireFiniteCell(lattice, hasExplicitLattice ? 'extended XYZ' : 'XYZ');
 
             if (hasExplicitLattice) {
                 atoms.forEach(atom => {
                     atom.fractional = cartesianToFractional(atom.position, lattice);
+                    if (!atom.fractional || atom.fractional.some(value => !Number.isFinite(value))) {
+                        throw new Error('Invalid extended XYZ: coordinates cannot be represented in the lattice');
+                    }
                 });
             }
 

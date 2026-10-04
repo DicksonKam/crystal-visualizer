@@ -715,6 +715,71 @@ test('unchanged geometry-only XYZ export preserves precision and a blank comment
     assert.equal(downloads[0], source);
 });
 
+test('deleting every atom remains reversible and exports only after atoms are restored or added', () => {
+    const sources = [
+        { text: example('examples/xyz/H2O.xyz'), name: 'water.xyz', parse: 'parseXYZ' },
+        { text: ['mixed cell', '1', '2 0 0', '0 2 0', '0 0 2', 'H O', '1 1', 'Selective Dynamics', 'Cartesian', '0 0 0 F T F', '1 1 1 T T T'].join('\n'), name: 'mixed.poscar', parse: 'parsePOSCAR' }
+    ];
+    for (const source of sources) {
+        const context = loadingApp();
+        context.loadStructureFromText(source.text, source.name);
+        const original = vm.runInContext('JSON.stringify(currentStructure.atoms)', context);
+        vm.runInContext(`
+            updateEditUI = () => {};
+            clearSelectionWithoutUndo = () => { selectedAtoms = []; };
+            selectedAtoms = currentStructure.atoms.map((_, index) => ({ index }));
+        `, context);
+        const downloads = [];
+        context.Blob = class { constructor(parts) { this.content = parts.join(''); } };
+        context.URL = { createObjectURL(blob) { downloads.push(blob.content); return 'blob:test'; }, revokeObjectURL() {} };
+        context.setTimeout = () => {};
+        context.document.body = { appendChild() {} };
+        context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
+        context.deleteSelectedAtoms();
+        assert.equal(vm.runInContext('currentStructure.atoms.length', context), 0);
+        assert.equal(vm.runInContext('undoStack.length', context), 1);
+        context.exportStructure();
+        assert.equal(downloads.length, 0);
+        assert.equal(context.hasUnsavedEdits(), true);
+        assert.match(context.document.getElementById('statusText').textContent, /empty structure.*Add an atom or Undo/);
+        context.performUndo();
+        assert.equal(vm.runInContext('JSON.stringify(currentStructure.atoms)', context), original);
+        context.exportStructure();
+        assert.equal(context[source.parse](downloads[0]).atoms.length, JSON.parse(original).length);
+        context.performRedo();
+        context.exportStructure();
+        assert.equal(downloads.length, 1);
+        assert.equal(context.hasUnsavedEdits(), true);
+        context.document.querySelector = () => ({ value: 'cartesian' });
+        context.document.getElementById('addAtomElement').value = 'H';
+        for (const axis of ['X', 'Y', 'Z']) context.document.getElementById(`addAtom${axis}`).value = '0';
+        context.addAtomFromInput();
+        context.exportStructure();
+        const restored = context[source.parse](downloads[1]);
+        assert.equal(restored.atoms.length, 1);
+        assert.equal(restored.atoms[0].element, 'H');
+        assert.equal(context.hasUnsavedEdits(), false);
+    }
+});
+
+test('empty structures show recovery guidance and disable atom-number navigation', () => {
+    const context = app();
+    context.structure = context.parseXYZ('1\nempty check\nH 0 0 0\n');
+    context.structure.atoms = [];
+    context.structure.elements = [];
+    context.structure.counts = [];
+    context.updateUI(context.structure);
+    const atomHTML = context.document.getElementById('atomList').innerHTML;
+    assert.match(atomHTML, /id="atomJumpInput"[^>]*placeholder="No atoms"[^>]*disabled/);
+    assert.match(atomHTML, /<button[^>]*disabled>Select<\/button>/);
+    const getElement = context.document.getElementById;
+    context.document.getElementById = id => { const element = getElement(id); element.addEventListener = () => {}; return element; };
+    context.document.querySelectorAll = () => [];
+    vm.runInContext('currentStructure = structure; updateEditUI();', context);
+    assert.match(context.document.getElementById('measurementPanel').innerHTML, /No atoms remain. Add an atom or Undo the deletion/);
+    assert.match(context.document.getElementById('measurementPanel').innerHTML, /id="addAtomBtn"/);
+});
+
 test('undo and redo restore an edit; a new edit invalidates redo', () => {
     const context = app();
     context.structure = context.parseXYZ(example('examples/xyz/H2O.xyz'));

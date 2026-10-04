@@ -2260,7 +2260,7 @@ function updateEditUI() {
     html += '<div class="edit-instructions">Click to select • Drag to move</div>';
     
     if (selectedAtoms.length === 0) {
-        html += `<p class="placeholder-text">${currentStructure ? 'No atoms selected' : 'Load a structure to start editing'}</p>`;
+        html += `<p class="placeholder-text">${currentStructure ? (currentStructure.atoms.length ? 'No atoms selected' : 'No atoms remain. Add an atom or Undo the deletion.') : 'Load a structure to start editing'}</p>`;
     } else {
         if (selectedAtoms.length > 0) {
             // Check if this is a preserved measurement from Measure mode
@@ -4352,8 +4352,8 @@ function updateUI(structure) {
         <form id="atomJumpForm" class="atom-jump-form">
             <label for="atomJumpInput">Find atom by number</label>
             <div class="atom-jump-row">
-                <input id="atomJumpInput" type="number" min="1" max="${structure.atoms.length}" step="1" placeholder="1–${structure.atoms.length}" value="${lastJumpAtomNumber <= structure.atoms.length ? lastJumpAtomNumber || '' : ''}" required>
-                <button type="submit" class="btn btn-secondary">Select</button>
+                <input id="atomJumpInput" type="number" min="1" max="${Math.max(1, structure.atoms.length)}" step="1" placeholder="${structure.atoms.length ? `1–${structure.atoms.length}` : 'No atoms'}" value="${lastJumpAtomNumber <= structure.atoms.length ? lastJumpAtomNumber || '' : ''}" required${structure.atoms.length ? '' : ' disabled'}>
+                <button type="submit" class="btn btn-secondary"${structure.atoms.length ? '' : ' disabled'}>Select</button>
             </div>
         </form>
     `;
@@ -5860,6 +5860,11 @@ function exportStructure() {
     }
     if (draggedAtom || vacuumDragState.isDragging) {
         onMouseUp({ button: 0, pointerId: activeEditPointerId });
+    }
+    if (currentStructure.atoms.length === 0) {
+        statusText.textContent = 'Cannot export an empty structure. Add an atom or Undo the deletion.';
+        statusText.className = 'warning';
+        return;
     }
     
     let content, filename;

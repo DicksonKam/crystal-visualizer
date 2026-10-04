@@ -3,8 +3,9 @@
 Status: **in progress**. The two-hour run has not yet completed. This document
 records confirmed findings and will be finalized from the campaign logs.
 
-Latest full verification at 2026-10-04 16:09 UTC: **141 unit tests and 51 browser
-tests passed**. Both stress campaigns were still running. This result covers
+Latest full verification: **141 unit tests passed** at 2026-10-04 16:09 UTC and
+**52 browser tests passed** at 16:23 UTC. The app code was unchanged between
+those runs. Both stress campaigns were still running. This result covers
 the current app fixes and expanded scenario/history regressions; it is not a
 claim that the sustained campaign has finished.
 
@@ -13,7 +14,7 @@ including blocked empty export, species creation, Undo/Redo and history branchin
 It uses real multi-selection clicks and existing forms
 (`tests/browser/empty-edit-history.spec.cjs`). Its first attempt requested an
 unavailable sodium option; replay with the offered carbon option passed. This
-setup error is not counted as an app bug. The final full suite will include
+setup error is not counted as an app bug. The full browser suite above includes
 this additional test.
 
 The campaign uses isolated Chromium contexts with software WebGL, synthetic

@@ -52,5 +52,30 @@
     "sha256": "ca62ce6f0c69ab220590ccf590b28dd6d0de072cefee803652ab0b584959a802",
     "openedAndInspected": true,
     "originalPath": "/private/tmp/crystal-cross-visual-followup-709/seed-711/seed-711-step-96-jump-after.png"
+  },
+  {
+    "file": "repeated-fcc-cell-preview-inspected.png",
+    "sha256": "9d8610550a6880d5f9ccc97e289355e969ee4a0255726b8a2f9cf893e220747c",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-browser-results/visual-edit-visual-boundar-2d014-nging-panel-width-at-1440px-chromium/frame-preview-7.png"
+  },
+  {
+    "file": "repeated-fcc-rotated-inspected.png",
+    "sha256": "43eefbf83aa0faf827bf5eba9295fd94bc6331664bca7f9bfdef8d39046d2e24",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-browser-results/visual-edit-visual-boundar-2d014-nging-panel-width-at-1440px-chromium/rotated.png"
+  },
+  {
+    "file": "repeated-fcc-narrow-preview-inspected.png",
+    "sha256": "d1b58e78dab53b6e808df916ea7ed382cda56e2723257356590ab864037c4f70",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-browser-results/visual-edit-visual-boundar-4872f-anging-panel-width-at-900px-chromium/atom-preview-7.png"
+  },
+  {
+    "file": "subpixel-periodic-view-inspected.png",
+    "sha256": "9a0720817bee805d0d8dece2f2e44aaf124ed0a24525a1c542a827ab2badf127",
+    "openedAndInspected": true,
+    "originalPath": "/private/tmp/crystal-cross-visual-followup-709/seed-723/seed-723-step-108-periodic-after.png",
+    "finding": "Minimum atom-size and bond-length settings; projected largest atom radius 0.3493 pixels after periodic-image refit. Visibility limitation, no automatic setting change."
   }
 ]

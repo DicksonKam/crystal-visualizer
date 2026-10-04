@@ -1,0 +1,27 @@
+{
+  "unitTests": {
+    "passed": 142,
+    "failed": 0
+  },
+  "browserSuite": {
+    "passed": 64,
+    "failed": 0,
+    "elapsedMinutes": 11.8,
+    "workers": 1,
+    "newDenseTestIncluded": false
+  },
+  "focusedDense": {
+    "passed": 1,
+    "failed": 0,
+    "captures": 13,
+    "elapsedMinutes": 1.1
+  },
+  "sourceHashes": {
+    "app.js": "4a38eadea93e814bd2c3557f3fafb285286d3eaf1d0bb1c5a1dd5e8970ff9cf9",
+    "styles.css": "4ca70ca1bbd24609d287beb4c489bd93a4639beb10fa7942173660111a7f2c7d",
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "index.html": "7959c24febab184d096f482a271756f5376d886c2c6c4d43fa583ff014d2e9a7",
+    "tests/browser/dense-edit-visual.spec.cjs": "0767e8fda0afcd4dd0b392d31dbfa261cedf287341deb210e06a6358d7fbc413"
+  },
+  "stressHarnessChange": "Hidden-copy selection oracle corrected after full64 suite; affected browser tests pending"
+}

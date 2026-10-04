@@ -88,3 +88,32 @@ Further inspected resumed-campaign images cover dense periodic drag, narrow
 cell resizing and trajectory measurement. The 64-test suite excludes this new
 focused test because discovery preceded its creation; results will be reported
 separately. The sustained campaign remains active.
+
+Current validation is complete: 141 unit tests, the full discovered browser suite
+(64 tests, 11.8 minutes), and one additional focused dense test all passed. The
+full suite includes 32 repeated boundary-edit/first-frame-drag/history cycles
+across two window sizes; representative current-run previews and rotated views
+were opened and retained. The timed random campaign is still running.
+
+An inspected seed-723 periodic-image capture looks nearly empty despite the
+visible cell. Its preceding native slider Home actions set minimum atom size
+and bond length; the largest projected atom radius is 0.3493 pixels after
+periodic-image refitting. This documents an existing visibility limitation at
+chosen settings, not proof of a stale renderer. No automatic scale change was
+introduced.
+
+The resumed run stopped after 18 passing seeds (709–726), 2,160 steps and 705
+captures, at seed 727 step 39. Undo correctly omitted a periodic copy hidden by
+a preceding image-count reduction. The stress model incorrectly required that
+hidden identity; the existing browser contract explicitly requires safe omission.
+The failure screenshot was opened, and the oracle now filters historical
+identities against current repeat counts, preserving order and clearing empty
+measurement purpose. Its focused unit regression passes (142 total unit tests).
+This is a second oracle correction, not a third app defect. Replay and the
+remaining timed run are pending.
+
+Seed 727 replay completed successfully: 120 steps, 39 captures, 22.2 seconds.
+Fresh seeds resume at 728 for 900 seconds, supplementing the interrupted
+905.6-second run; this is a segmented campaign, not an uninterrupted 30-minute
+pass. Thirteen affected stress/selection browser tests are running after the
+oracle change. Production source hashes remain unchanged.

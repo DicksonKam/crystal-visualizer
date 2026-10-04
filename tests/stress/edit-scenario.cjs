@@ -81,6 +81,14 @@ function compareGeometry(actual, expected, label) {
     }
     compare(actual, expected, 'geometry');
 }
+// Selection history resolves identities against the current display, while
+// periodic-image counts are presentation state outside selection history.
+function displayedSelection(selection, state) {
+    const identities = selection.identities.filter(([index, ghost, offset]) => ghost
+        ? state.periodic && offset && ['a', 'b', 'c'].every(axis => offset[axis] >= 0 && offset[axis] < state.repeats[axis])
+        : Number.isInteger(index) && index >= 0 && index < state.atomCount);
+    return { ...selection, identities, measurement: Boolean(identities.length && selection.measurement) };
+}
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
 async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null }) {
     page.setDefaultTimeout(5000);
@@ -325,7 +333,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                     compareGeometry(after.geometry,previous.geometry,`${action} selection changes document`);
                     assert.equal(after.revision,previous.revision,'selection history changes edit revision');
                     assert.equal(after.dirty,previous.dirty,'selection history changes saved status');
-                    if(expected) assert.deepEqual(after.selection,expected.selection,`${action} selection context`);
+                    if(expected) assert.deepEqual(after.selection,displayedSelection(expected.selection,after),`${action} selection context`);
                 } else if(expected) compareGeometry(after.geometry,expected.geometry,`${action} ${op.type}`);
             } else {
                 const added=after.undo.filter(op=>!previous.undo.some(old=>old.id===op.id));
@@ -350,4 +358,4 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
     if(extended) { page.off('dialog',handleDialog); await page.evaluate(()=>{loadStructureFromText=window.stressOriginalLoad;}); }
     return { seed, steps, counts, operations, final: previous };
 }
-module.exports={runScenario,capture,sourceFor};
+module.exports={runScenario,capture,sourceFor,displayedSelection};

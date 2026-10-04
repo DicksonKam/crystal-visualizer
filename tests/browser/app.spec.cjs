@@ -158,13 +158,28 @@ test('large finite selected positions do not require periodic-image offsets', as
     await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
 });
 
-test('trajectory playback, frame navigation and export retain frame data', async ({ page }) => {
+test('trajectory playback shows the correct icon, navigates frames and preserves export', async ({ page }) => {
     const source = 'trajectory\n1\n10 0 0\n0 10 0\n0 0 10\nH\n1\nDirect configuration= 1\n0.1 0 0\nDirect configuration= 2\n0.2 0 0\n';
     await upload(page, source, 'motion.xdatcar');
     await expect(page.locator('[data-mode="edit"]')).toBeDisabled();
-    await page.locator('#playPause').click();
+    const button = page.locator('#playPause');
+    const play = button.locator('.play-icon'), pause = button.locator('.pause-icon');
+    await expect(play).toBeVisible(); await expect(pause).toBeHidden();
+    await page.locator('#fpsSelect').selectOption('1');
+    await button.click();
+    await expect(button).toHaveAccessibleName('Pause trajectory');
+    await expect(pause).toBeVisible(); await expect(play).toBeHidden();
     await expect(page.locator('#frameSlider')).toHaveValue('1');
+    await button.click();
+    await expect(button).toHaveAccessibleName('Play trajectory');
+    await expect(play).toBeVisible(); await expect(pause).toBeHidden();
     expect(await page.evaluate(() => currentStructure.atoms[0].position.x)).toBe(2);
     const exported = formats.parseXDATCAR(await download(page));
     expect(exported.frames.map(frame => frame.fractional[0][0])).toEqual([0.1, 0.2]);
+    // Finishing non-looping playback must restore the play icon too.
+    await page.locator('#loopCheckbox').uncheck();
+    await button.click();
+    await expect(pause).toBeVisible();
+    await expect(button).toHaveAccessibleName('Play trajectory');
+    await expect(play).toBeVisible(); await expect(pause).toBeHidden();
 });

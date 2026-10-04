@@ -134,19 +134,44 @@ let selectedAtoms = []; // Array of { mesh, index, element, position }
 let selectionRings = []; // Visual rings around selected atoms
 let atomMeshes = []; // All atom meshes for raycasting
 const sharedRenderResources = new Set();
-let sharedAtomGeometry = null;
+const sharedAtomGeometries = new Map();
 let sharedBondGeometry = null;
 let sharedSolidBondMaterial = null;
 let sharedGhostBondMaterial = null;
 const sharedAtomMaterials = new Map();
 let smallestAtomRadiusCache = null;
+let displayedAtomCount = 0;
+
+const DENSE_VIEW_ATOMS = 500;
+
+function countDisplayedAtoms(structure) {
+    if (!structure) return 0;
+    const copies = isPeriodicStructure(structure)
+        ? settings.periodic.a * settings.periodic.b * settings.periodic.c : 1;
+    return structure.atoms.length * copies;
+}
+
+function atomSphereSegments() {
+    return displayedAtomCount > DENSE_VIEW_ATOMS ? 12 : 24;
+}
+
+function configureRenderQuality(structure) {
+    displayedAtomCount = countDisplayedAtoms(structure);
+    const useShadows = displayedAtomCount <= DENSE_VIEW_ATOMS;
+    if (renderer.shadowMap.enabled !== useShadows) {
+        renderer.shadowMap.enabled = useShadows;
+        renderer.shadowMap.needsUpdate = true;
+    }
+}
 
 function getSharedAtomGeometry() {
-    if (!sharedAtomGeometry) {
-        sharedAtomGeometry = new THREE.SphereGeometry(1, 24, 24);
-        sharedRenderResources.add(sharedAtomGeometry);
+    const segments = atomSphereSegments();
+    if (!sharedAtomGeometries.has(segments)) {
+        const geometry = new THREE.SphereGeometry(1, segments, segments);
+        sharedAtomGeometries.set(segments, geometry);
+        sharedRenderResources.add(geometry);
     }
-    return sharedAtomGeometry;
+    return sharedAtomGeometries.get(segments);
 }
 
 function getSharedBondGeometry() {
@@ -3962,6 +3987,7 @@ function createUnitCell(lattice) {
 // preserveState: if true, keeps selections and camera position (for display option changes)
 function renderStructure(structure, preserveState = false) {
     smallestAtomRadiusCache = null;
+    configureRenderQuality(structure);
     // Save current selection info including ghost atoms
     const savedSelections = preserveState ? selectedAtoms.map(a => ({
         index: a.index,
@@ -4089,21 +4115,23 @@ function renderStructure(structure, preserveState = false) {
             updateEditUI();
         }
     } else {
-        // Initial load - set up both cameras
-        const size = box.getSize(new THREE.Vector3()).length();
-        const distance = size * 1.5;
-        
-        // Position both cameras
-        perspectiveCamera.position.set(distance, distance * 0.8, distance);
-        orthographicCamera.position.set(distance, distance * 0.8, distance);
-        
-        // Adjust orthographic zoom based on structure size
-        orthographicCamera.zoom = 15 / (size * 1.2);
-        orthographicCamera.updateProjectionMatrix();
-        
-        controls.target.set(0, 0, 0);
-        controls.update();
+        fitStructureToView();
     }
+}
+
+function fitStructureToView(preserveOrientation = false) {
+    const box = new THREE.Box3().setFromObject(structureGroup);
+    const size = Math.max(box.getSize(new THREE.Vector3()).length(), 1);
+    const direction = preserveOrientation
+        ? camera.position.clone().sub(controls.target).normalize()
+        : new THREE.Vector3(1, 0.8, 1).normalize();
+    const distance = size * 1.5 * Math.hypot(1, 0.8, 1);
+    perspectiveCamera.position.copy(direction).multiplyScalar(distance);
+    orthographicCamera.position.copy(direction).multiplyScalar(distance);
+    orthographicCamera.zoom = 15 / (size * 1.2);
+    orthographicCamera.updateProjectionMatrix();
+    controls.target.set(0, 0, 0);
+    controls.update();
 }
 
 function escapeHTML(value) {
@@ -4523,20 +4551,7 @@ function setupControls() {
     // Reset view
     document.getElementById('resetView').addEventListener('click', () => {
         if (currentStructure) {
-            const box = new THREE.Box3().setFromObject(structureGroup);
-            const size = box.getSize(new THREE.Vector3()).length();
-            const distance = size * 1.5;
-            
-            // Reset both cameras
-            perspectiveCamera.position.set(distance, distance * 0.8, distance);
-            orthographicCamera.position.set(distance, distance * 0.8, distance);
-            
-            // Reset orthographic zoom
-            orthographicCamera.zoom = 15 / (size * 1.2);
-            orthographicCamera.updateProjectionMatrix();
-            
-            controls.target.set(0, 0, 0);
-            controls.update();
+            fitStructureToView();
         }
     });
     
@@ -4665,6 +4680,7 @@ function setupPeriodicControls() {
         // Re-render structure with periodic images
         if (currentStructure) {
             renderStructure(currentStructure, true);
+            fitStructureToView(true);
             
             // Update status
             if (settings.periodic.a > 1 || settings.periodic.b > 1 || settings.periodic.c > 1) {

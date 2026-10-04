@@ -87,6 +87,30 @@ test('atom materials are reused without sharing selection glow', () => {
     assert.equal(ghost.options.transparent, true);
 });
 
+test('dense views use lower-detail spheres and skip shadow passes', () => {
+    const context = app();
+    context.THREE.SphereGeometry = class {
+        constructor(radius, widthSegments, heightSegments) {
+            Object.assign(this, { radius, widthSegments, heightSegments });
+        }
+    };
+    const structure = { atoms: Array(300).fill({ element: 'Si' }), lattice: [[1, 0, 0], [0, 1, 0], [0, 0, 1]] };
+    context.structure = structure;
+    vm.runInContext('renderer = { shadowMap: { enabled: true } }; configureRenderQuality(structure)', context);
+    const detailed = context.getSharedAtomGeometry();
+    assert.equal(detailed.widthSegments, 24);
+    assert.equal(vm.runInContext('renderer.shadowMap.enabled', context), true);
+    vm.runInContext('settings.periodic = { a: 2, b: 1, c: 1 }; configureRenderQuality(structure)', context);
+    const compact = context.getSharedAtomGeometry();
+    assert.equal(compact.widthSegments, 12);
+    assert.notEqual(compact, detailed);
+    assert.equal(vm.runInContext('renderer.shadowMap.enabled', context), false);
+    assert.equal(vm.runInContext('renderer.shadowMap.needsUpdate', context), true);
+    vm.runInContext('settings.periodic = { a: 1, b: 1, c: 1 }; configureRenderQuality(structure)', context);
+    assert.equal(context.getSharedAtomGeometry(), detailed);
+    assert.equal(vm.runInContext('renderer.shadowMap.enabled', context), true);
+});
+
 test('POSCAR examples preserve coordinates and constraints after export', () => {
     const context = app();
     for (const file of fs.readdirSync(path.join(root, 'examples/poscar'))) {

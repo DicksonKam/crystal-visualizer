@@ -20,6 +20,30 @@
         return reciprocal.map(row => dot(position, row) / volume);
     }
 
+    // Average positions on each periodic axis. A linear average puts atoms at
+    // 0.99 and 0.01 on opposite sides of the cell instead of beside each other.
+    function periodicFractionalCenter(positions) {
+        if (!positions.length) return null;
+        return [0, 1, 2].map(axis => {
+            let sine = 0;
+            let cosine = 0;
+            let linear = 0;
+            positions.forEach(position => {
+                const wrapped = ((position[axis] % 1) + 1) % 1;
+                const angle = 2 * Math.PI * wrapped;
+                sine += Math.sin(angle);
+                cosine += Math.cos(angle);
+                linear += wrapped;
+            });
+            // A uniform distribution has no unique circular center. Preserve
+            // the familiar arithmetic center in that case.
+            if (Math.hypot(sine, cosine) < positions.length * 1e-8) {
+                return linear / positions.length;
+            }
+            return ((Math.atan2(sine, cosine) / (2 * Math.PI)) + 1) % 1;
+        });
+    }
+
     // Find the nearest translated copy of B to A. A QR-based integer search
     // handles tilted cells where rounding fractional coordinates is incorrect.
     function nearestImageBetween(pointA, pointB, lattice) {
@@ -123,7 +147,7 @@
         ];
     }
 
-    const api = { fractionalToCartesian, cartesianToFractional, nearestImageBetween, clipSegmentToCell };
+    const api = { fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalGeometry = api;
 })(globalThis);

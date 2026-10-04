@@ -29,6 +29,7 @@ Editing has Undo and Redo buttons, with ⌘Z/Ctrl+Z and ⌘⇧Z/Ctrl+Y shortcuts
 
 Use **Find atom by number** in the Atoms panel to select and center an atom that is hard to click. In Edit mode, selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
 Shift and add-atom inputs reject invalid or unrepresentable coordinates without changing the structure or undo history.
+**Center in Cell** uses periodic coordinates, so a cluster that crosses a cell boundary stays together when moved to the middle.
 
 ## Code and tests
 

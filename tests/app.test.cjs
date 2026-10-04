@@ -829,6 +829,31 @@ test('selected fractional shift wraps in a tilted cell and undo restores coordin
     assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].fractional[0]', context) - 0.2) < 1e-10);
 });
 
+test('center in cell moves a boundary-spanning cluster to the middle of a tilted cell', () => {
+    const context = app();
+    const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
+    context.structure = { lattice, atoms: [0.99, 0.01].map(a => ({
+        element: 'H', position: context.fractionalToCartesian([a, 0.5, 0.5], lattice),
+        fractional: [a, 0.5, 0.5]
+    })) };
+    vm.runInContext(`
+        currentStructure = structure;
+        renderStructure = () => {};
+        updateUI = () => {};
+        updateEditUI = () => {};
+        updateUI_forCurrentMode = () => {};
+    `, context);
+    context.centerStructureInCell();
+    const centered = context.structure.atoms.map(atom => context.cartesianToFractional(atom.position, lattice));
+    assert.ok(Math.abs(centered[0][0] - 0.49) < 1e-10);
+    assert.ok(Math.abs(centered[1][0] - 0.51) < 1e-10);
+    assert.ok(centered.every(frac => Math.abs(frac[1] - 0.5) < 1e-10 && Math.abs(frac[2] - 0.5) < 1e-10));
+    context.performUndo();
+    assert.ok(Math.abs(context.cartesianToFractional(context.structure.atoms[0].position, lattice)[0] - 0.99) < 1e-10);
+    context.performRedo();
+    assert.ok(Math.abs(vm.runInContext('currentStructure.atoms[0].fractional[0]', context) - 0.49) < 1e-10);
+});
+
 test('multi-atom shift validates every result before changing any atom', () => {
     const context = app();
     context.structure = { isXYZ: true, hasExplicitLattice: false, atoms: [

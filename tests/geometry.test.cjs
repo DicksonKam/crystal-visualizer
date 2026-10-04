@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { fractionalToCartesian, cartesianToFractional, nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
+const { fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
 
 test('coordinate conversion round-trips arrays and objects in a tilted cell', () => {
     const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
@@ -9,6 +9,14 @@ test('coordinate conversion round-trips arrays and objects in a tilted cell', ()
     const restored = cartesianToFractional({ x: position[0], y: position[1], z: position[2] }, lattice);
     restored.forEach((value, axis) => assert.ok(Math.abs(value - fractional[axis]) < 1e-12));
     assert.equal(cartesianToFractional(position, [[1, 0, 0], [2, 0, 0], [0, 0, 1]]), null);
+});
+
+test('periodic center keeps atoms together across a cell boundary', () => {
+    const center = periodicFractionalCenter([[0.99, 0.5, 0.5], [0.01, 0.5, 0.5]]);
+    assert.ok(Math.min(center[0], 1 - center[0]) < 1e-12);
+    assert.ok(Math.abs(center[1] - 0.5) < 1e-12);
+    assert.equal(periodicFractionalCenter([]), null);
+    assert.ok(Math.abs(periodicFractionalCenter([[0, 0, 0], [0.5, 0.5, 0.5]])[0] - 0.25) < 1e-12);
 });
 
 function bruteNearest(a, b, lattice, range = 4) {

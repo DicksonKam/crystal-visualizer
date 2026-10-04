@@ -3076,32 +3076,20 @@ function applyCartesianShift(shiftCartesian, atomIndices) {
 
 // Center structure in the unit cell
 function centerStructureInCell() {
-    if (!currentStructure) return;
+    if (!isPeriodicStructure(currentStructure) || currentStructure.atoms.length === 0) return;
     
     const lattice = currentStructure.lattice;
-    
-    // Calculate current center of mass in fractional coordinates
-    let sumFracA = 0, sumFracB = 0, sumFracC = 0;
-    
-    currentStructure.atoms.forEach(atom => {
+    const fractionalPositions = currentStructure.atoms.map(atom => {
         const frac = cartesianToFractional(atom.position, lattice);
-        if (frac) {
-            // Wrap to [0, 1) first
-            sumFracA += ((frac[0] % 1) + 1) % 1;
-            sumFracB += ((frac[1] % 1) + 1) % 1;
-            sumFracC += ((frac[2] % 1) + 1) % 1;
-        }
+        return frac && frac.every(Number.isFinite) ? frac : null;
     });
-    
-    const n = currentStructure.atoms.length;
-    const centerFracA = sumFracA / n;
-    const centerFracB = sumFracB / n;
-    const centerFracC = sumFracC / n;
-    
-    // Calculate shift to move center to (0.5, 0.5, 0.5)
-    const deltaA = 0.5 - centerFracA;
-    const deltaB = 0.5 - centerFracB;
-    const deltaC = 0.5 - centerFracC;
+    if (fractionalPositions.some(frac => !frac)) {
+        statusText.textContent = 'Cannot center atoms in this cell';
+        statusText.className = 'error';
+        return;
+    }
+    const center = CrystalGeometry.periodicFractionalCenter(fractionalPositions);
+    const [deltaA, deltaB, deltaC] = center.map(value => 0.5 - value);
     
     if (!applyPeriodicShiftByFractional(deltaA, deltaB, deltaC)) return;
     

@@ -7,8 +7,6 @@
         tieDegrees: 0.25,
         intentNoiseDegrees: 0.25,
         meaningfulDegrees: 0.25,
-        historyNoiseDegrees: 0.02,
-        historyMilliseconds: 150,
         durationMilliseconds: 300,
         fitPadding: 1.15,
         controlsStepMilliseconds: 1000 / 60,
@@ -153,7 +151,12 @@
             begin(kind, time) {
                 this.cancel();
                 const pose = math.clonePose(getPose());
-                gesture = { kind, start: pose.quaternion, maxMotion: 0, samples: [{ time, quaternion: pose.quaternion.clone() }] };
+                const direction = math.back(pose.quaternion);
+                const intent = new Map(getAxes().map(axis => {
+                    const angle = math.degrees(direction.angleTo(axis.direction));
+                    return [axis.name, { direction: axis.direction.clone(), peak: angle, trough: angle, approaching: false }];
+                }));
+                gesture = { kind, start: pose.quaternion, maxMotion: 0, intent };
                 previousSample = { time, quaternion: pose.quaternion.clone() };
             },
             sample(time) {
@@ -163,10 +166,28 @@
                 previousSample = { time, quaternion: pose.quaternion.clone() };
                 if (gesture?.kind === 'rotate') {
                     gesture.maxMotion = Math.max(gesture.maxMotion, math.degrees(math.angularDistance(gesture.start, pose.quaternion)));
-                    const last = gesture.samples[gesture.samples.length - 1];
-                    if (math.degrees(math.angularDistance(last.quaternion, pose.quaternion)) > policy.historyNoiseDegrees) {
-                        gesture.samples.push({ time, quaternion: pose.quaternion.clone() });
-                        if (gesture.samples.length > 120) gesture.samples.shift();
+                }
+                // Track terminal approach by angular extrema, not a time window.
+                // Holding still and slow damping cannot erase intent. A departure
+                // beyond the noise margin resets it, including inertia past an axis.
+                const intent = gesture?.kind === 'rotate' ? gesture.intent : pending?.intent;
+                if (intent) {
+                    const direction = math.back(pose.quaternion);
+                    for (const state of intent.values()) {
+                        const angle = math.degrees(direction.angleTo(state.direction));
+                        if (state.approaching) {
+                            state.trough = Math.min(state.trough, angle);
+                            if (angle - state.trough > policy.intentNoiseDegrees) {
+                                state.approaching = false;
+                                state.peak = angle;
+                            }
+                        } else {
+                            state.peak = Math.max(state.peak, angle);
+                            if (state.peak - angle > policy.intentNoiseDegrees) {
+                                state.approaching = true;
+                                state.trough = angle;
+                            }
+                        }
                     }
                 }
                 return { pose, speed };
@@ -175,12 +196,7 @@
                 if (!gesture) return;
                 this.sample(time);
                 if (gesture.kind === 'rotate' && gesture.maxMotion >= policy.meaningfulDegrees && this.autoSnap) {
-                    const samples = gesture.samples;
-                    const last = samples[samples.length - 1];
-                    const recent = samples.filter(sample => sample.time >= last.time - policy.historyMilliseconds);
-                    // Keep the start of the terminal movement while inertia settles.
-                    const reference = recent.length > 1 ? recent[0] : samples[Math.max(0, samples.length - 2)];
-                    pending = { reference: reference.quaternion.clone(), candidate: null, stableAt: null, quietAt: null };
+                    pending = { intent: gesture.intent, candidate: null, stableAt: null, quietAt: null };
                 }
                 gesture = null;
             },
@@ -230,7 +246,8 @@
                     pending.stableAt = time;
                 }
                 if (pending.quietAt === null || time - pending.quietAt < policy.settledMilliseconds || time - pending.stableAt < policy.settledMilliseconds) return;
-                const approach = math.degrees(math.back(pending.reference).angleTo(axis.direction) - math.back(pose.quaternion).angleTo(axis.direction));
+                const intent = pending.intent.get(axis.name);
+                const approach = intent?.approaching ? intent.peak - math.degrees(axis.angle) : 0;
                 if (approach <= policy.intentNoiseDegrees) { pending = null; return; }
                 const target = math.automaticOrientation(pose.quaternion, axis, policy);
                 if (target && math.angularDistance(pose.quaternion, target) > 1e-6) this.align(target, time, 'automatic', axis.name);

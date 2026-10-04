@@ -143,25 +143,19 @@ test('skew-cell load and measurements stay responsive with an explicit boundary-
     await expect(page.locator('#geometryWarning')).toContainText('work limit');
     await selectAtom(page, 1);
     await selectAtom(page, 2);
-    await expect(page.locator('#measurementPanel')).toContainText('0.5000 Å');
-    await page.locator('#measurementModeToggle').click();
     await expect(page.locator('#measurementPanel')).toContainText('0.5590 Å');
     await page.locator('#showBonds').uncheck();
     await expect(page.locator('#geometryWarning')).toBeHidden();
 });
 
-test('unrepresentable nearest-image offsets display Unavailable without a fallback distance', async ({ page }) => {
+test('large finite selected positions do not require periodic-image offsets', async ({ page }) => {
     await upload(page, 'offset\n1\n10 0 0\n0 10 0\n0 0 10\nH\n2\nCartesian\n0 0 0\n1e20 0 0\n', 'offset.poscar');
     await selectAtom(page, 1);
     await selectAtom(page, 2);
-    await expect(page.locator('#measurementPanel')).toContainText('Unavailable');
-    await expect(page.locator('#geometryWarning')).toContainText('integer precision');
-    await page.locator('#clearSelectionBtn').click();
-    await expect(page.locator('#geometryWarning')).not.toContainText('Use Selected images');
-    await selectAtom(page, 1);
-    await selectAtom(page, 2);
-    await page.locator('#measurementModeToggle').click();
+    await expect(page.locator('#measurementPanel')).toContainText('100000000000000000000.0000 Å');
     await expect(page.locator('#measurementPanel')).not.toContainText('Unavailable');
+    expect(await page.evaluate(() => geometryWarnings.has('measurement'))).toBe(false);
+    await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
 });
 
 test('trajectory playback, frame navigation and export retain frame data', async ({ page }) => {

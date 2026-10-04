@@ -265,3 +265,30 @@ test('the real controls and controller produce equivalent timestamped gestures a
         expect(result.captured[0].correction).toBeCloseTo(results[0].captured[0].correction, 6);
     });
 });
+
+test('a close-zoom approach still snaps after damping and a pause before release', async ({ page }) => {
+    await upload(page, cell(), 'camera.poscar');
+    for (const zoom of [1, 15]) {
+        await seed(page, 8);
+        await page.evaluate(zoom => { camera.zoom = zoom; camera.updateProjectionMatrix(); requestRender(); }, zoom);
+        await page.waitForTimeout(150);
+        const before = await pose(page);
+        const box = await canvas(page).boundingBox();
+        const x = box.x + box.width * .8, y = box.y + box.height * .2;
+        await page.mouse.move(x, y); await page.mouse.down();
+        await page.mouse.move(x + 2, y);
+        // Leave the pointer down through the damping tail. This used to lose
+        // the approach evidence before end() examined its short time window.
+        await page.waitForTimeout(1400);
+        expect(await page.evaluate(() => window.cameraAlignments.length)).toBe(0);
+        await page.mouse.up();
+        await expect.poll(() => page.evaluate(() => window.cameraAlignments.length), { timeout: 6000 }).toBe(1);
+        await expect.poll(() => page.evaluate(() => cameraController.phase)).toBe('idle');
+        const after = await pose(page);
+        nearArray(after.direction, [1, 0, 0]);
+        nearArray(after.pivot, before.pivot);
+        expect(after.zoom).toBe(zoom);
+        expect(after.distance).toBeCloseTo(before.distance, 7);
+        expect(await page.evaluate(() => window.cameraAlignments[0].correction)).toBeLessThanOrEqual(5 + 1e-8);
+    }
+});

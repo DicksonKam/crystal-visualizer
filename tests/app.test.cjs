@@ -264,7 +264,7 @@ test('Cartesian measurement deltas use x/y/z components in a tilted cell', () =>
     context.first = first;
     context.second = second;
     context.lattice = lattice;
-    vm.runInContext('currentStructure = { lattice }; measurementMode = "selected"; selectedAtomCoordMode = "cartesian";', context);
+    vm.runInContext('currentStructure = { lattice }; selectedAtomCoordMode = "cartesian";', context);
     const cartesian = context.computeDeltas(first, second);
     assert.ok(Math.abs(cartesian.da - 0.7) < 1e-12);
     assert.ok(Math.abs(cartesian.db - 0.6) < 1e-12);
@@ -276,40 +276,29 @@ test('Cartesian measurement deltas use x/y/z components in a tilted cell', () =>
     assert.match(context.formatDelta(first, second), /Δa<\/span> \+0\.200/);
 });
 
-test('periodic measurements use nearest image unless selected images are requested', () => {
+test('periodic measurements always use actual selections, including explicit ghost copies', () => {
     const context = app();
     context.points = [new Vector3(0.1, 0, 0), new Vector3(9.9, 0, 0)];
     vm.runInContext(`
         currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]], hasExplicitLattice: true };
         selectedAtoms = points.map(position => ({ position, isGhost: false }));
-        measurementMode = 'nearest';
     `, context);
-    const nearest = vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1])', context);
-    assert.ok(Math.abs(nearest.distance - 0.2) < 1e-10);
-    assert.deepEqual(Array.from(nearest.offset), [-1, 0, 0]);
+    assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 9.8) < 1e-10);
     const delta = vm.runInContext('computeDeltas(selectedAtoms[0], selectedAtoms[1])', context);
-    assert.ok(Math.abs(delta.da + 0.02) < 1e-10);
-
-    vm.runInContext("measurementMode = 'selected'", context);
-    assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 9.8) < 1e-10);
-    vm.runInContext("measurementMode = 'nearest'; selectedAtoms[1].isGhost = true", context);
-    assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 9.8) < 1e-10);
+    assert.ok(Math.abs(delta.da - 0.98) < 1e-10);
+    vm.runInContext('selectedAtoms[1].isGhost = true; selectedAtoms[1].position.x += 10', context);
+    assert.ok(Math.abs(vm.runInContext('getMeasurementPair(selectedAtoms[0], selectedAtoms[1]).distance', context) - 19.8) < 1e-10);
 });
 
-test('XYZ nearest-image measurements translate only periodic axes', () => {
+test('XYZ periodicity never changes the measured selected positions', () => {
     const context = app();
     context.structure = context.parseXYZ('2\nLattice="10 0 0 0 10 0 0 0 10" pbc="T F F"\nH 1 1 1\nH 9 9 9\n');
-    vm.runInContext('currentStructure = structure; measurementMode = "nearest";', context);
+    vm.runInContext('currentStructure = structure;', context);
     const first = { position: context.structure.atoms[0].position };
     const second = { position: context.structure.atoms[1].position };
-    const pair = context.getMeasurementPair(first, second);
-    assert.deepEqual(Array.from(pair.offset), [-1, 0, 0]);
-    assert.ok(Math.abs(pair.distance - Math.sqrt(132)) < 1e-10);
+    assert.ok(Math.abs(context.getMeasurementPair(first, second).distance - Math.sqrt(192)) < 1e-10);
     context.structure.pbc = [false, false, false];
-    assert.equal(context.hasLattice(context.structure), true);
-    assert.equal(context.isPeriodicStructure(context.structure), false);
-    assert.equal(context.getMeasurementPair(first, second).nearest, false);
-    assert.equal(context.measurementModeControlHTML(), '');
+    assert.ok(Math.abs(context.getMeasurementPair(first, second).distance - Math.sqrt(192)) < 1e-10);
 });
 
 test('malformed coordinates and constraints report errors', () => {

@@ -187,3 +187,37 @@ test('instant camera actions cancel movement, clear controls and copy the reques
     assert.deepEqual(r.events, ['start:explicit', 'start:focus', 'end:focus']);
     assert.equal(r.motion.length, 3);
 });
+
+test('slow approach and holding before release retain intent at any zoom or distance', () => {
+    for (const zoom of [.2, 1, 25]) for (const distance of [2, 40, 500]) {
+        for (const [duration, angleAt] of [
+            [2000, t => .4 + 9.6 * Math.exp(-t / 120)], // Damping tail.
+            [8000, t => 10 - 7 * Math.min(t / 8000, 1)] // Slow precise rotation.
+        ]) {
+            const r = rig(); r.pose.zoom = zoom; r.pose.distance = distance;
+            r.controller.begin('rotate', 0);
+            // The last 150 ms contain less than .25° of approach. A pause
+            // before release must retain the whole terminal movement's intent.
+            for (let t = 20; t <= duration + 1000; t += 20) {
+                r.setAngle(angleAt(Math.min(t, duration)));
+                r.controller.tick(t);
+            }
+            r.controller.end(duration + 1000);
+            for (const offset of [1020, 1200, 1600]) r.controller.tick(duration + offset);
+            assert.deepEqual(r.events, ['start:automatic', 'end:automatic']);
+            close(math.angularDistance(r.pose.quaternion, q(0)), 0);
+            close(r.pose.zoom, zoom); close(r.pose.distance, distance);
+        }
+    }
+});
+
+test('settling detects a reversal from inertia and permits a fresh intentional approach', () => {
+    for (const reapproach of [false, true]) {
+        const r = rig(); r.controller.begin('rotate', 0);
+        r.setAngle(.1); r.controller.tick(100); r.controller.end(100);
+        r.setAngle(-1); r.controller.tick(200); // Overshot and departed by .9°.
+        if (reapproach) { r.setAngle(-.4); r.controller.tick(300); }
+        for (const time of [320, 500, 900]) r.controller.tick(time);
+        assert.equal(r.events.includes('end:automatic'), reapproach);
+    }
+});

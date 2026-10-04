@@ -131,7 +131,6 @@ let settings = {
     ghostOpacity: 0.75, // Opacity of ghost atoms (default 75%)
     showFixedIndicators: true // Show visual indicators for fixed atoms
 };
-let measurementMode = 'nearest'; // Or 'selected': measure the visible atom copies exactly.
 
 // Measurement state
 let raycaster, mouse;
@@ -1038,7 +1037,7 @@ function addAxesHelper() {
 }
 
 // Keep the application entry points while format parsing lives in formats.js.
-const crystalMeasurements = CrystalMeasurements.createMeasurements(CrystalGeometry);
+const crystalMeasurements = CrystalMeasurements.createMeasurements();
 const crystalFormats = CrystalFormats.createFormats(THREE.Vector3, cartesianToFractional);
 function parsePOSCAR(content) { return crystalFormats.parsePOSCAR(content); }
 function parseXDATCAR(content) { return crystalFormats.parseXDATCAR(content); }
@@ -1268,15 +1267,10 @@ function formatMeasuredDistance(pair) {
     return pair.unavailable ? 'Unavailable' : `${pair.distance.toFixed(4)} Å`;
 }
 
-// All selected-pair values and visuals use one geometry anchored at atom 2.
+// Numbers and visuals share the actual selected positions, with atom 2 as the angle vertex.
 function resolveMeasurementGeometry(atoms) {
-    const resolved = crystalMeasurements.resolve(atoms, {
-        lattice: currentStructure?.lattice,
-        periodicAxes: getPeriodicAxes(currentStructure),
-        nearest: measurementMode === 'nearest' && isPeriodicStructure(currentStructure)
-    });
-    setGeometryWarning('measurement', resolved.errors.length
-        ? `${resolved.errors.join('. ')}. Use Selected images to measure displayed copies.` : '');
+    const resolved = crystalMeasurements.resolve(atoms);
+    setGeometryWarning('measurement', resolved.errors.join('. '));
     const points = resolved.points.map(point => ({ ...point, position: new THREE.Vector3(...point.position) }));
     const pairs = resolved.pairs.map((pair, index) => ({ ...pair,
         start: points[index].position, end: points[index + 1].position,
@@ -1294,34 +1288,12 @@ function getMeasurementPair(atomA, atomB, geometry = null) {
     if (first >= 0 && second >= 0 && Math.abs(first - second) === 1) {
         const pair = (geometry || getMeasurementGeometry()).pairs[Math.min(first, second)];
         if (first < second) return pair;
-        return { ...pair, start: pair.end, end: pair.start, delta: pair.delta.clone().multiplyScalar(-1),
-            offset: pair.offset.map(value => -value || 0) };
+        return { ...pair, start: pair.end, end: pair.start, delta: pair.delta.clone().multiplyScalar(-1) };
     }
     return resolveMeasurementGeometry([atomA, atomB]).pairs[0];
 }
 
 function getMeasurementAngle(geometry = null) { return (geometry || getMeasurementGeometry()).angle; }
-
-function formatImageShift(offset) {
-    const axes = ['a', 'b', 'c'];
-    return offset.map((value, index) => value ? `${value > 0 ? '+' : '−'}${Math.abs(value) === 1 ? '' : Math.abs(value)}${axes[index]}` : '').filter(Boolean).join(' ');
-}
-
-function measurementModeControlHTML() {
-    if (!isPeriodicStructure(currentStructure)) return '';
-    const nearest = measurementMode === 'nearest';
-    return `<div class="measurement-mode"><span>Distance mode</span><button type="button" id="measurementModeToggle" class="btn btn-secondary" title="Switch between shortest periodic distance and the displayed atom copies">${nearest ? 'Nearest periodic' : 'Selected images'}</button></div>`;
-}
-
-function setupMeasurementModeToggle() {
-    const button = document.getElementById('measurementModeToggle');
-    if (!button) return;
-    button.addEventListener('click', () => {
-        measurementMode = measurementMode === 'nearest' ? 'selected' : 'nearest';
-        updateMeasurements();
-        updateUI_forCurrentMode();
-    });
-}
 
 // Compute fractional displacement only when requested; Cartesian values use world axes.
 function computeDeltas(atomA, atomB, geometry = null) {
@@ -2238,23 +2210,20 @@ function updateEditUI() {
             if (isMeasurementSelection) {
                 // Show compact measurement display (read-only)
                 const geometry = getMeasurementGeometry();
-                const labels = selectedAtoms.map((_, index) => measurementPointLabel(index, geometry));
+                const labels = selectedAtoms.map((_, index) => measurementPointLabel(index));
                 html += '<div class="preserved-measurement">';
                 html += '<div class="preserved-measurement-header">📐 Measurement Preserved</div>';
                 html += '<div class="preserved-measurement-hint">Click atom to start editing</div>';
-                html += measurementModeControlHTML();
                 
                 // Show measurement values
                 if (selectedAtoms.length >= 2) {
                     const pair = geometry.pairs[0];
                     html += `<div class="preserved-measurement-value">Distance (${labels[0]}—${labels[1]}): <strong>${formatMeasuredDistance(pair)}</strong></div>`;
-                    html += measurementImageNote(pair);
                     html += formatDeltaCompact(selectedAtoms[0], selectedAtoms[1], geometry);
                 }
                 if (selectedAtoms.length === 3) {
                     const pair = geometry.pairs[1];
                     html += `<div class="preserved-measurement-value">Distance (${labels[1]}—${labels[2]}): <strong>${formatMeasuredDistance(pair)}</strong></div>`;
-                    html += measurementImageNote(pair);
                     html += formatDeltaCompact(selectedAtoms[1], selectedAtoms[2], geometry);
                     const angle = geometry.angle;
                     if (angle) html += `<div class="preserved-measurement-value">Angle (${labels.join("—")}): <strong>${angle.angleDeg.toFixed(2)}°</strong></div>`;
@@ -2463,7 +2432,6 @@ function updateEditUI() {
     }
     
     replacePanelHTML(panel, html, 'atomJumpInput');
-    setupMeasurementModeToggle();
     const coordinateMode = document.getElementById('editAtomCoordMode');
     if (coordinateMode) coordinateMode.addEventListener('change', event => {
         selectedAtomCoordMode = event.target.value;
@@ -3721,43 +3689,11 @@ function updateMeasurements() {
         const midpoint = pair.start.clone().multiplyScalar(0.5).addScaledVector(pair.end, 0.5);
         createFloatingDistanceLabel(midpoint, pair.distance);
     });
-    geometry.points.filter(point => point.isImage && !point.unavailable).forEach(createMeasurementImageMarker);
     if (geometry.angle) {
         const arc = drawAngleArc(geometry.angle);
         createFloatingAngleLabel(arc.labelPosition, geometry.angle.angleDeg);
     }
     requestRender();
-}
-
-// Overlay-only periodic copies: identify endpoints without adding pickable atoms.
-function createMeasurementImageMarker(point) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256; canvas.height = 160;
-    const context = canvas.getContext('2d');
-    const color = getSelectionColorHex(point.selectionIndex + 1);
-    context.strokeStyle = color; context.lineWidth = 3;
-    context.setLineDash([7, 5]);
-    context.beginPath(); context.arc(128, 55, 35, 0, 2 * Math.PI); context.stroke();
-    context.fillStyle = color; context.textAlign = 'center'; context.textBaseline = 'middle';
-    context.font = 'bold 38px JetBrains Mono, monospace';
-    context.fillText(`${point.selectionIndex + 1}′`, 128, 55);
-    const shift = formatImageShift(point.offset);
-    context.font = '22px JetBrains Mono, monospace';
-    const size = Math.min(22, 22 * 236 / Math.max(1, context.measureText(shift).width));
-    context.font = `${size}px JetBrains Mono, monospace`;
-    context.fillText(shift, 128, 116);
-    const material = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas),
-        transparent: true, opacity: 0.85, depthTest: false, depthWrite: false });
-    const marker = new THREE.Sprite(material);
-    const sizeInView = getFloatingLabelSize() * 2;
-    marker.scale.set(sizeInView * 1.6, sizeInView, 1);
-    marker.position.copy(point.position);
-    marker.center.set(0.5, 1 - 55 / canvas.height);
-    marker.raycast = () => {}; // An annotation never behaves as a selectable atom.
-    marker.renderOrder = 997;
-    marker.userData = { isMeasurementVisual: true, isMeasurementImage: true,
-        selectionIndex: point.selectionIndex, offset: [...point.offset] };
-    measurementGroup.add(marker);
 }
 
 // Get the floating label size (matches selection label size)
@@ -3917,12 +3853,8 @@ function drawAngleArc(angleData) {
     return { labelPosition: v1.clone().applyAxisAngle(normal, angle / 2).multiplyScalar(arcRadius * 1.8).add(vertex) };
 }
 
-function measurementPointLabel(index, geometry) {
-    return `${index + 1}${selectedAtoms[index].isGhost || geometry.points[index].isImage ? "′" : ''}`;
-}
-
-function measurementImageNote(pair) {
-    return pair.images.map(point => `<span class="meas-note">Atom ${point.selectionIndex + 1} image ${formatImageShift(point.offset)}</span>`).join('');
+function measurementPointLabel(index) {
+    return `${index + 1}${selectedAtoms[index].isGhost ? "′" : ''}`;
 }
 
 // Update measurement panel in UI with proper multi-color strips
@@ -3932,7 +3864,7 @@ function updateMeasurementUI() {
     
     const geometry = getMeasurementGeometry();
     const colors = ['#00f5d4', '#f15bb5', '#fee440']; // cyan, pink, yellow
-    let html = measurementModeControlHTML();
+    let html = '';
     
     if (selectedAtoms.length === 0) {
         html += '<p class="placeholder-text">Click atoms to measure</p>';
@@ -3963,8 +3895,8 @@ function updateMeasurementUI() {
         if (selectedAtoms.length >= 2) {
             const pair = geometry.pairs[0];
             // Build label with ghost indicators
-            const label1 = measurementPointLabel(0, geometry);
-            const label2 = measurementPointLabel(1, geometry);
+            const label1 = measurementPointLabel(0);
+            const label2 = measurementPointLabel(1);
             
             // Fractional delta for distance 1-2
             const deltaHtml12 = formatDelta(selectedAtoms[0], selectedAtoms[1], geometry);
@@ -3979,7 +3911,6 @@ function updateMeasurementUI() {
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label1}—${label2})</span>
                         <span class="meas-value">${formatMeasuredDistance(pair)}</span>
-                        ${measurementImageNote(pair)}
                         ${deltaHtml12}
                     </div>
                 </div>
@@ -3990,9 +3921,9 @@ function updateMeasurementUI() {
             const angle = geometry.angle;
             
             // Build labels with ghost indicators
-            const label1 = measurementPointLabel(0, geometry);
-            const label2 = measurementPointLabel(1, geometry);
-            const label3 = measurementPointLabel(2, geometry);
+            const label1 = measurementPointLabel(0);
+            const label2 = measurementPointLabel(1);
+            const label3 = measurementPointLabel(2);
             
             // Distance 2-3: two color strips (pink + yellow)
             const pair = geometry.pairs[1];
@@ -4009,7 +3940,6 @@ function updateMeasurementUI() {
                     <div class="meas-content">
                         <span class="meas-label">Distance (${label2}—${label3})</span>
                         <span class="meas-value">${formatMeasuredDistance(pair)}</span>
-                        ${measurementImageNote(pair)}
                         ${deltaHtml23}
                     </div>
                 </div>
@@ -4036,7 +3966,6 @@ function updateMeasurementUI() {
     }
     
     replacePanelHTML(panel, html, 'atomJumpInput');
-    setupMeasurementModeToggle();
     
     // Add clear button listener
     const clearBtn = document.getElementById('clearSelectionBtn');
@@ -4454,7 +4383,6 @@ function loadStructureFromText(content, filename, requestId = null) {
     currentStructure = nextStructure;
     currentSourceText = nextStructure.isXYZ || nextStructure.hasAdditionalSections ? content : null;
     lastJumpAtomNumber = null;
-    measurementMode = 'nearest';
     currentFilename = filename || 'Untitled';
     selectedAtomCoordMode = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastAddAtomElement = null;

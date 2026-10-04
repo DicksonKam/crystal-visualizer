@@ -25,7 +25,7 @@ async function state(page) {
 }
 const near = (actual, expected) => actual.forEach((value, index) => expect(value).toBeCloseTo(expected[index], 5));
 
-test('periodic distances and angle form a connected diagram with identified, non-pickable copies', async ({ page }) => {
+test('distances and angle connect the actual selected atoms across the cell', async ({ page }) => {
     await upload(page, source, 'boundary.poscar');
     const original = await page.evaluate(() => ({ bounds: [getStructureBounds().min.toArray(), getStructureBounds().max.toArray()], text: generatePOSCAR() }));
     await select(page, 1); await select(page, 2);
@@ -38,18 +38,14 @@ test('periodic distances and angle form a connected diagram with identified, non
     near(triple.lines[0].slice(3), triple.points[1]);
     near(triple.lines[1].slice(3), triple.points[2]);
     expect(triple.angle).toBeCloseTo(90, 6);
-    expect(triple.markers).toHaveLength(1);
-    expect(triple.markers[0].index).toBe(0);
-    expect(triple.markers[0].offset).toEqual([1, 0, 0]);
-    expect(triple.markers[0].hits).toBe(0);
-    near(triple.markers[0].position, triple.points[0]);
+    expect(triple.markers).toHaveLength(0);
     // Arc endpoints must follow the same two rays as the rendered distances.
     const direction = (a, b) => { const v = a.map((value, i) => value - b[i]); const n = Math.hypot(...v); return v.map(value => value / n); };
     near(direction(triple.arc.slice(0, 3), triple.points[1]), direction(triple.points[0], triple.points[1]));
     near(direction(triple.arc.slice(-3), triple.points[1]), direction(triple.points[2], triple.points[1]));
-    await expect(page.locator('#measurementPanel')).toContainText('Distance (1′—2)');
-    await expect(page.locator('#measurementPanel')).toContainText('Atom 1 image +a');
-    await expect(page.locator('#measurementPanel')).toContainText('0.2000 Å');
+    await expect(page.locator('#measurementPanel')).toContainText('Distance (1—2)');
+    await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
+    await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
     expect(triple.source).toBe(original.text);
     expect(triple.revision).toBe(0); expect(triple.dirty).toBe(false);
     expect(await page.evaluate(() => [getStructureBounds().min.toArray(), getStructureBounds().max.toArray()])).toEqual(original.bounds);
@@ -61,38 +57,37 @@ test('periodic distances and angle form a connected diagram with identified, non
     expect(rotated.angle).toBe(triple.angle);
 });
 
-test('mode changes, clear, undo and document replacement dispose and restore periodic annotations correctly', async ({ page }) => {
+test('mode changes, clear, undo and document replacement dispose and restore actual measurements', async ({ page }) => {
     await upload(page, source, 'boundary.poscar');
     for (const number of [1, 2, 3]) await select(page, number);
+    const original = await state(page);
     await page.evaluate(() => {
-        window.markerDisposals = [];
-        measurementGroup.children.filter(child => child.userData.isMeasurementImage).forEach(marker => {
-            marker.material.addEventListener('dispose', () => window.markerDisposals.push('material'));
-            marker.material.map.addEventListener('dispose', () => window.markerDisposals.push('texture'));
+        window.measurementDisposals = [];
+        measurementGroup.children.filter(child => child.userData.isMeasurementVisual).forEach(child => {
+            if (child.isLine) child.geometry.addEventListener('dispose', () => window.measurementDisposals.push('geometry'));
+            child.material.addEventListener('dispose', () => window.measurementDisposals.push('material'));
+            child.material.map?.addEventListener('dispose', () => window.measurementDisposals.push('texture'));
         });
     });
-    await page.locator('#measurementModeToggle').click();
-    await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
-    const selected = await state(page);
-    expect(selected.markers).toHaveLength(0);
-    expect(await page.evaluate(() => window.markerDisposals.sort())).toEqual(['material', 'texture']);
-    const displayed = await page.evaluate(() => selectedAtoms.map(atom => atom.position.toArray()));
-    selected.points.forEach((point, index) => near(point, displayed[index]));
-    await page.locator('#measurementModeToggle').click();
-    expect((await state(page)).markers).toHaveLength(1);
     await page.locator('[data-mode="edit"]').click();
-    await expect(page.locator('#measurementPanel')).toContainText('Atom 1 image +a');
-    expect((await state(page)).markers).toHaveLength(1);
+    await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
+    expect((await state(page)).points).toEqual(original.points);
+    await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
     await page.locator('[data-mode="measure"]').click();
     await page.locator('#clearSelectionBtn').click();
-    expect((await state(page)).markers).toHaveLength(0);
+    expect((await state(page)).lines).toHaveLength(0);
+    const disposals = await page.evaluate(() => window.measurementDisposals);
+    expect(disposals.filter(value => value === 'geometry')).toHaveLength(3);
+    expect(disposals.filter(value => value === 'texture')).toHaveLength(3);
+    expect(disposals.filter(value => value === 'material')).toHaveLength(6);
     await page.locator('#undoBtn').click();
-    expect((await state(page)).markers).toHaveLength(1);
+    expect((await state(page)).points).toEqual(original.points);
+    await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
     await page.locator('#redoBtn').click();
-    expect((await state(page)).markers).toHaveLength(0);
+    expect((await state(page)).lines).toHaveLength(0);
     await upload(page, '2\nmolecule\nH 0 0 0\nH 1 0 0\n', 'molecule.xyz');
     expect(await page.evaluate(() => measurementGroup.children.length)).toBe(0);
-    expect(await page.locator('.camera-panel, #fitView, #autoSnap, [data-camera-axis]').count()).toBe(0);
+    expect(await page.locator('.camera-panel, #fitView, #autoSnap, [data-camera-axis], #measurementModeToggle').count()).toBe(0);
 });
 
 test('zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle', async ({ page }) => {
@@ -111,15 +106,22 @@ test('zero and straight angles have finite arcs and labels; coincident arms omit
     expect(measured.angle).toBe(null); expect(measured.arc).toBe(null); expect(measured.labels).toBe(2);
 });
 
-test('unreliable arms do not draw a fictitious line, image marker or angle', async ({ page }) => {
-    await upload(page, 'unreliable\n1\n10 0 0\n0 10 0\n0 0 10\nH\n3\nCartesian\n1e20 0 0\n0 0 0\n1 0 0\n', 'unreliable.poscar');
-    for (const number of [1, 2, 3]) await select(page, number);
-    await expect(page.locator('#measurementPanel')).toContainText('Unavailable');
-    await expect(page.locator('#geometryWarning')).toContainText('integer precision');
+test('explicit ghost selections measure their world positions without substituting another image', async ({ page }) => {
+    await upload(page, source, 'boundary.poscar');
+    await page.getByRole('button', { name: 'Increase a periodic images', exact: true }).click();
+    await select(page, 1);
+    const displayed = await page.evaluate(() => {
+        const ghost = atomMeshes.find(mesh => mesh.userData.isGhost && mesh.userData.originalIndex === 1);
+        selectAtom(ghost, ghost.userData.atomIndex);
+        updateMeasurements(); updateMeasurementUI();
+        return selectedAtoms.map(atom => atom.position.toArray());
+    });
     const measured = await state(page);
-    expect(measured.lines).toHaveLength(1); expect(measured.markers).toHaveLength(0); expect(measured.angle).toBe(null);
-    await page.locator('#measurementModeToggle').click();
-    expect((await state(page)).lines).toHaveLength(2);
-    expect(await page.evaluate(() => geometryWarnings.has('measurement'))).toBe(false);
-    await expect(page.locator('#geometryWarning')).not.toContainText('Use Selected images');
+    expect(measured.points).toEqual(displayed);
+    near(measured.lines[0].slice(0, 3), displayed[0]);
+    near(measured.lines[0].slice(3), displayed[1]);
+    expect(measured.markers).toHaveLength(0);
+    const distance = Math.hypot(...displayed[1].map((value, i) => value - displayed[0][i]));
+    await expect(page.locator('#measurementPanel')).toContainText(`${distance.toFixed(4)} Å`);
+    await expect(page.locator('#measurementPanel')).toContainText('Distance (1—2′)');
 });

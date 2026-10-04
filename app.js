@@ -2471,9 +2471,12 @@ function addPeriodicBoundaryBonds(buckets, bucketSize) {
         const fractional = cartesianToFractional(atom.position, lattice);
         if (!fractional) continue;
         const shifts = [0, 1, 2].map(axis => {
-            const values = [0];
-            if (fractional[axis] <= margins[axis]) values.push(repeats[axis]);
-            if (fractional[axis] >= repeats[axis] - margins[axis]) values.push(-repeats[axis]);
+            // A tilted, non-reduced basis can need a translation larger than
+            // one cell along this axis to reach a nearby Cartesian neighbor.
+            const values = [];
+            const first = Math.ceil((-margins[axis] - fractional[axis]) / repeats[axis]);
+            const last = Math.floor((repeats[axis] + margins[axis] - fractional[axis]) / repeats[axis]);
+            for (let count = first; count <= last; count++) values.push(count * repeats[axis]);
             return values;
         });
         for (const ia of shifts[0]) for (const ib of shifts[1]) for (const ic of shifts[2]) {

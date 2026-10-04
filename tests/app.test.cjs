@@ -423,6 +423,28 @@ test('periodic bonds cross opposite cell faces without a long interior bond', ()
     assert.ok(bonds.every(bond => bond.start.distanceTo(bond.end) <= 0.401));
 });
 
+test('periodic bonds reach neighbors across multiple vectors of a tilted basis', () => {
+    const context = app();
+    const lattice = [[1, 0, 0], [11, 3, 0], [0, 0, 10]];
+    context.points = [[0.1, 0.1, 0], [0.1, 0.9, 0]].map(frac => context.fractionalToCartesian(frac, lattice));
+    context.lattice = lattice;
+    vm.runInContext(`
+        currentStructure = { lattice };
+        settings.periodic = { a: 1, b: 1, c: 1 };
+        settings.showBonds = true;
+        settings.useElementRadii = false;
+        settings.bondThreshold = 0.9;
+        atomMeshes = points.map(position => ({ position, userData: { element: 'H' } }));
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        createBond = () => ({ kind: 'interior' });
+        createGhostBond = (start, end) => ({ kind: 'boundary', start, end });
+        addBondsFromAtomMeshes();
+    `, context);
+    const bonds = vm.runInContext('structureGroup.children', context);
+    assert.ok(bonds.length > 0);
+    assert.ok(bonds.every(bond => bond.kind === 'boundary'));
+});
+
 test('smallest atom radius is reused until render scale changes', () => {
     const context = app();
     let reads = 0;

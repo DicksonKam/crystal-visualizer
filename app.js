@@ -4432,7 +4432,11 @@ function loadStructureFromText(content, filename) {
     updateModeToggleForFileType();
     updateSupercellButtonState();
 
+    const focusWasInDropZone = dropZone.contains(document.activeElement);
     dropZone.classList.add('hidden');
+    const examplesBtn = document.getElementById('examplesBtn');
+    examplesBtn?.setAttribute('aria-expanded', 'false');
+    if (focusWasInDropZone) examplesBtn?.focus();
     statusText.className = 'success';
     return true;
 }
@@ -4506,9 +4510,18 @@ function setupExamplePicker() {
 
     function showExampleOverlay() {
         dropZone.classList.remove('hidden');
+        examplesBtn?.setAttribute('aria-expanded', 'true');
         if (closeDropZone) {
             closeDropZone.classList.toggle('hidden', !currentStructure);
         }
+        (currentStructure ? closeDropZone : list.querySelector('[data-example-path]'))?.focus();
+    }
+
+    function hideExampleOverlay() {
+        if (!currentStructure) return;
+        dropZone.classList.add('hidden');
+        examplesBtn?.setAttribute('aria-expanded', 'false');
+        examplesBtn?.focus();
     }
 
     if (examplesBtn) {
@@ -4518,11 +4531,15 @@ function setupExamplePicker() {
         closeDropZone.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (currentStructure) {
-                dropZone.classList.add('hidden');
-            }
+            hideExampleOverlay();
         });
     }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !dropZone.classList.contains('hidden') && currentStructure) {
+            e.preventDefault();
+            hideExampleOverlay();
+        }
+    });
 }
 
 // Setup drag and drop

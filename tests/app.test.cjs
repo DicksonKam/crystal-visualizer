@@ -28,7 +28,28 @@ function app() {
     const elements = new Map();
     const document = {
         getElementById(id) {
-            if (!elements.has(id)) elements.set(id, { value: '', textContent: '', classList: { add() {}, remove() {} } });
+            if (!elements.has(id)) {
+                const classes = new Set();
+                const attributes = new Map();
+                elements.set(id, {
+                    value: '', textContent: '',
+                    classList: {
+                        add(name) { classes.add(name); },
+                        remove(name) { classes.delete(name); },
+                        contains(name) { return classes.has(name); },
+                        toggle(name, force) {
+                            if (force === undefined) force = !classes.has(name);
+                            if (force) classes.add(name);
+                            else classes.delete(name);
+                            return force;
+                        }
+                    },
+                    contains(target) { return target === this; },
+                    setAttribute(name, value) { attributes.set(name, value); },
+                    getAttribute(name) { return attributes.get(name); },
+                    focus() { document.activeElement = this; }
+                });
+            }
             return elements.get(id);
         }
     };
@@ -381,6 +402,20 @@ test('a successful replacement clears undo history; a failed parse preserves it'
     assert.equal(vm.runInContext('undoStack.length', context), 1);
     context.loadStructureFromText(example('examples/xyz/H2O.xyz'), 'H2O.xyz');
     assert.equal(vm.runInContext('undoStack.length', context), 0);
+});
+
+test('loading an example hides the picker and restores focus to its trigger', () => {
+    const context = app();
+    vm.runInContext('renderStructure = () => {}; updateUI = () => {}; updateUI_forCurrentMode = () => {}; updateModeToggleForFileType = () => {}; updateSupercellButtonState = () => {}; stopAnimation = () => {}; hideTimelinePanel = () => {};', context);
+    const chip = {};
+    const dropZone = context.document.getElementById('dropZone');
+    dropZone.contains = target => target === chip;
+    context.document.activeElement = chip;
+    assert.equal(context.loadStructureFromText(example('examples/xyz/H2O.xyz'), 'H2O.xyz'), true);
+    const examplesButton = context.document.getElementById('examplesBtn');
+    assert.equal(dropZone.classList.contains('hidden'), true);
+    assert.equal(examplesButton.getAttribute('aria-expanded'), 'false');
+    assert.equal(context.document.activeElement, examplesButton);
 });
 
 test('canceling a replacement preserves unsaved structure and history', () => {

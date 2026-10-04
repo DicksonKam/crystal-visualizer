@@ -882,8 +882,7 @@ body.edit-mode-active .panel-title {
 }
 
 .drop-zone.hidden {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 .drop-zone.drag-over {

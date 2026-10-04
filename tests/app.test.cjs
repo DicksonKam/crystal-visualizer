@@ -113,6 +113,65 @@ test('dense views use lower-detail spheres and skip shadow passes', () => {
     assert.equal(vm.runInContext('renderer.shadowMap.enabled', context), true);
 });
 
+test('dense atoms batch by element and ghost state while preserving pick and selection meshes', () => {
+    const context = app();
+    class Geometry {
+        clone() { return new Geometry(); }
+        dispose() { this.disposed = true; }
+    }
+    class Material {
+        constructor() { this.emissive = { setHex() {} }; }
+        clone() { return new Material(); }
+        dispose() { this.disposed = true; }
+    }
+    class Matrix4 {
+        makeScale(x, y, z) { this.hidden = x === 0 && y === 0 && z === 0; return this; }
+    }
+    class InstancedMesh {
+        constructor(geometry, material, count) {
+            Object.assign(this, { geometry, material, count, matrices: [], instanceMatrix: {}, userData: {} });
+        }
+        setMatrixAt(index, matrix) { this.matrices[index] = matrix; }
+        traverse(visitor) { visitor(this); }
+    }
+    Object.assign(context.THREE, { SphereGeometry: Geometry, MeshPhysicalMaterial: Material, Matrix4, InstancedMesh });
+    const layers = () => ({
+        mask: 1,
+        set(layer) { this.mask = 1 << layer; },
+        enable(layer) { this.mask |= 1 << layer; },
+        disable(layer) { this.mask &= ~(1 << layer); }
+    });
+    const atom = (x, isGhost = false, element = 'Si') => ({
+        position: new Vector3(x, 0, 0),
+        layers: layers(),
+        userData: { element, isGhost },
+        updateMatrix() { this.matrix = { x: this.position.x }; }
+    });
+    context.proxies = [atom(0), atom(1), atom(2, true), atom(3, false, 'O')];
+    vm.runInContext(`
+        displayedAtomCount = 600;
+        atomMeshes = proxies;
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        proxies.forEach(mesh => { mesh.material = getAtomMaterial(mesh.userData.element, mesh.userData.isGhost); });
+        addInstancedAtoms();
+    `, context);
+    const batches = vm.runInContext('structureGroup.children', context);
+    assert.deepEqual(Array.from(batches, batch => batch.count), [2, 1, 1]);
+    assert.ok(context.proxies.every(mesh => mesh.layers.mask === 2));
+    assert.equal(batches[0].matrices[1].x, 1);
+    context.highlightAtomMesh(context.proxies[0]);
+    assert.equal(context.proxies[0].layers.mask, 3);
+    assert.equal(batches[0].matrices[0].hidden, true);
+    context.unhighlightAtomMesh(context.proxies[0]);
+    assert.equal(context.proxies[0].layers.mask, 2);
+    assert.equal(batches[0].matrices[0].x, 0);
+    context.proxies[2].position.x = 4;
+    context.updateAtomInstances();
+    assert.equal(batches[1].matrices[0].x, 4);
+    context.disposeObject3D(batches[0]);
+    assert.equal(batches[0].geometry.disposed, true);
+});
+
 test('idle frames skip WebGL work while edits and camera movement render promptly', () => {
     const context = app();
     context.frames = { count: 0 };

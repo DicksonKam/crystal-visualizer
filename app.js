@@ -146,6 +146,7 @@ let lastRenderedAt = -Infinity;
 let lastCameraMotionAt = -Infinity;
 
 const DENSE_VIEW_ATOMS = 500;
+const ATOM_PICKING_LAYER = 1;
 
 function requestRender() {
     renderPending = true;
@@ -230,6 +231,45 @@ function getAtomMaterial(element, isGhost = false) {
     return sharedAtomMaterials.get(key);
 }
 
+function updateAtomInstance(mesh) {
+    const instance = mesh.userData.atomInstance;
+    if (!instance) return;
+    if (mesh.userData.atomHighlighted) {
+        instance.batch.setMatrixAt(instance.index, new THREE.Matrix4().makeScale(0, 0, 0));
+    } else {
+        mesh.updateMatrix();
+        instance.batch.setMatrixAt(instance.index, mesh.matrix);
+    }
+    instance.batch.instanceMatrix.needsUpdate = true;
+}
+
+function updateAtomInstances() {
+    atomMeshes.forEach(updateAtomInstance);
+}
+
+function addInstancedAtoms() {
+    if (displayedAtomCount <= DENSE_VIEW_ATOMS) return;
+    const groups = new Map();
+    atomMeshes.forEach(mesh => {
+        const isGhost = Boolean(mesh.userData.isGhost);
+        const key = `${mesh.userData.element}:${isGhost}`;
+        if (!groups.has(key)) groups.set(key, { element: mesh.userData.element, isGhost, meshes: [] });
+        groups.get(key).meshes.push(mesh);
+    });
+    groups.forEach(({ element, isGhost, meshes }) => {
+        // A separate geometry lets disposal release this batch's instance buffer.
+        const batch = new THREE.InstancedMesh(getSharedAtomGeometry().clone(), getAtomMaterial(element, isGhost), meshes.length);
+        batch.frustumCulled = false;
+        batch.userData.isAtomBatch = true;
+        structureGroup.add(batch);
+        meshes.forEach((mesh, index) => {
+            mesh.userData.atomInstance = { batch, index };
+            mesh.layers.set(ATOM_PICKING_LAYER);
+            updateAtomInstance(mesh);
+        });
+    });
+}
+
 function setAtomGlow(mesh, color, intensity) {
     if (!mesh || !mesh.material) return;
     const base = getAtomMaterial(mesh.userData.element, Boolean(mesh.userData.isGhost));
@@ -241,6 +281,12 @@ function setAtomGlow(mesh, color, intensity) {
         const oldMaterial = mesh.material;
         mesh.material = base;
         oldMaterial.dispose();
+    }
+    if (mesh.userData.atomInstance) {
+        mesh.userData.atomHighlighted = intensity > 0;
+        if (intensity > 0) mesh.layers.enable(0);
+        else mesh.layers.disable(0);
+        updateAtomInstance(mesh);
     }
     requestRender();
 }
@@ -796,6 +842,7 @@ function initScene() {
     
     // Raycaster for atom selection
     raycaster = new THREE.Raycaster();
+    raycaster.layers.enable(ATOM_PICKING_LAYER);
     mouse = new THREE.Vector2();
     
     // Initialize axes HUD
@@ -2435,6 +2482,7 @@ function rebuildDisplayOptions() {
             mesh.position.addScaledVector(new THREE.Vector3(...currentStructure.lattice[index]), cellOffset[axis]);
         });
     });
+    updateAtomInstances();
     rebuildBonds();
     rebuildFixedIndicators();
     rebuildLabels();
@@ -4053,6 +4101,7 @@ function renderStructure(structure, preserveState = false) {
     
     // Add periodic ghost atoms (before centering so they get centered too)
     addPeriodicImages(structure);
+    addInstancedAtoms();
     addBondsFromAtomMeshes();
     
     // Center the structure (includes ghost atoms now)
@@ -5790,6 +5839,7 @@ function switchToFrame(frameIndex) {
                 mesh.position.addScaledVector(new THREE.Vector3(...frame.lattice[index]), cellOffset[axis]);
             });
         });
+        updateAtomInstances();
         rebuildBonds();
         if (settings.showLabels) {
             structureGroup.children.forEach(child => {

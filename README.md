@@ -34,7 +34,7 @@ Shift and add-atom inputs reject invalid or unrepresentable coordinates without 
 
 `index.html` contains the UI, `styles.css` contains the styling, `geometry.js` contains coordinate conversion and periodic geometry, and `formats.js` contains file parsers and exporters that can run without the browser or Three.js renderer. `app.js` contains structure operations, rendering, and event handling. These areas still share application state, so new features should keep loading, rendering, editing, undo, and export behavior consistent.
 
-The renderer reuses sphere geometry and element materials across atoms, reuses bond geometry, and caches the smallest atom radius during redraws. Views above 500 displayed atoms use simpler spheres, batch solid and ghost bonds into two instanced draws, skip shadows, and cap active rendering at 30 fps. Idle views render at a lower rate, while edits request an immediate redraw. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
+The renderer reuses sphere geometry and element materials across atoms, reuses bond geometry, and caches the smallest atom radius during redraws. Views above 500 displayed atoms use simpler spheres, batch atoms by element and ghost state while retaining their picking/editing meshes, batch solid and ghost bonds, skip shadows, and cap active rendering at 30 fps. Idle views render at a lower rate, while edits request an immediate redraw. Atom-number navigation and coordinate-system toggles are keyboard accessible; the status bar announces actions to assistive technology.
 
 Run the focused tests with:
 

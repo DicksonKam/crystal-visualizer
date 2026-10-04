@@ -1,130 +1,119 @@
 # Cross-feature visual campaign — 2026-10-05 (Hong Kong)
 
-Status: **active**. This campaign broadens the previous repeated FCC sequence;
-completion and full-suite validation are pending. It cannot prove every possible
-user sequence.
+Status: **complete**. The principal campaign covered **4,800 passing
+steps across 40 seeds (709–748), with **1,610 rendered
+captures**. Timed segments total 30.34 minutes; including the successful
+failure replay, execution totals 30.71 minutes. This was segmented,
+interrupted by a test-oracle error; it was not an uninterrupted 30-minute pass.
+Earlier pilots and an interrupted initial run are reported separately below.
+There is no claim that every possible user sequence is tested.
 
-The seeded harness now mixes sidebar size/collapse, window sizes, real zoom/pan,
-atom/bond-size sliders, trajectory playback and existing editing, measurement,
-periodic, load/download and history actions. Every fifth campaign seed starts
-with a 600-atom periodic XYZ to exercise instanced rendering. Ordinary fixtures
-cover molecular, cubic, tilted and partially periodic cells. Pointer previews
-are observed before release; passing sequences retain action records and state
-hashes, while failures retain full states, HTML and screenshots.
+## Confirmed app defects fixed
 
-The visual observer wraps the app's real animation-loop scene render, reads its
-framebuffer, checks opacity and renderer state restoration, detects stale
-periodic copies and canvas/layout disagreement, and captures rendered screenshots.
-A fitted/reset view with atoms at least one pixel in radius must contain non-background scene pixels. This pixel check does not by
-itself prove visible atoms, correct appearance, or every bond; actual screenshot
-inspection is required. Tiny user-selected atom scales may legitimately make
-atoms difficult to see in a narrow view.
+1. **Viewport size could change without resizing the canvas.** Wrapped status
+   text changed the viewport height without a window resize or divider gesture.
+   The renderer now observes the actual viewport with ResizeObserver. A separate
+   regression reproduced the persistent mismatch before the fix and passed after.
+2. **Narrow controls could scroll the panel horizontally and clip their labels.**
+   Focus and periodic steppers produced an 82-pixel horizontal scroll. Container
+   rules now reflow coordinates, measurement content and periodic controls to
+   fit. The regression covers editing and preserved measurements; before/after
+   images were inspected.
+3. **The constraint threshold unit could wrap alone at intermediate panel widths.**
+   A container-scoped grid keeps the input and Å together below their label.
+   The 220/240/260-pixel regression failed against the prior stylesheet (32.29
+   pixels of vertical separation) and passes now. Both images were inspected.
 
-## Findings and current evidence
+No new buttons or editing behaviors were added. The pending clipped-periodic-bond
+presentation policy was left unchanged. All browsers were isolated; the user's
+unsaved tab was neither reloaded nor edited. Local Git checkpoints were saved;
+nothing was pushed.
 
-- **Confirmed: content-driven viewport resizing left a stale canvas size.**
-  Pilot seed 701 initially recorded canvas 195×652 versus viewport 195×670.
-  A separate browser regression changes status text to wrap, without a window
-  or divider gesture, and reproduced a persistent mismatch. The renderer now
-  observes the actual viewport with ResizeObserver. 141 unit tests and all five
-  sidebar browser tests passed after the fix. Before-fix evidence is retained
-  in `tests/stress/evidence/2026-10-05/visual-campaign/`.
-- **Oracle timing correction:** an immediate render can precede layout-observer
-  delivery. The visual observer now permits up to two seconds for canvas/layout
-  agreement before capturing, so persistent mismatches still fail. The corrected
-  seed-701 pilot passed 40 steps and captured 10 images; initial, reset, and file
-  replacement images were opened and inspected.
-- **Confirmed and fixed: narrow-panel horizontal overflow.** narrow-panel images show horizontal scrolling after
-  controls receive focus, clipping labels and controls at the left. Constraint
-  summaries also wrap poorly at that width. A focused regression reproduced an 82-pixel horizontal scroll after editing
-  and periodic controls. Container-based reflow now passes that regression,
-  including preserved measurements, and the corrected screenshot was inspected.
-  Full current-suite verification remains pending.
+## Visual coverage and validation
 
-## Coverage ledger to finish
+The seeded campaign mixes editing, periodic-copy selection, measurements/modes,
+history, file replacement/downloads, supercells, constraints, display options,
+sidebar collapse/resize, window changes, real rotation/pan/zoom and playback.
+Molecular, cubic, tilted and partially periodic fixtures are used; every fifth
+seed starts with a 600-atom periodic view. Viewports include 1440×900, 900×760
+and 390×844, with device pixel ratios 1 and 2.
 
-- Varied real-pointer edit/cell/measurement/history combinations and preview images.
-- Sidebar/window changes combined with camera, editing and long content.
-- Display toggles and size changes combined with selections and periodic copies.
-- Cubic, tilted, partially periodic, molecular and dense instanced views.
-- Trajectory playback/frame navigation, replacement and exports with selections.
-- Inspection of representative initial/preview/settled/rebuilt screenshots.
-- Root fixes, failed-then-passing regressions, current full unit/browser validation.
-- Retained campaign totals/log hashes, limits and local Git checkpoints; no push.
+Actual performed actions include 39 cell-resize
+gestures, 20 periodic-copy selections,
+197 panel gestures, 181
+window changes, 25 playback actions and
+189 downloads. Recorded document operations
+include 58 atom moves,
+32 committed cell resizes,
+47 additions,
+14 deletions and
+13 supercells. Passing steps also include
+unavailable actions; attempted steps are not equivalent to successful mutations.
+The complete action and operation counts are in `completed-summary.json`.
 
-All campaign browsers are isolated from the user's unsaved tab. No new controls
-or changes to the pending clipped-periodic-bond display policy are part of this
-campaign.
+The observer reads the actual animation-loop scene framebuffer, checks opacity,
+renderer state restoration, periodic-copy positions, canvas dimensions and panel
+overflow, and captures pointer previews before release. State checks additionally
+cover document/mesh agreement, measurement endpoints, constraints and history.
+**18 representative images were opened and inspected**
+and retained with hashes. Capturing 1,610 images does not mean each was manually
+inspected; framebuffer presence alone cannot prove every atom or bond is correct.
 
-## Interrupted first run and replay
+A separate dense regression passed real atom drag/cancellation, delete/add and
+undo/redo across 501↔500 atoms, then a real first cell-resize gesture and history.
+It captured 13 images, including inspected previews and the non-instanced rebuild.
+The full browser suite also passed 32 repeated boundary-edit/immediate-frame-drag
+cycles across two window sizes. Camera tests cover actual approaching/departing
+rotation, close zoom, overshoot, interruption and frame-rate consistency.
 
-The first sustained run passed seeds 702–706 (600 steps, 185 images), then stopped
-at seed 707, step 54. A bright-pixel quota rejected a deliberately tiny atom scale
-with cell and axes hidden. The failure screenshot was inspected and showed tiny
-atoms; this is classified as an oracle threshold error. The observer now samples
-every pixel against the actual clear color and records projected atom radius,
-with an explicit limitation for subpixel atoms. Seed 707 passed all 120 steps and
-captured 41 images afterward. Failure/replay evidence and summaries are retained
-in the campaign evidence directory. The timed campaign must still be resumed
-and completed; these short portions do not establish sustained completion.
+Validation:
 
-Seed 708 then passed 120 steps and 36 captures with the panel-overflow check
-enabled. A new 30-minute campaign resumed at seed 709. The full current browser
-suite (64 tests) is running separately with one worker to limit competing GPU
-load. Neither run has yet been reported complete.
+- **142 unit tests passed** on the final files.
+- **64 full browser tests passed** before the last CSS-only constraint-unit fix.
+- **One additional dense browser test passed**; it was added after full-suite discovery.
+- **13 affected stress/selection browser tests passed** after the history-oracle correction.
+- **All seven sidebar browser tests passed** after the final CSS-only fix.
+- The completed random segment recorded the latest stylesheet on seeds
+  738–748; source versions
+  are retained per seed. The final CSS change was not followed by a second full
+  browser-suite run; its affected scope was rerun.
 
-The 600-atom initial view, a real atom-drag preview and trajectory playback were
-opened and inspected; representative images and their hashes are retained in
-`inspection-ledger.json` beside the evidence. The earlier preview also documents
-the panel clipping before its fix. Dense renderer transitions around 500 atoms
-and dense edit/cell-preview combinations need additional focused coverage;
-initial dense rendering alone does not prove those interactions.
+## Interruptions and oracle corrections
 
-The focused dense workflow passed: real atom drag/cancellation, delete/add and
-undo/redo across 501↔500 atoms (instanced/non-instanced rendering), then a real
-cell resize preview, release, undo and redo. Its 13 captures include inspected
-atom-preview, 500-atom rebuild and cell-preview images, now retained with hashes.
-Further inspected resumed-campaign images cover dense periodic drag, narrow
-cell resizing and trajectory measurement. The 64-test suite excludes this new
-focused test because discovery preceded its creation; results will be reported
-separately. The sustained campaign remains active.
+An initial sustained run passed seeds 702–706 (600 steps, 185 captures), then
+failed seed 707 at step 54. Its bright-pixel quota rejected a chosen tiny atom
+scale with cell and axes hidden. The inspected image showed subpixel atoms.
+The observer now checks every pixel against the actual clear color and records
+projected atom radius; seed 707 replay passed 120 steps/41 captures. A corrected
+seed-701 pilot passed 40 steps/10 captures, and seed 708 passed 120/36.
 
-Current validation is complete: 141 unit tests, the full discovered browser suite
-(64 tests, 11.8 minutes), and one additional focused dense test all passed. The
-full suite includes 32 repeated boundary-edit/first-frame-drag/history cycles
-across two window sizes; representative current-run previews and rotated views
-were opened and retained. The timed random campaign is still running.
+The principal run passed seeds 709–726 (2,160 steps, 705 captures), then stopped
+at seed 727 step 39. Undo correctly omitted a periodic copy hidden by reducing
+image counts; the oracle wrongly required it. The existing browser contract
+requires safe omission. The corrected oracle filters historical identities by
+current repeats, preserves order and clears empty measurement purpose. Seed 727
+replay passed 120 steps/39 captures. Fresh seeds 728–748 completed another
+2,520 steps/866 captures in 914.54 seconds with terminal exit code 0.
 
-An inspected seed-723 periodic-image capture looks nearly empty despite the
-visible cell. Its preceding native slider Home actions set minimum atom size
-and bond length; the largest projected atom radius is 0.3493 pixels after
-periodic-image refitting. This documents an existing visibility limitation at
-chosen settings, not proof of a stale renderer. No automatic scale change was
-introduced.
+Immediate rendering can precede ResizeObserver delivery; the observer permits
+up to two seconds for layout agreement. This timing allowance is distinct from
+the independently reproduced persistent canvas-size bug.
 
-The resumed run stopped after 18 passing seeds (709–726), 2,160 steps and 705
-captures, at seed 727 step 39. Undo correctly omitted a periodic copy hidden by
-a preceding image-count reduction. The stress model incorrectly required that
-hidden identity; the existing browser contract explicitly requires safe omission.
-The failure screenshot was opened, and the oracle now filters historical
-identities against current repeat counts, preserving order and clearing empty
-measurement purpose. Its focused unit regression passes (142 total unit tests).
-This is a second oracle correction, not a third app defect. Replay and the
-remaining timed run are pending.
+## Evidence and limits
 
-Seed 727 replay completed successfully: 120 steps, 39 captures, 22.2 seconds.
-Fresh seeds resume at 728 for 900 seconds, supplementing the interrupted
-905.6-second run; this is a segmented campaign, not an uninterrupted 30-minute
-pass. Thirteen affected stress/selection browser tests are running after the
-oracle change. Production source hashes remain unchanged.
+Evidence is in `tests/stress/evidence/2026-10-05/visual-campaign/`: raw run logs,
+compact failures, source hashes, `completed-summary.json`, `validation.json`,
+`inspection-ledger.json`, inspected PNGs, and compressed passing action sequences
+in `passing-sequences.json.gz`. Larger original captures/failure states remain
+under the recorded `/private/tmp` paths. Seeds and retained source revisions
+provide repeatability; original screenshots will vary by platform and rendering.
 
-A third confirmed visual defect was found in the tilted-cell preview: the
-constraint threshold unit wrapped alone at intermediate panel widths. A
-container-scoped grid keeps input and unit together below the label. The new
-220/240/260-pixel regression failed against the previous stylesheet (32.29-pixel
-vertical separation) and passes after the fix; all seven sidebar tests pass.
-Both images were opened and retained. The earlier full 64-test result predates
-this CSS-only change; the seven-test sidebar rerun validates its affected scope.
-Fresh campaign seeds record both stylesheet hashes as the change takes effect.
-Partial-periodicity and tilted initial/preview images were also inspected and
-retained.
+These tests use software-rendered Chromium, finite fixtures and gesture samples.
+Other browsers, real GPU drivers, touch hardware, and arbitrary large or exotic
+structures remain untested. Some resize workflows prepare an axis view; that
+setup does not independently prove automatic snapping. Subpixel atom visibility
+is explicitly exempted from the fitted-view presence check. An inspected
+periodic-image capture had a largest atom radius of 0.349 pixels after minimum
+size/length slider choices, explaining its nearly empty appearance. No automatic
+scale change was introduced. The campaign found and fixed three layout defects;
+it cannot establish that no other bugs remain.

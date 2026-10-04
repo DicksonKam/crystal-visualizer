@@ -90,7 +90,7 @@
   "logSha256": "bdd6b45d6c1122fddf3bae5aaee8910edd23a7cd19aa48ba62491e5ace6accbe",
   "notes": [
     "A real terminal exit code 1 was observed before resuming from seed 145.",
-    "Saved page HTML reports the Add Atom action completed; a lower-concurrency replay is pending.",
+    "Saved page HTML reports the Add Atom action completed; lower-concurrency seed 145 replay passed all 160 steps.",
     "The core run spans the second and third fixes; per-seed app hashes are retained."
   ],
   "replayEvidence": "tests/stress/evidence/2026-10-04/core-add-timeout-replay.json"

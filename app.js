@@ -3129,44 +3129,12 @@ function addAtomFromInput() {
 
 // Convert fractional coordinates to Cartesian
 function fractionalToCartesian(frac, lattice) {
-    const x = frac[0] * lattice[0][0] + frac[1] * lattice[1][0] + frac[2] * lattice[2][0];
-    const y = frac[0] * lattice[0][1] + frac[1] * lattice[1][1] + frac[2] * lattice[2][1];
-    const z = frac[0] * lattice[0][2] + frac[1] * lattice[1][2] + frac[2] * lattice[2][2];
-    return new THREE.Vector3(x, y, z);
+    return new THREE.Vector3(...CrystalGeometry.fractionalToCartesian(frac, lattice));
 }
 
 // Convert Cartesian coordinates to fractional
 function cartesianToFractional(pos, lattice) {
-    // Solve: pos = f[0]*a + f[1]*b + f[2]*c
-    // Using matrix inversion
-    const a = lattice[0];
-    const b = lattice[1];
-    const c = lattice[2];
-    
-    // Create 3x3 matrix from lattice vectors (column vectors)
-    const det = a[0] * (b[1] * c[2] - b[2] * c[1])
-              - a[1] * (b[0] * c[2] - b[2] * c[0])
-              + a[2] * (b[0] * c[1] - b[1] * c[0]);
-    
-    if (Math.abs(det) < 1e-10) {
-        return null; // Degenerate lattice
-    }
-    
-    // Cramer's rule: rows are b×c, c×a, and a×b divided by the cell volume.
-    const invDet = 1.0 / det;
-    
-    const inv = [
-        [(b[1] * c[2] - b[2] * c[1]) * invDet, (b[2] * c[0] - b[0] * c[2]) * invDet, (b[0] * c[1] - b[1] * c[0]) * invDet],
-        [(c[1] * a[2] - c[2] * a[1]) * invDet, (c[2] * a[0] - c[0] * a[2]) * invDet, (c[0] * a[1] - c[1] * a[0]) * invDet],
-        [(a[1] * b[2] - a[2] * b[1]) * invDet, (a[2] * b[0] - a[0] * b[2]) * invDet, (a[0] * b[1] - a[1] * b[0]) * invDet]
-    ];
-    
-    // Multiply inverse by position
-    const fx = inv[0][0] * pos.x + inv[0][1] * pos.y + inv[0][2] * pos.z;
-    const fy = inv[1][0] * pos.x + inv[1][1] * pos.y + inv[1][2] * pos.z;
-    const fz = inv[2][0] * pos.x + inv[2][1] * pos.y + inv[2][2] * pos.z;
-    
-    return [fx, fy, fz];
+    return CrystalGeometry.cartesianToFractional(pos, lattice);
 }
 
 // Check if Cartesian position is within unit cell (fractional coords in [0, 1])

@@ -1,10 +1,24 @@
 // Geometry independent of Three.js and the browser UI.
 (function (root) {
     const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
     const subtract = (a, b) => a.map((value, index) => value - b[index]);
     const scale = (a, factor) => a.map(value => value * factor);
     const length = a => Math.sqrt(dot(a, a));
     const components = point => Array.isArray(point) ? point : [point.x, point.y, point.z];
+
+    function fractionalToCartesian(fractional, lattice) {
+        return [0, 1, 2].map(axis => fractional.reduce((sum, value, index) => sum + value * lattice[index][axis], 0));
+    }
+
+    function cartesianToFractional(point, lattice) {
+        const [a, b, c] = lattice;
+        const reciprocal = [cross(b, c), cross(c, a), cross(a, b)];
+        const volume = dot(a, reciprocal[0]);
+        if (Math.abs(volume) < 1e-10) return null;
+        const position = components(point);
+        return reciprocal.map(row => dot(position, row) / volume);
+    }
 
     // Find the nearest translated copy of B to A. A QR-based integer search
     // handles tilted cells where rounding fractional coordinates is incorrect.
@@ -84,7 +98,6 @@
         const a = components(pointA);
         const b = components(pointB);
         const [u, v, w] = lattice;
-        const cross = (p, q) => [p[1] * q[2] - p[2] * q[1], p[2] * q[0] - p[0] * q[2], p[0] * q[1] - p[1] * q[0]];
         const volume = dot(u, cross(v, w));
         if (Math.abs(volume) < 1e-10) throw new Error('Cannot clip periodic bond: lattice has zero volume');
         const reciprocal = [cross(v, w), cross(w, u), cross(u, v)].map(row => scale(row, 1 / volume));
@@ -110,7 +123,7 @@
         ];
     }
 
-    const api = { nearestImageBetween, clipSegmentToCell };
+    const api = { fractionalToCartesian, cartesianToFractional, nearestImageBetween, clipSegmentToCell };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalGeometry = api;
 })(globalThis);

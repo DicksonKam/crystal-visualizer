@@ -1,6 +1,15 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
+const { fractionalToCartesian, cartesianToFractional, nearestImageBetween, clipSegmentToCell } = require('../geometry.js');
+
+test('coordinate conversion round-trips arrays and objects in a tilted cell', () => {
+    const lattice = [[2, 0, 0], [0.8, 3, 0], [0.4, 0.5, 4]];
+    const fractional = [0.2, 0.35, 0.7];
+    const position = fractionalToCartesian(fractional, lattice);
+    const restored = cartesianToFractional({ x: position[0], y: position[1], z: position[2] }, lattice);
+    restored.forEach((value, axis) => assert.ok(Math.abs(value - fractional[axis]) < 1e-12));
+    assert.equal(cartesianToFractional(position, [[1, 0, 0], [2, 0, 0], [0, 0, 1]]), null);
+});
 
 function bruteNearest(a, b, lattice, range = 4) {
     let distance = Infinity;

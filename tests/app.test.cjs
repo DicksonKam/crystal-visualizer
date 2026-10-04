@@ -538,9 +538,11 @@ test('supercell undo and redo preserve lattice-bearing XYZ metadata', () => {
     context.performUndo();
     assert.equal(vm.runInContext('currentStructure.atoms.length', context), initialAtoms);
     assert.equal(vm.runInContext('currentStructure.isXYZ && currentStructure.hasExplicitLattice', context), true);
+    assert.equal(vm.runInContext('currentStructure.isDirect', context), false);
     context.performRedo();
     assert.equal(vm.runInContext('currentStructure.atoms.length', context), initialAtoms * 2);
     assert.equal(vm.runInContext('currentStructure.isXYZ && currentStructure.hasExplicitLattice', context), true);
+    assert.equal(vm.runInContext('currentStructure.isDirect', context), false);
 });
 
 test('exact fractional coordinates update one atom and round-trip through undo', () => {

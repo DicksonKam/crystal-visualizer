@@ -361,9 +361,21 @@ function updateUndoButton() {
     if (redoButton) redoButton.disabled = redoStack.length === 0;
 }
 
+function snapshotStructure(structure) {
+    return JSON.parse(JSON.stringify(structure));
+}
+
+function restoreStructure(snapshot) {
+    const structure = snapshotStructure(snapshot);
+    structure.atoms.forEach(atom => {
+        atom.position = new THREE.Vector3(atom.position.x, atom.position.y, atom.position.z);
+    });
+    return structure;
+}
+
 function captureRedoState(operation) {
     return {
-        structure: isSelectionOperation(operation) ? null : JSON.parse(JSON.stringify(currentStructure)),
+        structure: isSelectionOperation(operation) ? null : snapshotStructure(currentStructure),
         periodic: { ...settings.periodic },
         selected: selectedAtoms.map(atom => ({
             index: atom.index,
@@ -384,10 +396,7 @@ function performRedo() {
     }
     const { operation, state } = redoStack.pop();
     if (state.structure) {
-        currentStructure = state.structure;
-        currentStructure.atoms.forEach(atom => {
-            atom.position = new THREE.Vector3(atom.position.x, atom.position.y, atom.position.z);
-        });
+        currentStructure = restoreStructure(state.structure);
     }
     settings.periodic = { ...state.periodic };
     ['a', 'b', 'c'].forEach(axis => {
@@ -543,11 +552,7 @@ function undoFixAtoms(op) {
 
 function undoMakeSupercell(op) {
     // Restore the old structure completely
-    currentStructure = JSON.parse(JSON.stringify(op.oldStructure));
-    // Restore THREE.Vector3 objects for positions
-    currentStructure.atoms.forEach(atom => {
-        atom.position = new THREE.Vector3(atom.position.x, atom.position.y, atom.position.z);
-    });
+    currentStructure = restoreStructure(op.oldStructure);
     // Restore periodic settings
     settings.periodic = { ...op.oldPeriodic };
     document.getElementById('periodicA').value = settings.periodic.a;
@@ -4825,25 +4830,8 @@ function convertToSupercell() {
     // Skip if already 1×1×1
     if (na === 1 && nb === 1 && nc === 1) return false;
     
-    // Save for undo (deep copy of structure) - unified undo stack
-    const oldStructure = {
-        comment: currentStructure.comment,
-        scale: currentStructure.scale,
-        isXYZ: Boolean(currentStructure.isXYZ),
-        hasExplicitLattice: Boolean(currentStructure.hasExplicitLattice),
-        isXDATCAR: Boolean(currentStructure.isXDATCAR),
-        lattice: currentStructure.lattice.map(v => [...v]),
-        coordType: currentStructure.coordType,
-        hasSelectiveDynamics: currentStructure.hasSelectiveDynamics,
-        elements: [...currentStructure.elements],
-        counts: [...currentStructure.counts],
-        atoms: currentStructure.atoms.map(atom => ({
-            element: atom.element,
-            position: { x: atom.position.x, y: atom.position.y, z: atom.position.z },
-            fractional: atom.fractional ? [...atom.fractional] : null,
-            selectiveDynamics: atom.selectiveDynamics ? [...atom.selectiveDynamics] : [true, true, true]
-        }))
-    };
+    // Keep all parsed metadata in the undo snapshot as formats evolve.
+    const oldStructure = snapshotStructure(currentStructure);
     pushUndo({
         type: 'make_supercell',
         oldStructure: oldStructure,

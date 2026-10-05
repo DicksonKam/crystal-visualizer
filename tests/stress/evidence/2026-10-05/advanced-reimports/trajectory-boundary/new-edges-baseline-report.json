@@ -1,0 +1,323 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/drag-status.spec.cjs",
+      "tests/browser/trajectory-boundary-keyboard.spec.cjs",
+      "--config=/private/tmp/crystal-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-new-edges-baseline",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-new-edges-baseline",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "drag-status.spec.cjs",
+      "file": "drag-status.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a new mouse drag replaces the previous cancellation message before release",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14778,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#statusText')\nExpected: \u001b[32m\"Moving atom #1\"\u001b[39m\nReceived: \u001b[31m\"Drag canceled (Escape pressed); original geometry restored\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('#statusText') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#statusText')\u001b[22m\n\u001b[2m    14 × locator resolved to <span class=\"\" role=\"status\" id=\"statusText\" aria-live=\"polite\" data-drag-cancellation=\"{\"reason\":\"Escape pressed\",\"eventType\":\"keydown\",\"eventButtons\":null,\"pointerId\":1,\"lastPointerEvent\":{\"type\":\"pointermove\",\"buttons\":1,\"pointerType\":\"mouse\"},\"hadMoved\":true,\"documentFocused\":true}\">Drag canceled (Escape pressed); original geometry…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Drag canceled (Escape pressed); original geometry restored\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#statusText')\nExpected: \u001b[32m\"Moving atom #1\"\u001b[39m\nReceived: \u001b[31m\"Drag canceled (Escape pressed); original geometry restored\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('#statusText') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#statusText')\u001b[22m\n\u001b[2m    14 × locator resolved to <span class=\"\" role=\"status\" id=\"statusText\" aria-live=\"polite\" data-drag-cancellation=\"{\"reason\":\"Escape pressed\",\"eventType\":\"keydown\",\"eventButtons\":null,\"pointerId\":1,\"lastPointerEvent\":{\"type\":\"pointermove\",\"buttons\":1,\"pointerType\":\"mouse\"},\"hadMoved\":true,\"documentFocused\":true}\">Drag canceled (Escape pressed); original geometry…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Drag canceled (Escape pressed); original geometry restored\"\u001b[22m\n\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/drag-status.spec.cjs:30:47",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/drag-status.spec.cjs",
+                      "column": 47,
+                      "line": 30
+                    },
+                    "snippet": "  28 |     await start();\n  29 |     await page.screenshot({ path: info.outputPath('next-drag-held.png') });\n> 30 |     await expect(page.locator('#statusText')).toHaveText('Moving atom #1');\n     |                                               ^\n  31 |     const preview = await page.evaluate(() => currentStructure.atoms[0].position.toArray());\n  32 |     expect(preview).not.toEqual(original);\n  33 |     await page.mouse.up();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/drag-status.spec.cjs",
+                        "column": 47,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#statusText')\nExpected: \u001b[32m\"Moving atom #1\"\u001b[39m\nReceived: \u001b[31m\"Drag canceled (Escape pressed); original geometry restored\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('#statusText') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#statusText')\u001b[22m\n\u001b[2m    14 × locator resolved to <span class=\"\" role=\"status\" id=\"statusText\" aria-live=\"polite\" data-drag-cancellation=\"{\"reason\":\"Escape pressed\",\"eventType\":\"keydown\",\"eventButtons\":null,\"pointerId\":1,\"lastPointerEvent\":{\"type\":\"pointermove\",\"buttons\":1,\"pointerType\":\"mouse\"},\"hadMoved\":true,\"documentFocused\":true}\">Drag canceled (Escape pressed); original geometry…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Drag canceled (Escape pressed); original geometry restored\"\u001b[22m\n\n\n  28 |     await start();\n  29 |     await page.screenshot({ path: info.outputPath('next-drag-held.png') });\n> 30 |     await expect(page.locator('#statusText')).toHaveText('Moving atom #1');\n     |                                               ^\n  31 |     const preview = await page.evaluate(() => currentStructure.atoms[0].position.toArray());\n  32 |     expect(preview).not.toEqual(original);\n  33 |     await page.mouse.up();\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/drag-status.spec.cjs:30:47"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T14:59:33.776Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-new-edges-baseline/drag-status-a-new-mouse-dr-0cc14-tion-message-before-release-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-new-edges-baseline/drag-status-a-new-mouse-dr-0cc14-tion-message-before-release-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-new-edges-baseline/drag-status-a-new-mouse-dr-0cc14-tion-message-before-release-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/drag-status.spec.cjs",
+                    "column": 47,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "525bcff37f3cece6ef6e-122e02b85f26c00b826b",
+          "file": "drag-status.spec.cjs",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "trajectory-boundary-keyboard.spec.cjs",
+      "file": "trajectory-boundary-keyboard.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard scrubbing at Home pauses even when the native range value cannot change",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8789,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs:33:73",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs",
+                      "column": 73,
+                      "line": 33
+                    },
+                    "snippet": "  31 |             expect(await slider.inputValue()).toBe(frame);\n  32 |             expect(await page.evaluate(() => window.boundaryInputCount)).toBe(0);\n> 33 |             expect(await page.evaluate(() => animationState.isPlaying)).toBe(false);\n     |                                                                         ^\n  34 |             expect(await page.evaluate(() => animationState.intervalId)).toBeNull();\n  35 |             await expect(page.locator('#playPause')).toHaveAttribute('aria-label', 'Play trajectory');\n  36 |             await page.clock.runFor(1200);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs",
+                        "column": 73,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  31 |             expect(await slider.inputValue()).toBe(frame);\n  32 |             expect(await page.evaluate(() => window.boundaryInputCount)).toBe(0);\n> 33 |             expect(await page.evaluate(() => animationState.isPlaying)).toBe(false);\n     |                                                                         ^\n  34 |             expect(await page.evaluate(() => animationState.intervalId)).toBeNull();\n  35 |             await expect(page.locator('#playPause')).toHaveAttribute('aria-label', 'Play trajectory');\n  36 |             await page.clock.runFor(1200);\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs:33:73"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T14:59:49.468Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-new-edges-baseline/trajectory-boundary-keyboa-7494e-e-range-value-cannot-change-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-new-edges-baseline/trajectory-boundary-keyboa-7494e-e-range-value-cannot-change-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-new-edges-baseline/trajectory-boundary-keyboa-7494e-e-range-value-cannot-change-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs",
+                    "column": 73,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ed8b6db4012559d0dad4-21fd01eac958ed2dd0f1",
+          "file": "trajectory-boundary-keyboard.spec.cjs",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "title": "keyboard scrubbing at End pauses even when the native range value cannot change",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8618,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs:33:73",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs",
+                      "column": 73,
+                      "line": 33
+                    },
+                    "snippet": "  31 |             expect(await slider.inputValue()).toBe(frame);\n  32 |             expect(await page.evaluate(() => window.boundaryInputCount)).toBe(0);\n> 33 |             expect(await page.evaluate(() => animationState.isPlaying)).toBe(false);\n     |                                                                         ^\n  34 |             expect(await page.evaluate(() => animationState.intervalId)).toBeNull();\n  35 |             await expect(page.locator('#playPause')).toHaveAttribute('aria-label', 'Play trajectory');\n  36 |             await page.clock.runFor(1200);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs",
+                        "column": 73,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  31 |             expect(await slider.inputValue()).toBe(frame);\n  32 |             expect(await page.evaluate(() => window.boundaryInputCount)).toBe(0);\n> 33 |             expect(await page.evaluate(() => animationState.isPlaying)).toBe(false);\n     |                                                                         ^\n  34 |             expect(await page.evaluate(() => animationState.intervalId)).toBeNull();\n  35 |             await expect(page.locator('#playPause')).toHaveAttribute('aria-label', 'Play trajectory');\n  36 |             await page.clock.runFor(1200);\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs:33:73"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T14:59:58.870Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-new-edges-baseline/trajectory-boundary-keyboa-fec4f-e-range-value-cannot-change-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-new-edges-baseline/trajectory-boundary-keyboa-fec4f-e-range-value-cannot-change-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-new-edges-baseline/trajectory-boundary-keyboa-fec4f-e-range-value-cannot-change-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/trajectory-boundary-keyboard.spec.cjs",
+                    "column": 73,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "ed8b6db4012559d0dad4-7caa5c57ed402553cf55",
+          "file": "trajectory-boundary-keyboard.spec.cjs",
+          "line": 9,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-05T14:59:33.136Z",
+    "duration": 34635.173,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

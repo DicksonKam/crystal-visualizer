@@ -1,0 +1,18 @@
+--- app.js (feedback v175)
++++ app.js (all fixes v176)
+@@ -5913,6 +5913,15 @@
+             switchToFrame(frameIndex);
+         });
+         
++        // A range emits no input event for a key that stays at its endpoint.
++        // Scrubbing still owns the frame, even when its value cannot change.
++        slider.addEventListener('keydown', (event) => {
++            if (!event.altKey && !event.ctrlKey && !event.metaKey &&
++                ['Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown'].includes(event.key)) {
++                stopAnimation();
++            }
++        });
++
+         // Stop animation when user interacts with slider
+         slider.addEventListener('pointerdown', () => {
+             if (animationState.isPlaying) {

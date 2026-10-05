@@ -1,0 +1,28 @@
+{
+  "status": "Baseline failure verified; all-fixes candidate v176 passes focused browser verification; full suite running",
+  "rootCause": "Native range keyboard interaction emits no input event when the value is already at its endpoint, so input-only playback cancellation misses the user intent.",
+  "failure": "Version 174 suite, keyboard End at 900px; isPlaying remained true at frame 24/24.",
+  "candidateVersion": 176,
+  "candidateRoot": "/private/tmp/crystal-final-candidate",
+  "test": "tests/browser/trajectory-boundary-keyboard.spec.cjs",
+  "mainSourceUnchangedForDiscovery": true,
+  "baselineBrowser": {
+    "reportStats": {
+      "startTime": "2026-10-05T14:59:33.136Z",
+      "duration": 34635.173,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 3,
+      "flaky": 0
+    },
+    "report": "../trajectory-boundary/new-edges-baseline-report.json"
+  },
+  "candidateBrowser": {
+    "version": 176,
+    "passed": 9,
+    "failed": 0,
+    "reportedDuration": "41.8s",
+    "scope": "Drag feedback, Home/End boundary keys and original six trajectory keyboard playback cases",
+    "report": "../trajectory-boundary/new-edges-candidate-report.json"
+  }
+}

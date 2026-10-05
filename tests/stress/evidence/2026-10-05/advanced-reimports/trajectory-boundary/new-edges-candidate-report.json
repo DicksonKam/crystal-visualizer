@@ -1,0 +1,416 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/drag-status.spec.cjs",
+      "tests/browser/trajectory-boundary-keyboard.spec.cjs",
+      "tests/browser/trajectory-interaction-visual.spec.cjs",
+      "--config=/private/tmp/crystal-final-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-new-edges-candidate",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-final-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-new-edges-candidate",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4177",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "drag-status.spec.cjs",
+      "file": "drag-status.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a new mouse drag replaces the previous cancellation message before release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9863,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:23.347Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "525bcff37f3cece6ef6e-122e02b85f26c00b826b",
+          "file": "drag-status.spec.cjs",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "trajectory-boundary-keyboard.spec.cjs",
+      "file": "trajectory-boundary-keyboard.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard scrubbing at Home pauses even when the native range value cannot change",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5079,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:33.412Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed8b6db4012559d0dad4-21fd01eac958ed2dd0f1",
+          "file": "trajectory-boundary-keyboard.spec.cjs",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "title": "keyboard scrubbing at End pauses even when the native range value cannot change",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4477,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:38.499Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ed8b6db4012559d0dad4-7caa5c57ed402553cf55",
+          "file": "trajectory-boundary-keyboard.spec.cjs",
+          "line": 9,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "trajectory-interaction-visual.spec.cjs",
+      "file": "trajectory-interaction-visual.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard trajectory scrubbing ArrowRight pauses playback at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4216,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:42.991Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b575bd2947dfcef3204-101b7ed9a983cf53aba8",
+          "file": "trajectory-interaction-visual.spec.cjs",
+          "line": 6,
+          "column": 75
+        },
+        {
+          "title": "keyboard trajectory scrubbing Home pauses playback at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:47.221Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b575bd2947dfcef3204-dbabdadc0d47013f0744",
+          "file": "trajectory-interaction-visual.spec.cjs",
+          "line": 6,
+          "column": 75
+        },
+        {
+          "title": "keyboard trajectory scrubbing End pauses playback at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3352,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:50.686Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b575bd2947dfcef3204-cb129bec5beaab1300c4",
+          "file": "trajectory-interaction-visual.spec.cjs",
+          "line": 6,
+          "column": 75
+        },
+        {
+          "title": "keyboard trajectory scrubbing ArrowRight pauses playback at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3271,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:54.047Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b575bd2947dfcef3204-9ff0be310bf9a9ab36e4",
+          "file": "trajectory-interaction-visual.spec.cjs",
+          "line": 6,
+          "column": 75
+        },
+        {
+          "title": "keyboard trajectory scrubbing Home pauses playback at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3734,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:00:57.328Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b575bd2947dfcef3204-2e680a34abef49710c7f",
+          "file": "trajectory-interaction-visual.spec.cjs",
+          "line": 6,
+          "column": 75
+        },
+        {
+          "title": "keyboard trajectory scrubbing End pauses playback at 390px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3461,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T15:01:01.070Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6b575bd2947dfcef3204-b50c37df7d6ed3f44242",
+          "file": "trajectory-interaction-visual.spec.cjs",
+          "line": 6,
+          "column": 75
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-05T15:00:22.807Z",
+    "duration": 41803.077999999994,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -813,6 +813,7 @@ body.edit-mode-active .panel-title {
     flex: 1;
     position: relative;
     overflow: hidden;
+    container-type: inline-size;
 }
 
 .viewport {
@@ -833,7 +834,7 @@ body.edit-mode-active .panel-title {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1rem;
     padding: 1.25rem 1.5rem;
     overflow: auto;
@@ -892,6 +893,9 @@ body.edit-mode-active .panel-title {
     cursor: pointer;
     transition: transform var(--transition-normal);
     flex-shrink: 0;
+    /* Auto margins center fitting content, but collapse to zero when the
+       picker overflows so its beginning remains reachable by scrolling. */
+    margin-top: auto;
 }
 
 .example-picker {
@@ -899,6 +903,7 @@ body.edit-mode-active .panel-title {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin-bottom: auto;
 }
 
 .example-picker-title {
@@ -1004,6 +1009,13 @@ body.edit-mode-active .panel-title {
     font-size: 0.75rem;
     color: var(--text-secondary);
     white-space: nowrap;
+}
+
+/* Sidebar resizing changes the viewer without changing the window width. */
+@container (max-width: 640px) {
+    .controls-hint {
+        display: none;
+    }
 }
 
 /* === Status Bar === */

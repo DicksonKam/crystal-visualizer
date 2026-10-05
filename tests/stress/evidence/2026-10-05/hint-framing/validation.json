@@ -1,5 +1,5 @@
 {
-  "status": "confirmed bug; source fix pending completion of the current two-hour discovery soak",
+  "status": "Source layout fix applied after two-hour discovery completed; final main-source checks running",
   "appVersion": 171,
   "cause": "Navigation help is absolutely positioned over the full-height canvas. Camera fitting uses the full canvas dimensions, so fitted unit-cell corners can be covered by the help strip.",
   "trajectoryReproduction": {
@@ -41,9 +41,8 @@
     "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
   },
   "remaining": [
-    "Finish the live discovery soak, retaining its original revision and duration.",
-    "Apply the source layout fix and verify the new regression, existing layout/edit/playback behavior, and rendered screenshots.",
-    "Run additional visual sequences on the final source and audit the completed campaign."
+    "Complete direct main-source regression tests and the additional final-source persistent visual run.",
+    "Audit completion and save local Git checkpoints."
   ],
   "stagedSource": {
     "directory": "/private/tmp/crystal-hint-candidate",
@@ -90,5 +89,66 @@
       },
       "suiteCompletionConfirmed": true
     }
+  },
+  "finalAppVersion": 172,
+  "mainSourceMatchesTestedCandidate": {
+    "layout.js": {
+      "match": true,
+      "sha256": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a"
+    },
+    "measurement.js": {
+      "match": true,
+      "sha256": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62"
+    },
+    "history.js": {
+      "match": true,
+      "sha256": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa"
+    },
+    "camera.js": {
+      "match": true,
+      "sha256": "00f8eaf6daa9f6f98a4f965f9b56fbcfcf69d7d292e1b1849e8d73446e4a0342"
+    },
+    "structure.js": {
+      "match": true,
+      "sha256": "8495d62e49f0ddfe6373a62617633fb6bfc0fc374948160e91ed1903aec25254"
+    },
+    "app.js": {
+      "match": true,
+      "sha256": "d7ea857f69f14f80d207c05ac2bbf2dcc178424c6ac4500e4d909acf7a0fba82"
+    },
+    "geometry.js": {
+      "match": true,
+      "sha256": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1"
+    },
+    "formats.js": {
+      "match": true,
+      "sha256": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1"
+    },
+    "document.js": {
+      "match": true,
+      "sha256": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17"
+    },
+    "index.html": {
+      "match": true,
+      "sha256": "876ad5a7abd5fe987ba89e95b5892ada05ad5fffd469bb5b50397f5177accd4a"
+    },
+    "styles.css": {
+      "match": true,
+      "sha256": "63df494608b7eb0769d0dbc0685ce60d4f79b33ba2090e6a41321921d9ab8a07"
+    }
+  },
+  "directMainRegression": {
+    "passed": 3,
+    "failed": 0,
+    "durationSeconds": 10.3,
+    "exitCode": 0,
+    "outputDirectory": "/private/tmp/crystal-hint-framing-main-final"
+  },
+  "nativeMainVerification": {
+    "application": "app.js?v=172",
+    "stylesheet": "styles.css?v=51",
+    "canvasBottom": 579,
+    "hintTop": 579.21875,
+    "observed": "Full trajectory cell is visible above navigation help; timeline visible. Screenshot inspected in native tool output, not retained locally. Own temporary tab closed. User tab untouched."
   }
 }

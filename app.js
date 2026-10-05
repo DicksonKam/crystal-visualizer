@@ -4111,8 +4111,14 @@ function getStructureBounds() {
 function fitStructureToView(preserveOrientation = false) {
     const quaternion = preserveOrientation ? camera.quaternion.clone()
         : cameraMath.orientation([1, 0.8, 1], [0, 1, 0]);
-    const fitted = cameraMath.fit(getStructureBounds(), quaternion, viewport.clientWidth / viewport.clientHeight,
-        orthographicCamera.top - orthographicCamera.bottom, isPerspective ? perspectiveCamera.fov : null);
+    // Fit the projection actually in use. A file can finish loading before a
+    // window/sidebar resize has settled, when the DOM canvas width is zero.
+    // The resize handler preserves this fit when it updates the projection.
+    const frustumHeight = orthographicCamera.top - orthographicCamera.bottom;
+    const aspect = isPerspective ? perspectiveCamera.aspect
+        : (orthographicCamera.right - orthographicCamera.left) / frustumHeight;
+    const fitted = cameraMath.fit(getStructureBounds(), quaternion, aspect,
+        frustumHeight, isPerspective ? perspectiveCamera.fov : null);
     cameraController.setPose(fitted, preserveOrientation ? 'fit' : 'reset');
 }
 

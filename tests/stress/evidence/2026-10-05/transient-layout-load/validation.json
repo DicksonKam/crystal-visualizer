@@ -1,0 +1,40 @@
+{
+  "status": "Root fix applied; verification running",
+  "failedRun": {
+    "appVersion": 172,
+    "exitCode": 1,
+    "elapsedSeconds": 401.70324737500005,
+    "completedSequences": 12,
+    "failedSeed": 2213,
+    "randomizedStepsCompleted": 2160,
+    "screenshotCheckpointsCompleted": 712,
+    "failure": "File replacement after a narrow-window transition reports Error: Invalid camera viewport. This run is not counted as a successful ten-minute final check."
+  },
+  "baselineRegression": {
+    "failed": 1,
+    "message": "Error: Invalid camera viewport",
+    "realAdapter": "FileReader via file input",
+    "reproduction": "Temporarily retain a 414px sidebar in a 390px window, giving the canvas zero width before layout clamp."
+  },
+  "rootCause": "Document fitting divides transient DOM width by height instead of using the currently active camera projection. The resize listener skips zero dimensions and retains a valid projection, but a concurrent file load can attempt fitting before the layout settles.",
+  "fix": "Fit against the active projection aspect. Existing resize framing scales the fitted view when dimensions become positive. No delayed document state or arbitrary fallback size is introduced.",
+  "appVersion": 173,
+  "sourceHashes": {
+    "app.js": "603777a2d43f46f9ded2f254eb1b15d5a5c7f5ccffcc06c1c7a390e554ec009c",
+    "index.html": "52328baf349bb652a84e1de8e2438d4780141f06250ce7445200f672e0943867",
+    "styles.css": "63df494608b7eb0769d0dbc0685ce60d4f79b33ba2090e6a41321921d9ab8a07"
+  },
+  "unitTests": {
+    "passed": 144,
+    "failed": 0
+  },
+  "remaining": [
+    "Finish active 136-case final-source browser suite and persistent visual replay; inspect rendered evidence; audit and commit completion."
+  ],
+  "targetedBrowserTests": {
+    "passed": 9,
+    "failed": 0,
+    "durationSeconds": 34.4,
+    "exitCode": 0
+  }
+}

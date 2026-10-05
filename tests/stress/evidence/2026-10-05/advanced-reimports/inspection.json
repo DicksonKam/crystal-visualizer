@@ -67,6 +67,10 @@
     {
       "file": "seed-3245-step-162-drag-atom-preview.png",
       "result": "XYZ scene has no lattice despite global showCell setting. This attempted drag did not produce an active atom drag. Prior explicit interruption cases in the sequence can leave the cancellation status visible; this screenshot alone does not prove a new unexpected cancellation."
+    },
+    {
+      "file": "seed-3250-step-169-drag-atom-preview.png",
+      "result": "Actual atom drag displays an oblique triangular plane within the base cell. Base and periodic-copy frame edges are intact, and labels correspond to the base selection; bonds are disabled."
     }
   ],
   "nativeChecks": [

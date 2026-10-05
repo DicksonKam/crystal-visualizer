@@ -31,6 +31,11 @@
       "source": "seed-1118-step-178-panel-after.png",
       "retained": "late-invalid-import-scene.png",
       "observation": "Collapsed sidebar retains five rendered atoms after rejected XYZ import. Bonds disabled. Invalid XYZ status visible. No new visual defect confirmed in this checkpoint."
+    },
+    {
+      "source": "seed-1130-step-2-display-after.png",
+      "retained": "late-dense-portrait.png",
+      "observation": "600-atom portrait view, expanded sidebar. Full cell edges visible; bonds disabled, no residual drag plane observed. Maximum projected atom radius 1.399px. This image does not prove individual visibility of all overlapping atoms."
     }
   ]
 }

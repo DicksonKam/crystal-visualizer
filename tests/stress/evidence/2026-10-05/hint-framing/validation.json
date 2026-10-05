@@ -62,6 +62,19 @@
       "application": "app.js?v=172",
       "observed": "Full NaCl frame visibly clear of navigation help in a temporary native tab; tab closed afterward."
     },
-    "applicationPlan": "After the discovery soak completes, apply proposed-source.patch and verify main source hashes exactly match the tested candidate."
+    "applicationPlan": "After the discovery soak completes, apply proposed-source.patch and verify main source hashes exactly match the tested candidate.",
+    "confirmedCasesWhileSuiteRunning": {
+      "throughCase": 106,
+      "newHintRegressions": {
+        "passed": 3,
+        "failed": 0
+      },
+      "denseContinuousPlayback": {
+        "passed": true,
+        "duration": "2.1 minutes",
+        "timeoutChanged": false
+      },
+      "suiteCompletionConfirmed": false
+    }
   }
 }

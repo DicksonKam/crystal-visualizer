@@ -12,10 +12,28 @@ function createVisualObserver(page, directory, seed, every = 12) {
         assert.deepEqual(snapshot.violations, [], `visual checkpoint ${seed}/${event.step}/${event.stage}`);
         // Layout observation runs after animation-frame callbacks. Allow it to
         // settle before evaluating an image; persistent mismatches still fail.
-        await page.waitForFunction(() => {
-            const rect = renderer.domElement.getBoundingClientRect();
-            return rect.width === viewport.clientWidth && rect.height === viewport.clientHeight;
-        }, null, { timeout: 2000 });
+        let layoutWaitTimedOut = false;
+        try {
+            await page.waitForFunction(() => {
+                const rect = renderer.domElement.getBoundingClientRect();
+                return rect.width === viewport.clientWidth && rect.height === viewport.clientHeight;
+            }, null, { timeout: 2000 });
+        } catch (error) {
+            if (error.name !== 'TimeoutError') throw error;
+            layoutWaitTimedOut = true;
+            const layout = await page.evaluate(() => ({
+                canvas: renderer.domElement.getBoundingClientRect().toJSON(),
+                viewer: viewport.getBoundingClientRect().toJSON(),
+                client: [viewport.clientWidth, viewport.clientHeight],
+                buffer: [renderer.domElement.width, renderer.domElement.height]
+            }));
+            // A dense synchronous render can consume the observation deadline.
+            // Judge the current layout, not the expired polling deadline; still
+            // reject a real mismatch and retain the delay in checkpoint metrics.
+            if (layout.canvas.width !== layout.client[0] || layout.canvas.height !== layout.client[1]) {
+                throw new Error(`${error.message}; layout=${JSON.stringify(layout)}`, { cause: error });
+            }
+        }
         const metrics = await page.evaluate(() => new Promise((resolve, reject) => {
             const original = renderer.render;
             const timeout = setTimeout(() => { renderer.render = original; reject(new Error('No scene render at visual checkpoint')); }, 5000);
@@ -62,6 +80,7 @@ function createVisualObserver(page, directory, seed, every = 12) {
             };
             requestRender();
         }));
+        metrics.layoutWaitTimedOut = layoutWaitTimedOut;
         assert.equal(metrics.transparent,0,'scene drawing buffer must remain opaque');
         assert.equal(metrics.autoClear,true,'axes must restore clear state');
         assert.equal(metrics.scissor,false,'axes must restore scissor state');

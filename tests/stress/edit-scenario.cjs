@@ -110,6 +110,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
         });
     }
     await page.locator('#fileInput').setInputFiles({ name: source.name, mimeType: 'text/plain', buffer: Buffer.from(source.content) });
+    if (extended) await page.waitForFunction(() => window.stressLoadSerial > 0);
     await page.locator('#statusText').filter({ hasText: 'Loaded' }).waitFor();
     const known = new Map(); const counts = {}, operations = {};
     let previous = await capture(page);

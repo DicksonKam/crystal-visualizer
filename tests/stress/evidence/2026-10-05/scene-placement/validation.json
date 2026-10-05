@@ -11,7 +11,20 @@
   "verification": {
     "unitTestsPassed": 144,
     "targetedBrowserCasesPassed": 15,
-    "fullBrowserSuite": "running, 132 cases",
+    "fullBrowserSuite": {
+      "total": 132,
+      "passed": 131,
+      "failed": 1,
+      "failure": "Dense continuous playback exceeded its 240-second test deadline while multiple visual jobs were running. Single-worker rerun pending.",
+      "rerun": {
+        "passed": 2,
+        "durationMinutes": 2.7,
+        "denseCaseMinutes": 2.1,
+        "workers": 1,
+        "outputDirectory": "/private/tmp/crystal-dense-playback-rerun",
+        "conclusion": "The dense case passed within its unchanged 240-second deadline. The initial concurrent suite remains recorded as 131 passes and one timeout; this focused rerun resolves that case."
+      }
+    },
     "native": "Water molecule atom centers visibly stayed fixed while the Atom Size slider changed to minimum."
   },
   "sourceHashes": {

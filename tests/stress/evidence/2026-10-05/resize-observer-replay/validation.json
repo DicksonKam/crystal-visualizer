@@ -1,0 +1,62 @@
+{
+  "cause": "Polling deadline expired under dense rendering; the subsequent authoritative measurement already matched the viewer client size. No persistent resize mismatch was demonstrated.",
+  "failedSeed": 1020,
+  "failedStep": 23,
+  "diagnosticError": "Error: Seed 1020, step 23, action viewport: page.waitForFunction: Timeout 2000ms exceeded.; layout={\"canvas\":{\"x\":425,\"y\":97.78125,\"width\":475,\"height\":630,\"top\":97.78125,\"right\":900,\"bottom\":727.78125,\"left\":425},\"viewer\":{\"x\":425,\"y\":97.78125,\"width\":475,\"height\":630.4375,\"top\":97.78125,\"right\":900,\"bottom\":728.21875,\"left\":425},\"client\":[475,630],\"buffer\":[950,1260]}\n    at observe (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-observer.cjs:27:19)\n    at async runScenario (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:354:39)\n    at async /Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-campaign.cjs:33:40",
+  "correction": "On a TimeoutError, immediately inspect actual layout. Accept only if canvas width and height exactly match viewer client dimensions; otherwise fail with diagnostic rectangles. Retain layoutWaitTimedOut in every checkpoint metric. Other errors remain failures.",
+  "verifiedReplay": {
+    "actions": 180,
+    "checkpoints": 64,
+    "durationSeconds": 137.3610275,
+    "failedCheckpointMetrics": {
+      "content": 114913,
+      "cyan": 9307,
+      "transparent": 0,
+      "checksum": 245542973,
+      "nonBackground": 223735,
+      "maxAtomRadiusPixels": 0.4260725304427393,
+      "panelLayout": {
+        "collapsed": false,
+        "left": 0,
+        "width": 414,
+        "content": 414
+      },
+      "width": 950,
+      "height": 1260,
+      "canvasCSS": [
+        475,
+        630
+      ],
+      "viewportCSS": [
+        475,
+        630
+      ],
+      "autoClear": true,
+      "scissor": false,
+      "staleCopies": [],
+      "atomCount": 600,
+      "showCell": true,
+      "showBonds": true,
+      "phase": "idle",
+      "layoutWaitTimedOut": false
+    },
+    "appCommit": "7ef5b34"
+  },
+  "freshSoak": {
+    "seed": 1021,
+    "seconds": 7200,
+    "startedUTC": "2026-10-05T08:14:01.575Z",
+    "outputDirectory": "/private/tmp/crystal-visual-soak-1021-fixed",
+    "status": "running"
+  },
+  "limitation": "This replay validates the sequence and actual layout. It does not establish performance on other GPUs or claim dense rendering is always responsive.",
+  "persistentCampaign": {
+    "seed": 2101,
+    "seconds": 1800,
+    "stepsPerSeed": 180,
+    "startedUTC": "2026-10-05T08:27:08.962Z",
+    "outputDirectory": "/private/tmp/crystal-persistent-soak-2101",
+    "status": "running",
+    "purpose": "Reuse one browser page across document loads, keeping presentation state and recording renderer resource counts."
+  }
+}

@@ -38,5 +38,17 @@
     "Stable export filename suffix",
     "Current atom drag feedback",
     "Keyboard scrub intent at range endpoints"
+  ],
+  "inspectedImages": [
+    {
+      "file": "dense-cell-resize.png",
+      "sourceVersion": 176,
+      "result": "Complete cell frame and visible atoms/bonds; redo restores the resized view. Boundary-clipped periodic-neighbor segments remain consistent with current display policy."
+    },
+    {
+      "file": "dense-cell-redo.png",
+      "sourceVersion": 176,
+      "result": "Complete cell frame and visible atoms/bonds; redo restores the resized view. Boundary-clipped periodic-neighbor segments remain consistent with current display policy."
+    }
   ]
 }

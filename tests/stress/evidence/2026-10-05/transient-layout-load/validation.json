@@ -36,5 +36,13 @@
     "failed": 0,
     "durationSeconds": 34.4,
     "exitCode": 0
+  },
+  "nativeFinalVerification": {
+    "application": "app.js?v=173",
+    "fixture": "NaCl_rocksalt.poscar",
+    "canvasBottom": 636,
+    "hintTop": 636.21875,
+    "observed": "Full NaCl frame clearly above the navigation-help row after Reset. Temporary native tab closed, user original tab left unchanged.",
+    "imageEvidence": "Native screenshot inspected in tool output; not retained as a local file."
   }
 }

@@ -1,5 +1,5 @@
 {
-  "status": "Two-hour discovery completed; v172 follow-up exposed and reproduced a third bug; v173 persistent replay completed; final full suite pending",
+  "status": "campaign completed; two-hour discovery, persistent follow-up, final v173 replay and full regressions verified",
   "productCommit": "7ef5b34",
   "harnessCommit": "7e0699e",
   "nativeChecks": {
@@ -54,5 +54,26 @@
       "retained": "final-source-fractional-shift.png",
       "observation": "Committed shift of two selected atoms with labels disabled. Six atoms remain, current frame intact, no stale drag plane observed."
     }
-  ]
+  ],
+  "completionVerification": {
+    "discovery": "discovery-validation.json",
+    "persistent": "persistent-validation.json",
+    "finalSource": "../transient-layout-load/validation.json",
+    "finalReplay": "../transient-layout-load/v173-replay-validation.json",
+    "finalBrowserCasesPassed": 136,
+    "unitTestsPassed": 144,
+    "productFixes": [
+      "Retain document origin during same-document scene rebuilds",
+      "Reserve real layout space for existing navigation help",
+      "Fit newly loaded documents against the active camera projection during transient layout changes"
+    ],
+    "noNewButtons": "Product index diff changes the existing guidance class and cache versions only.",
+    "limits": [
+      "Screenshots captured differ from screenshots individually inspected.",
+      "Fresh-page discovery and same-page segments have separate durations; parallel work is not added as wall time.",
+      "Other GPUs/browsers, every combination and very large supercell growth remain unverified.",
+      "Clipped periodic-neighbor bond presentation is retained as existing policy.",
+      "The failed v172 follow-up and initial concurrent playback timeout remain recorded alongside their successful focused regressions/replay."
+    ]
+  }
 }

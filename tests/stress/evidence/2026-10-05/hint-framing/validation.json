@@ -1,5 +1,5 @@
 {
-  "status": "Source layout fix applied after two-hour discovery completed; final main-source checks running",
+  "status": "verified on final v173 source",
   "appVersion": 171,
   "cause": "Navigation help is absolutely positioned over the full-height canvas. Camera fitting uses the full canvas dimensions, so fitted unit-cell corners can be covered by the help strip.",
   "trajectoryReproduction": {
@@ -40,9 +40,7 @@
     "styles.css": "3639d5f62f27d22dd1fd790cfd65b58945eb54607f1b3be0f659e228b1fd5981",
     "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
   },
-  "remaining": [
-    "Finish v173 full browser suite and persistent replay; see ../transient-layout-load/validation.json."
-  ],
+  "remaining": [],
   "stagedSource": {
     "directory": "/private/tmp/crystal-hint-candidate",
     "previewURL": "http://127.0.0.1:4174/",
@@ -150,5 +148,24 @@
       "sha256": "63df494608b7eb0769d0dbc0685ce60d4f79b33ba2090e6a41321921d9ab8a07"
     }
   },
-  "sourceMatchScope": "Byte match was verified at the v172 patch application. The subsequent transient-layout-load fix changes app.js and its cache version; final v173 verification is recorded separately."
+  "sourceMatchScope": "Byte match was verified at the v172 patch application. The subsequent transient-layout-load fix changes app.js and its cache version; final v173 verification is recorded separately.",
+  "finalV173BrowserSuite": {
+    "status": "completed",
+    "appVersion": 173,
+    "passed": 136,
+    "failed": 0,
+    "durationMinutes": 22.8,
+    "workers": 1,
+    "exitCode": 0,
+    "baseURL": "http://127.0.0.1:4173",
+    "config": "/private/tmp/crystal-browser-config.cjs",
+    "outputDirectory": "/private/tmp/crystal-v173-final-browser-suite",
+    "sourceHashesMatchedAtCompletion": true,
+    "denseContinuousPlaybackMinutes": 1.3,
+    "timeoutChanged": false
+  },
+  "finalV173InspectedImages": [
+    "cell-v173-final.png",
+    "trajectory-v173-final.png"
+  ]
 }

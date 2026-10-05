@@ -39,7 +39,21 @@
     "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
   },
   "soak": "The stable v171 discovery run completed 7219.425459125 seconds with 129 sequences and 7475 PNG checkpoints. See ../renewed-soak/discovery-validation.json. The earlier interrupted mixed-revision pilot is separate evidence and is not counted as this two-hour completion.",
-  "remaining": [
-    "Complete the additional persistent visual run on final v172 layout and completion audit."
-  ]
+  "remaining": [],
+  "status": "verified on final v173 source",
+  "finalV173BrowserSuite": {
+    "status": "completed",
+    "appVersion": 173,
+    "passed": 136,
+    "failed": 0,
+    "durationMinutes": 22.8,
+    "workers": 1,
+    "exitCode": 0,
+    "baseURL": "http://127.0.0.1:4173",
+    "config": "/private/tmp/crystal-browser-config.cjs",
+    "outputDirectory": "/private/tmp/crystal-v173-final-browser-suite",
+    "sourceHashesMatchedAtCompletion": true,
+    "denseContinuousPlaybackMinutes": 1.3,
+    "timeoutChanged": false
+  }
 }

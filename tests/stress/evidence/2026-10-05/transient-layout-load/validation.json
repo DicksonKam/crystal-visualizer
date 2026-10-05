@@ -1,5 +1,5 @@
 {
-  "status": "Root fix applied; verification running",
+  "status": "verified final source",
   "failedRun": {
     "appVersion": 172,
     "exitCode": 1,
@@ -28,9 +28,7 @@
     "passed": 144,
     "failed": 0
   },
-  "remaining": [
-    "Finish active 136-case final-source browser suite; audit completion and save its result."
-  ],
+  "remaining": [],
   "targetedBrowserTests": {
     "passed": 9,
     "failed": 0,
@@ -64,5 +62,26 @@
       2215
     ],
     "screenshotCheckpoints": 909
-  }
+  },
+  "fullBrowserSuite": {
+    "status": "completed",
+    "appVersion": 173,
+    "passed": 136,
+    "failed": 0,
+    "durationMinutes": 22.8,
+    "workers": 1,
+    "exitCode": 0,
+    "baseURL": "http://127.0.0.1:4173",
+    "config": "/private/tmp/crystal-browser-config.cjs",
+    "outputDirectory": "/private/tmp/crystal-v173-final-browser-suite",
+    "sourceHashesMatchedAtCompletion": true,
+    "denseContinuousPlaybackMinutes": 1.3,
+    "timeoutChanged": false
+  },
+  "inspectedRetainedImages": [
+    "zero-width-baseline.png",
+    "seed-2213-failure.png",
+    "replacement-after-layout.png",
+    "seed-2213-load-fixed.png"
+  ]
 }

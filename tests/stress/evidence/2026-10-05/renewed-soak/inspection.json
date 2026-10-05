@@ -37,5 +37,22 @@
       "retained": "late-dense-portrait.png",
       "observation": "600-atom portrait view, expanded sidebar. Full cell edges visible; bonds disabled, no residual drag plane observed. Maximum projected atom radius 1.399px. This image does not prove individual visibility of all overlapping atoms."
     }
+  ],
+  "finalSourceInspectedImages": [
+    {
+      "source": "seed-2204/seed-2204-step-84-display-after.png",
+      "retained": "final-source-trajectory-display.png",
+      "observation": "Trajectory with periodic image outline and minimum atom scale. Frame and help do not overlap; atoms can be subpixel at this deliberately selected minimum."
+    },
+    {
+      "source": "seed-2205/seed-2205-step-132-drag-after.png",
+      "retained": "final-source-atom-drag.png",
+      "observation": "Committed move of atom 2, status Moved atom #2. Six atoms, labels enabled, frame remains visible; no drag plane left after release."
+    },
+    {
+      "source": "seed-2205/seed-2205-step-144-shift-after.png",
+      "retained": "final-source-fractional-shift.png",
+      "observation": "Committed shift of two selected atoms with labels disabled. Six atoms remain, current frame intact, no stale drag plane observed."
+    }
   ]
 }

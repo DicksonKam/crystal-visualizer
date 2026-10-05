@@ -15,7 +15,7 @@
       "total": 132,
       "passed": 131,
       "failed": 1,
-      "failure": "Dense continuous playback exceeded its 240-second test deadline while multiple visual jobs were running. Single-worker rerun pending.",
+      "failure": "Dense continuous playback exceeded its 240-second test deadline while multiple visual jobs were running. The focused rerun result is retained below.",
       "rerun": {
         "passed": 2,
         "durationMinutes": 2.7,
@@ -25,15 +25,21 @@
         "conclusion": "The dense case passed within its unchanged 240-second deadline. The initial concurrent suite remains recorded as 131 passes and one timeout; this focused rerun resolves that case."
       }
     },
-    "native": "Water molecule atom centers visibly stayed fixed while the Atom Size slider changed to minimum."
+    "native": "Water molecule atom centers visibly stayed fixed while the Atom Size slider changed to minimum.",
+    "finalSourceFullBrowserSuite": {
+      "passed": 135,
+      "failed": 0,
+      "durationMinutes": 26.8,
+      "workers": 1,
+      "sourceVerification": "All main root JS/HTML/CSS byte-match the tested staged source. See ../hint-framing/validation.json."
+    }
   },
   "sourceHashes": {
     "app.js": "d7ea857f69f14f80d207c05ac2bbf2dcc178424c6ac4500e4d909acf7a0fba82",
     "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
   },
-  "soak": "Two-hour visual runner still active. Logs record per-seed source hashes, distinguishing baseline and fixed product revisions. Do not treat mixed-revision coverage as two hours on the fixed revision.",
+  "soak": "The stable v171 discovery run completed 7219.425459125 seconds with 129 sequences and 7475 PNG checkpoints. See ../renewed-soak/discovery-validation.json. The earlier interrupted mixed-revision pilot is separate evidence and is not counted as this two-hour completion.",
   "remaining": [
-    "Complete the requested soak and inspect additional rendered checkpoints.",
-    "Complete full regressions and investigate any failures."
+    "Complete the additional persistent visual run on final v172 layout and completion audit."
   ]
 }

@@ -109,6 +109,16 @@
       "case": "Native cell-corner drag in the default oblique view",
       "result": "Atom position unchanged",
       "interpretation": "Current plane through corner can intersect the unit cell at only that corner. This is a geometric constraint, not a pointer cancellation; changing that interaction policy has not been requested."
+    },
+    {
+      "browser": "Codex IAB",
+      "productVersion": 176,
+      "temporaryTab": "Closed after verification",
+      "case": "H2 vibration, loop enabled, 1 FPS, last frame, Play then native End key",
+      "result": "Frame remained 16/16 and the button returned to Play trajectory; intact cell frame visible",
+      "nativeScreenshots": "Inspected in tool outputs; not retained as local PNGs",
+      "additionalExportAttempt": "App showed Started XDATCAR download, but native download event/path wait timed out. Actual saved bytes and native reimport not verified; completed Playwright download/reimport checks cover the file workflow.",
+      "originalUserTab": "Inventory confirmed original version=167 tab still open; never reloaded or closed."
     }
   ],
   "inspectionLimit": "Captured checkpoints are not all individually inspected",

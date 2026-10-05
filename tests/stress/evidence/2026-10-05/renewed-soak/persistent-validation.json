@@ -1,5 +1,5 @@
 {
-  "status": "persistent segment complete; main two-hour campaign remains running",
+  "status": "completed persistent v171 segment; separate two-hour discovery also completed",
   "persistent": {
     "terminalExitCode": 0,
     "durationSeconds": 1814.7591731669997,
@@ -68,7 +68,6 @@
       "delete": 31
     },
     "layoutDeadlineFallbacks": 0,
-    "sourceHashesMatchCurrentFiles": true,
     "resourceDiagnostics": {
       "endOfSequenceGeometriesRange": [
         3,
@@ -83,13 +82,15 @@
         14300000
       ],
       "limitation": "End-of-sequence samples exclude peaks. Heap values are coarse browser diagnostics; this is not proof that no leak exists."
-    }
+    },
+    "sourceHashesMatchedFilesAtCompletion": true
   },
   "definitions": "The runner actions field counts randomized loop steps, including skipped choices. Performed action attempts are distinct from committed edits; screenshot checkpoint count is distinct from individually inspected images.",
   "limits": [
     "Headless Chromium uses SwiftShader; hardware and other browsers are unverified.",
     "Persistent segment uses device pixel ratio 1; the separate fresh-page run alternates 1 and 2.",
-    "The two-hour fresh-page campaign remains incomplete.",
     "Clipped periodic-neighbor bond presentation remains unchanged."
-  ]
+  ],
+  "discoveryCompletionReference": "discovery-validation.json",
+  "sourceScope": "This persistent segment used v171. Later v172/v173 changes are verified separately in ../transient-layout-load/validation.json."
 }

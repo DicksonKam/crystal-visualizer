@@ -47,7 +47,12 @@
     "seconds": 7200,
     "startedUTC": "2026-10-05T08:14:01.575Z",
     "outputDirectory": "/private/tmp/crystal-visual-soak-1021-fixed",
-    "status": "running"
+    "status": "completed; exit 0",
+    "durationSeconds": 7219.425459125,
+    "randomizedSteps": 23220,
+    "checkpoints": 7475,
+    "retainedLog": "../renewed-soak/discovery-run.jsonl",
+    "validation": "../renewed-soak/discovery-validation.json"
   },
   "limitation": "This replay validates the sequence and actual layout. It does not establish performance on other GPUs or claim dense rendering is always responsive.",
   "persistentCampaign": {

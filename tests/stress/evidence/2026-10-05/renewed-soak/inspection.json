@@ -1,5 +1,5 @@
 {
-  "status": "Two-hour discovery completed; v172 final check found the transient-layout-load bug; final v173 replay running",
+  "status": "Two-hour discovery completed; v172 follow-up exposed and reproduced a third bug; v173 persistent replay completed; final full suite pending",
   "productCommit": "7ef5b34",
   "harnessCommit": "7e0699e",
   "nativeChecks": {

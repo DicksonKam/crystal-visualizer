@@ -1,0 +1,11 @@
+{
+  "status": "Visual reproduction and isolated candidate prepared; browser regression not yet run",
+  "observed": "Seed 3257 step 94: an active drag guide and highlighted atom coexist with a stale Escape cancellation message from step 92.",
+  "rootCause": "Atom drag start creates the guide and live preview but leaves the last action status unchanged until release.",
+  "fix": "Replace the footer with Moving atom #N when the movement threshold starts the real drag, preserving cancellation and completion messages.",
+  "candidateVersion": 175,
+  "candidateRoot": "/private/tmp/crystal-feedback-candidate",
+  "test": "tests/browser/drag-status.spec.cjs",
+  "mainSourceUnchangedForDiscovery": true,
+  "combinedVersion174Suite": "Still running session 45468; collected 148 tests, excludes this later regression."
+}

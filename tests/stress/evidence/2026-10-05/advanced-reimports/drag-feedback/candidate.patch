@@ -1,0 +1,11 @@
+--- app.js (combined v174 candidate)
++++ app.js (feedback v175 candidate)
+@@ -1810,6 +1810,8 @@
+             // First time detecting drag
+             isDragging = true;
+             controls.enabled = false;
++            statusText.textContent = `Moving atom #${draggedAtom.index + 1}`;
++            statusText.className = '';
+             
+             // Keep selection during drag - don't deselect
+             // Selection visuals will move with the atom during drag

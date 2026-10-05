@@ -1,0 +1,30 @@
+{
+  "status": "candidate verified; not yet applied to main source",
+  "baseline": {
+    "passed": 2,
+    "failed": 1,
+    "failure": "390px filename range right edge 512.890625px, beyond viewport"
+  },
+  "candidate": {
+    "passed": 3,
+    "failed": 0,
+    "seconds": 11.2,
+    "url": "http://127.0.0.1:4174",
+    "stylesSha256": "8910132574e1e206a34c518bdfb8f15f99d09e8555101a7fdf0c36bbfb318d2d"
+  },
+  "relatedLayoutChecks": {
+    "passed": 16,
+    "failed": 0,
+    "reportedDuration": "1.1m",
+    "output": "/private/tmp/crystal-status-layout-verification",
+    "scope": [
+      "Footer readability",
+      "Sidebar interactions",
+      "Resize framing",
+      "Navigation help framing",
+      "Transient-layout file replacement"
+    ]
+  },
+  "reasonForStaging": "Keep product source stable during the two-hour discovery campaign",
+  "mainSourceVersion": 173
+}

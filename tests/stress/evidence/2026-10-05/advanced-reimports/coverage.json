@@ -1,0 +1,32 @@
+{
+  "advanced": true,
+  "newCoverage": [
+    "Actual download followed by FileReader reimport, geometry/constraints validation and history reset",
+    "Fractional and Cartesian coordinate entry including negative and greater-than-one values",
+    "Undo shortcuts while numeric fields have focus",
+    "Short landscape and 641px/769px breakpoints",
+    "Persistent DPR 2 session across document transitions"
+  ],
+  "pilot": {
+    "seeds": [
+      3100,
+      3101
+    ],
+    "randomizedSteps": 360,
+    "actualReimports": 18,
+    "capturedImages": 122,
+    "elapsedSeconds": 129.665319834
+  },
+  "discovery": {
+    "rawLog": "/private/tmp/crystal-advanced-soak-3200/2026-10-05T13-40-11-687Z.jsonl",
+    "initialSeed": 3200,
+    "secondsRequestedByRunner": 7200,
+    "terminalResult": "not yet available"
+  },
+  "limits": [
+    "Captured images are not all individually inspected",
+    "SwiftShader Chromium and selected native IAB interactions",
+    "New advanced coordinate random range -0.5 to 1.5 in either mode; normal mode retains original range",
+    "No claim that all possible combinations are covered"
+  ]
+}

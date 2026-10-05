@@ -796,7 +796,7 @@ function initScene() {
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && (draggedAtom || vacuumDragState.isDragging)) {
             event.preventDefault();
-            cancelEditDrag();
+            cancelEditDrag(event);
         }
     });
 }
@@ -1522,6 +1522,7 @@ function releaseEditPointer() {
 function cancelEditDrag(event) {
     if (event?.pointerId !== undefined && event.pointerId !== activeEditPointerId) return;
     if (!draggedAtom && !vacuumDragState.isDragging) return;
+    console.debug('Edit drag canceled:', event?.type || 'application action');
     const wasVacuumDrag = vacuumDragState.isDragging;
     if (wasVacuumDrag) {
         const { originalLattice, originalAtomPositions } = vacuumDragState;
@@ -1814,7 +1815,14 @@ function onMouseUp(event) {
     controls.enabled = true;
     
     if (draggedAtom && currentMode === 'edit') {
-        if (isDragging) {
+        const completedDrag = draggedAtom;
+        const moved = isDragging;
+        // Pointer-up ends ownership before rendering or panel/focus work can
+        // emit interruption events. A completed move must never be rolled back.
+        draggedAtom = null;
+        isDragging = false;
+        releaseEditPointer();
+        if (moved) {
             // Finalize the move - this was a drag, not a click
             wasDragging = true; // Prevent click handler from firing
             
@@ -1822,36 +1830,36 @@ function onMouseUp(event) {
             removeDragGuidePlane();
             
             // Restore the selection glow if this atom was selected before dragging.
-            if (selectedAtoms.some(atom => atom.mesh === draggedAtom.mesh)) highlightAtomMesh(draggedAtom.mesh);
-            else unhighlightAtomMesh(draggedAtom.mesh);
+            if (selectedAtoms.some(atom => atom.mesh === completedDrag.mesh)) highlightAtomMesh(completedDrag.mesh);
+            else unhighlightAtomMesh(completedDrag.mesh);
             
             // Save move for undo (unified undo stack)
-            const oldPos = draggedAtom.startPosition.clone();
-            const newPos = draggedAtom.mesh.position.clone();
+            const oldPos = completedDrag.startPosition.clone();
+            const newPos = completedDrag.mesh.position.clone();
             
             const changed = oldPos.distanceTo(newPos) >= 1e-10;
             if (changed) {
                 pushUndo({
                     type: 'move_atom',
-                    index: draggedAtom.index,
+                    index: completedDrag.index,
                     oldPosition: oldPos,
                     newPosition: newPos.clone()
                 });
             } else {
                 newPos.copy(oldPos);
-                draggedAtom.mesh.position.copy(oldPos);
+                completedDrag.mesh.position.copy(oldPos);
             }
             
             // Update structure data
-            currentStructure.atoms[draggedAtom.index].position.copy(newPos);
-            currentStructure.atoms[draggedAtom.index].fractional = hasLattice(currentStructure)
+            currentStructure.atoms[completedDrag.index].position.copy(newPos);
+            currentStructure.atoms[completedDrag.index].fractional = hasLattice(currentStructure)
                 ? cartesianToFractional(newPos, currentStructure.lattice) : null;
             
             // Rebuild all display options (bonds, fixed indicators, etc.)
             rebuildDisplayOptions();
             
             // Update status
-            statusText.textContent = changed ? `Moved atom #${draggedAtom.index + 1}` : 'Atom position unchanged';
+            statusText.textContent = changed ? `Moved atom #${completedDrag.index + 1}` : 'Atom position unchanged';
             statusText.className = changed ? 'success' : '';
             
             // Update edit UI to show undo option
@@ -1859,8 +1867,6 @@ function onMouseUp(event) {
         }
         // Note: We don't handle click here anymore - let the click event handle it
         
-        isDragging = false;
-        draggedAtom = null;
     }
     releaseEditPointer();
     // Note: Measure mode clicks are handled by onClickFallback

@@ -1,0 +1,44 @@
+{
+  "before": {
+    "appSourceCommit": "739cc0b",
+    "appSha256": "359995e56e70da9654213d89e577a2e45b5404a499d9c47903c3be8bb108f4e7",
+    "releaseInterruptionsFailed": [
+      "blur",
+      "capture-loss"
+    ],
+    "originalPosition": [
+      -1,
+      0,
+      0
+    ],
+    "previewPosition": [
+      -0.9183289344071008,
+      -0.05045766398224805,
+      -0.04130493440710081
+    ],
+    "actualPositionAfterRelease": [
+      -1,
+      0,
+      0
+    ],
+    "injectedEvents": true
+  },
+  "afterSourceHashes": {
+    "app.js": "b5e0984aba01e757f0f9182248587826268530802650d85fc5ea9b7b2e40295c",
+    "index.html": "95b2fd306a11d463cff972f50679c0b292a9a070f19ccfb8dae2513f2c0ffaac",
+    "tests/browser/drag-release.spec.cjs": "4746231c8b86b732efbde985a572e6b5b530ac215032030a7806c2d003153548"
+  },
+  "inspectedImages": [
+    {
+      "file": "before-blur.png",
+      "sha256": "b5e4923f82fafcf634864d19fe2fbc2eea386b56af2ae5b05a24145e19db8034",
+      "openedAndInspected": true
+    },
+    {
+      "file": "after-blur.png",
+      "sha256": "a3d31ac0ab3cf873f1eff055916f44ce884cd6195cf5ec52314bcedcac4bb98e",
+      "openedAndInspected": true
+    }
+  ],
+  "unitTestsPassed": 142
+}

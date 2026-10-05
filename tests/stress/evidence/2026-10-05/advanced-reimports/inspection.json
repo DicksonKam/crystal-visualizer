@@ -11,6 +11,18 @@
     {
       "file": "seed-3204-step-11-panel-panel-preview.png",
       "result": "Intact visible frame when enabled, readable controls; minimum atom size intentionally produces small points in the latter two cases"
+    },
+    {
+      "file": "seed-3210-step--1-load-initial.png",
+      "result": "600-atom scene with labels visible: complete frame and atoms present; dense labels naturally occlude one another"
+    },
+    {
+      "file": "seed-3211-step-16-replace-initial.png",
+      "result": "Actual edited POSCAR download reopened: clean document, visible atoms and complete cell"
+    },
+    {
+      "file": "seed-3212-step-28-cancel-atom-preview.png",
+      "result": "Periodic repeat scene: base and copy frames intact, copies visible; no plane remains in this non-moving preview"
     }
   ],
   "nativeChecks": [

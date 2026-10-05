@@ -1810,6 +1810,8 @@ function onMouseMove(event) {
             // First time detecting drag
             isDragging = true;
             controls.enabled = false;
+            statusText.textContent = `Moving atom #${draggedAtom.index + 1}`;
+            statusText.className = '';
             
             // Keep selection during drag - don't deselect
             // Selection visuals will move with the atom during drag
@@ -5616,7 +5618,7 @@ function exportStructure() {
     let content, filename;
     let omittedSourceData = false;
     const sourceName = (currentFilename || 'structure').replace(/[\\/]/g, '_');
-    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '') || 'structure';
+    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '').replace(/(?:_edited)+$/i, '') || 'structure';
     
     if (currentStructure.isXDATCAR) {
         content = generateXDATCAR();
@@ -5911,6 +5913,15 @@ function setupTimelineControls() {
             switchToFrame(frameIndex);
         });
         
+        // A range emits no input event for a key that stays at its endpoint.
+        // Scrubbing still owns the frame, even when its value cannot change.
+        slider.addEventListener('keydown', (event) => {
+            if (!event.altKey && !event.ctrlKey && !event.metaKey &&
+                ['Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown'].includes(event.key)) {
+                stopAnimation();
+            }
+        });
+
         // Stop animation when user interacts with slider
         slider.addEventListener('pointerdown', () => {
             if (animationState.isPlaying) {

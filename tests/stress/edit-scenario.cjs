@@ -90,7 +90,7 @@ function displayedSelection(selection, state) {
     return { ...selection, identities, measurement: Boolean(identities.length && selection.measurement) };
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
-async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null }) {
+async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null, advanced = false }) {
     page.setDefaultTimeout(5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
     const source = sourceOverride || sourceFor(seed);
@@ -125,12 +125,13 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
         if (extended && previous.trajectory) choices.push('frame');
         if (visual) choices.push('panel','zoom','pan','viewport','scale','bond_length');
         if (visual && previous.trajectory) choices.push('playback');
+        if (advanced && extended) choices.push('roundtrip');
         const action = choices[integer(choices.length)];
         const record = { step, action, before: previous }; log.push(record);
         let performed = true;
         const click = async selector => { if (!await visible(page, selector)) { performed = false; return false; } await page.locator(selector).click(); return true; };
         try {
-            if (visual && !['panel','zoom','pan','rotate','viewport','mode','undo','redo','reset','replace','invalid_load','decline_load','frame','playback','export','download','click','ghost','drag','cancel','resize'].includes(action)
+            if (visual && !['panel','zoom','pan','rotate','viewport','mode','undo','redo','reset','replace','invalid_load','decline_load','frame','playback','export','download','roundtrip','click','ghost','drag','cancel','resize'].includes(action)
                 && await page.locator('.sidebar').getAttribute('aria-hidden') === 'true') {
                 await page.locator('#sidebarDivider').focus(); await page.keyboard.press('ArrowRight'); record.panelReopened = true;
             }
@@ -142,7 +143,9 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if(observe) record.preview=await observe({stage:'panel-preview',step,action,state:previous});
                 await page.mouse.up();
             } else if (action === 'viewport') {
-                record.viewport=[{width:390,height:844},{width:900,height:760},{width:1440,height:900}][integer(3)];
+                const viewports=[{width:390,height:844},{width:900,height:760},{width:1440,height:900}];
+                if(advanced) viewports.push({width:844,height:390},{width:641,height:480},{width:769,height:600},{width:1920,height:540});
+                record.viewport=viewports[integer(viewports.length)];
                 await page.setViewportSize(record.viewport);
             } else if (action === 'scale' || action === 'bond_length') {
                 const slider=page.locator(action==='scale'?'#atomScale':'#bondThreshold');
@@ -166,9 +169,19 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             else if (action === 'coordinates' || action === 'invalid') {
                 if (!await visible(page, '#saveAtomCoordinates')) performed = false;
                 else {
-                    await page.locator('#editAtomCoordMode').selectOption('cartesian');
-                    const values = action === 'invalid' ? ['', '1', '2'] : [rng()*4, rng()*4, rng()*4].map(v => v.toFixed(6)); record.values = values;
+                    record.coordMode=advanced && previous.lattice && integer(2) ? 'fractional' : 'cartesian';
+                    await page.locator('#editAtomCoordMode').selectOption(record.coordMode);
+                    const values = action === 'invalid' ? ['', '1', '2'] : [rng(), rng(), rng()].map(v => ((advanced ? v*2-.5 : v*4)).toFixed(6)); record.values = values;
                     for (let i=0;i<3;i++) await page.locator(`#editAtom${i}`).fill(values[i]);
+                    if(advanced) {
+                        record.inputUndoKey=integer(2)?'Control+z':'Meta+z';
+                        await page.locator('#editAtom0').press(record.inputUndoKey);
+                        const during=await capture(page);
+                        compareGeometry(during.geometry,previous.geometry,'input undo changes document');
+                        assert.deepEqual(during.undo,previous.undo,'input undo changes application history');
+                        assert.deepEqual(during.selection,previous.selection,'input undo changes selection');
+                        await page.locator('#editAtom0').fill(values[0]);
+                    }
                     await page.locator('#saveAtomCoordinates').click();
                 }
             } else if (action === 'add') {
@@ -225,7 +238,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             } else if (action === 'frame') {
                 const key=integer(2) ? 'Home' : 'End'; record.key=key;
                 await page.locator('#frameSlider').focus(); await page.locator('#frameSlider').press(key);
-            } else if (action === 'download') {
+            } else if (action === 'download' || action === 'roundtrip') {
                 if(!previous.atomCount) performed=false;
                 else {
                     const waiting=page.waitForEvent('download'); await page.locator('#exportPoscar').click(); const file=await waiting;
@@ -242,6 +255,29 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                         return errors;
                     },text);
                     assert.deepEqual(errors,[],'download round-trip');
+                    if(action==='roundtrip') {
+                        const serial=await page.evaluate(()=>window.stressLoadSerial);
+                        await page.locator('#fileInput').setInputFiles({name:file.suggestedFilename(),mimeType:'text/plain',buffer:Buffer.from(text)});
+                        await page.waitForFunction(value=>window.stressLoadSerial>value,serial);
+                        await page.locator('#statusText').filter({hasText:'Loaded'}).waitFor();
+                        known.clear();
+                        const importedErrors=await page.evaluate(text=>{
+                            const parsed=currentStructure.isXDATCAR?parseXDATCAR(text):currentStructure.isXYZ?parseXYZ(text):parsePOSCAR(text);
+                            const errors=[];
+                            parsed.atoms.forEach((atom,i)=>{
+                                if(atom.element!==currentStructure.atoms[i].element || atom.position.distanceTo(currentStructure.atoms[i].position)>1e-7) errors.push(`reimport atom ${i}`);
+                                if(JSON.stringify(atom.selectiveDynamics||[true,true,true])!==JSON.stringify(currentStructure.atoms[i].selectiveDynamics||[true,true,true])) errors.push(`reimport constraints ${i}`);
+                            });
+                            return errors;
+                        },text);
+                        assert.deepEqual(importedErrors,[],'actual FileReader reimport');
+                        const state=await capture(page);
+                        assert.equal(state.atomCount,previous.atomCount,'reimport atom count');
+                        assert.equal(state.undo.length,0,'reimport must reset undo');
+                        assert.equal(state.redo.length,0,'reimport must reset redo');
+                        assert.equal(state.dirty,false,'reimport must start clean');
+                        if(observe) record.reimport=await observe({stage:'initial',step,action:'replace',state});
+                    }
                 }
             } else if (action === 'export') {
                 if (!previous.atomCount) performed = false;

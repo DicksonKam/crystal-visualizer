@@ -10,14 +10,15 @@ const arg=(key,fallback)=>{const i=process.argv.indexOf(key);return i<0?fallback
 const seconds=Number(arg('--seconds',1800)),initialSeed=Number(arg('--seed',701)),steps=Number(arg('--steps',120));
 const directory=path.resolve(arg('--out','/private/tmp/crystal-visual-campaign'));
 const persistent=arg('--persistent','false')==='true';
+const advanced=arg('--advanced','false')==='true';
 if(!Number.isFinite(seconds)||seconds<=0||!Number.isInteger(initialSeed)||!Number.isInteger(steps)||steps<=0)throw Error('Invalid campaign arguments');
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
-async function sourceHashes(){const result={};for(const name of ['app.js','camera.js','structure.js','geometry.js','formats.js','document.js','history.js','layout.js','styles.css','index.html','tests/stress/edit-scenario.cjs','tests/stress/visual-observer.cjs','tests/stress/visual-campaign.cjs'])result[name]=hash(await fs.readFile(path.resolve(__dirname,'../..',name)));return result;}
+async function sourceHashes(){const result={};for(const name of ['app.js','camera.js','structure.js','geometry.js','formats.js','document.js','history.js','measurement.js','layout.js','styles.css','index.html','tests/stress/edit-scenario.cjs','tests/stress/visual-observer.cjs','tests/stress/visual-campaign.cjs'])result[name]=hash(await fs.readFile(path.resolve(__dirname,'../..',name)));return result;}
 function denseSource(){const atoms=[];for(let x=0;x<10;x++)for(let y=0;y<10;y++)for(let z=0;z<6;z++)atoms.push(`H ${x*2} ${y*2} ${z*2}`);return {name:'dense-periodic.xyz',content:`600\nLattice="20 0 0 0 20 0 0 0 12" Properties=species:S:1:pos:R:3 pbc="T T T"\n${atoms.join('\n')}\n`};}
 (async()=>{
  await fs.mkdir(directory,{recursive:true});const runId=new Date().toISOString().replace(/[:.]/g,'-');
  const file=path.join(directory,runId+'.jsonl');const emit=async r=>{await fs.appendFile(file,JSON.stringify(r)+'\n');process.stdout.write(JSON.stringify(r)+'\n');};
- await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,persistent,sourceHashes:await sourceHashes()});
+ await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,persistent,advanced,sourceHashes:await sourceHashes()});
  const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const started=performance.now();let seed=initialSeed,actions=0,images=0,sessionContext=null,sessionPage=null;
  try{do{
@@ -34,7 +35,7 @@ function denseSource(){const atoms=[];for(let x=0;x<10;x++)for(let y=0;y<10;y++)
   const log=[],observer=createVisualObserver(page,seedDir,seed);const hashes=await sourceHashes();
   try{
    if(freshPage)await page.goto('http://127.0.0.1:4173/',{waitUntil:'domcontentloaded'});await page.locator('canvas[aria-label^="3D structure"]').waitFor();
-   const dense=seed%5===0;const result=await runScenario(page,{seed,steps,extended:true,includeGhosts:true,visual:true,observe:observer.observe,log,sourceOverride:dense?denseSource():null});
+   const dense=seed%5===0;const result=await runScenario(page,{seed,steps,advanced,extended:true,includeGhosts:true,visual:true,observe:observer.observe,log,sourceOverride:dense?denseSource():null});
    if(errors.length)throw Error(errors.join('; '));
    const sequence=log.map(({before,after,...rest})=>({...rest,beforeHash:before?hash(JSON.stringify(before)):null,afterHash:after?hash(JSON.stringify(after)):null}));
    await fs.writeFile(path.join(seedDir,'sequence.json'),JSON.stringify({seed,viewport,deviceScaleFactor,persistent,dense,sourceHashes:hashes,sequence},null,2));

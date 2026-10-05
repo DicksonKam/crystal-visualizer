@@ -1805,3 +1805,32 @@ test('smallest atom radius is reused until render scale changes', () => {
     vm.runInContext('settings.atomScale = 1.2; getSmallestAtomRadius();', context);
     assert.equal(reads, 2);
 });
+
+for (const [format, parser, fixture] of [
+    ['xyz', 'parseXYZ', 'examples/xyz/H2O.xyz'],
+    ['poscar', 'parsePOSCAR', 'examples/poscar/Al_fcc_cartesian.poscar'],
+    ['xdatcar', 'parseXDATCAR', 'examples/xdatcar/H2_vibration.xdatcar']
+]) test(`${format} exports normalize accumulated suffixes and preserve meaningful filename text`, () => {
+    const context = app();
+    context.structure = context[parser](example(fixture));
+    context.Blob = Blob;
+    context.URL = { createObjectURL() { return 'blob:filename'; }, revokeObjectURL() {} };
+    context.setTimeout = () => {};
+    let anchor;
+    context.document.body = { appendChild(value) { anchor = value; } };
+    context.document.createElement = () => ({ style: {}, click() {}, remove() {} });
+    vm.runInContext('currentStructure = structure;', context);
+    for (const [source, expected] of [
+        [`sample.${format}`, `sample_edited.${format}`],
+        [`sample_edited_edited.${format}`, `sample_edited.${format}`],
+        [`sample_EDITED.${format.toUpperCase()}`, `sample_edited.${format}`],
+        [`sample_edited_notes.${format}`, `sample_edited_notes_edited.${format}`],
+        [`_edited.${format}`, `structure_edited.${format}`],
+        [`folder/sample.${format}`, `folder_sample_edited.${format}`]
+    ]) {
+        context.inputFilename = source;
+        vm.runInContext('currentFilename = inputFilename;', context);
+        context.exportStructure();
+        assert.equal(anchor.download, expected, source);
+    }
+});

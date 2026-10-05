@@ -1,8 +1,25 @@
 {
-  "status": "visual defect confirmed; candidate awaits browser reproduction and verification",
+  "status": "baseline reproduced in all formats; combined candidate passes unit suite; browser checks pending",
   "observed": "Repeated actual download/reimport in seed 3218 produced cell_edited_edited_edited_edited_edited.poscar",
   "rootCause": "Shared export stem removes extension but retains previously added export suffix before appending another",
   "proposedFix": "Normalize trailing repeated _edited suffixes once in the shared stem, retaining internal occurrences and format-specific generation",
   "test": "tests/browser/export-filename-roundtrip.spec.cjs",
-  "productSourceUnchangedForDiscovery": true
+  "productSourceUnchangedForDiscovery": true,
+  "baselineUnit": {
+    "tests": 3,
+    "failed": 3,
+    "actualExamples": [
+      "sample_edited_edited_edited.xyz",
+      "sample_edited_edited_edited.poscar",
+      "sample_edited_edited_edited.xdatcar"
+    ]
+  },
+  "combinedCandidateUnit": {
+    "passed": 147,
+    "failed": 0,
+    "durationMilliseconds": 387.67,
+    "appSha256": "5e014f1270337acfc9ae3df696b31133b72d78a406cffdf4e8c155c1f60a8692",
+    "log": "combined-unit-tests.log",
+    "setupRepair": "Initial isolated run lacked installed three dependency and stress helper; fixed copy/runtime paths, then complete 147-test suite passed. No product changes for setup repair."
+  }
 }

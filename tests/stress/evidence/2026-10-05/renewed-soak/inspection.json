@@ -1,5 +1,5 @@
 {
-  "status": "Two-hour discovery completed; final-source layout verification pending",
+  "status": "Two-hour discovery completed; v172 final check found the transient-layout-load bug; final v173 replay running",
   "productCommit": "7ef5b34",
   "harnessCommit": "7e0699e",
   "nativeChecks": {
@@ -38,7 +38,7 @@
       "observation": "600-atom portrait view, expanded sidebar. Full cell edges visible; bonds disabled, no residual drag plane observed. Maximum projected atom radius 1.399px. This image does not prove individual visibility of all overlapping atoms."
     }
   ],
-  "finalSourceInspectedImages": [
+  "v172InspectedImages": [
     {
       "source": "seed-2204/seed-2204-step-84-display-after.png",
       "retained": "final-source-trajectory-display.png",

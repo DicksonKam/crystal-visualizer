@@ -26,12 +26,12 @@
       }
     },
     "native": "Water molecule atom centers visibly stayed fixed while the Atom Size slider changed to minimum.",
-    "finalSourceFullBrowserSuite": {
+    "v172FullBrowserSuite": {
       "passed": 135,
       "failed": 0,
       "durationMinutes": 26.8,
       "workers": 1,
-      "sourceVerification": "All main root JS/HTML/CSS byte-match the tested staged source. See ../hint-framing/validation.json."
+      "sourceVerification": "At v172 application, all main root JS/HTML/CSS byte-matched the tested candidate. This is historical v172 coverage; final v173 verification is pending in ../transient-layout-load/validation.json."
     }
   },
   "sourceHashes": {

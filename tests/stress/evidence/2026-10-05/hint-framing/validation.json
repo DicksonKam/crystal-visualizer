@@ -41,8 +41,7 @@
     "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
   },
   "remaining": [
-    "Complete direct main-source regression tests and the additional final-source persistent visual run.",
-    "Audit completion and save local Git checkpoints."
+    "Finish v173 full browser suite and persistent replay; see ../transient-layout-load/validation.json."
   ],
   "stagedSource": {
     "directory": "/private/tmp/crystal-hint-candidate",
@@ -90,8 +89,22 @@
       "suiteCompletionConfirmed": true
     }
   },
-  "finalAppVersion": 172,
-  "mainSourceMatchesTestedCandidate": {
+  "finalAppVersion": 173,
+  "directMainRegression": {
+    "passed": 3,
+    "failed": 0,
+    "durationSeconds": 10.3,
+    "exitCode": 0,
+    "outputDirectory": "/private/tmp/crystal-hint-framing-main-final"
+  },
+  "nativeMainVerification": {
+    "application": "app.js?v=172",
+    "stylesheet": "styles.css?v=51",
+    "canvasBottom": 579,
+    "hintTop": 579.21875,
+    "observed": "Full trajectory cell is visible above navigation help; timeline visible. Screenshot inspected in native tool output, not retained locally. Own temporary tab closed. User tab untouched."
+  },
+  "appliedV172SourceMatchedTestedCandidate": {
     "layout.js": {
       "match": true,
       "sha256": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a"
@@ -137,18 +150,5 @@
       "sha256": "63df494608b7eb0769d0dbc0685ce60d4f79b33ba2090e6a41321921d9ab8a07"
     }
   },
-  "directMainRegression": {
-    "passed": 3,
-    "failed": 0,
-    "durationSeconds": 10.3,
-    "exitCode": 0,
-    "outputDirectory": "/private/tmp/crystal-hint-framing-main-final"
-  },
-  "nativeMainVerification": {
-    "application": "app.js?v=172",
-    "stylesheet": "styles.css?v=51",
-    "canvasBottom": 579,
-    "hintTop": 579.21875,
-    "observed": "Full trajectory cell is visible above navigation help; timeline visible. Screenshot inspected in native tool output, not retained locally. Own temporary tab closed. User tab untouched."
-  }
+  "sourceMatchScope": "Byte match was verified at the v172 patch application. The subsequent transient-layout-load fix changes app.js and its cache version; final v173 verification is recorded separately."
 }

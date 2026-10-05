@@ -1,0 +1,58 @@
+{
+  "appVersion": 166,
+  "sourceSHA256": "44a31207c1f65d5f2d8a68946e5f427a4ea1e7e55af47eebf3bed2ef592c0308",
+  "unitTests": {
+    "passed": 142,
+    "failed": 0
+  },
+  "releaseBrowserTests": {
+    "passed": 10,
+    "failed": 0,
+    "retries": 0
+  },
+  "relatedBrowserTests": {
+    "passed": 41,
+    "failed": 0,
+    "duration": "5.4 minutes",
+    "note": "Initial cases loaded the document routing fix before the released-button handler was added; final release tests and repeated four capture-loss combinations use the final app."
+  },
+  "baseline": {
+    "commit": "c53a141",
+    "nativeHeldCaptureCases": {
+      "expectedFailures": 2
+    },
+    "releasedButtonIncidentSimulation": {
+      "expectedFailures": 1,
+      "stateMatchesUserDiagnostic": true
+    }
+  },
+  "nativeInAppChecks": {
+    "grapheneMousePlacements": 2,
+    "bothSucceeded": true,
+    "userUnsavedTab": "Read only; diagnostic attribute retrieved; no reload"
+  },
+  "visualInspection": [
+    "held-capture-before.png",
+    "held-capture-recovered.png",
+    "outside-capture-recovered.png",
+    "tilted-frame-preview.png",
+    "tilted-frame-settled.png",
+    "tilted-atom-settled.png"
+  ],
+  "limits": "Native host event ordering was observed through the user diagnostic, not reproduced spontaneously. Released-button ordering is simulated; held capture loss is native Chromium.",
+  "finalBoundaryCaptureCombinations": {
+    "passed": 4,
+    "failed": 0,
+    "retries": 0,
+    "duration": "1.3 minutes",
+    "cyclesPerCombination": 3,
+    "cases": "cubic/tilted atom/frame; assert changed preview and committed history, preserve measurements, verify the first following drag"
+  },
+  "testDevelopment": "A strengthened tilted-atom assertion initially failed because the header path constrained the atom to its original corner. The fixture now returns to a known changed preview after loss of capture and asserts geometry before release; all four final cases pass.",
+  "fileSHA256": {
+    "app.js": "44a31207c1f65d5f2d8a68946e5f427a4ea1e7e55af47eebf3bed2ef592c0308",
+    "index.html": "58519e58b51e45a6e3724f81f6590aecfc4241e7151e3573550b70f8e5e201ea",
+    "tests/browser/drag-capture-recovery.spec.cjs": "2b1f84f8c0fa8176e501c4816f4d1a41db0a27027e68b57d1e550d1c3667b3ad",
+    "tests/browser/gesture-edge-visual.spec.cjs": "9b03573062720448db9327733ea21c33c402e4eabab17e7467479b456081bf2c"
+  }
+}

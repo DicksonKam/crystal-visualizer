@@ -788,10 +788,21 @@ function initScene() {
     // Handle mouse events for atom selection and dragging
     // Use capture phase to ensure we handle events before OrbitControls/TrackballControls
     renderer.domElement.addEventListener('pointerdown', onMouseDown, { capture: true });
-    renderer.domElement.addEventListener('pointermove', onMouseMove);
-    renderer.domElement.addEventListener('pointerup', onMouseUp, { capture: true });
-    renderer.domElement.addEventListener('pointercancel', cancelEditDrag);
-    renderer.domElement.addEventListener('lostpointercapture', cancelEditDrag);
+    renderer.domElement.addEventListener('pointermove', event => {
+        if (activeEditPointerId === null) onMouseMove(event);
+    });
+    // Capture is a routing aid, not ownership of the edit. Track the owned
+    // pointer across the document even if the browser releases canvas capture.
+    document.addEventListener('pointermove', trackEditPointer, { capture: true });
+    document.addEventListener('pointerup', finishEditPointer, { capture: true });
+    document.addEventListener('lostpointercapture', event => {
+        // Some hosts drop pointerup before reporting capture loss on release.
+        // Released mouse buttons finish the preview; held buttons keep tracking.
+        if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) trackEditPointer(event);
+    }, { capture: true });
+    document.addEventListener('pointercancel', event => {
+        if (activeEditPointerId !== null) cancelEditDrag(event);
+    }, { capture: true });
     renderer.domElement.addEventListener('click', onClickFallback);
     window.addEventListener('blur', cancelEditDrag);
     document.addEventListener('keydown', event => {
@@ -1517,6 +1528,24 @@ function recordEditPointerEvent(event) {
     lastEditPointerEvent = { type: event.type, buttons: event.buttons, pointerType: event.pointerType };
 }
 
+function trackEditPointer(event) {
+    if (activeEditPointerId === null || event.pointerId !== activeEditPointerId) return;
+    // Mouse pointerup fires only when every button is released. The primary
+    // button may already be up during a chord, or its up may have occurred
+    // outside the document. Commit the last held preview, never a hover point.
+    if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) {
+        onMouseUp({ pointerId: event.pointerId, pointerType: event.pointerType,
+            type: event.type, button: 0, buttons: event.buttons });
+        return;
+    }
+    onMouseMove(event);
+}
+
+function finishEditPointer(event) {
+    if (activeEditPointerId === null || event.pointerId !== activeEditPointerId) return;
+    onMouseUp(event);
+}
+
 function releaseEditPointer() {
     const pointerId = activeEditPointerId;
     activeEditPointerId = null;
@@ -1532,7 +1561,6 @@ function cancelEditDrag(event, actionReason) {
     if (!draggedAtom && !vacuumDragState.isDragging) return;
     const reason = actionReason || ({
         blur: 'app lost focus',
-        lostpointercapture: 'mouse tracking interrupted',
         pointercancel: 'browser canceled pointer input',
         keydown: 'Escape pressed'
     })[event?.type] || 'another action started';

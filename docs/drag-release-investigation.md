@@ -66,3 +66,48 @@ Five controlled reason checks and both release regressions passed. The next
 required evidence is a real unexpected cancellation in version 165, rather than
 another simulated event being presented as the user's cause. Diagnostic proof
 is retained under `tests/stress/evidence/2026-10-05/cancellation-diagnostics`.
+
+## Confirmed capture-loss incident and version 166
+
+The user's version-165 screenshot reports `mouse tracking interrupted`. Read-only
+inspection of the same tab's diagnostic attribute confirmed `lostpointercapture`,
+`eventButtons: 0`, last owned event `pointermove` with `buttons: 1` and
+`pointerType: mouse`, `hadMoved: true`, and `documentFocused: true`. The app had
+not completed its pointerup handler before this released-button notification.
+The precise reason the host omitted or reordered that release is still unknown;
+the app's rollback policy was nevertheless incorrect for this event.
+
+Capture now helps route events without defining the edit's lifetime. Document
+capture-phase listeners process only the owned pointer's moves, release and
+cancellation. Losing capture while held keeps the drag active; losing capture
+with the primary mouse button released immediately finishes the last preview.
+A subsequent mouse move with the primary button up also finishes a missed
+release without moving the atom to a hover position. Ownership closes before
+rendering or panel updates, so later release events cannot add duplicate history.
+Escape, blur, pointercancel, Undo/Redo, mode and document replacement retain their
+rollback behavior. There are no new controls or snapping changes.
+
+This follows the distinction between pointer capture routing and pointer
+cancellation in the [Pointer Events specification](https://www.w3.org/TR/pointerevents3/).
+In particular, lostpointercapture may precede subsequent normally targeted input;
+it does not itself assert that the gesture was canceled.
+
+Regression tests request actual browser capture release while a real mouse is
+held, then release inside and outside the canvas. The old app rolls back in both
+cases. The exact released-button incident is covered separately by explicit
+event injection; this models the observed event state, not native host ordering.
+Further tests check explicit cancellation after capture loss, unrelated pointers,
+missed release, button chords, duplicate release, undo/redo, and atom/frame
+gestures in cubic and tilted cells. An isolated native in-app browser drag on
+graphene placed atom #12 successfully. The user's unsaved document was not
+reloaded or edited.
+
+Validation: 142 unit tests, 10 release/capture browser regressions, and 41 related
+browser checks passed. The four cubic/tilted atom/frame capture-loss combinations
+were then rerun against the final code with stronger changed-preview assertions;
+all passed (three cycles each). The stronger tilted-atom check initially exposed
+a fixture path returning to its original constrained corner, not a rollback; the
+path now returns to a known changed preview after capture loss before release.
+This is targeted validation, not a new complete browser-suite run. Six retained
+PNGs were visually inspected. Results and native incident details are retained
+in `tests/stress/evidence/2026-10-05/capture-recovery`.

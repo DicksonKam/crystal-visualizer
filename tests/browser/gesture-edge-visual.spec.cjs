@@ -34,7 +34,7 @@ async function prepare(page,kind){
     throw Error('No unobscured fixture frame edge');
 },kind);}
 async function idle(page){expect(await page.evaluate(()=>({atom:draggedAtom,cell:vacuumDragState.isDragging,pointer:activeEditPointerId,enabled:controls.enabled,guide:!!dragGuidePlane}))).toEqual({atom:null,cell:false,pointer:null,enabled:true,guide:false});}
-for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cell'])for(const interruption of ['escape','resize-escape','panel-escape','blur-event','release-outside']){
+for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cell'])for(const interruption of ['escape','resize-escape','panel-escape','blur-event','release-outside','capture-loss-release']){
  test(`${cell} ${kind}: ${interruption} preserves measurement and the next gesture`,async({page},info)=>{
     test.setTimeout(150000);await page.setViewportSize({width:900,height:760});await upload(page,source(lattice),'gesture.poscar');
     for(const n of [1,2]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
@@ -65,10 +65,23 @@ for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cel
             // Headless tab activation does not emit native window blur. Exercise
             // the browser event adapter explicitly; real focus loss is unproven.
             await page.evaluate(()=>window.dispatchEvent(new Event('blur')));
-        }else await page.mouse.move(450,20,{steps:4});
+        }else {
+            if(interruption==='capture-loss-release'){
+                await page.evaluate(()=>renderer.domElement.releasePointerCapture(activeEditPointerId));
+            }
+            await page.mouse.move(450,20,{steps:4});
+            if(interruption==='capture-loss-release'){
+                expect(await page.evaluate(kind=>kind==='atom'?!!draggedAtom:vacuumDragState.isDragging,kind)).toBe(true);
+                // A constrained corner may be the nearest point to the header.
+                // Return to the known changed preview so release must commit.
+                await page.mouse.move(point.x+point.dx,point.y+point.dy,{steps:4});
+                expect((await capture(page)).geometry).not.toEqual(before.geometry);
+            }
+        }
         await page.mouse.up();await idle(page);const after=await capture(page);expect(after.violations).toEqual([]);
-        if(interruption==='release-outside'){
+        if(interruption==='release-outside'||interruption==='capture-loss-release'){
             const changed=after.undo.length!==before.undo.length;
+            if(interruption==='capture-loss-release')expect(changed).toBe(true);
             if(changed){expect(after.undo.at(-1).type).toBe(kind==='atom'?'move_atom':'vacuum_drag');await page.locator('#undoBtn').click();}
             else expect(after.geometry).toEqual(before.geometry);
         }else expect(after.undo).toEqual(before.undo);

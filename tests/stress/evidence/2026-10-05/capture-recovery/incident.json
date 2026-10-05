@@ -1,0 +1,16 @@
+{
+  "source": "Read-only status attribute of user tab 40, version 165; screenshot supplied by user",
+  "reason": "mouse tracking interrupted",
+  "eventType": "lostpointercapture",
+  "eventButtons": 0,
+  "pointerId": 1,
+  "lastPointerEvent": {
+    "type": "pointermove",
+    "buttons": 1,
+    "pointerType": "mouse"
+  },
+  "hadMoved": true,
+  "documentFocused": true,
+  "nativeOrdering": "Pointerup was not handled before capture loss; why the host omitted/reordered it remains unknown",
+  "baselineCommit": "c53a141ff782d5d0646af1249683cebc36a8db3a"
+}

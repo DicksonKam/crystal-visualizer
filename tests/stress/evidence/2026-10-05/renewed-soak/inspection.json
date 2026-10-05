@@ -20,5 +20,17 @@
     "cell-preview.png",
     "atom-drag-settled.png"
   ],
-  "scopeLimit": "Random gesture attempts are distinct from committed document operations. Automated checkpoint counts are distinct from individually inspected images; no claim of complete combination or hardware coverage."
+  "scopeLimit": "Random gesture attempts are distinct from committed document operations. Automated checkpoint counts are distinct from individually inspected images; no claim of complete combination or hardware coverage.",
+  "laterInspectedImages": [
+    {
+      "source": "seed-1118-step-83-drag-atom-preview.png",
+      "retained": "late-narrow-cell-gesture.png",
+      "observation": "Narrow portrait viewport with expanded panel, oblique cell plane and original cell outline. Atoms subpixel (0.225px maximum projected radius) at this chosen scale/zoom. Snapshot phase idle: gesture attempt is not evidence of a committed atom drag."
+    },
+    {
+      "source": "seed-1118-step-178-panel-after.png",
+      "retained": "late-invalid-import-scene.png",
+      "observation": "Collapsed sidebar retains five rendered atoms after rejected XYZ import. Bonds disabled. Invalid XYZ status visible. No new visual defect confirmed in this checkpoint."
+    }
+  ]
 }

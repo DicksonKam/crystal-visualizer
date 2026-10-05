@@ -1,0 +1,300 @@
+{
+  "stats": {
+    "startTime": "2026-10-05T04:34:46.036Z",
+    "duration": 572814.4959999999,
+    "expected": 41,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "tests": [
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "cubic, view -1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 11439
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "cubic, view 1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 6362
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "skewed, view -1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 6245
+    },
+    {
+      "file": "atom-picking.spec.cjs",
+      "title": "skewed, view 1: boundary atoms win hover, click and drag over overlapping frame handles",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 6204
+    },
+    {
+      "file": "drag-plane.spec.cjs",
+      "title": "boundary guide and movement cover all six cell faces and constrain tangent sections",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1367
+    },
+    {
+      "file": "drag-plane.spec.cjs",
+      "title": "pointer dragging reaches both halves of a boundary face and supports undo/redo",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3778
+    },
+    {
+      "file": "drag-plane.spec.cjs",
+      "title": "boundary atom drag preview rebuilds bonds before pointer release",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2399
+    },
+    {
+      "file": "drag-release.spec.cjs",
+      "title": "release UI refresh cannot roll back a committed mouse move: blur",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2514
+    },
+    {
+      "file": "drag-release.spec.cjs",
+      "title": "release UI refresh cannot roll back a committed mouse move: capture-loss",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2545
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 9180
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8831
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: panel-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 10032
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8861
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic atom: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 12904
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22831
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 22872
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: panel-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 23778
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 23004
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "cubic cell: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 32635
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8650
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8861
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: panel-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 9842
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 8621
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted atom: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 10298
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 23545
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: resize-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 23336
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: panel-escape preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 23673
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: blur-event preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 23053
+    },
+    {
+      "file": "gesture-edge-visual.spec.cjs",
+      "title": "tilted cell: release-outside preserves measurement and the next gesture",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 32368
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example decline during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3428
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example accept during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3379
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example 404 during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3776
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example malformed during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3408
+    },
+    {
+      "file": "load-edit-race-visual.spec.cjs",
+      "title": "delayed example superseded during a live atom move preserves the right document and visuals",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3403
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "distances and angle connect the actual selected atoms across the cell",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 1904
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "mode changes, clear, undo and document replacement dispose and restore actual measurements",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3929
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 3037
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "explicit ghost selections measure their world positions without substituting another image",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2805
+    },
+    {
+      "file": "measurement.spec.cjs",
+      "title": "canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 2605
+    },
+    {
+      "file": "visual-edit.spec.cjs",
+      "title": "visual boundary editing with changing panel width at 1440px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 83048
+    },
+    {
+      "file": "visual-edit.spec.cjs",
+      "title": "visual boundary editing with changing panel width at 900px",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 66700
+    }
+  ]
+}

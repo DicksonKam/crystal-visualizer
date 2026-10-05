@@ -32,7 +32,9 @@ No new controls or changes to snapping were added. App cache version is 164.
   not reloaded or edited. Native follow-up testing used a separate disposable tab.
 - Two release-time interruption regressions failed before the fix and passed
   afterward, verifying final geometry, move history and undo/redo.
-- All 142 unit tests passed. The affected 41-case browser run is in progress.
+- All 142 unit tests and 41 affected browser tests passed (9.5 minutes, no
+  retries, skipped or flaky cases). This was targeted validation, not a fresh
+  run of the entire browser suite. The 41-case result is retained in validation.json.
 - Native mouse placement on graphene also succeeded after the change.
 
 The investigation additionally found touch gestures can be taken over by native

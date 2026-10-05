@@ -44,5 +44,24 @@
     "Finish the live discovery soak, retaining its original revision and duration.",
     "Apply the source layout fix and verify the new regression, existing layout/edit/playback behavior, and rendered screenshots.",
     "Run additional visual sequences on the final source and audit the completed campaign."
-  ]
+  ],
+  "stagedSource": {
+    "directory": "/private/tmp/crystal-hint-candidate",
+    "previewURL": "http://127.0.0.1:4174/",
+    "version": 172,
+    "sourceHashes": {
+      "app.js": "d7ea857f69f14f80d207c05ac2bbf2dcc178424c6ac4500e4d909acf7a0fba82",
+      "styles.css": "63df494608b7eb0769d0dbc0685ce60d4f79b33ba2090e6a41321921d9ab8a07",
+      "index.html": "876ad5a7abd5fe987ba89e95b5892ada05ad5fffd469bb5b50397f5177accd4a"
+    },
+    "fullBrowserSuite": "running, 135 cases, one worker",
+    "nativeVerification": {
+      "canvasBottom": 636,
+      "hintTop": 636.21875,
+      "stylesheet": "styles.css?v=51",
+      "application": "app.js?v=172",
+      "observed": "Full NaCl frame visibly clear of navigation help in a temporary native tab; tab closed afterward."
+    },
+    "applicationPlan": "After the discovery soak completes, apply proposed-source.patch and verify main source hashes exactly match the tested candidate."
+  }
 }

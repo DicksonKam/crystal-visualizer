@@ -32,10 +32,58 @@
     "flaky": 0
   },
   "full151Suite": "Identical source bytes verified on isolated candidate",
-  "replay": "running",
+  "replay": {
+    "event": "complete",
+    "nextSeed": 3409,
+    "actions": 1620,
+    "images": 597,
+    "elapsedSeconds": 607.6398098330001,
+    "status": "passed",
+    "exitCode": 0,
+    "completedSequences": 9,
+    "sourceHashesUnchanged": true,
+    "rawLog": "replay.jsonl"
+  },
   "nativeCheck": "Separate main v176 native IAB tab: corner drag remained at constrained corner without cancellation; face atom #4 moved on release, Undo restored initial atom/bonds, Redo restored moved atom/bonds. Original tab #1 version167 preserved. Native screenshots visually inspected in tool results.",
   "inspectedImages": [
     "next-drag-held.png",
     "narrow-footer.png"
-  ]
+  ],
+  "replayVisualInspection": [
+    {
+      "file": "trajectory-panel.png",
+      "result": "Collapsed sidebar, intact oblique frame, readable timeline; prior invalid-load footer remains intentionally until next operation."
+    },
+    {
+      "file": "small-atoms-drag.png",
+      "result": "Active drag feedback; tiny atom radius is supported by display-size endpoint interactions and projected radius below 1 CSS pixel, not absent geometry."
+    },
+    {
+      "file": "cell-resize-preview.png",
+      "result": "Aligned cell frame visible; small projected atom size after display-size endpoint interactions."
+    },
+    {
+      "file": "landscape-resize-preview.png",
+      "result": "Short landscape view and footer remain within viewport during resize."
+    },
+    {
+      "file": "dense-initial.png",
+      "result": "600-atom dense initial scene visually inspected; frame toggle off, atoms and bonds rendered."
+    }
+  ],
+  "completionAudit": {
+    "sustainedDiscovery": "120.202 minutes; 107 completed sequences; raw discovery log retained and source hashes stable",
+    "newCrossFunctionCoverage": "Real download/reimport, numeric entry/focused undo, dense initial fixtures, document transitions, resize, periodic selections, mouse interruption and trajectory keyboard interactions",
+    "confirmedFixes": "Four baseline-reproduced defects fixed in current app; no new controls added",
+    "verification": "147 unit tests; full151 browser suite on identical final-source hashes; fresh-main15 browser regressions; final10.127minute persistent replay",
+    "visualEvidence": "Selected screenshots and native IAB behavior inspected; capture count is not inspection count",
+    "preservation": "Original user tab1 version167 preserved; agent test tab10 closed; local-only commits; no push",
+    "limits": [
+      "Selected images only; not every captured screenshot examined",
+      "Chromium SwiftShader and native IAB, not all browsers or GPUs",
+      "No claim of every possible combination covered or absence of memory leaks",
+      "Optional candidate native download completion could not be verified; automated actual file downloads and reimports were verified"
+    ]
+  },
+  "status": "complete; current main verified"
 }

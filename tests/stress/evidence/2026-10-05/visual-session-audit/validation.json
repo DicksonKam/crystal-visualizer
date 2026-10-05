@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-05",
+  "appVersion": 170,
+  "validatedProductCommit": "8f9195e",
+  "method": "Native in-app browser interaction plus Chromium mouse/keyboard stress sequences; rendered screenshots inspected individually, alongside geometry and state assertions.",
+  "fixes": [
+    {
+      "problem": "Short picker content starts above the reachable scroll origin",
+      "commit": "d872392",
+      "evidence": "../overlay-layout/validation.json"
+    },
+    {
+      "problem": "Camera help is cropped when a desktop sidebar narrows the viewer",
+      "commit": "d872392",
+      "evidence": "../overlay-layout/validation.json"
+    },
+    {
+      "problem": "Fitted atoms are cropped after sidebar/window resizing",
+      "commit": "837ee65",
+      "evidence": "../resize-framing/validation.json"
+    },
+    {
+      "problem": "Existing picker close button scrolls away",
+      "commit": "8f9195e",
+      "evidence": "../picker-close/validation.json"
+    }
+  ],
+  "inspectedCheckpoints": [
+    {
+      "image": "dense-cell-preview.png",
+      "observation": "501-atom scene, cell preview and boundary bonds are rendered; projected rows and the isolated added atom remain visible."
+    },
+    {
+      "image": "dense-undo-restored.png",
+      "observation": "Undo after deletion restores a populated oblique atom/bond scene with the frame visible."
+    },
+    {
+      "image": "graphene-contained.png",
+      "observation": "After a boundary move and shrinking the oblique a face, the frame contains projected atom centers. Sphere surfaces may straddle faces. The element legend was caught during its existing fade-in; this image alone does not validate that legend."
+    },
+    {
+      "image": "panel-cancel-settled.png",
+      "observation": "Panel collapse plus Escape leaves the frame, atoms and preserved measurement rendered; cancellation status states geometry restoration."
+    },
+    {
+      "image": "file-replacement-settled.png",
+      "observation": "Accepting a replacement during an atom move shows the incoming two-atom fixture and bond, without the previous frame or drag plane."
+    },
+    {
+      "image": "playback-selection-undo.png",
+      "observation": "Narrow portrait viewer remains populated after playback/rebuild/selection undo; timeline play icon and frame counter are visible."
+    },
+    {
+      "image": "dense-playback-narrow.png",
+      "observation": "Dense playback remains populated in the narrow viewer; complete projected cell and pause icon are visible."
+    },
+    {
+      "image": "boundary-final.png",
+      "observation": "After 16 mixed boundary-edit cycles, undo restores four atom spheres and the frame. Legend is captured partway through its existing fade-in."
+    },
+    {
+      "image": "boundary-frame-preview.png",
+      "observation": "Repeated atom move followed by frame resize retains four atom spheres, expected projected bonds and visible frame."
+    }
+  ],
+  "nativeChecks": [
+    "Loaded graphene, selected atoms, switched modes, toggled labels and periodic images, zoomed and reset.",
+    "Loaded H2O trajectory, hid cell, reset and expanded sidebar to its maximum; all three atoms remained visible after the framing fix.",
+    "Opened examples and scrolled to the bottom before and after the close-button fix; existing close button stays anchored after the fix.",
+    "Started trajectory playback, observed pause icon and advancing frame count, paused and scrubbed to final frame; play icon and 24/24 remained visible."
+  ],
+  "validation": {
+    "unitTests": {
+      "passed": 144,
+      "failed": 0
+    },
+    "fullBrowserSuite": {
+      "passed": 129,
+      "failed": 0,
+      "duration": "12.6 minutes",
+      "command": "PLAYWRIGHT_BROWSERS_PATH=/private/tmp/crystal-visualizer-browsers npx playwright test --config=/private/tmp/crystal-browser-config.cjs --workers=2 --output=/private/tmp/crystal-full-visual-final-results",
+      "configuration": "Repository browser configuration, local testDir and output paths, existing 4173 server reused; list reporter."
+    }
+  },
+  "preservation": {
+    "newButtons": 0,
+    "pushed": false,
+    "userTabsModified": false,
+    "temporaryTabClosed": true,
+    "originalSidebarWidthRestored": 0
+  },
+  "limits": [
+    "Representative combinations and screenshots, not every possible input sequence.",
+    "Browser regression suite uses Chromium and pinned local Three.js dependencies; native checks use the Codex in-app browser. Other GPU/browser combinations are unverified.",
+    "Small atoms/labels in a cell fitted around a large vacuum region are not treated as a defect without a separate reproduction.",
+    "Post-resize evidence waits two animation frames; a cleared buffer captured before the queued render was replaced, not counted as a solved rendering bug."
+  ],
+  "completionAudit": {
+    "directVisualInspection": "Native browser screenshots plus nine individually inspected full-suite checkpoints retained here; before/after fixes retained in sibling directories.",
+    "crossFunctionCoverage": "Boundary moves, cell resizing, selection/measurement, undo/redo, display/periodic toggles, camera operations, sidebar/window resizing and file/trajectory transitions exercised in the full suite and native/sweep sequences.",
+    "reproducibleFindings": "Four visual bugs found, fixed, reproduced before and verified after. No additional reproducible defect in the inspected final checkpoints.",
+    "preservation": "Only the isolated temporary native tab was operated on; original collapsed sidebar preference restored and temporary tab closed. No user documents reloaded or edited; no push or added buttons.",
+    "remainingRequiredWork": "None for this representative visual stress-test campaign. Unverified breadth is explicitly listed in limits."
+  }
+}

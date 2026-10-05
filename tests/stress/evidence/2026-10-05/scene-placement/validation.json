@@ -1,0 +1,26 @@
+{
+  "baselineCommit": "f9287d7",
+  "appVersion": 171,
+  "cause": "renderStructure recalculated the scene origin from presentation-dependent bounds on every rebuild while restoring the previous camera pose. Changing sphere radii, bonds or cell visibility therefore shifted unchanged atom centers.",
+  "fix": "Only establish the scene origin for a newly loaded document. Retain the existing origin when preserving the camera and selection on a same-document rebuild.",
+  "baselineFailures": {
+    "moleculeCenterShiftAngstrom": 0.049,
+    "slabCenterShiftAngstrom": 0.27104000374674797,
+    "failedRegressions": 2
+  },
+  "verification": {
+    "unitTestsPassed": 144,
+    "targetedBrowserCasesPassed": 15,
+    "fullBrowserSuite": "running, 132 cases",
+    "native": "Water molecule atom centers visibly stayed fixed while the Atom Size slider changed to minimum."
+  },
+  "sourceHashes": {
+    "app.js": "d7ea857f69f14f80d207c05ac2bbf2dcc178424c6ac4500e4d909acf7a0fba82",
+    "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
+  },
+  "soak": "Two-hour visual runner still active. Logs record per-seed source hashes, distinguishing baseline and fixed product revisions. Do not treat mixed-revision coverage as two hours on the fixed revision.",
+  "remaining": [
+    "Complete the requested soak and inspect additional rendered checkpoints.",
+    "Complete full regressions and investigate any failures."
+  ]
+}

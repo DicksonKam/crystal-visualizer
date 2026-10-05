@@ -4063,10 +4063,14 @@ function renderStructure(structure, preserveState = false) {
     addInstancedAtoms();
     addBondsFromAtomMeshes();
     
-    // Center the structure (includes ghost atoms now)
-    const box = getStructureBounds();
-    const center = box.getCenter(new THREE.Vector3());
-    structureGroup.position.sub(center);
+    // Establish an origin for a newly loaded document. Rebuilding the same
+    // document must retain its placement: display bounds change with atom
+    // radii, bonds and cell visibility, without moving the atoms themselves.
+    if (!savedCameraPose) {
+        const box = getStructureBounds();
+        const center = box.getCenter(new THREE.Vector3());
+        structureGroup.position.sub(center);
+    }
     
     if (savedCameraPose) {
         cameraController.setPose(savedCameraPose, 'rebuild');

@@ -1,0 +1,51 @@
+{
+  "inspectedCampaignImages": [
+    {
+      "file": "seed-3204-step-96-playback-after.png",
+      "result": "Intact visible frame when enabled, readable controls; minimum atom size intentionally produces small points in the latter two cases"
+    },
+    {
+      "file": "seed-3204-step-41-resize-cell-preview.png",
+      "result": "Intact visible frame when enabled, readable controls; minimum atom size intentionally produces small points in the latter two cases"
+    },
+    {
+      "file": "seed-3204-step-11-panel-panel-preview.png",
+      "result": "Intact visible frame when enabled, readable controls; minimum atom size intentionally produces small points in the latter two cases"
+    }
+  ],
+  "nativeChecks": [
+    {
+      "browser": "Codex IAB",
+      "temporaryTab": "Closed after verification",
+      "productVersion": 173,
+      "actions": [
+        "Al FCC example",
+        "Select atoms 1 and 2 by keyboard",
+        "Preserve measurement into Edit mode",
+        "Native face-boundary mouse drag",
+        "Rotate",
+        "Undo",
+        "Redo"
+      ],
+      "observedDistancesAngstrom": [
+        2.8638,
+        2.541,
+        2.8638,
+        2.541
+      ],
+      "result": "Move committed, measurement followed the edit/history, intact frame observed after rotation and redo",
+      "nativeScreenshots": "Inspected in tool outputs; not retained as local PNGs",
+      "originalUserTab": "Untouched"
+    },
+    {
+      "case": "Native cell-corner drag in the default oblique view",
+      "result": "Atom position unchanged",
+      "interpretation": "Current plane through corner can intersect the unit cell at only that corner. This is a geometric constraint, not a pointer cancellation; changing that interaction policy has not been requested."
+    }
+  ],
+  "inspectionLimit": "Captured checkpoints are not all individually inspected",
+  "inspectedFocusedImages": [
+    "cell-file-load/desktop-next-frame-drag.png",
+    "cell-file-load/portrait-next-frame-drag.png"
+  ]
+}

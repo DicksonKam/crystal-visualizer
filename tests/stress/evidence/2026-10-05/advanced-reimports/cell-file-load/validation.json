@@ -1,0 +1,26 @@
+{
+  "status": "verified on unchanged v173 product source",
+  "cases": 6,
+  "passed": 6,
+  "failed": 0,
+  "reportedDuration": "1.3m",
+  "source": "tests/browser/cell-file-load-visual.spec.cjs",
+  "output": "/private/tmp/crystal-cell-file-load-verified",
+  "coverage": [
+    "Local FileReader replacement while cell drag is held",
+    "Accept, decline, invalid parse",
+    "Same window or live portrait resize",
+    "Preserved measurement and history restoration",
+    "First frame drag after interruption",
+    "Rendered preview and settled checkpoints"
+  ],
+  "initialRun": {
+    "passed": 4,
+    "failed": 2,
+    "reason": "Test expected remote Could not load message; local parser correctly uses Error: Invalid XYZ coordinates. No product fix was required."
+  },
+  "limits": [
+    "Axis pose set directly to make the real pointer frame gesture reproducible",
+    "No native operating system file-picker timing claim"
+  ]
+}

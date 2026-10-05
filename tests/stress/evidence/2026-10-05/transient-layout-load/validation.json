@@ -29,7 +29,7 @@
     "failed": 0
   },
   "remaining": [
-    "Finish active 136-case final-source browser suite and persistent visual replay; inspect rendered evidence; audit and commit completion."
+    "Finish active 136-case final-source browser suite; audit completion and save its result."
   ],
   "targetedBrowserTests": {
     "passed": 9,
@@ -44,5 +44,25 @@
     "hintTop": 636.21875,
     "observed": "Full NaCl frame clearly above the navigation-help row after Reset. Temporary native tab closed, user original tab left unchanged.",
     "imageEvidence": "Native screenshot inspected in tool output; not retained as a local file."
+  },
+  "previouslyFailedSeedReplay": {
+    "seed": 2213,
+    "status": "pass",
+    "steps": 180,
+    "initialImage": "seed-2213-load-fixed.png",
+    "inspected": "Loaded: cell.poscar visible; five atoms at the retained zoom/scale, no camera error. Orange markers are partial-constraint indicators. Cell display is intentionally disabled.",
+    "scope": "The focused zero-width regression proves the intermediate-layout condition. Seed replay confirms the same randomized sequence completes; it is not proof that event timing exactly matched the original run."
+  },
+  "persistentReplay": {
+    "status": "completed",
+    "exitCode": 0,
+    "appVersion": 173,
+    "elapsedSeconds": 653.8161031669999,
+    "sequences": 15,
+    "seedRange": [
+      2201,
+      2215
+    ],
+    "screenshotCheckpoints": 909
   }
 }

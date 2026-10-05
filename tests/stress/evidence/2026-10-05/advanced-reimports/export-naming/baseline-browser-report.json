@@ -1,0 +1,314 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/export-filename-roundtrip.spec.cjs",
+      "--config=/private/tmp/crystal-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-export-name-baseline",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-export-name-baseline",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "export-filename-roundtrip.spec.cjs",
+      "file": "export-filename-roundtrip.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "xyz export names remain stable across repeated reopening",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8031,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.xyz\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.xyz\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.xyz\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.xyz\"\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs:25:30",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                      "column": 30,
+                      "line": 25
+                    },
+                    "snippet": "  23 |             const download=await downloadPromise;\n  24 |             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');\n> 25 |             expect(filename).toBe(`structure_edited.${format}`);\n     |                              ^\n  26 |         }\n  27 |         await reopen(content,`internal_edited_notes.${format}`);\n  28 |         const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                        "column": 30,
+                        "line": 25
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.xyz\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.xyz\"\u001b[39m\n\n  23 |             const download=await downloadPromise;\n  24 |             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');\n> 25 |             expect(filename).toBe(`structure_edited.${format}`);\n     |                              ^\n  26 |         }\n  27 |         await reopen(content,`internal_edited_notes.${format}`);\n  28 |         const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs:25:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T14:27:34.536Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--d9156-e-across-repeated-reopening-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--d9156-e-across-repeated-reopening-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--d9156-e-across-repeated-reopening-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                    "column": 30,
+                    "line": 25
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c9fe2f29bd0d1a0becab-c16f0a98b821a0c13e66",
+          "file": "export-filename-roundtrip.spec.cjs",
+          "line": 6,
+          "column": 5
+        },
+        {
+          "title": "poscar export names remain stable across repeated reopening",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7420,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.poscar\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.poscar\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.poscar\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.poscar\"\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs:25:30",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                      "column": 30,
+                      "line": 25
+                    },
+                    "snippet": "  23 |             const download=await downloadPromise;\n  24 |             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');\n> 25 |             expect(filename).toBe(`structure_edited.${format}`);\n     |                              ^\n  26 |         }\n  27 |         await reopen(content,`internal_edited_notes.${format}`);\n  28 |         const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                        "column": 30,
+                        "line": 25
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.poscar\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.poscar\"\u001b[39m\n\n  23 |             const download=await downloadPromise;\n  24 |             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');\n> 25 |             expect(filename).toBe(`structure_edited.${format}`);\n     |                              ^\n  26 |         }\n  27 |         await reopen(content,`internal_edited_notes.${format}`);\n  28 |         const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs:25:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T14:27:43.226Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--918f0-e-across-repeated-reopening-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--918f0-e-across-repeated-reopening-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--918f0-e-across-repeated-reopening-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                    "column": 30,
+                    "line": 25
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c9fe2f29bd0d1a0becab-fc7827fc4df696dcad2e",
+          "file": "export-filename-roundtrip.spec.cjs",
+          "line": 6,
+          "column": 5
+        },
+        {
+          "title": "xdatcar export names remain stable across repeated reopening",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7419,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.xdatcar\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.xdatcar\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.xdatcar\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.xdatcar\"\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs:25:30",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                      "column": 30,
+                      "line": 25
+                    },
+                    "snippet": "  23 |             const download=await downloadPromise;\n  24 |             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');\n> 25 |             expect(filename).toBe(`structure_edited.${format}`);\n     |                              ^\n  26 |         }\n  27 |         await reopen(content,`internal_edited_notes.${format}`);\n  28 |         const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                        "column": 30,
+                        "line": 25
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"structure_edited.xdatcar\"\u001b[39m\nReceived: \u001b[31m\"structure_edited\u001b[7m_edited_edited\u001b[27m.xdatcar\"\u001b[39m\n\n  23 |             const download=await downloadPromise;\n  24 |             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');\n> 25 |             expect(filename).toBe(`structure_edited.${format}`);\n     |                              ^\n  26 |         }\n  27 |         await reopen(content,`internal_edited_notes.${format}`);\n  28 |         const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs:25:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-05T14:27:51.232Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--9ba6e-e-across-repeated-reopening-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--9ba6e-e-across-repeated-reopening-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-export-name-baseline/export-filename-roundtrip--9ba6e-e-across-repeated-reopening-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/export-filename-roundtrip.spec.cjs",
+                    "column": 30,
+                    "line": 25
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c9fe2f29bd0d1a0becab-5e521f97fec4f3e74cce",
+          "file": "export-filename-roundtrip.spec.cjs",
+          "line": 6,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-05T14:27:34.052Z",
+    "duration": 24878.72,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

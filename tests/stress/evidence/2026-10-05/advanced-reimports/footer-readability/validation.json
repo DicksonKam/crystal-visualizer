@@ -28,7 +28,7 @@
   "reasonForStaging": "Keep product source stable during the two-hour discovery campaign",
   "mainSourceVersion": 173,
   "fullStagedSuite": {
-    "status": "running",
+    "status": "passed",
     "session": 13249,
     "expectedTests": 145,
     "url": "http://127.0.0.1:4174",
@@ -46,6 +46,10 @@
       "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
       "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
       "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17"
-    }
+    },
+    "passed": 145,
+    "failed": 0,
+    "reportedDuration": "29.0m",
+    "scope": "Footer-only candidate; excludes the later three export-name browser regressions"
   }
 }

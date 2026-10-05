@@ -35,6 +35,14 @@
     {
       "file": "seed-3226-step-165-cancel-atom-preview.png",
       "result": "Constrained boundary atom is selected with periodic copies visible; cell frames remain intact"
+    },
+    {
+      "file": "seed-3237-step-167-cancel-atom-preview.png",
+      "result": "Atom drag preview remains visible after invalid-file recovery; oblique plane section is triangular and no new rendering defect is apparent."
+    },
+    {
+      "file": "seed-3237-step-84-roundtrip-after.png",
+      "result": "Reimported structure and responsive controls are visible. Repeated edited suffix confirms the already recorded export naming defect."
     }
   ],
   "nativeChecks": [

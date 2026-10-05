@@ -1,0 +1,33 @@
+{
+  "appVersion": 167,
+  "structureCacheVersion": 4,
+  "baselineCommit": "40a774d",
+  "cause": "Cartesian dot product along a lattice vector does not identify cell face coordinates in an oblique lattice. Other lattice vectors contribute to the dot product.",
+  "fix": "Bound each resized face using fractional coordinates of original positions in the drag-start lattice; preserve near-face Cartesian translation and validated atomic preparation.",
+  "baselineBrowserCases": {
+    "expectedFailures": 2,
+    "structures": "original graphene, shrink a and b"
+  },
+  "finalBrowserCases": {
+    "passed": 6,
+    "failed": 0,
+    "durationSeconds": 29.1,
+    "coverage": "Both skew signs, both near/far faces, preview containment, release, Undo/Redo; graphene atom move followed by shrinking a/b with current extrema."
+  },
+  "relatedBrowserCases": {
+    "passed": 11,
+    "failed": 0,
+    "coverage": "Atom/frame picking, boundary movement plane, bond previews, capture loss and next gestures"
+  },
+  "unitTests": {
+    "passed": 143,
+    "failed": 0
+  },
+  "containment": "Atom centers are bounded. Spheres can straddle faces at boundary sites. Existing out-of-cell source coordinates are not automatically wrapped or relocated.",
+  "fileSHA256": {
+    "structure.js": "8495d62e49f0ddfe6373a62617633fb6bfc0fc374948160e91ed1903aec25254",
+    "index.html": "c66b702f9dddaf5f1d699980e5c27e53ea547e487a3828959f83e03c6053f6e9",
+    "tests/browser/cell-containment.spec.cjs": "c4eaddaf9c65c2b0aea2e666483e5a0df0aadd255de1229cd62c5ff899e0b1ec",
+    "tests/structure.test.cjs": "9be8f934744616cde2b16f8da21033a8f8913024066e1aeb77475c762e2d226f"
+  }
+}

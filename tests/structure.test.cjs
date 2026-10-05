@@ -92,3 +92,29 @@ test('cell resize validates every proposed position before committing a tilted n
     assert.deepEqual(unchanged.lattice, lattice);
     assert.deepEqual(unchanged.updates[0].position, { x: 3, y: 4, z: 1 });
 });
+
+test('oblique cell faces stop at atom fractional extents on both sides', () => {
+    // Opposite signs of the off-axis projection expose both the far and near
+    // face failures of using a dot product along the resized lattice vector.
+    for (const skew of [-5, 5]) {
+        const lattice = [[10, 0, 0], [skew, 10, 0], [2, 1, 10]];
+        const fractions = [[0.1, 0.9, 0.5], [0.9, 0.9, 0.5]];
+        const positions = fractions.map(f => {
+            const [x, y, z] = fractionalToCartesian(f, lattice);
+            return { x, y, z };
+        });
+        const structure = { lattice, atoms: positions.map(position => ({ position })) };
+        for (const handle of ['near', 'far']) {
+            const result = prepareCellResize(structure, lattice, positions, 0, handle, -100);
+            assert.ok(Math.abs(result.lattice[0][0] - 9.001) < 1e-12);
+            for (const update of result.updates) {
+                assert.ok(update.fractional.every(f => f >= -1e-12 && f <= 1 + 1e-12));
+            }
+            // Changing a must leave the other fractional coordinates intact.
+            result.updates.forEach((update, i) => {
+                assert.ok(Math.abs(update.fractional[1] - fractions[i][1]) < 1e-12);
+                assert.ok(Math.abs(update.fractional[2] - fractions[i][2]) < 1e-12);
+            });
+        }
+    }
+});

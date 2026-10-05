@@ -15,12 +15,18 @@
         const length = Math.hypot(...vector);
         if (!Number.isFinite(length) || length <= 0) throw new Error('Invalid original cell length');
         const direction = vector.map(value => value / length);
-        const projections = originalPositions.map(pos => direction[0] * pos.x + direction[1] * pos.y + direction[2] * pos.z);
-        if (!projections.every(Number.isFinite)) throw new Error('Atom extent cannot be represented');
+        // Cell faces are constant fractional coordinates. A Cartesian dot
+        // product along this vector includes contributions from the other
+        // vectors in an oblique cell and can let a face pass through atoms.
+        const axisCoordinates = originalPositions.map(pos => {
+            const fractional = geometry.cartesianToFractional(pos, originalLattice);
+            return fractional ? fractional[axis] * length : NaN;
+        });
+        if (!axisCoordinates.every(Number.isFinite)) throw new Error('Atom extent cannot be represented');
         const epsilon = 0.001;
-        const max = projections.reduce((value, projection) => Math.max(value, projection), -Infinity);
-        const min = projections.reduce((value, projection) => Math.min(value, projection), Infinity);
-        const extent = projections.length ? (handle === 'far' ? max + epsilon : length + epsilon - min) : epsilon;
+        const max = axisCoordinates.reduce((value, coordinate) => Math.max(value, coordinate), -Infinity);
+        const min = axisCoordinates.reduce((value, coordinate) => Math.min(value, coordinate), Infinity);
+        const extent = axisCoordinates.length ? (handle === 'far' ? max + epsilon : length + epsilon - min) : epsilon;
         // Atom coordinates may lie outside the cell. Their extent alone must
         // never allow a zero or reversed cell vector.
         const newLength = Math.max(epsilon, extent, length + delta);

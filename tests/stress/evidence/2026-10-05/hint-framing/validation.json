@@ -63,7 +63,11 @@
       "exitCode": 0,
       "config": "/private/tmp/crystal-hint-candidate.config.cjs",
       "baseURL": "http://127.0.0.1:4174",
-      "outputDirectory": "/private/tmp/crystal-hint-candidate-full"
+      "outputDirectory": "/private/tmp/crystal-hint-candidate-full",
+      "inspectedRetainedImages": [
+        "cell-staged-tested.png",
+        "trajectory-staged-tested.png"
+      ]
     },
     "nativeVerification": {
       "canvasBottom": 636,

@@ -1,0 +1,17 @@
+{
+  "status": "revision audit during live run",
+  "applicationRevision": "171; unchanged throughout recorded seeds",
+  "actualLoadedRunnerSources": {
+    "edit-scenario.cjs": {
+      "gitRef": "7e0699e^",
+      "sha256": "dc557adb86e4a6ada7e0e9a2143c77d5cea9e3cdd9bc10753f8969a3e9a3b09e"
+    },
+    "visual-campaign.cjs": {
+      "gitRef": "7e0699e^",
+      "sha256": "813226a5597b45a3ee454b6471fe6c5fd16fc7c3f4673fc40dd43e81700ff8b2"
+    }
+  },
+  "diskHashChangeExplanation": "The persistent-session harness extension changed edit-scenario.cjs on disk while the discovery Node process remained live. Its require-loaded scenario continued using the initial source. Later per-seed hashes describe on-disk files, not a reloaded runner. The only scenario change was waiting for stressLoadSerial > 0 after file input, intended for reused pages. This discovery runner uses a fresh page each seed. The separate persistent run loaded and tested the updated harness.",
+  "hashCoverageLimit": "The discovery runner records app.js, layout.js, styles.css, index.html, edit-scenario.cjs and visual-observer.cjs, not every application module. The newer persistent runner records the expanded module set.",
+  "scope": "Retain exact raw logs. Do not claim identical harness disk hashes or expanded module hash coverage for the two-hour discovery run."
+}

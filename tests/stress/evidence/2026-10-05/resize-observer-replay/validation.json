@@ -56,7 +56,11 @@
     "stepsPerSeed": 180,
     "startedUTC": "2026-10-05T08:27:08.962Z",
     "outputDirectory": "/private/tmp/crystal-persistent-soak-2101",
-    "status": "running",
-    "purpose": "Reuse one browser page across document loads, keeping presentation state and recording renderer resource counts."
+    "status": "completed; exit 0",
+    "purpose": "Reuse one browser page across document loads, keeping presentation state and recording renderer resource counts.",
+    "durationSeconds": 1814.7591731669997,
+    "randomizedSteps": 7560,
+    "checkpoints": 2462,
+    "retainedLog": "../renewed-soak/persistent-run.jsonl"
   }
 }

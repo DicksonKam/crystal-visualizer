@@ -1,0 +1,95 @@
+{
+  "status": "persistent segment complete; main two-hour campaign remains running",
+  "persistent": {
+    "terminalExitCode": 0,
+    "durationSeconds": 1814.7591731669997,
+    "seeds": [
+      2101,
+      2142
+    ],
+    "sequences": 42,
+    "randomizedSteps": 7560,
+    "performedActionAttempts": 5505,
+    "renderedCheckpoints": 2462,
+    "individuallyInspectedRetainedExamples": [
+      "oblique-drag-preview.png",
+      "declined-replacement.png",
+      "invalid-import-retained.png",
+      "trajectory-controls.png"
+    ],
+    "committedOperationCounts": {
+      "select_atom": 415,
+      "shift_atoms": 139,
+      "vacuum_drag": 39,
+      "fix_atoms": 41,
+      "move_atom": 96,
+      "add_atom": 94,
+      "clear_selection": 148,
+      "make_supercell": 14,
+      "deselect_atom": 25,
+      "delete_atoms": 31
+    },
+    "performedActionAttemptCounts": {
+      "display": 220,
+      "download": 259,
+      "redo": 19,
+      "bond_length": 275,
+      "clear": 88,
+      "panel": 259,
+      "resize": 56,
+      "batch_fix": 41,
+      "undo": 174,
+      "decline_load": 73,
+      "ghost": 46,
+      "invalid_load": 247,
+      "jump": 276,
+      "supercell": 14,
+      "scale": 281,
+      "pan": 257,
+      "reset": 269,
+      "periodic": 208,
+      "rotate": 266,
+      "mode": 195,
+      "shift": 103,
+      "export": 270,
+      "viewport": 268,
+      "add": 94,
+      "drag": 108,
+      "coordinates": 21,
+      "zoom": 270,
+      "cancel": 91,
+      "center": 44,
+      "invalid": 17,
+      "fix": 10,
+      "replace": 269,
+      "click": 261,
+      "frame": 58,
+      "playback": 67,
+      "delete": 31
+    },
+    "layoutDeadlineFallbacks": 0,
+    "sourceHashesMatchCurrentFiles": true,
+    "resourceDiagnostics": {
+      "endOfSequenceGeometriesRange": [
+        3,
+        33
+      ],
+      "endOfSequenceTexturesRange": [
+        1,
+        10
+      ],
+      "heapUsedBytesRange": [
+        11900000,
+        14300000
+      ],
+      "limitation": "End-of-sequence samples exclude peaks. Heap values are coarse browser diagnostics; this is not proof that no leak exists."
+    }
+  },
+  "definitions": "The runner actions field counts randomized loop steps, including skipped choices. Performed action attempts are distinct from committed edits; screenshot checkpoint count is distinct from individually inspected images.",
+  "limits": [
+    "Headless Chromium uses SwiftShader; hardware and other browsers are unverified.",
+    "Persistent segment uses device pixel ratio 1; the separate fresh-page run alternates 1 and 2.",
+    "The two-hour fresh-page campaign remains incomplete.",
+    "Clipped periodic-neighbor bond presentation remains unchanged."
+  ]
+}

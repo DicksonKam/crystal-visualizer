@@ -1,0 +1,24 @@
+{
+  "baselineCommit": "d872392",
+  "appVersion": 169,
+  "cause": "Changing viewer aspect altered orthographic horizontal field while retaining the previous fitted zoom, clipping atoms during sidebar expansion.",
+  "fix": "Scale zoom (or perspective distance) by old/new fitted view ratios, preserving pan and orientation; update in-flight controller transition start pose too.",
+  "before": {
+    "expectedFailures": 1,
+    "atomScreenX": 2.6614734777447038,
+    "maximumVisibleScreenX": 1
+  },
+  "unitTests": {
+    "passed": 144,
+    "failed": 0
+  },
+  "browserTests": {
+    "cameraAndInterruptedGestures": 19,
+    "finalFramingAndZoomPan": 2,
+    "existingSidebarCases": 7,
+    "failed": 0,
+    "note": "The fitted framing case is present in both the 19-case run and final 2-case run."
+  },
+  "nativeVerification": "H2O trajectory with hidden cell, Reset View then maximum sidebar width: all three atoms visibly retained.",
+  "testRefinement": "Quaternion equality comparison changed to a 1e-12 tolerance for an observed 1-ulp difference. Automatic-transition unit setup uses 4 degrees to stay within the 5-degree policy."
+}

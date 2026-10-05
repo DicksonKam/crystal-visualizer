@@ -869,6 +869,18 @@ function onWindowResize() {
     if (!viewport.clientWidth || !viewport.clientHeight) return;
     const aspect = viewport.clientWidth / viewport.clientHeight;
     const frustumSize = 15;
+    let framing = null;
+    if (currentStructure && cameraMath && cameraController && aspect !== perspectiveCamera.aspect) {
+        const bounds = getStructureBounds();
+        const pose = getCameraPose();
+        const fov = isPerspective ? perspectiveCamera.fov : null;
+        const before = cameraMath.fit(bounds, pose.quaternion, perspectiveCamera.aspect,
+            orthographicCamera.top - orthographicCamera.bottom, fov);
+        const after = cameraMath.fit(bounds, pose.quaternion, aspect, frustumSize, fov);
+        // Preserve the user's magnification relative to a fitted view. Layout
+        // changes must not reset orientation, pan, or the document's history.
+        framing = { zoom: after.zoom / before.zoom, distance: after.distance / before.distance };
+    }
     
     // Update perspective camera
     perspectiveCamera.aspect = aspect;
@@ -880,6 +892,7 @@ function onWindowResize() {
     orthographicCamera.top = frustumSize / 2;
     orthographicCamera.bottom = frustumSize / -2;
     orthographicCamera.updateProjectionMatrix();
+    if (framing) cameraController.resizeView(framing);
     
     renderer.setSize(viewport.clientWidth, viewport.clientHeight);
     controls.handleResize();

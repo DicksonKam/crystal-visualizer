@@ -16,6 +16,26 @@ function rig(reduced = false) {
     return { controller, events, motion, get pose() { return pose; }, setAngle: angle => { pose.quaternion = q(angle); } };
 }
 
+test('layout resize preserves camera intent and cannot be overwritten by a running alignment', () => {
+    const r = rig();
+    r.setAngle(4);
+    const pivot = r.pose.pivot.toArray();
+    r.controller.align(q(0), 0, 'automatic');
+    r.controller.tick(40);
+    const orientation = r.pose.quaternion.toArray();
+    r.controller.resizeView({ zoom: .25, distance: 2 });
+    close(r.pose.zoom, .15); close(r.pose.distance, 80);
+    assert.deepEqual(r.pose.pivot.toArray(), pivot);
+    assert.deepEqual(r.pose.quaternion.toArray(), orientation);
+    assert.equal(r.controller.phase, 'transition');
+    r.controller.tick(1000);
+    close(r.pose.zoom, .15); close(r.pose.distance, 80);
+    assert.deepEqual(r.pose.pivot.toArray(), pivot);
+    r.controller.resizeView({ zoom: 4, distance: .5 });
+    close(r.pose.zoom, .6); close(r.pose.distance, 40);
+    assert.throws(() => r.controller.resizeView({ zoom: 0 }), /Invalid camera resize/);
+});
+
 test('axis capture depends on angle, including boundaries, not lattice proportions', () => {
     const elongated = math.axes([[5, 0, 0], [0, 5, 0], [0, 0, 100]]);
     assert.equal(math.nearestAxis(q(30), elongated), null);

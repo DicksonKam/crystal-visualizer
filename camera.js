@@ -213,6 +213,21 @@
                 clearMotion();
                 onComplete(kind, '');
             },
+            resizeView({ zoom = 1, distance = 1 }) {
+                if (![zoom, distance].every(value => Number.isFinite(value) && value > 0)) {
+                    throw new Error('Invalid camera resize scale');
+                }
+                const pose = math.clonePose(getPose());
+                pose.zoom *= zoom;
+                pose.distance *= distance;
+                // An in-flight rotation retains its original pose each tick.
+                // Update it too, without canceling or restarting the rotation.
+                if (transition) {
+                    transition.start.zoom *= zoom;
+                    transition.start.distance *= distance;
+                }
+                applyPose(pose);
+            },
             tick(time, manualInput = Boolean(gesture)) {
                 if (transition) {
                     const current = transition;

@@ -1,0 +1,24 @@
+{
+  "status": "in progress; two-hour campaign has not yet completed",
+  "productCommit": "7ef5b34",
+  "harnessCommit": "7e0699e",
+  "nativeChecks": {
+    "browser": "isolated in-app browser tab, closed after restoring sidebar width to 0",
+    "fixture": "NaCl_rocksalt.poscar",
+    "sequence": [
+      "Select atoms 1 and 5 in Measure mode",
+      "Enter Edit mode with measurement preserved",
+      "Shift both by fractional a=0.2",
+      "Undo, redo, enable labels, reset view",
+      "Mouse drag atom 3 from cell-edge overlap; status Moved atom #3",
+      "Mouse drag measured atom 5; undo and redo"
+    ],
+    "observed": "Both boundary drags committed. Preserved distance changed from 2.8200 to 2.4112 angstrom after moving atom 5. Redo restored rendered atom position and corresponding measurement. No new defect observed in this sequence.",
+    "visualEvidence": "Native screenshots inspected in tool outputs; they are not retained as local files. Do not count them among retained PNG captures."
+  },
+  "retainedImagesInspected": [
+    "cell-preview.png",
+    "atom-drag-settled.png"
+  ],
+  "scopeLimit": "Random gesture attempts are distinct from committed document operations. Automated checkpoint counts are distinct from individually inspected images; no claim of complete combination or hardware coverage."
+}

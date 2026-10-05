@@ -23,6 +23,18 @@
     {
       "file": "seed-3212-step-28-cancel-atom-preview.png",
       "result": "Periodic repeat scene: base and copy frames intact, copies visible; no plane remains in this non-moving preview"
+    },
+    {
+      "file": "seed-3225-step-112-resize-cell-preview.png",
+      "result": "Aligned resized cell and its periodic copy have complete visible frame edges; no atom-center escape is apparent"
+    },
+    {
+      "file": "seed-3225-step-114-drag-atom-preview.png",
+      "result": "Oblique atom drag shows the cell-plane polygon over the complete cell; cut corners match the oblique section"
+    },
+    {
+      "file": "seed-3226-step-165-cancel-atom-preview.png",
+      "result": "Constrained boundary atom is selected with periodic copies visible; cell frames remain intact"
     }
   ],
   "nativeChecks": [

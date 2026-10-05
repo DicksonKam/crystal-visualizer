@@ -1,0 +1,5 @@
+.viewport-container { display: flex; flex-direction: column; background: var(--bg-primary); }
+.viewport { flex: 1; min-height: 0; height: auto; }
+.viewport-overlay { position: static; flex: 0 0 auto; display: flex; justify-content: center; padding: 0 1rem 1rem; transform: none; }
+@container (max-width: 640px) { .viewport-overlay { display: none; } }
+@media (max-width: 768px) { .viewport-overlay { display: none; } }

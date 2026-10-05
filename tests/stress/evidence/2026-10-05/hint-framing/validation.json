@@ -1,0 +1,48 @@
+{
+  "status": "confirmed bug; source fix pending completion of the current two-hour discovery soak",
+  "appVersion": 171,
+  "cause": "Navigation help is absolutely positioned over the full-height canvas. Camera fitting uses the full canvas dimensions, so fitted unit-cell corners can be covered by the help strip.",
+  "trajectoryReproduction": {
+    "viewport": [
+      900,
+      760
+    ],
+    "corner": [
+      455,
+      633.4116847826086
+    ],
+    "hintY": [
+      619.21875,
+      655.21875
+    ]
+  },
+  "baselineTests": {
+    "failed": 2,
+    "passed": 1,
+    "outputDirectory": "/private/tmp/crystal-hint-framing-baseline"
+  },
+  "proposedRootFix": "Lay out the existing navigation help in its own row below a flexible canvas. The renderer observes the actual unobstructed canvas size. Hide the entire row at the current responsive breakpoints so it returns its space to the canvas. Add no buttons.",
+  "draftValidation": {
+    "passed": 3,
+    "failed": 0,
+    "durationSeconds": 13.8,
+    "outputDirectory": "/private/tmp/crystal-hint-framing-draft",
+    "scope": "CSS was injected in isolated test pages. No product source file was changed.",
+    "inspectedImages": [
+      "trajectory-before.png",
+      "trajectory-draft.png",
+      "cell-draft.png",
+      "portrait-draft.png"
+    ]
+  },
+  "sourceHashes": {
+    "app.js": "d7ea857f69f14f80d207c05ac2bbf2dcc178424c6ac4500e4d909acf7a0fba82",
+    "styles.css": "3639d5f62f27d22dd1fd790cfd65b58945eb54607f1b3be0f659e228b1fd5981",
+    "index.html": "663a66709a6feb4da28db7f93a5533e27af6553300b7f9086522f7a87e6fb32d"
+  },
+  "remaining": [
+    "Finish the live discovery soak, retaining its original revision and duration.",
+    "Apply the source layout fix and verify the new regression, existing layout/edit/playback behavior, and rendered screenshots.",
+    "Run additional visual sequences on the final source and audit the completed campaign."
+  ]
+}

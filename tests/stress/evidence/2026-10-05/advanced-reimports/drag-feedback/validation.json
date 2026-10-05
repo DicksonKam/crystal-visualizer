@@ -7,5 +7,12 @@
   "candidateRoot": "/private/tmp/crystal-feedback-candidate",
   "test": "tests/browser/drag-status.spec.cjs",
   "mainSourceUnchangedForDiscovery": true,
-  "combinedVersion174Suite": "Still running session 45468; collected 148 tests, excludes this later regression."
+  "combinedVersion174Suite": "Still running session 45468; collected 148 tests, excludes this later regression.",
+  "candidateUnit": {
+    "passed": 147,
+    "failed": 0,
+    "durationMilliseconds": 425.188916,
+    "appSha256": "8e0e0c55caa0a5c94d0fe0eca41ca9765123e0827aca224daf1acd30702c42bf",
+    "log": "candidate-unit-tests.log"
+  }
 }

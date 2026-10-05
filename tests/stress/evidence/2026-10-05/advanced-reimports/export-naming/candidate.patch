@@ -1,0 +1,11 @@
+--- a/app.js
++++ b/app.js
+@@ -5616,7 +5616,7 @@
+     let content, filename;
+     let omittedSourceData = false;
+     const sourceName = (currentFilename || 'structure').replace(/[\\/]/g, '_');
+-    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '') || 'structure';
++    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '').replace(/(?:_edited)+$/i, '') || 'structure';
+     
+     if (currentStructure.isXDATCAR) {
+         content = generateXDATCAR();

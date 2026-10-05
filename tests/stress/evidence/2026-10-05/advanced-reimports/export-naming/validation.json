@@ -1,0 +1,8 @@
+{
+  "status": "visual defect confirmed; candidate awaits browser reproduction and verification",
+  "observed": "Repeated actual download/reimport in seed 3218 produced cell_edited_edited_edited_edited_edited.poscar",
+  "rootCause": "Shared export stem removes extension but retains previously added export suffix before appending another",
+  "proposedFix": "Normalize trailing repeated _edited suffixes once in the shared stem, retaining internal occurrences and format-specific generation",
+  "test": "tests/browser/export-filename-roundtrip.spec.cjs",
+  "productSourceUnchangedForDiscovery": true
+}

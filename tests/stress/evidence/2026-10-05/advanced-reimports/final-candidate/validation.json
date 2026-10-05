@@ -1,6 +1,6 @@
 {
   "version": 176,
-  "status": "Isolated candidate verified in unit and focused browser checks; full browser suite running; main source not yet changed",
+  "status": "Isolated final candidate passes all 147 unit and 151 browser tests; main-source application and replay pending",
   "unit": {
     "passed": 147,
     "failed": 0,
@@ -13,12 +13,25 @@
     "reportedDuration": "41.8s"
   },
   "fullBrowser": {
-    "status": "running",
+    "status": "passed",
     "session": 65076,
     "expectedTests": 151,
     "url": "http://127.0.0.1:4177",
     "output": "/private/tmp/crystal-final-full-suite",
-    "jsonReport": "/private/tmp/crystal-final-full-suite.json"
+    "jsonReport": "/private/tmp/crystal-final-full-suite.json",
+    "passed": 151,
+    "failed": 0,
+    "reportedDuration": "30.0m",
+    "reportStats": {
+      "startTime": "2026-10-05T15:01:21.559Z",
+      "duration": 1802944.8120000002,
+      "expected": 151,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "report": "full-browser-report.json",
+    "candidateHashesUnchanged": true
   },
   "sourceHashes": {
     "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",

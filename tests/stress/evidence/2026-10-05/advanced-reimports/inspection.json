@@ -43,6 +43,22 @@
     {
       "file": "seed-3237-step-84-roundtrip-after.png",
       "result": "Reimported structure and responsive controls are visible. Repeated edited suffix confirms the already recorded export naming defect."
+    },
+    {
+      "file": "seed-3244-step-24-coordinates-after.png",
+      "result": "Fractional coordinate edit with negative coordinates renders visible small atoms; cell hidden by display setting. Fields and action controls fit within the resized sidebar."
+    },
+    {
+      "file": "seed-3244-step-148-drag-atom-preview.png",
+      "result": "Five-atom XYZ mouse drag preview visible after replacement; bonds and frame disabled in recorded settings. No stale plane or stray bond apparent."
+    },
+    {
+      "file": "seed-3244-step-168-playback-after.png",
+      "result": "Reopened trajectory plays with clear play icon, frame position and slider at narrow viewport. Two atoms visible; bonds disabled."
+    },
+    {
+      "file": "seed-3243-step-96-ghost-after.png",
+      "result": "Periodic 1x2x1 view renders corresponding atom copies. Frame and bonds disabled by recorded settings; sidebar controls remain within available width."
     }
   ],
   "nativeChecks": [

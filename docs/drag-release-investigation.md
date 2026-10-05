@@ -46,3 +46,23 @@ Inspected before/after PNGs are retained in
 `tests/stress/evidence/2026-10-05/drag-release`. The release event injection is
 explicit in `tests/browser/drag-release.spec.cjs`; avoid claiming it as native
 focus-loss reproduction or proof that every intermittent mouse failure is solved.
+
+## Recurrence after version 164
+
+The user reports unexpected cancellation still occurs in version 164. The earlier
+release-time race was real and remains covered, but it did not explain every
+native incident. The remaining native trigger is unconfirmed. The browser
+connector did not expose the user's visible tab during this follow-up, so its
+existing event log could not be retrieved. No existing document was reloaded.
+
+Version 165 keeps the cancellation policy and adds a reason to the existing
+status message: focus loss, capture loss, browser pointer cancellation, Escape,
+Undo/Redo, mode changes or document replacement. The status element's
+`data-drag-cancellation` attribute and local console retain the event type, button
+state, last owned pointer event, focus and whether movement had begun. No
+coordinates, file contents or network telemetry are recorded; no new controls.
+
+Five controlled reason checks and both release regressions passed. The next
+required evidence is a real unexpected cancellation in version 165, rather than
+another simulated event being presented as the user's cause. Diagnostic proof
+is retained under `tests/stress/evidence/2026-10-05/cancellation-diagnostics`.

@@ -1,0 +1,113 @@
+{
+  "stats": {
+    "startTime": "2026-10-05T06:04:34.719Z",
+    "duration": 14892.952000000001,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "diagnosticChecks": [
+    {
+      "title": "held mouse drag reports actual cancellation cause blur",
+      "status": "passed",
+      "diagnostics": [
+        {
+          "reason": "app lost focus",
+          "eventType": "blur",
+          "eventButtons": null,
+          "pointerId": 1,
+          "lastPointerEvent": {
+            "type": "pointermove",
+            "buttons": 1,
+            "pointerType": "mouse"
+          },
+          "hadMoved": true,
+          "documentFocused": true
+        }
+      ]
+    },
+    {
+      "title": "held mouse drag reports actual cancellation cause lostpointercapture",
+      "status": "passed",
+      "diagnostics": [
+        {
+          "reason": "mouse tracking interrupted",
+          "eventType": "lostpointercapture",
+          "eventButtons": 1,
+          "pointerId": 1,
+          "lastPointerEvent": {
+            "type": "pointermove",
+            "buttons": 1,
+            "pointerType": "mouse"
+          },
+          "hadMoved": true,
+          "documentFocused": true
+        }
+      ]
+    },
+    {
+      "title": "held mouse drag reports actual cancellation cause pointercancel",
+      "status": "passed",
+      "diagnostics": [
+        {
+          "reason": "browser canceled pointer input",
+          "eventType": "pointercancel",
+          "eventButtons": 1,
+          "pointerId": 1,
+          "lastPointerEvent": {
+            "type": "pointermove",
+            "buttons": 1,
+            "pointerType": "mouse"
+          },
+          "hadMoved": true,
+          "documentFocused": true
+        }
+      ]
+    },
+    {
+      "title": "held mouse drag reports actual cancellation cause Escape",
+      "status": "passed",
+      "diagnostics": [
+        {
+          "reason": "Escape pressed",
+          "eventType": "keydown",
+          "eventButtons": null,
+          "pointerId": 1,
+          "lastPointerEvent": {
+            "type": "pointermove",
+            "buttons": 1,
+            "pointerType": "mouse"
+          },
+          "hadMoved": true,
+          "documentFocused": true
+        }
+      ]
+    },
+    {
+      "title": "held mouse drag reports actual cancellation cause Undo",
+      "status": "passed",
+      "diagnostics": [
+        {
+          "reason": "Undo requested",
+          "eventType": "application action",
+          "eventButtons": null,
+          "pointerId": 1,
+          "lastPointerEvent": {
+            "type": "pointermove",
+            "buttons": 1,
+            "pointerType": "mouse"
+          },
+          "hadMoved": true,
+          "documentFocused": true
+        }
+      ]
+    }
+  ],
+  "releaseRegressionsPassed": 2,
+  "unitTestsPassed": 142,
+  "sourceHashes": {
+    "app.js": "e853bf8caa804e96bfc5034211386ae1c7392ee4669a017680c320d9d4eddfe2",
+    "index.html": "5bfde5e3a13ea023218dd926736dcb729d0c222851bd49f4e8e6b877b61d0a2c"
+  }
+}

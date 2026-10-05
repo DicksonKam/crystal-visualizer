@@ -439,7 +439,7 @@ function restoreSelectedAtoms(savedSelections) {
 
 function performRedo() {
     if (draggedAtom || vacuumDragState.isDragging) {
-        cancelEditDrag();
+        cancelEditDrag(null, 'Redo requested');
         return;
     }
     if (editHistory.redoStack.length === 0) {
@@ -474,7 +474,7 @@ function performRedo() {
 
 function performUndo() {
     if (draggedAtom || vacuumDragState.isDragging) {
-        cancelEditDrag();
+        cancelEditDrag(null, 'Undo requested');
         return;
     }
     if (editHistory.undoStack.length === 0) {
@@ -688,6 +688,7 @@ let isDragging = false;
 let wasDragging = false; // Flag to prevent click after drag
 let draggedAtom = null; // { mesh, index, startPosition }
 let activeEditPointerId = null;
+let lastEditPointerEvent = null;
 let dragStartMouse = new THREE.Vector2();
 let dragPlane = new THREE.Plane();
 let dragOffset = new THREE.Vector3();
@@ -1507,22 +1508,41 @@ function onMouseDown(event) {
 
 function captureEditPointer(event) {
     activeEditPointerId = event.pointerId;
+    recordEditPointerEvent(event);
     renderer.domElement.setPointerCapture(event.pointerId);
+}
+
+function recordEditPointerEvent(event) {
+    if (activeEditPointerId === null || event.pointerId !== activeEditPointerId) return;
+    lastEditPointerEvent = { type: event.type, buttons: event.buttons, pointerType: event.pointerType };
 }
 
 function releaseEditPointer() {
     const pointerId = activeEditPointerId;
     activeEditPointerId = null;
+    lastEditPointerEvent = null;
     if (pointerId !== null && renderer.domElement.hasPointerCapture(pointerId)) {
         renderer.domElement.releasePointerCapture(pointerId);
     }
 }
 
 // Interrupted drags restore the document without adding an undo entry.
-function cancelEditDrag(event) {
+function cancelEditDrag(event, actionReason) {
     if (event?.pointerId !== undefined && event.pointerId !== activeEditPointerId) return;
     if (!draggedAtom && !vacuumDragState.isDragging) return;
-    console.debug('Edit drag canceled:', event?.type || 'application action');
+    const reason = actionReason || ({
+        blur: 'app lost focus',
+        lostpointercapture: 'mouse tracking interrupted',
+        pointercancel: 'browser canceled pointer input',
+        keydown: 'Escape pressed'
+    })[event?.type] || 'another action started';
+    const diagnostic = {
+        reason, eventType: event?.type || 'application action',
+        eventButtons: event?.buttons ?? null, pointerId: activeEditPointerId,
+        lastPointerEvent: lastEditPointerEvent, hadMoved: isDragging || vacuumDragState.isDragging,
+        documentFocused: document.hasFocus?.() ?? null
+    };
+    console.debug('Edit drag canceled:', diagnostic);
     const wasVacuumDrag = vacuumDragState.isDragging;
     if (wasVacuumDrag) {
         const { originalLattice, originalAtomPositions } = vacuumDragState;
@@ -1557,7 +1577,8 @@ function cancelEditDrag(event) {
     updateUI_forCurrentMode();
     updateDirtyIndicator();
     requestRender();
-    statusText.textContent = 'Drag canceled; original geometry restored';
+    statusText.setAttribute('data-drag-cancellation', JSON.stringify(diagnostic));
+    statusText.textContent = `Drag canceled (${reason}); original geometry restored`;
     statusText.className = '';
 }
 
@@ -1710,6 +1731,7 @@ function constrainToPolygon(worldPos) {
 function onMouseMove(event) {
     if (!currentStructure) return;
     if (activeEditPointerId !== null && event.pointerId !== activeEditPointerId) return;
+    recordEditPointerEvent(event);
     
     // Handle vacuum drag
     if (vacuumDragState.isDragging) {
@@ -1717,7 +1739,7 @@ function onMouseMove(event) {
         return;
     }
     if (draggedAtom && currentMode !== 'edit') {
-        cancelEditDrag();
+        cancelEditDrag(null, 'mode changed');
         return;
     }
     
@@ -1798,6 +1820,7 @@ function onMouseUp(event) {
     if (!currentStructure) return;
     if (event.button !== 0) return; // Only left click
     if (activeEditPointerId !== null && event.pointerId !== activeEditPointerId) return;
+    recordEditPointerEvent(event);
     
     // Handle vacuum drag end
     if (vacuumDragState.isDragging) {
@@ -1807,7 +1830,7 @@ function onMouseUp(event) {
         return;
     }
     if (draggedAtom && currentMode !== 'edit') {
-        cancelEditDrag();
+        cancelEditDrag(null, 'mode changed');
         return;
     }
     
@@ -4231,7 +4254,7 @@ function loadStructureFromText(content, filename, requestId = null) {
         return false;
     }
 
-    cancelEditDrag();
+    cancelEditDrag(null, 'file replaced');
     stopAnimation();
     editHistory.reset();
     updateUndoButton();
@@ -4764,7 +4787,7 @@ function setInteractionMode(mode, restoringSelection = false) {
     }
 
     // Update mode
-    cancelEditDrag();
+    cancelEditDrag(null, 'mode changed');
     cancelCameraAlignment();
     // Record a mode-induced clear in the context that owns the selection.
     if (!restoringSelection && mode === 'measure' && !isMeasurementSelection) clearSelection();
@@ -5942,7 +5965,7 @@ function updateModeToggleForFileType() {
 // Helper function to switch to measure mode (used when loading XDATCAR)
 function switchToMeasureMode() {
     if (currentMode === 'measure') return;
-    cancelEditDrag();
+    cancelEditDrag(null, 'mode changed');
     cancelCameraAlignment();
     cleanupVacuumHandles();
     currentMode = 'measure';

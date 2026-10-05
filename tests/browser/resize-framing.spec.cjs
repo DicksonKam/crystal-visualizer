@@ -23,6 +23,7 @@ test('sidebar and window resizing retain fitted atoms without changing orientati
         history: editHistory.undoStack.length, zoom: camera.zoom }));
     for (let cycle = 0; cycle < 3; cycle++) {
         await page.locator('#sidebarDivider').focus(); await page.keyboard.press('End');
+        await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
         await page.screenshot({ path: info.outputPath(`narrow-${cycle}.png`) });
         for (const points of await visibleAtoms(page)) for (const [x, y] of points) {
             expect(Math.abs(x)).toBeLessThanOrEqual(1); expect(Math.abs(y)).toBeLessThanOrEqual(1);
@@ -33,6 +34,7 @@ test('sidebar and window resizing retain fitted atoms without changing orientati
         await page.setViewportSize({ width: 1280, height: 800 });
         await page.getByRole('button', { name: 'Reset View', exact: true }).click();
         await page.setViewportSize({ width: 390, height: 844 });
+        await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
         await page.screenshot({ path: info.outputPath(`portrait-${cycle}.png`) });
         for (const points of await visibleAtoms(page)) for (const [x, y] of points) {
             expect(Math.abs(x)).toBeLessThanOrEqual(1); expect(Math.abs(y)).toBeLessThanOrEqual(1);

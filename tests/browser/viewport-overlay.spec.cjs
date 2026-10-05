@@ -8,7 +8,7 @@ for (const size of [{ width: 320, height: 480 }, { width: 1280, height: 420 }]) 
                 await upload(page, '2\nwater fragment\nH 0 0 0\nO 1 0 0\n', 'fragment.xyz');
                 await page.locator('#examplesBtn').click();
             }
-            await page.locator('#dropZone').evaluate(e => { e.scrollTop = 0; });
+            await page.locator('.drop-zone-scroll').evaluate(e => { e.scrollTop = 0; });
             await page.screenshot({ path: info.outputPath('picker-top.png') });
             const box = await page.locator('#dropZone').boundingBox();
             const prompt = await page.locator('.drop-zone-content').boundingBox();
@@ -20,6 +20,12 @@ for (const size of [{ width: 320, height: 480 }, { width: 1280, height: 420 }]) 
             await page.getByRole('button', { name: 'H₂O wobble 24-frame animation', exact: true }).scrollIntoViewIfNeeded();
             await expect(page.getByRole('button', { name: 'H₂O wobble 24-frame animation', exact: true })).toBeInViewport();
             await page.screenshot({ path: info.outputPath('picker-bottom.png') });
+            if (loaded) {
+                await expect(page.locator('#closeDropZone')).toBeInViewport();
+                await page.locator('#closeDropZone').click();
+                await expect(page.locator('#dropZone')).toBeHidden();
+                await expect(page.locator('#statusText')).toContainText('Loaded');
+            }
         });
     }
 }

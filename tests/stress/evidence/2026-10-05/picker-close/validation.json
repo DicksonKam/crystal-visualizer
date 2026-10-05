@@ -1,0 +1,16 @@
+{
+  "appVersion": 170,
+  "stylesVersion": 50,
+  "before": {
+    "expectedFailures": 2,
+    "closeButtonViewportRatio": 0
+  },
+  "after": {
+    "passed": 7,
+    "failed": 0,
+    "durationSeconds": 16.6,
+    "coverage": "Picker initial/reopened on short desktop and narrow phone, content scrolling, anchored close, loaded-document preservation, help containment, camera framing/zoom-pan cycles"
+  },
+  "nativeDiscovery": "H2O trajectory, maximal sidebar width, open examples and scroll to bottom: close button disappears before fix.",
+  "fix": "Separate the scrolling content from the existing anchored close button; no new buttons."
+}

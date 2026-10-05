@@ -20,5 +20,6 @@
     "note": "The fitted framing case is present in both the 19-case run and final 2-case run."
   },
   "nativeVerification": "H2O trajectory with hidden cell, Reset View then maximum sidebar width: all three atoms visibly retained.",
-  "testRefinement": "Quaternion equality comparison changed to a 1e-12 tolerance for an observed 1-ulp difference. Automatic-transition unit setup uses 4 degrees to stay within the 5-degree policy."
+  "testRefinement": "Quaternion equality comparison changed to a 1e-12 tolerance for an observed 1-ulp difference. Automatic-transition unit setup uses 4 degrees to stay within the 5-degree policy.",
+  "screenshotCorrection": "The first post-fix narrow screenshot preceded the queued resize render and showed a transient cleared buffer. The final test waits two animation frames and the retained after.png visibly contains all three atoms. Native verification also shows all three atoms."
 }

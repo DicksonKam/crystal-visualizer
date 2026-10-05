@@ -831,6 +831,17 @@ body.edit-mode-active .panel-title {
 .drop-zone {
     position: absolute;
     inset: 0;
+    overflow: hidden;
+    background: rgba(10, 10, 15, 0.95);
+    z-index: 50;
+    cursor: default;
+    transition: all var(--transition-normal);
+}
+
+/* Scroll the picker content independently of its anchored close control. */
+.drop-zone-scroll {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -838,10 +849,6 @@ body.edit-mode-active .panel-title {
     gap: 1rem;
     padding: 1.25rem 1.5rem;
     overflow: auto;
-    background: rgba(10, 10, 15, 0.95);
-    z-index: 50;
-    cursor: default;
-    transition: all var(--transition-normal);
     box-sizing: border-box;
 }
 
@@ -858,6 +865,7 @@ body.edit-mode-active .panel-title {
     font-size: 1.25rem;
     line-height: 1;
     cursor: pointer;
+    z-index: 1;
 }
 
 .drop-zone-close:hover {

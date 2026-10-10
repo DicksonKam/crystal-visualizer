@@ -1,0 +1,9 @@
+{
+  "seed": 4109,
+  "inspected": [
+    "seed-4109-step-169-drag-atom-preview.png",
+    "seed-4109-step-176-display-after.png"
+  ],
+  "result": "Intact frame and guide plane; tiny atoms and labels consistent with visible minimum atom-size slider setting. No new defect confirmed from these captures.",
+  "scope": "Selected individual screenshots only"
+}

@@ -1,0 +1,26 @@
+--- app.js
++++ app.js
+@@ -2775,17 +2775,21 @@
+     
+     // Subtle text - no background, just the number
+     ctx.font = 'bold 72px JetBrains Mono, monospace';
++    const labelText = String(indexNumber);
++    const textWidth = ctx.measureText(labelText).width;
++    const fontSize = Math.min(72, Math.floor(72 * (canvas.width - 16) / textWidth));
++    ctx.font = `bold ${fontSize}px JetBrains Mono, monospace`;
+     ctx.textAlign = 'center';
+     ctx.textBaseline = 'middle';
+     
+     // Subtle dark outline for visibility against light atoms
+     ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+     ctx.lineWidth = 4;
+-    ctx.strokeText(indexNumber.toString(), 64, 64);
++    ctx.strokeText(labelText, 64, 64);
+     
+     // Semi-transparent light text - visible but not distracting
+     ctx.fillStyle = 'rgba(220, 220, 240, 0.6)';
+-    ctx.fillText(indexNumber.toString(), 64, 64);
++    ctx.fillText(labelText, 64, 64);
+     
+     const texture = new THREE.CanvasTexture(canvas);
+     texture.minFilter = THREE.LinearFilter;

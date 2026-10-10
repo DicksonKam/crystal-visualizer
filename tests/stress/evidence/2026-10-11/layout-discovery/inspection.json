@@ -1,0 +1,18 @@
+{
+  "inspected": [
+    "320-480-edit.png",
+    "390-844-measure.png"
+  ],
+  "result": "No confirmed panel overflow; measurement values and deltas stay within panel. Scroll position in oversized panels is intentional scrollIntoView centering, not proof of inaccessible content. Large-coordinate fixture makes atoms subpixel at fitted zoom.",
+  "fontLimitation": "Font API reports loaded; actual requested face availability not independently proven.",
+  "campaign": {
+    "status": "running",
+    "session": 60481,
+    "seed": 4101,
+    "seconds": 7200,
+    "directory": "/private/tmp/crystal-visual-oct11-4101",
+    "log": "2026-10-10T18-45-24-664Z.jsonl",
+    "sourceVersion": 176
+  },
+  "startup": "Initial launch failed before browser start because browser files were missing; runtime reinstalled and subsequent launch verified live."
+}

@@ -1,0 +1,252 @@
+[
+  {
+    "width": 320,
+    "height": 480,
+    "mode": "measure",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 149,
+      "scroll": 149
+    },
+    "document": {
+      "client": 320,
+      "scroll": 320
+    },
+    "measurement": {
+      "x": 12,
+      "y": -66.859375,
+      "width": 125,
+      "height": 745.9375,
+      "top": -66.859375,
+      "right": 137,
+      "bottom": 679.078125,
+      "left": 12
+    }
+  },
+  {
+    "width": 320,
+    "height": 480,
+    "mode": "edit",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 149,
+      "scroll": 149
+    },
+    "document": {
+      "client": 320,
+      "scroll": 320
+    },
+    "measurement": {
+      "x": 12,
+      "y": -66.859375,
+      "width": 125,
+      "height": 1416.234375,
+      "top": -66.859375,
+      "right": 137,
+      "bottom": 1349.375,
+      "left": 12
+    }
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "measure",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 184,
+      "scroll": 184
+    },
+    "document": {
+      "client": 390,
+      "scroll": 390
+    },
+    "measurement": {
+      "x": 12,
+      "y": 89.078125,
+      "width": 160,
+      "height": 683.546875,
+      "top": 89.078125,
+      "right": 172,
+      "bottom": 772.625,
+      "left": 12
+    }
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "mode": "edit",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 184,
+      "scroll": 184
+    },
+    "document": {
+      "client": 390,
+      "scroll": 390
+    },
+    "measurement": {
+      "x": 12,
+      "y": 89.078125,
+      "width": 160,
+      "height": 1144.3125,
+      "top": 89.078125,
+      "right": 172,
+      "bottom": 1233.390625,
+      "left": 12
+    }
+  },
+  {
+    "width": 641,
+    "height": 480,
+    "mode": "measure",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 350,
+      "scroll": 350
+    },
+    "document": {
+      "client": 641,
+      "scroll": 641
+    },
+    "measurement": {
+      "x": 20,
+      "y": -20.078125,
+      "width": 310,
+      "height": 468.421875,
+      "top": -20.078125,
+      "right": 330,
+      "bottom": 448.34375,
+      "left": 20
+    }
+  },
+  {
+    "width": 641,
+    "height": 480,
+    "mode": "edit",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 350,
+      "scroll": 350
+    },
+    "document": {
+      "client": 641,
+      "scroll": 641
+    },
+    "measurement": {
+      "x": 20,
+      "y": -20.078125,
+      "width": 310,
+      "height": 820.390625,
+      "top": -20.078125,
+      "right": 330,
+      "bottom": 800.3125,
+      "left": 20
+    }
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "mode": "measure",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 553,
+      "scroll": 553
+    },
+    "document": {
+      "client": 844,
+      "scroll": 844
+    },
+    "measurement": {
+      "x": 20,
+      "y": -110.203125,
+      "width": 513,
+      "height": 468.421875,
+      "top": -110.203125,
+      "right": 533,
+      "bottom": 358.21875,
+      "left": 20
+    }
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "mode": "edit",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 553,
+      "scroll": 553
+    },
+    "document": {
+      "client": 844,
+      "scroll": 844
+    },
+    "measurement": {
+      "x": 20,
+      "y": -110.203125,
+      "width": 513,
+      "height": 820.390625,
+      "top": -110.203125,
+      "right": 533,
+      "bottom": 710.1875,
+      "left": 20
+    }
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "mode": "measure",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 989,
+      "scroll": 989
+    },
+    "document": {
+      "client": 1280,
+      "scroll": 1280
+    },
+    "measurement": {
+      "x": 20,
+      "y": 61.265625,
+      "width": 949,
+      "height": 468.421875,
+      "top": 61.265625,
+      "right": 969,
+      "bottom": 529.6875,
+      "left": 20
+    }
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "mode": "edit",
+    "fonts": "loaded",
+    "font": "Outfit, -apple-system, \"system-ui\", sans-serif",
+    "panel": {
+      "client": 989,
+      "scroll": 989
+    },
+    "document": {
+      "client": 1280,
+      "scroll": 1280
+    },
+    "measurement": {
+      "x": 20,
+      "y": 61.265625,
+      "width": 949,
+      "height": 820.390625,
+      "top": 61.265625,
+      "right": 969,
+      "bottom": 881.65625,
+      "left": 20
+    }
+  }
+]

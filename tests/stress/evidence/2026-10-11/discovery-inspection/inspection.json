@@ -14,16 +14,20 @@
     {
       "file": "seed-4122-step-36-zoom-after.png",
       "result": "Portrait trajectory timeline and periodic frame presentation fit; expected periodic-image frame styling visible."
+    },
+    {
+      "file": "seed-4130-step-159-replace-after.png",
+      "result": "Inspected trajectory replacement screenshot: full cell frame, atoms, periodic controls and playback timeline render without a new confirmed defect."
     }
   ],
   "lastVerifiedWait": {
     "discoverySession": 60481,
     "suiteSession": 29077,
-    "lastDiscoverySeed": 4125,
-    "randomizedSteps": 4500,
-    "capturedImages": 1591,
-    "elapsedSeconds": 1436.3595878750002,
-    "suiteLastPassedTest": 82,
-    "status": "Both jobs live; not terminal"
+    "lastDiscoverySeed": 4134,
+    "randomizedSteps": 6120,
+    "capturedImages": 2154,
+    "elapsedSeconds": 1886.2714900830001,
+    "suiteLastPassedTest": 96,
+    "status": "Both jobs verified live by polling; not terminal"
   }
 }

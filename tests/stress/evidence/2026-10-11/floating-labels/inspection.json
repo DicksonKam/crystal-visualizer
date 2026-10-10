@@ -16,5 +16,20 @@
     "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
     "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
     "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17"
+  },
+  "finalCandidateServer": {
+    "root": "/private/tmp/crystal-labels-final-candidate-oct11",
+    "port": 4176,
+    "session": 30366,
+    "status": "Running; actual document regressions and full combined verification still pending"
+  },
+  "finalCandidateHashes": {
+    "app.js": "74018867280134b295ca93199b72f8d7c00fea216ea1f19bbeab58532447978f",
+    "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
+    "index.html": "d72f9fb973a87611ab2da33aa2730649209be75f3b608371485cba57e5f2497d"
+  },
+  "cacheVersions": {
+    "app": 177,
+    "styles": 53
   }
 }

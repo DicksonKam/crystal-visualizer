@@ -1,0 +1,50 @@
+[
+  {
+    "n": 1,
+    "font": "bold 72px \"JetBrains Mono\", monospace",
+    "measuredWidth": 43.20703125,
+    "canvasWidth": 128,
+    "leftEdgeInk": false,
+    "rightEdgeInk": false
+  },
+  {
+    "n": 99,
+    "font": "bold 72px \"JetBrains Mono\", monospace",
+    "measuredWidth": 86.4140625,
+    "canvasWidth": 128,
+    "leftEdgeInk": false,
+    "rightEdgeInk": false
+  },
+  {
+    "n": 100,
+    "font": "bold 72px \"JetBrains Mono\", monospace",
+    "measuredWidth": 129.62109375,
+    "canvasWidth": 128,
+    "leftEdgeInk": false,
+    "rightEdgeInk": true
+  },
+  {
+    "n": 501,
+    "font": "bold 72px \"JetBrains Mono\", monospace",
+    "measuredWidth": 129.62109375,
+    "canvasWidth": 128,
+    "leftEdgeInk": false,
+    "rightEdgeInk": false
+  },
+  {
+    "n": 999,
+    "font": "bold 72px \"JetBrains Mono\", monospace",
+    "measuredWidth": 129.62109375,
+    "canvasWidth": 128,
+    "leftEdgeInk": false,
+    "rightEdgeInk": false
+  },
+  {
+    "n": 1000,
+    "font": "bold 72px \"JetBrains Mono\", monospace",
+    "measuredWidth": 172.828125,
+    "canvasWidth": 128,
+    "leftEdgeInk": true,
+    "rightEdgeInk": true
+  }
+]

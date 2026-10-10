@@ -1,0 +1,6 @@
+{
+  "status": "Confirmed clipped four-digit label from production label generator; actual document-flow regression prepared, pending execution",
+  "inspected": "label-textures.png",
+  "rootCause": "Fixed 72px font on 128px texture regardless of digit count",
+  "limits": "Discovery isolates the production generator; actual document-flow test must also be run before applying the fix"
+}

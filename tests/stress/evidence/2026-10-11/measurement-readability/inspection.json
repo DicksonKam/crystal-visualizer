@@ -1,0 +1,15 @@
+{
+  "confirmed": "Distance and delta text clips or spills out of measurement cards around intermediate sidebar widths; panel scroll-width check misses clipped descendants.",
+  "inspected": [
+    "261-measure.png",
+    "280-measure.png",
+    "280-edit.png",
+    "320-edit.png"
+  ],
+  "baselineBrowser": {
+    "passed": 1,
+    "failed": 2,
+    "reportedDuration": "57.9s"
+  },
+  "candidate": "Isolated CSS intrinsic-wrap fix under browser verification; not applied to main source while discovery campaign runs."
+}

@@ -1,0 +1,274 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/measurement-readability.spec.cjs",
+      "--config=/private/tmp/crystal-oct11-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-measurement-baseline-oct11",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-oct11-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-measurement-baseline-oct11",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-readability.spec.cjs",
+      "file": "measurement-readability.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "measurement values stay inside their cards at 220px panel width",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15038,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T18:48:55.127Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5d97f5daea49962336f0-b1304c436ed688119db4",
+          "file": "measurement-readability.spec.cjs",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "measurement values stay inside their cards at 280px panel width",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7526,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 20\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       241,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz +345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       241,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz -345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 20\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       241,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz +345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       241,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz -345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs:37:29",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs",
+                      "column": 29,
+                      "line": 37
+                    },
+                    "snippet": "  35 |                 return result;\n  36 |             });\n> 37 |             expect(clipped).toEqual([]);\n     |                             ^\n  38 |             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');\n  39 |             await expect(page.locator('#measurementPanel')).toContainText('345678.90');\n  40 |         }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs",
+                        "column": 29,
+                        "line": 37
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 20\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       241,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz +345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       241,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz -345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  35 |                 return result;\n  36 |             });\n> 37 |             expect(clipped).toEqual([]);\n     |                             ^\n  38 |             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');\n  39 |             await expect(page.locator('#measurementPanel')).toContainText('345678.90');\n  40 |         }\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs:37:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T18:49:10.652Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs",
+                    "column": 29,
+                    "line": 37
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5d97f5daea49962336f0-004e23c287f877f7e0c8",
+          "file": "measurement-readability.spec.cjs",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "measurement values stay inside their cards at 320px panel width",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 14827,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 20\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       281,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz +345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       281,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz -345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 20\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       281,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz +345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       281,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz -345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs:37:29",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs",
+                      "column": 29,
+                      "line": 37
+                    },
+                    "snippet": "  35 |                 return result;\n  36 |             });\n> 37 |             expect(clipped).toEqual([]);\n     |                             ^\n  38 |             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');\n  39 |             await expect(page.locator('#measurementPanel')).toContainText('345678.90');\n  40 |         }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs",
+                        "column": 29,
+                        "line": 37
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  -  1\u001b[39m\n\u001b[31m+ Received  + 20\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       281,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz +345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bounds\": Array [\u001b[39m\n\u001b[31m+       33,\u001b[39m\n\u001b[31m+       281,\u001b[39m\n\u001b[31m+     ],\u001b[39m\n\u001b[31m+     \"left\": 241.4375,\u001b[39m\n\u001b[31m+     \"right\": 308.65625,\u001b[39m\n\u001b[31m+     \"text\": \"Δz -345678.90\",\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  35 |                 return result;\n  36 |             });\n> 37 |             expect(clipped).toEqual([]);\n     |                             ^\n  38 |             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');\n  39 |             await expect(page.locator('#measurementPanel')).toContainText('345678.90');\n  40 |         }\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs:37:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T18:49:37.321Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs",
+                    "column": 29,
+                    "line": 37
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5d97f5daea49962336f0-e2e1a2506cb9c9dcdaab",
+          "file": "measurement-readability.spec.cjs",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T18:48:54.695Z",
+    "duration": 57861.952,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

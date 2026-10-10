@@ -1,0 +1,120 @@
+
+Running 3 tests using 1 worker
+
+(node:35611) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 220px panel width (15.0s)
+  ✘  2 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 280px panel width (7.5s)
+(node:35802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 320px panel width (14.8s)
+
+
+  1) [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 280px panel width 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 20
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "bounds": Array [
+    +       33,
+    +       241,
+    +     ],
+    +     "left": 241.4375,
+    +     "right": 308.65625,
+    +     "text": "Δz +345678.90",
+    +   },
+    +   Object {
+    +     "bounds": Array [
+    +       33,
+    +       241,
+    +     ],
+    +     "left": 241.4375,
+    +     "right": 308.65625,
+    +     "text": "Δz -345678.90",
+    +   },
+    + ]
+
+      35 |                 return result;
+      36 |             });
+    > 37 |             expect(clipped).toEqual([]);
+         |                             ^
+      38 |             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');
+      39 |             await expect(page.locator('#measurementPanel')).toContainText('345678.90');
+      40 |         }
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs:37:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-eb6fe--cards-at-280px-panel-width-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 320px panel width 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 20
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "bounds": Array [
+    +       33,
+    +       281,
+    +     ],
+    +     "left": 241.4375,
+    +     "right": 308.65625,
+    +     "text": "Δz +345678.90",
+    +   },
+    +   Object {
+    +     "bounds": Array [
+    +       33,
+    +       281,
+    +     ],
+    +     "left": 241.4375,
+    +     "right": 308.65625,
+    +     "text": "Δz -345678.90",
+    +   },
+    + ]
+
+      35 |                 return result;
+      36 |             });
+    > 37 |             expect(clipped).toEqual([]);
+         |                             ^
+      38 |             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');
+      39 |             await expect(page.locator('#measurementPanel')).toContainText('345678.90');
+      40 |         }
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-readability.spec.cjs:37:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-measurement-baseline-oct11/measurement-readability-me-e139b--cards-at-320px-panel-width-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 280px panel width 
+    [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 320px panel width 
+  1 passed (57.9s)

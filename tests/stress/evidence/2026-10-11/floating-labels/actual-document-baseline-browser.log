@@ -1,0 +1,78 @@
+
+Running 2 tests using 1 worker
+
+(node:45437) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers (11.3s)
+(node:45498) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › tests/browser/floating-label-readability.spec.cjs:4:1 › floating measurements retain their full number and unit at longer distances and straight angles (7.7s)
+
+
+  1) [chromium] › tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers 
+
+    Error: atom 100 is clipped at the texture edge
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      36 |     expect(result.metrics).toHaveLength(6);
+      37 |     for (const label of result.metrics) {
+    > 38 |         expect(label.edgeInk, `atom ${label.index} is clipped at the texture edge`).toBe(false);
+         |                                                                                     ^
+      39 |         expect(label.width, `atom ${label.index} text needs padding inside its texture`).toBeLessThanOrEqual(label.canvasWidth - 16);
+      40 |     }
+      41 | });
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/atom-label-readability.spec.cjs:38:85
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/browser/floating-label-readability.spec.cjs:4:1 › floating measurements retain their full number and unit at longer distances and straight angles 
+
+    Error: 10000.000 Å
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 112
+    Received:    158.42578125
+
+      24 |     await fs.writeFile(info.outputPath('actual-floating-label-textures.png'), Buffer.from(result.image.split(',')[1], 'base64'));
+      25 |     expect(result.metrics).toHaveLength(3);
+    > 26 |     for (const label of result.metrics) expect(label.width, label.text).toBeLessThanOrEqual(label.canvasWidth - 16);
+         |                                                                         ^
+      27 |     await expect(page.locator('#measurementPanel')).toContainText('10000.0000 Å');
+      28 |     await expect(page.locator('#measurementPanel')).toContainText('180.00°');
+      29 | });
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/floating-label-readability.spec.cjs:26:73
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers 
+    [chromium] › tests/browser/floating-label-readability.spec.cjs:4:1 › floating measurements retain their full number and unit at longer distances and straight angles 

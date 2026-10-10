@@ -1,9 +1,11 @@
---- app.js
-+++ app.js
-@@ -2764,6 +2764,15 @@
+diff --git a/app.js b/private/tmp/crystal-labels-final-candidate-oct11/app.js
+index 645d18a..83effe2 100644
+--- a/app.js
++++ b/private/tmp/crystal-labels-final-candidate-oct11/app.js
+@@ -2763,6 +2763,15 @@ function rebuildLabels() {
+     requestRender();
  }
  
- // Create a subtle, camera-facing label sprite for an atom
 +// Keep every glyph and its outline/shadow inside the fixed-size texture.
 +function setFittedLabelFont(ctx, text, preferredSize) {
 +    ctx.font = `bold ${preferredSize}px JetBrains Mono, monospace`;
@@ -13,10 +15,10 @@
 +    ctx.font = `bold ${fontSize}px JetBrains Mono, monospace`;
 +}
 +
+ // Create a subtle, camera-facing label sprite for an atom
  function createAtomLabel(indexNumber, position) {
      const canvas = document.createElement('canvas');
-     canvas.width = 128;
-@@ -2774,18 +2783,19 @@
+@@ -2774,18 +2783,19 @@ function createAtomLabel(indexNumber, position) {
      ctx.clearRect(0, 0, 128, 128);
      
      // Subtle text - no background, just the number
@@ -39,7 +41,7 @@
      
      const texture = new THREE.CanvasTexture(canvas);
      texture.minFilter = THREE.LinearFilter;
-@@ -3650,7 +3660,8 @@
+@@ -3650,7 +3660,8 @@ function createFloatingDistanceLabel(position, distance) {
      const ctx = canvas.getContext('2d');
      
      // Text with subtle shadow for visibility
@@ -49,7 +51,7 @@
      ctx.textAlign = 'center';
      ctx.textBaseline = 'middle';
      
-@@ -3662,7 +3673,7 @@
+@@ -3662,7 +3673,7 @@ function createFloatingDistanceLabel(position, distance) {
      
      // White text
      ctx.fillStyle = '#ffffff';
@@ -58,7 +60,7 @@
      
      const texture = new THREE.CanvasTexture(canvas);
      const spriteMaterial = new THREE.SpriteMaterial({ 
-@@ -3693,7 +3704,8 @@
+@@ -3693,7 +3704,8 @@ function createFloatingAngleLabel(position, angleDeg) {
      const ctx = canvas.getContext('2d');
      
      // Text with subtle shadow for visibility
@@ -68,7 +70,7 @@
      ctx.textAlign = 'center';
      ctx.textBaseline = 'middle';
      
-@@ -3705,7 +3717,7 @@
+@@ -3705,7 +3717,7 @@ function createFloatingAngleLabel(position, angleDeg) {
      
      // White text
      ctx.fillStyle = '#ffffff';

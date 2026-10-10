@@ -1,0 +1,12 @@
+
+Running 5 tests using 1 worker
+
+(node:45531) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers (11.0s)
+  ✓  2 [chromium] › tests/browser/floating-label-readability.spec.cjs:4:1 › floating measurements retain their full number and unit at longer distances and straight angles (3.3s)
+  ✓  3 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 220px panel width (4.3s)
+  ✓  4 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 280px panel width (4.0s)
+  ✓  5 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 320px panel width (3.9s)
+
+  5 passed (27.1s)

@@ -32,5 +32,13 @@
       "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
       "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17"
     }
+  },
+  "actualDocumentResult": {
+    "baselineExit": 1,
+    "baselineFailed": 2,
+    "candidateExit": 0,
+    "candidatePassed": 5,
+    "candidateDurationSeconds": 27.1,
+    "scope": "Normal file load, actual app-generated textures; 2 label tests plus 3 measurement-card width tests. Both actual texture atlases visually inspected before and after."
   }
 }

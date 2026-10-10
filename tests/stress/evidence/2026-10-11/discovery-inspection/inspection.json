@@ -26,16 +26,19 @@
     {
       "file": "seed-4135-step-112-panel-panel-preview.png",
       "result": "Inspected active divider resize: sidebar and controls fit. Tiny atoms correspond to minimum atom-size setting and the frame is deliberately hidden."
+    },
+    {
+      "file": "seed-4143-step-92-drag-atom-preview.png",
+      "result": "Narrow portrait drag preview inspected: wrapped toolbar, periodic controls and intact guide plane fit. Small model reflects the current zoom distance; no new visual defect confirmed."
     }
   ],
   "lastVerifiedWait": {
     "discoverySession": 60481,
-    "suiteSession": 29077,
-    "lastDiscoverySeed": 4143,
-    "randomizedSteps": 7740,
-    "capturedImages": 2732,
-    "elapsedSeconds": 2315.4972932909996,
-    "suiteLastPassedTest": 123,
-    "status": "Both jobs confirmed live by polling; not terminal"
+    "suiteSession": 20697,
+    "lastDiscoverySeed": 4154,
+    "randomizedSteps": 9720,
+    "capturedImages": 3409,
+    "elapsedSeconds": 2704.333781041,
+    "status": "Discovery verified live; CSS-only full suite finished exit 0, combined suite launched"
   }
 }

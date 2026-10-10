@@ -1,0 +1,249 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/atom-label-readability.spec.cjs",
+      "tests/browser/floating-label-readability.spec.cjs",
+      "--config=/private/tmp/crystal-oct11-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-labels-baseline-oct11",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-oct11-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-labels-baseline-oct11",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "atom-label-readability.spec.cjs",
+      "file": "atom-label-readability.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "dense-structure labels retain every digit of larger atom numbers",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11336,
+                  "error": {
+                    "message": "Error: atom 100 is clipped at the texture edge\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                    "stack": "Error: atom 100 is clipped at the texture edge\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/atom-label-readability.spec.cjs:38:85",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/atom-label-readability.spec.cjs",
+                      "column": 85,
+                      "line": 38
+                    },
+                    "snippet": "  36 |     expect(result.metrics).toHaveLength(6);\n  37 |     for (const label of result.metrics) {\n> 38 |         expect(label.edgeInk, `atom ${label.index} is clipped at the texture edge`).toBe(false);\n     |                                                                                     ^\n  39 |         expect(label.width, `atom ${label.index} text needs padding inside its texture`).toBeLessThanOrEqual(label.canvasWidth - 16);\n  40 |     }\n  41 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/atom-label-readability.spec.cjs",
+                        "column": 85,
+                        "line": 38
+                      },
+                      "message": "Error: atom 100 is clipped at the texture edge\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  36 |     expect(result.metrics).toHaveLength(6);\n  37 |     for (const label of result.metrics) {\n> 38 |         expect(label.edgeInk, `atom ${label.index} is clipped at the texture edge`).toBe(false);\n     |                                                                                     ^\n  39 |         expect(label.width, `atom ${label.index} text needs padding inside its texture`).toBeLessThanOrEqual(label.canvasWidth - 16);\n  40 |     }\n  41 | });\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/atom-label-readability.spec.cjs:38:85"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T19:29:48.630Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-labels-baseline-oct11/atom-label-readability-den-b5a31-igit-of-larger-atom-numbers-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/atom-label-readability.spec.cjs",
+                    "column": 85,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "d89e11d6fd9b7b6bcd77-168b5c8a1bf6abb46f3d",
+          "file": "atom-label-readability.spec.cjs",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "floating-label-readability.spec.cjs",
+      "file": "floating-label-readability.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "floating measurements retain their full number and unit at longer distances and straight angles",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7680,
+                  "error": {
+                    "message": "Error: 10000.000 Å\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m112\u001b[39m\nReceived:    \u001b[31m158.42578125\u001b[39m",
+                    "stack": "Error: 10000.000 Å\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m112\u001b[39m\nReceived:    \u001b[31m158.42578125\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/floating-label-readability.spec.cjs:26:73",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/floating-label-readability.spec.cjs",
+                      "column": 73,
+                      "line": 26
+                    },
+                    "snippet": "  24 |     await fs.writeFile(info.outputPath('actual-floating-label-textures.png'), Buffer.from(result.image.split(',')[1], 'base64'));\n  25 |     expect(result.metrics).toHaveLength(3);\n> 26 |     for (const label of result.metrics) expect(label.width, label.text).toBeLessThanOrEqual(label.canvasWidth - 16);\n     |                                                                         ^\n  27 |     await expect(page.locator('#measurementPanel')).toContainText('10000.0000 Å');\n  28 |     await expect(page.locator('#measurementPanel')).toContainText('180.00°');\n  29 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/floating-label-readability.spec.cjs",
+                        "column": 73,
+                        "line": 26
+                      },
+                      "message": "Error: 10000.000 Å\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m112\u001b[39m\nReceived:    \u001b[31m158.42578125\u001b[39m\n\n  24 |     await fs.writeFile(info.outputPath('actual-floating-label-textures.png'), Buffer.from(result.image.split(',')[1], 'base64'));\n  25 |     expect(result.metrics).toHaveLength(3);\n> 26 |     for (const label of result.metrics) expect(label.width, label.text).toBeLessThanOrEqual(label.canvasWidth - 16);\n     |                                                                         ^\n  27 |     await expect(page.locator('#measurementPanel')).toContainText('10000.0000 Å');\n  28 |     await expect(page.locator('#measurementPanel')).toContainText('180.00°');\n  29 | });\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/floating-label-readability.spec.cjs:26:73"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-10T19:30:00.770Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-labels-baseline-oct11/floating-label-readability-a5ac9-stances-and-straight-angles-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/floating-label-readability.spec.cjs",
+                    "column": 73,
+                    "line": 26
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0e82803c777c1794a69-04a5b4708e20f9218248",
+          "file": "floating-label-readability.spec.cjs",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T19:29:47.961Z",
+    "duration": 20794.347999999998,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

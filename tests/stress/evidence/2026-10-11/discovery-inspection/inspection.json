@@ -18,16 +18,24 @@
     {
       "file": "seed-4130-step-159-replace-after.png",
       "result": "Inspected trajectory replacement screenshot: full cell frame, atoms, periodic controls and playback timeline render without a new confirmed defect."
+    },
+    {
+      "file": "seed-4135-step-166-cancel-atom-preview.png",
+      "result": "Inspected guide plane and complete frame during atom #3 drag while the prior atom #4 selection stays in the sidebar. Sequence records intentional cancel and identical before/after geometry hashes."
+    },
+    {
+      "file": "seed-4135-step-112-panel-panel-preview.png",
+      "result": "Inspected active divider resize: sidebar and controls fit. Tiny atoms correspond to minimum atom-size setting and the frame is deliberately hidden."
     }
   ],
   "lastVerifiedWait": {
     "discoverySession": 60481,
     "suiteSession": 29077,
-    "lastDiscoverySeed": 4134,
-    "randomizedSteps": 6120,
-    "capturedImages": 2154,
-    "elapsedSeconds": 1886.2714900830001,
-    "suiteLastPassedTest": 96,
-    "status": "Both jobs verified live by polling; not terminal"
+    "lastDiscoverySeed": 4143,
+    "randomizedSteps": 7740,
+    "capturedImages": 2732,
+    "elapsedSeconds": 2315.4972932909996,
+    "suiteLastPassedTest": 123,
+    "status": "Both jobs confirmed live by polling; not terminal"
   }
 }

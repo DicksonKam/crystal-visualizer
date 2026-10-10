@@ -11,5 +11,16 @@
     "failed": 2,
     "reportedDuration": "57.9s"
   },
-  "candidate": "Isolated CSS intrinsic-wrap fix under browser verification; not applied to main source while discovery campaign runs."
+  "candidate": {
+    "status": "Focused regression passed; related tests running; main application pending",
+    "passed": 3,
+    "duration": "17.1s",
+    "relatedSession": 75500,
+    "root": "/private/tmp/crystal-measurement-candidate-oct11",
+    "serverSession": 17502
+  },
+  "candidateInspected": [
+    "candidate-280-measure.png",
+    "candidate-280-edit.png"
+  ]
 }

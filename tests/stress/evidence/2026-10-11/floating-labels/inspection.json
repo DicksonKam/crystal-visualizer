@@ -1,0 +1,20 @@
+{
+  "confirmed": "10000.000 \u00c5 texture visibly loses leading digit and unit; fixed-font canvas widths also leave inadequate room for 180.0\u00b0 and 100.000 \u00c5",
+  "inspected": "floating-label-textures.png",
+  "candidate": "Shared fitted-font helper prepared for atom, floating distance and floating angle labels; final candidate at /private/tmp/crystal-labels-final-candidate-oct11; actual document-flow tests pending",
+  "candidateVisualResult": "Inspected fitted textures: full 10000.000 \u00c5 with leading digit and unit; 180.0\u00b0 padded within canvas. Actual document-flow tests pending after current full-suite slot frees.",
+  "candidateInspected": "candidate-floating-label-textures.png",
+  "finalCandidateSourceHashes": {
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "index.html": "be7f7cb4a7ce955e83b6eb4895c95321bb23bb34552157560f53351c784eb734",
+    "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
+    "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+    "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+    "camera.js": "00f8eaf6daa9f6f98a4f965f9b56fbcfcf69d7d292e1b1849e8d73446e4a0342",
+    "structure.js": "8495d62e49f0ddfe6373a62617633fb6bfc0fc374948160e91ed1903aec25254",
+    "app.js": "74018867280134b295ca93199b72f8d7c00fea216ea1f19bbeab58532447978f",
+    "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
+    "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+    "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17"
+  }
+}

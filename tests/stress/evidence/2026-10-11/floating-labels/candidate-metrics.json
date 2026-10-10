@@ -1,0 +1,44 @@
+[
+  {
+    "kind": "distance",
+    "n": 3.84,
+    "text": "3.840 Å",
+    "width": 100.81640625,
+    "canvasWidth": 128
+  },
+  {
+    "kind": "distance",
+    "n": 100,
+    "text": "100.000 Å",
+    "width": 108.017578125,
+    "canvasWidth": 128
+  },
+  {
+    "kind": "distance",
+    "n": 10000,
+    "text": "10000.000 Å",
+    "width": 105.6171875,
+    "canvasWidth": 128
+  },
+  {
+    "kind": "angle",
+    "n": 0,
+    "text": "0.0°",
+    "width": 52.8046875,
+    "canvasWidth": 80
+  },
+  {
+    "kind": "angle",
+    "n": 90,
+    "text": "90.0°",
+    "width": 61.6064453125,
+    "canvasWidth": 80
+  },
+  {
+    "kind": "angle",
+    "n": 180,
+    "text": "180.0°",
+    "width": 61.20703125,
+    "canvasWidth": 80
+  }
+]

@@ -84,7 +84,9 @@
     "deleteHistoryPassed": 2,
     "candidateExamplePassed": 12,
     "variationSession": 69404,
-    "variationStatus": "Running72 cases on main181; source frozen"
+    "variationStatus": "Running72 cases on main181; source frozen",
+    "variationPassedSoFar": 7,
+    "fullBrowserPassedSoFar": 86
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -118,5 +120,12 @@
     "candidateBrowserPassed": 15,
     "unitPassed": 152,
     "status": "Promoted v181; full regression and sustained variations pending"
-  }
+  },
+  "v181InspectedExamples": [
+    "Aluminium 900/1440",
+    "Silicon900",
+    "NaCl900/1440",
+    "Graphene900",
+    "Mouse capture-loss release with active measurement"
+  ]
 }

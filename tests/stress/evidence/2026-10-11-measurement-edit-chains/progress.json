@@ -84,7 +84,9 @@
     "deleteHistoryPassed": 2,
     "candidateExamplePassed": 12,
     "variationSession": 57627,
-    "variationStatus": "Running72 cases on frozenv182"
+    "variationStatus": "Running72 cases on frozenv182",
+    "variationPassedSoFar": 9,
+    "fullBrowserPassedSoFar": 99
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -141,6 +143,7 @@
     "Silicon900/1440",
     "NaCl900",
     "NaCl1440",
-    "Graphene900"
+    "Graphene900",
+    "Slab900 constraint overlays and crowded edits"
   ]
 }

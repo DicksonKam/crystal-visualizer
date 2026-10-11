@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 32,
+    "variationPassedSoFar": 33,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -173,7 +173,8 @@
     "NaCl1440 order512 frame edit and bond refresh",
     "Graphene900 order213 middle atom and bond rebuild; shallow5.3angle and6.521/7.420labels visible",
     "Graphene900 order213 frame and deletion history;1.0507/2.1900 and9.87match labels",
-    "Graphene1440 order213 frame edit"
+    "Graphene1440 order213 frame edit",
+    "Slab900 order546 middle atom move, first subsequent frame drag, constraints and deletion undo;2.8462/2.8462 and60.41match captions"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

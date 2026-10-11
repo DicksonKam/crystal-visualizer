@@ -135,5 +135,10 @@
     "evidence": "close-water-caption",
     "status": "Promotedv182;154units,16focusedbrowser checks passed;final sustained validation pending",
     "mainFocusedPassed": 1
-  }
+  },
+  "v182InspectedExamples": [
+    "Aluminium900/1440",
+    "Silicon900/1440",
+    "NaCl900"
+  ]
 }

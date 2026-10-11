@@ -186,7 +186,12 @@
     "log": "/private/tmp/crystal-three-fixes-browser-suite.log",
     "total": 184,
     "lastObservedPass": 137,
-    "excluded": "Synthetic dense continuous playback only; not representative of requested ordinary workflows."
+    "excluded": null,
+    "attemptedExclusion": "Anchored title-only expression did not match full Playwright title.",
+    "observedFailures": [
+      "measurement-unrelated-atom: pre-render scale observation, corrected replay passed",
+      "dense continuous playback: synthetic 499-atom capture exceeded 240s"
+    ]
   },
   "coreUnitTests": {
     "status": "passed",
@@ -204,7 +209,8 @@
       "styles.css",
       "tests/browser/selection-marker-layout.spec.cjs",
       "tests/browser/selection-marker-colors.spec.cjs",
-      "tests/browser/measurement-edit-helpers.cjs"
+      "tests/browser/measurement-edit-helpers.cjs",
+      "tests/browser/measurement-unrelated-atom.spec.cjs"
     ],
     "cacheVersions": {
       "app.js": 183,
@@ -227,5 +233,10 @@
       "displaced marker drag with undo/redo",
       "constraint input widths"
     ]
+  },
+  "renderObservationReplay": {
+    "result": "passed",
+    "log": "timeout-replays/measurement-unrelated-render/rendered-pass.log",
+    "testPatch": "timeout-replays/measurement-unrelated-render/test.patch"
   }
 }

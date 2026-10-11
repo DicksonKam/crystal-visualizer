@@ -1,0 +1,17 @@
+--- a/tests/browser/measurement-unrelated-atom.spec.cjs
++++ b/tests/browser/measurement-unrelated-atom.spec.cjs
+@@ -6,7 +6,13 @@
+     await upload(page, await fs.readFile(path.join(__dirname, '../../examples/poscar/Al_fcc_cartesian.poscar'), 'utf8'), 'Al.poscar');
+     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
+     await page.locator('[data-mode="edit"]').click();
+-    const sizes = () => page.evaluate(() => measurementGroup.children.filter(object => object.userData.isMeasurementLabel || object.userData.isSelectionLabel).map(object => ({ position: object.position.toArray(), scale: object.scale.toArray(), label: !!object.userData.isMeasurementLabel })));
++    // Read the rendered size after reconstruction has reached the animation loop.
++    // Undo/redo creates sprites synchronously; their CSS-pixel sizing occurs there.
++    const sizes = () => page.evaluate(async () => {
++        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
++        return measurementGroup.children.filter(object => object.userData.isMeasurementLabel || object.userData.isSelectionLabel)
++            .map(object => ({ position: object.position.toArray(), scale: object.scale.toArray(), label: !!object.userData.isMeasurementLabel }));
++    });
+     const before = await sizes();
+     await page.screenshot({ path: info.outputPath('before-add.png') });
+     await page.locator('#addAtomElement').selectOption('H');

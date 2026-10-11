@@ -1,0 +1,7 @@
+{
+  "cause": "Assertion reads synchronous reconstructed sprite scale immediately after undo, before animation-loop CSS-pixel sizing.",
+  "evidence": "Original test fails at undo scale comparison; waiting for two animation frames preserves the exact same equality assertions and passes add, undo and redo.",
+  "productChanged": false,
+  "result": "1 passed (16.9s)",
+  "denseSuiteIssue": "Attempted exclusion ^dense continuous playback did not match full Playwright test name, so synthetic 499-atom playback ran and timed out at capture after 240s. Full suite therefore is not all green and cannot be described as excluding this case."
+}

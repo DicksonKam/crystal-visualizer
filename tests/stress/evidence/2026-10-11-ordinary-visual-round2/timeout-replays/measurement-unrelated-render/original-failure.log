@@ -1,0 +1,71 @@
+
+Running 1 test using 1 worker
+
+(node:84790) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement (14.2s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 9
+    + Received  + 9
+
+    @@ -1,20 +1,20 @@
+      Array [
+        Array [
+    -     0.29921011181160273,
+    -     0.29921011181160273,
+    -     0.29921011181160273,
+    +     0.5420799999999999,
+    +     0.5420799999999999,
+    +     0.5420799999999999,
+        ],
+        Array [
+    -     0.29921011181160273,
+    -     0.29921011181160273,
+    -     0.29921011181160273,
+    +     0.5420799999999999,
+    +     0.5420799999999999,
+    +     0.5420799999999999,
+        ],
+        Array [
+    -     0.29921011181160273,
+    -     0.29921011181160273,
+    -     0.29921011181160273,
+    +     0.5420799999999999,
+    +     0.5420799999999999,
+    +     0.5420799999999999,
+        ],
+        Array [
+          1.1925759999999999,
+          0.29814399999999996,
+          1,
+
+      19 |     await expect(page.locator('#measurementPanel')).toContainText('2.8638 Å');
+      20 |     await page.locator('#undoBtn').click();
+    > 21 |     expect((await sizes()).map(object => object.scale)).toEqual(before.map(object => object.scale));
+         |                                                         ^
+      22 |     await page.locator('#redoBtn').click();
+      23 |     expect((await sizes()).map(object => object.scale)).toEqual(before.map(object => object.scale));
+      24 |     await page.screenshot({ path: info.outputPath('after-redo-add.png') });
+        at /private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement-unrelated-atom.spec.cjs:21:57
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-unrelated-replay/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-unrelated-replay/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-unrelated-replay/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-unrelated-replay/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement 

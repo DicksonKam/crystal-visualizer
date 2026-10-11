@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 39,
+    "variationPassedSoFar": 40,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -181,7 +181,9 @@
     "Aluminium900 order312 frame edit;2.452/3.025 and60.4readable",
     "Aluminium900 order312 deletion undo;2.7120/2.4518 and117.16restored",
     "Aluminium1440 order312 frame edit",
-    "Silicon900 order215 measured atom move, frame edit and deletion undo;4.8456/1.8108 and100.47restored"
+    "Silicon900 order215 measured atom move, frame edit and deletion undo;4.8456/1.8108 and100.47restored",
+    "Silicon1440 order215 frame and deletion undo;4.8331/1.8092 and100.12restored",
+    "NaCl900 order215 middle atom edit;3.561/2.473 and53.9captions clear of atom bodies"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

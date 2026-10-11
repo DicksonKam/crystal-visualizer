@@ -1,0 +1,41 @@
+{
+  "version": 181,
+  "status": "Incomplete: full178 and sustained72 cases still running",
+  "requirements": [
+    {
+      "requirement": "Realistic small examples and edit/measurement combinations",
+      "evidence": "12 ordinary example chains completed on v180; new v181 72-case run varies all six measurement orders and mouse gestures",
+      "status": "v181 sustained coverage pending"
+    },
+    {
+      "requirement": "Visual inspection, not numeric checks alone",
+      "evidence": "Six ordinary example visual samples, six confirmed before/after faults, new v181-visual-samples inspected personally",
+      "status": "Continue inspection of later v181 cases"
+    },
+    {
+      "requirement": "Measurements match selected actual atoms after edit/history changes",
+      "evidence": "Campaign checks exact selected indices, Cartesian distances, angles, logical anchors and displayed sidebar values after each transition",
+      "status": "Full v181 campaign pending"
+    },
+    {
+      "requirement": "Bond rendering stays consistent after geometry changes",
+      "evidence": "Campaign compares rendered bond endpoints before/after display rebuild plus screenshots",
+      "status": "Full v181 campaign pending"
+    },
+    {
+      "requirement": "Root fixes reproduced through normal interactions",
+      "evidence": "Six confirmed faults with baseline/fixed evidence folders and regression tests",
+      "status": "Implemented; final broader verification pending"
+    },
+    {
+      "requirement": "Local Git backup, no push or added buttons",
+      "evidence": "Local commit27ca486, source change adds only annotation placement math and tests",
+      "status": "Satisfied for current changes"
+    }
+  ],
+  "liveSessions": {
+    "fullBrowser": 3682,
+    "sustainedVariations": 69404
+  },
+  "limitations": "Finite reproducible workflows cannot prove the absence of every possible bug."
+}

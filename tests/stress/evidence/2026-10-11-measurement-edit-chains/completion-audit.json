@@ -4,32 +4,32 @@
   "requirements": [
     {
       "requirement": "Realistic small examples and edit/measurement combinations",
-      "evidence": "12 ordinary example chains completed on v180; new v181 72-case run varies all six measurement orders and mouse gestures",
-      "status": "v181 sustained coverage pending"
+      "evidence": "12 ordinary example chains completed on v180; new v182 72-case run varies all six measurement orders and mouse gestures",
+      "status": "v182 sustained coverage pending"
     },
     {
       "requirement": "Visual inspection, not numeric checks alone",
-      "evidence": "Six ordinary example visual samples, six confirmed before/after faults, new v181-visual-samples inspected personally",
-      "status": "Continue inspection of later v181 cases"
+      "evidence": "Six ordinary example visual samples, seven confirmed before/after faults, new v182-visual-samples inspected personally",
+      "status": "Continue inspection of later v182 cases"
     },
     {
       "requirement": "Measurements match selected actual atoms after edit/history changes",
       "evidence": "Campaign checks exact selected indices, Cartesian distances, angles, logical anchors and displayed sidebar values after each transition",
-      "status": "Full v181 campaign pending"
+      "status": "Full v182 campaign pending"
     },
     {
       "requirement": "Bond rendering stays consistent after geometry changes",
       "evidence": "Campaign compares rendered bond endpoints before/after display rebuild plus screenshots",
-      "status": "Full v181 campaign pending"
+      "status": "Full v182 campaign pending"
     },
     {
       "requirement": "Root fixes reproduced through normal interactions",
-      "evidence": "Six confirmed faults with baseline/fixed evidence folders and regression tests",
+      "evidence": "Seven confirmed faults with baseline/fixed evidence folders and regression tests",
       "status": "Implemented; final broader verification pending"
     },
     {
       "requirement": "Local Git backup, no push or added buttons",
-      "evidence": "Local commit27ca486, source change adds only annotation placement math and tests",
+      "evidence": "Local commits27ca486 and710189b, source change adds only annotation placement math and tests",
       "status": "Satisfied for current changes"
     }
   ],
@@ -54,5 +54,10 @@
       "v181-visual-samples/nacl-900-label-clear-of-atom.png"
     ],
     "observation": "2.570angstrom caption stays below unselected sodium sphere with a leader to its actual measurement midpoint; retained markers and angle are visible."
+  },
+  "latestProgress": {
+    "fullBrowserPassed": 144,
+    "sustainedCasesPassed": 17,
+    "terminalResultsPending": true
   }
 }

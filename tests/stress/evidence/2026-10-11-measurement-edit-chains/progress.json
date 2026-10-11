@@ -30,7 +30,7 @@
     "0-atom-committed.png",
     "0-shift.png"
   ],
-  "investigation": "Five confirmed visual/interaction faults corrected across the goal; normal examples pass; broader gesture/order variations and full main regressions continue.",
+  "investigation": "Seven confirmed visual/interaction faults corrected. Frozen v182 final regression and 72 realistic measurement/edit combinations remain running.",
   "productChanges": true,
   "nextInvestigation": "Inspect all six ordinary examples across near/far growth/shrink and panel collapse; finish current full regression; run sustained campaign.",
   "measurementSizeFix": {
@@ -85,8 +85,8 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 16,
-    "fullBrowserPassedSoFar": 119
+    "variationPassedSoFar": 17,
+    "fullBrowserPassedSoFar": 144
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -97,14 +97,14 @@
   "additionalCoverage": "Deleting earlier atoms and restoring preserved measurement identities through history and a fresh edit branch.",
   "preparedVariationCampaign": {
     "root": "/private/tmp/crystal-measure-variation-campaign",
-    "status": "Running v181",
+    "status": "Running v182",
     "plannedCases": 72,
     "examples": 6,
     "measurementOrders": 6,
     "ordinaryPairs": "Silicon neighbors and Na-Cl, top slab atoms, H-O-H water; includes unmeasured atom editing.",
     "variations": "Mouse step count and drag size; exposed-pixel picking with side views for layered atoms.",
     "collectedCases": 72,
-    "session": 69404
+    "session": 57627
   },
   "personallyInspectedNormalExamples": [
     "Aluminium",
@@ -151,7 +151,8 @@
     "Aluminium900 reverse measurement order321",
     "Silicon900 reverse measurement order251",
     "Silicon1440 reverse order251",
-    "Frame release over atom retains markers and labels"
+    "Frame release over atom retains markers and labels",
+    "NaCl900 reverse order251 cell edit and bond refresh"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

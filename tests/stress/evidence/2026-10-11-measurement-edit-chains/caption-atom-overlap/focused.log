@@ -1,0 +1,22 @@
+
+Running 15 tests using 1 worker
+
+(node:60235) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/dense-edit-visual.spec.cjs:28:1 › dense atom/bond rendering survives movement cancellation, 501/500 transitions and cell resizing (45.1s)
+  ✓   2 [chromium] › tests/browser/measurement-annotation-placement.spec.cjs:3:45 › water measurement labels remain distinct in edit mode, order 1-2-3 (3.1s)
+  ✓   3 [chromium] › tests/browser/measurement-annotation-placement.spec.cjs:3:45 › water measurement labels remain distinct in edit mode, order 2-1-3 (2.9s)
+  ✓   4 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 1 › small atom annotations survive sidebar resizing and zoom at 900px (4.5s)
+  ✓   5 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 1 › small atom annotations survive sidebar resizing and zoom at 1440px (4.3s)
+  ✓   6 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 2 › small atom annotations survive sidebar resizing and zoom at 900px (5.9s)
+  ✓   7 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 2 › small atom annotations survive sidebar resizing and zoom at 1440px (8.9s)
+  ✓   8 [chromium] › tests/browser/measurement-atom-occlusion.spec.cjs:5:1 › a distance caption stays clear of an unselected atom projected onto its midpoint (4.5s)
+  ✓   9 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode (3.3s)
+  ✓  10 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode (5.8s)
+  ✓  11 [chromium] › tests/browser/measurement.spec.cjs:28:1 › distances and angle connect the actual selected atoms across the cell (2.6s)
+  ✓  12 [chromium] › tests/browser/measurement.spec.cjs:60:1 › mode changes, clear, undo and document replacement dispose and restore actual measurements (4.6s)
+  ✓  13 [chromium] › tests/browser/measurement.spec.cjs:94:1 › zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle (4.1s)
+  ✓  14 [chromium] › tests/browser/measurement.spec.cjs:110:1 › explicit ghost selections measure their world positions without substituting another image (2.5s)
+  ✓  15 [chromium] › tests/browser/measurement.spec.cjs:130:1 › canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry (3.3s)
+
+  15 passed (1.8m)

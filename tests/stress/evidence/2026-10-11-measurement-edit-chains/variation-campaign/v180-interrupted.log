@@ -1,0 +1,73 @@
+
+Running 72 tests using 1 worker
+
+(node:59723) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.5m)
+  ✓   2 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.7m)
+(node:59788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.6m)
+  ✓   4 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.7m)
+(node:59940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.6m)
+  ✓   6 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.9m)
+(node:60014) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.6m)
+  ✓   8 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.7m)
+(node:60087) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.6m)
+  ✓  10 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.8m)
+(node:60196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (39.8s)
+  ✓  12 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (50.8s)
+(node:60249) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.7m)
+  ✓  14 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.8m)
+(node:60360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  15 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.7m)
+  ✘  16 [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (33.3s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px 
+
+    Test was interrupted.
+
+    Error: mouse.move: Test ended.
+
+       at measurement-edit-helpers.cjs:112
+
+      110 |     }), { kind, point });
+      111 |     expect(ownership.owns, JSON.stringify(ownership)).toBe(true);
+    > 112 |     await page.mouse.move(point.x + point.dx, point.y + point.dy, { steps: 2 + gestureSeed % 9 });
+          |                      ^
+      113 | }
+      114 |
+      115 | // A display rebuild must reproduce the bonds already shown after an edit.
+        at dragTarget (/private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-edit-helpers.cjs:112:22)
+        at /private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:29:13
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measure-variation-output/measurement-example-chains-080c4-mpound-edit-chain-at-1440px-chromium-repeat7/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-measure-variation-output/measurement-example-chains-080c4-mpound-edit-chain-at-1440px-chromium-repeat7/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measure-variation-output/measurement-example-chains-080c4-mpound-edit-chain-at-1440px-chromium-repeat7/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-measure-variation-output/measurement-example-chains-080c4-mpound-edit-chain-at-1440px-chromium-repeat7/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    [chromium] › ../../../../private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px 
+  56 did not run
+  15 passed (24.1m)

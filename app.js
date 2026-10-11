@@ -3669,18 +3669,18 @@ function updateAnnotationSizes() {
             : sprite.userData.isSelectionLabel ? 14 : 0;
         if (!minimumPixels) continue;
         const base = sprite.userData.annotationBaseScale || (sprite.userData.annotationBaseScale = sprite.scale.clone());
-        let worldPerPixel;
-        if (camera.isOrthographicCamera) {
-            worldPerPixel = (camera.top - camera.bottom) / (camera.zoom * height);
-        } else {
-            const depth = -sprite.getWorldPosition(new THREE.Vector3()).applyMatrix4(camera.matrixWorldInverse).z;
-            worldPerPixel = depth > 0 ? 2 * depth * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / (camera.zoom * height) : 0;
-        }
+        const worldPerPixel = getAnnotationWorldPerPixel(sprite.getWorldPosition(new THREE.Vector3()), height);
         const factor = Math.max(1, minimumPixels * worldPerPixel / base.y);
         sprite.scale.copy(base).multiplyScalar(factor);
         sprite.userData.annotationWorldPerPixel = worldPerPixel;
     }
     positionMeasurementLabels();
+}
+
+function getAnnotationWorldPerPixel(position, height) {
+    if (camera.isOrthographicCamera) return (camera.top - camera.bottom) / (camera.zoom * height);
+    const depth = -position.clone().applyMatrix4(camera.matrixWorldInverse).z;
+    return depth > 0 ? 2 * depth * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / (camera.zoom * height) : 0;
 }
 
 function positionMeasurementLabels() {
@@ -3696,6 +3696,17 @@ function positionMeasurementLabels() {
     const labels = measurementGroup.children.filter(sprite => sprite.userData.isMeasurementLabel);
     const visible = labels.map(sprite => ({ sprite, rect: screenRect(sprite) })).filter(item => item.rect);
     const obstacles = selectionRings.map(screenRect).filter(Boolean);
+    // Keep caption text clear of atomic bodies, including unselected atoms.
+    // The placement solver restricts collisions to each label's search area.
+    if (visible.length) for (const mesh of atomMeshes) {
+        const center = mesh.getWorldPosition(new THREE.Vector3());
+        const point = center.clone().project(camera);
+        const unit = getAnnotationWorldPerPixel(center, height);
+        const radius = (mesh.geometry.parameters.radius || 1) * mesh.getWorldScale(new THREE.Vector3()).x / unit;
+        if (!(unit > 0) || !(radius > 0) || ![point.x, point.y, point.z, radius].every(Number.isFinite) || Math.abs(point.z) > 1) continue;
+        const rect = { x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2, width: radius * 2, height: radius * 2 };
+        obstacles.push(rect);
+    }
     const placed = CrystalAnnotations.placeLabels(visible.map(item => item.rect), obstacles, { width, height });
     const world = (x, y, depth) => new THREE.Vector3(x / width * 2 - 1, 1 - y / height * 2, depth).unproject(camera);
     labels.forEach(sprite => { if (sprite.userData.annotationLeader) sprite.userData.annotationLeader.visible = false; });

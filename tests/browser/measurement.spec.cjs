@@ -61,13 +61,18 @@ test('mode changes, clear, undo and document replacement dispose and restore act
     await upload(page, source, 'boundary.poscar');
     for (const number of [1, 2, 3]) await select(page, number);
     const original = await state(page);
-    await page.evaluate(() => {
+    const expectedDisposals = await page.evaluate(() => {
         window.measurementDisposals = [];
-        measurementGroup.children.filter(child => child.userData.isMeasurementVisual).forEach(child => {
-            if (child.isLine) child.geometry.addEventListener('dispose', () => window.measurementDisposals.push('geometry'));
-            child.material.addEventListener('dispose', () => window.measurementDisposals.push('material'));
-            child.material.map?.addEventListener('dispose', () => window.measurementDisposals.push('texture'));
+        const resources = new Map();
+        // Sprite quad geometry belongs to Three; track owned line geometry
+        // and every measurement/marker material and texture instead.
+        measurementGroup.children.forEach(child => {
+            if (child.isLine) resources.set(`geometry:${child.geometry.uuid}`, child.geometry);
+            resources.set(`material:${child.material.uuid}`, child.material);
+            if (child.material.map) resources.set(`texture:${child.material.map.uuid}`, child.material.map);
         });
+        for (const [id, resource] of resources) resource.addEventListener('dispose', () => window.measurementDisposals.push(id));
+        return [...resources.keys()].sort();
     });
     await page.locator('[data-mode="edit"]').click();
     await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
@@ -77,9 +82,7 @@ test('mode changes, clear, undo and document replacement dispose and restore act
     await page.locator('#clearSelectionBtn').click();
     expect((await state(page)).lines).toHaveLength(0);
     const disposals = await page.evaluate(() => window.measurementDisposals);
-    expect(disposals.filter(value => value === 'geometry')).toHaveLength(3);
-    expect(disposals.filter(value => value === 'texture')).toHaveLength(3);
-    expect(disposals.filter(value => value === 'material')).toHaveLength(6);
+    expect(disposals.sort()).toEqual(expectedDisposals);
     await page.locator('#undoBtn').click();
     expect((await state(page)).points).toEqual(original.points);
     await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');

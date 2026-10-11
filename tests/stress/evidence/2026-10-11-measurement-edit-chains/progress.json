@@ -1,11 +1,11 @@
 {
   "goalScope": "Realistic editing with active three-atom measurements, not large-label formatting",
-  "sourceVersion": 180,
+  "sourceVersion": 181,
   "productHashes": {
-    "app.js": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
-    "annotations.js": "cf97ddf3368d7f6819e055e4cd47581e30fbb1270b51936bba52d97bba6c4af7",
+    "app.js": "14565c0843446f859f44af77eab9124e9f58881fcbf3142b4d5f0841be8edaf1",
+    "annotations.js": "94b743472a958a216ded11e32a685f5f2ec5a72308348d6bc9a736ef8a84883d",
     "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
-    "index.html": "00d96b3f4a812e39d692b1fc5de0a45acb31c2db842c89040093734d44180d9a"
+    "index.html": "c56bf1b3ae5c36bbee20141a9752a4ab081e68cf83f567f47b95f4bfcfca00d5"
   },
   "currentRun": {
     "session": 29337,
@@ -74,17 +74,17 @@
     "chainPassed": 6
   },
   "currentMainValidation": {
-    "version": 180,
-    "unitPassed": 151,
-    "fullBrowserSession": 90589,
-    "fullBrowserStatus": "Running",
+    "version": 181,
+    "unitPassed": 152,
+    "fullBrowserSession": 3682,
+    "fullBrowserStatus": "Running v181; source frozen",
     "candidateExampleSession": 17660,
     "candidateExampleStatus": "Terminal exit0; all12 normal example-width combinations passed in20.5minutes",
     "navigationPassed": 1,
     "deleteHistoryPassed": 2,
     "candidateExamplePassed": 12,
-    "variationSession": 91395,
-    "variationStatus": "Running72 cases on main180; isolated harness fixed for reproducibility"
+    "variationSession": 69404,
+    "variationStatus": "Running72 cases on main181; source frozen"
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -95,14 +95,14 @@
   "additionalCoverage": "Deleting earlier atoms and restoring preserved measurement identities through history and a fresh edit branch.",
   "preparedVariationCampaign": {
     "root": "/private/tmp/crystal-measure-variation-campaign",
-    "status": "Running",
+    "status": "Running v181",
     "plannedCases": 72,
     "examples": 6,
     "measurementOrders": 6,
     "ordinaryPairs": "Silicon neighbors and Na-Cl, top slab atoms, H-O-H water; includes unmeasured atom editing.",
     "variations": "Mouse step count and drag size; exposed-pixel picking with side views for layered atoms.",
     "collectedCases": 72,
-    "session": 91395
+    "session": 69404
   },
   "personallyInspectedNormalExamples": [
     "Aluminium",
@@ -111,5 +111,12 @@
     "Graphene",
     "Slab deletion history",
     "Water navigation and deletion history"
-  ]
+  ],
+  "sixthConfirmedBug": {
+    "description": "Measurement caption overlaps an unselected atom body after actual NaCl editing",
+    "evidence": "caption-atom-overlap",
+    "candidateBrowserPassed": 15,
+    "unitPassed": 152,
+    "status": "Promoted v181; full regression and sustained variations pending"
+  }
 }

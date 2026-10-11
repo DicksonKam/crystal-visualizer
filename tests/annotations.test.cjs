@@ -32,3 +32,16 @@ test('labels near viewport edges remain within the visible area', () => {
         assert.ok(label.y + label.height / 2 <= 196);
     }
 });
+
+test('viewport clamping retains collisions far from the original anchor', () => {
+    const label = { x: 0, y: 200, width: 400, height: 100 };
+    const obstacle = { x: 400, y: 200, width: 50, height: 50 };
+    const [placed] = placeLabels([label], [obstacle], { width: 900, height: 400 });
+    const separated = Math.abs(placed.x - obstacle.x) >= (placed.width + obstacle.width) / 2 + 4
+        || Math.abs(placed.y - obstacle.y) >= (placed.height + obstacle.height) / 2 + 4;
+    assert.equal(separated, true);
+    assert.ok(placed.x - placed.width / 2 >= 4);
+    assert.ok(placed.x + placed.width / 2 <= 896);
+    assert.ok(placed.y - placed.height / 2 >= 4);
+    assert.ok(placed.y + placed.height / 2 <= 396);
+});

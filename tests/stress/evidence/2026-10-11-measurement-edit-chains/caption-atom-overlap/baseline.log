@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:60082) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/browser/measurement-atom-occlusion.spec.cjs:5:1 › a distance caption stays clear of an unselected atom projected onto its midpoint (9.7s)
+
+
+  1) [chromium] › tests/browser/measurement-atom-occlusion.spec.cjs:5:1 › a distance caption stays clear of an unselected atom projected onto its midpoint 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 3.9
+    Received:    -63.99657452657144
+
+      39 |     });
+      40 |     await info.attach('projected-clearance', { body: JSON.stringify(projected), contentType: 'application/json' });
+    > 41 |     expect(projected.clearance).toBeGreaterThanOrEqual(3.9);
+         |                                 ^
+      42 |     expect(projected.anchor).toEqual(projected.midpoint);
+      43 |     expect(await page.evaluate(() => currentStructure.atoms.map(atom => atom.position.toArray()))).toEqual(before);
+      44 |     await expect(page.locator('#measurementPanel')).toContainText('2.8200 Å');
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-atom-occlusion.spec.cjs:41:33
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-caption-body-baseline/measurement-atom-occlusion-79cbc-projected-onto-its-midpoint-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-caption-body-baseline/measurement-atom-occlusion-79cbc-projected-onto-its-midpoint-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-caption-body-baseline/measurement-atom-occlusion-79cbc-projected-onto-its-midpoint-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-caption-body-baseline/measurement-atom-occlusion-79cbc-projected-onto-its-midpoint-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/browser/measurement-atom-occlusion.spec.cjs:5:1 › a distance caption stays clear of an unselected atom projected onto its midpoint 

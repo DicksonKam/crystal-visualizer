@@ -2763,6 +2763,15 @@ function rebuildLabels() {
     requestRender();
 }
 
+// Keep every glyph and its outline/shadow inside the fixed-size texture.
+function setFittedLabelFont(ctx, text, preferredSize) {
+    ctx.font = `bold ${preferredSize}px JetBrains Mono, monospace`;
+    const textWidth = ctx.measureText(text).width;
+    const availableWidth = ctx.canvas.width - 16;
+    const fontSize = Math.max(1, Math.min(preferredSize, Math.floor(preferredSize * availableWidth / textWidth)));
+    ctx.font = `bold ${fontSize}px JetBrains Mono, monospace`;
+}
+
 // Create a subtle, camera-facing label sprite for an atom
 function createAtomLabel(indexNumber, position) {
     const canvas = document.createElement('canvas');
@@ -2774,18 +2783,19 @@ function createAtomLabel(indexNumber, position) {
     ctx.clearRect(0, 0, 128, 128);
     
     // Subtle text - no background, just the number
-    ctx.font = 'bold 72px JetBrains Mono, monospace';
+    const labelText = String(indexNumber);
+    setFittedLabelFont(ctx, labelText, 72);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
     // Subtle dark outline for visibility against light atoms
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
     ctx.lineWidth = 4;
-    ctx.strokeText(indexNumber.toString(), 64, 64);
+    ctx.strokeText(labelText, 64, 64);
     
     // Semi-transparent light text - visible but not distracting
     ctx.fillStyle = 'rgba(220, 220, 240, 0.6)';
-    ctx.fillText(indexNumber.toString(), 64, 64);
+    ctx.fillText(labelText, 64, 64);
     
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -3650,7 +3660,8 @@ function createFloatingDistanceLabel(position, distance) {
     const ctx = canvas.getContext('2d');
     
     // Text with subtle shadow for visibility
-    ctx.font = 'bold 24px JetBrains Mono, monospace';
+    const labelText = `${distance.toFixed(3)} Å`;
+    setFittedLabelFont(ctx, labelText, 24);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -3662,7 +3673,7 @@ function createFloatingDistanceLabel(position, distance) {
     
     // White text
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${distance.toFixed(3)} Å`, 64, 16);
+    ctx.fillText(labelText, 64, 16);
     
     const texture = new THREE.CanvasTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({ 
@@ -3693,7 +3704,8 @@ function createFloatingAngleLabel(position, angleDeg) {
     const ctx = canvas.getContext('2d');
     
     // Text with subtle shadow for visibility
-    ctx.font = 'bold 24px JetBrains Mono, monospace';
+    const labelText = `${angleDeg.toFixed(1)}°`;
+    setFittedLabelFont(ctx, labelText, 24);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -3705,7 +3717,7 @@ function createFloatingAngleLabel(position, angleDeg) {
     
     // White text
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${angleDeg.toFixed(1)}°`, 40, 16);
+    ctx.fillText(labelText, 40, 16);
     
     const texture = new THREE.CanvasTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({ 

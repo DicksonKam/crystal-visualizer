@@ -562,6 +562,8 @@ button.meas-delta:focus-visible {
 
 .meas-content {
     flex: 1;
+    min-width: 0;
+    gap: 0.3rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -574,6 +576,8 @@ button.meas-delta:focus-visible {
 }
 
 .meas-value {
+    max-width: 100%;
+    overflow-wrap: anywhere;
     font-family: var(--font-mono);
     font-size: 0.95rem;
     font-weight: 600;
@@ -587,6 +591,7 @@ button.meas-delta:focus-visible {
 /* Delta display under distance measurements (unified fractional/cartesian) */
 .meas-delta {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.25rem;
     width: 100%;
     margin-top: 0.35rem;
@@ -601,7 +606,7 @@ button.meas-delta:focus-visible {
     display: flex;
     align-items: center;
     gap: 0.15rem;
-    flex: 1;
+    flex: 1 1 70px;
 }
 
 .delta-label {

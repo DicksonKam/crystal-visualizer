@@ -1,0 +1,13 @@
+{
+  "terminalExit": 0,
+  "complete": {
+    "event": "complete",
+    "nextSeed": 4292,
+    "actions": 34380,
+    "images": 12101,
+    "elapsedSeconds": 7205.348160875
+  },
+  "completedSequences": 191,
+  "distinctSourceHashSets": 1,
+  "coverage": "Persistent browser DPR1, advanced mixed actions, 180 steps per sequence; screenshots captured are not all personally inspected."
+}

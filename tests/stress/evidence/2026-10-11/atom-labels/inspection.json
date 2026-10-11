@@ -40,5 +40,10 @@
     "candidatePassed": 5,
     "candidateDurationSeconds": 27.1,
     "scope": "Normal file load, actual app-generated textures; 2 label tests plus 3 measurement-card width tests. Both actual texture atlases visually inspected before and after."
+  },
+  "finalNativeInspection": {
+    "file": "native-label-1000-final-candidate.jpg",
+    "port": 4176,
+    "result": "Full 1000 visible using actual native file chooser and display controls on shared-helper candidate. Original user tab preserved; test tab closed."
   }
 }

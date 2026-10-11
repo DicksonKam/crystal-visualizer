@@ -30,6 +30,14 @@
     {
       "file": "seed-4143-step-92-drag-atom-preview.png",
       "result": "Narrow portrait drag preview inspected: wrapped toolbar, periodic controls and intact guide plane fit. Small model reflects the current zoom distance; no new visual defect confirmed."
+    },
+    {
+      "file": "seed-4290-step-88-panel-panel-preview.png",
+      "result": "Late campaign divider resize: complete cell, atoms and controls render and fit."
+    },
+    {
+      "file": "seed-4291-step-99-display-after.png",
+      "result": "Late campaign edited-file replacement and display changes: intact frame, atoms and fixed-state selection indicators."
     }
   ],
   "lastVerifiedWait": {
@@ -40,5 +48,14 @@
     "capturedImages": 3409,
     "elapsedSeconds": 2704.333781041,
     "status": "Discovery verified live; CSS-only full suite finished exit 0, combined suite launched"
+  },
+  "campaignTerminal": {
+    "discoverySession": 60481,
+    "exit": 0,
+    "event": "complete",
+    "nextSeed": 4292,
+    "actions": 34380,
+    "images": 12101,
+    "elapsedSeconds": 7205.348160875
   }
 }

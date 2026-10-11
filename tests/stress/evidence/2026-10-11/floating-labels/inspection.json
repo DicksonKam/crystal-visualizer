@@ -42,7 +42,7 @@
   },
   "fullCombinedSuite": {
     "session": 20697,
-    "status": "running",
+    "status": "terminal exit 0",
     "expected": 156,
     "report": "/private/tmp/crystal-oct11-final-candidate-full.json",
     "log": "/private/tmp/crystal-oct11-final-candidate-full.log",
@@ -50,6 +50,20 @@
       "app.js": "6808fa8b310ecd1fcb4b0f3608e96081f4a1681ea933b9b7bbfe66ceb0ed7ce8",
       "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
       "index.html": "d72f9fb973a87611ab2da33aa2730649209be75f3b608371485cba57e5f2497d"
-    }
+    },
+    "passed": 156,
+    "failed": 0,
+    "flaky": 0,
+    "durationMinutes": 28.4,
+    "sourceHashesUnchanged": true
+  },
+  "mainApplied": {
+    "files": [
+      "app.js",
+      "styles.css",
+      "index.html"
+    ],
+    "exactTestedSource": true,
+    "freshMainVerification": "running"
   }
 }

@@ -1,6 +1,6 @@
 {
   "goalScope": "Realistic editing with active three-atom measurements, not large-label formatting",
-  "sourceVersion": 177,
+  "sourceVersion": 178,
   "productHashes": {
     "app.js": "6808fa8b310ecd1fcb4b0f3608e96081f4a1681ea933b9b7bbfe66ceb0ed7ce8",
     "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
@@ -29,9 +29,9 @@
     "0-atom-committed.png",
     "0-shift.png"
   ],
-  "investigation": "Earlier harness failures were an unexported helper and unavailable helium option. Next drag-start failure required waiting for settled renderer/sidebar dimensions before projecting test click. Corrected run still active; no app bug claimed yet.",
-  "productChanges": false,
-  "nextInvestigation": "Deletion followed by undo through selection operations back to measurement; six repeated species/cell/order variants running",
+  "investigation": "Two confirmed measurement/edit visual bugs fixed; focused combinations continue.",
+  "productChanges": true,
+  "nextInvestigation": "Expanded constraints, display rebuilding, periodic preview changes, then sustained varied measurement/edit campaign",
   "measurementSizeFix": {
     "commit": "5ca253c",
     "unitPassed": 147,
@@ -39,10 +39,21 @@
     "visualProof": "smaller-unselected-atom/fixed-after-add.png"
   },
   "activeRun": {
-    "session": 19086,
-    "status": "Launched; live status requires polling",
-    "log": "/private/tmp/crystal-measure-variants-v2.log"
+    "session": 77504,
+    "status": "Expanded four-chain pilot running; verify terminal state before counting results",
+    "log": "/private/tmp/crystal-measure-expanded-pilot.log"
   },
   "harnessCorrection": "Deletion undo leaves selection empty under existing app semantics; test now checks geometry restoration and continues to measurement selection history.",
-  "secondConfirmedBug": "Supercell conversion loses a measured periodic copy; visual baseline retained under supercell-measurement"
+  "secondConfirmedBug": "Supercell conversion loses a measured periodic copy; visual baseline retained under supercell-measurement",
+  "sixVariants": {
+    "session": 19086,
+    "status": "Terminal exit 0",
+    "passed": 6,
+    "duration": "6.4 minutes"
+  },
+  "supercellFix": {
+    "unitPassed": 148,
+    "focusedBrowserPassed": 5,
+    "nativeVisualProof": "supercell-measurement/native-converted.png"
+  }
 }

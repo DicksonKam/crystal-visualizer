@@ -52,10 +52,13 @@
         const lattice = structure.lattice.map((vector, axis) => vector.map(value => value * repeats[axis]));
         geometry.requireFiniteCell(lattice, 'supercell');
         const atoms = [];
+        // Preserve each displayed copy's identity across conversion. Positions
+        // alone cannot distinguish coincident atoms on periodic boundaries.
+        const atomSources = [];
         let nextAtomId = structure.nextAtomId || structure.atoms.length + 1;
         for (let a = 0; a < repeats[0]; a++) for (let b = 0; b < repeats[1]; b++) for (let c = 0; c < repeats[2]; c++) {
             const translation = geometry.fractionalToCartesian([a, b, c], structure.lattice);
-            for (const atom of structure.atoms) {
+            for (const [originalIndex, atom] of structure.atoms.entries()) {
                 const position = {
                     x: atom.position.x + translation[0],
                     y: atom.position.y + translation[1],
@@ -67,9 +70,10 @@
                 }
                 const id = a === 0 && b === 0 && c === 0 ? atom.id : `atom-${nextAtomId++}`;
                 atoms.push({ ...atom, id, position, fractional, selectiveDynamics: [...(atom.selectiveDynamics || [true, true, true])] });
+                atomSources.push({ originalIndex, cellOffset: { a, b, c } });
             }
         }
-        return { lattice, atoms, nextAtomId };
+        return { lattice, atoms, nextAtomId, atomSources };
     }
     function summarizeConstraints(atoms) {
         const summary = { fixed: 0, partial: 0, free: 0, byElement: new Map() };

@@ -1,0 +1,17 @@
+
+Running 6 tests using 1 worker
+
+(node:55448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:80:34 › measurement survives a sustained edit chain at 900px (1.0m)
+  ✓  2 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:80:34 › measurement survives a sustained edit chain at 1440px (1.2m)
+(node:55651) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:80:34 › measurement survives a sustained edit chain at 900px (1.0m)
+  ✓  4 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:80:34 › measurement survives a sustained edit chain at 1440px (1.1m)
+(node:55903) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:80:34 › measurement survives a sustained edit chain at 900px (1.0m)
+  ✓  6 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:80:34 › measurement survives a sustained edit chain at 1440px (1.1m)
+
+  6 passed (6.4m)

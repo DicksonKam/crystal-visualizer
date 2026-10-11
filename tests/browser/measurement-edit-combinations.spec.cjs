@@ -78,7 +78,7 @@ async function dragTarget(page, kind, cycle) {
 }
 
 for (const width of [900, 1440]) test(`measurement survives a sustained edit chain at ${width}px`, async ({ page }, info) => {
-    test.setTimeout(180000);
+    test.setTimeout(240000);
     page.setDefaultTimeout(10000);
     await page.setViewportSize({ width, height: 900 });
     const variant = info.repeatEachIndex;
@@ -106,12 +106,30 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
         await page.locator('#shiftA').fill(variant % 2 ? '-.1' : '.1'); await page.locator('#shiftB').fill('0'); await page.locator('#shiftC').fill('0');
         await page.locator('#applyShiftBtn').click(); await checkMeasurement(page); await snap(`${cycle}-shift`);
         await page.locator('#addAtomElement').selectOption('C');
-        for (const axis of ['X', 'Y', 'Z']) await page.locator(`#addAtom${axis}`).fill('.4');
+        for (const [axis, value] of [['X', .3 + cycle * .1], ['Y', .35 + (variant % 4) * .1], ['Z', .4 + cycle * .05]]) await page.locator(`#addAtom${axis}`).fill(String(value));
         await page.locator('#addAtomBtn').click(); await checkMeasurement(page); await snap(`${cycle}-add`);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await page.locator('#redoBtn').click(); await checkMeasurement(page);
         await page.locator('[data-mode="measure"]').click(); await checkMeasurement(page);
         await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+        // Rebuild the scene through ordinary display and periodic controls
+        // while the same three-point measurement remains active.
+        const displayId = ['showBonds', 'useElementRadii', 'showFixedIndicators', 'showLabels'][(variant + cycle) % 4];
+        const display = page.locator(`#${displayId}`);
+        const checked = await display.isChecked();
+        await display.setChecked(!checked); await checkMeasurement(page); await snap(`${cycle}-${displayId}`);
+        await display.setChecked(checked); await checkMeasurement(page);
+        const axis = ['a', 'b', 'c'][(variant + cycle) % 3];
+        await page.getByRole('button', { name: `Increase ${axis} periodic images`, exact: true }).click();
+        await checkMeasurement(page); await snap(`${cycle}-periodic-${axis}`);
+        await page.getByRole('button', { name: `Decrease ${axis} periodic images`, exact: true }).click();
+        await checkMeasurement(page);
+        // Constraint overlays also rebuild meshes and participate in history.
+        await page.locator('#fixZThreshold').fill('20');
+        await page.locator('#fixByZBtn').click(); await checkMeasurement(page); await snap(`${cycle}-fixed`);
+        await page.locator('#undoBtn').click(); await checkMeasurement(page);
+        await page.locator('#redoBtn').click(); await checkMeasurement(page);
+        await page.locator('#unfixAllBtn').click(); await checkMeasurement(page);
     }
     // Switch from the measured trio to an edit selection, delete, and walk
     // back through both geometry history and the measurement context.

@@ -1,0 +1,334 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/measurement-edit-combinations.spec.cjs",
+      "--repeat-each=3",
+      "--max-failures=1",
+      "--config=/private/tmp/crystal-oct11-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-measure-variants-v2",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-oct11-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-measure-variants-v2",
+        "repeatEach": 3,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-edit-combinations.spec.cjs",
+      "file": "measurement-edit-combinations.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "measurement survives a sustained edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61676,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:27:00.723Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "variant",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjowLCJsYXR0aWNlIjoiOCAwIDBcbjAgOCAwXG4wIDAgOCIsInNwZWNpZXMiOiJIIE8ifQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-d483597cee581722702e",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        },
+        {
+          "title": "measurement survives a sustained edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 69367,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:28:02.738Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "variant",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjowLCJsYXR0aWNlIjoiOCAwIDBcbjAgOCAwXG4wIDAgOCIsInNwZWNpZXMiOiJIIE8ifQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-e807a63c0101c65ce682",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        },
+        {
+          "title": "measurement survives a sustained edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61180,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:29:12.508Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "variant",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxLCJsYXR0aWNlIjoiOCAxIDBcbjEgOCAwXG4wIDAgOCIsInNwZWNpZXMiOiJTaSBPIn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-78421bd8acf655b3acc1",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        },
+        {
+          "title": "measurement survives a sustained edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 65872,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:30:13.836Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "variant",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxLCJsYXR0aWNlIjoiOCAxIDBcbjEgOCAwXG4wIDAgOCIsInNwZWNpZXMiOiJTaSBPIn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-31e742acbcde699db2f5",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        },
+        {
+          "title": "measurement survives a sustained edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 60322,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:31:20.120Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "variant",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyLCJsYXR0aWNlIjoiOCAwIDBcbjAgOCAwXG4wIDAgOCIsInNwZWNpZXMiOiJBbCBIIn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-6e4ac65fae57b721189c",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        },
+        {
+          "title": "measurement survives a sustained edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 65906,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:32:20.656Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "variant",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyLCJsYXR0aWNlIjoiOCAwIDBcbjAgOCAwXG4wIDAgOCIsInNwZWNpZXMiOiJBbCBIIn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-8efd89af528be6a2266b",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T01:27:00.391Z",
+    "duration": 386332.052,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

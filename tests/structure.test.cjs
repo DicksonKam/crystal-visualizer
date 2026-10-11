@@ -39,6 +39,30 @@ test('supercell validation rejects overflow, invalid repeats, and excessive copi
     assert.throws(() => buildSupercell(wide, [3, 1, 1]), /non-finite coordinates/);
 });
 
+test('supercell copy identities distinguish coincident boundary atoms in every direction', () => {
+    const source = {
+        lattice: [[2, 0, 0], [0, 3, 0], [0, 0, 4]],
+        atoms: [
+            { id: 'left', element: 'Si', position: { x: 0, y: 0, z: 0 } },
+            { id: 'right', element: 'Si', position: { x: 2, y: 0, z: 0 } }
+        ]
+    };
+    const prepared = buildSupercell(source, [2, 2, 2]);
+    assert.equal(prepared.atomSources.length, prepared.atoms.length);
+    const identities = new Set();
+    prepared.atomSources.forEach(({ originalIndex, cellOffset: { a, b, c } }, index) => {
+        identities.add(`${originalIndex}:${a}:${b}:${c}`);
+        assert.deepEqual(prepared.atoms[index].position, {
+            x: source.atoms[originalIndex].position.x + a * 2, y: b * 3, z: c * 4
+        });
+    });
+    assert.equal(identities.size, 16);
+    const at = (originalIndex, a) => prepared.atomSources.findIndex(source => source.originalIndex === originalIndex
+        && source.cellOffset.a === a && source.cellOffset.b === 0 && source.cellOffset.c === 0);
+    assert.deepEqual(prepared.atoms[at(1, 0)].position, prepared.atoms[at(0, 1)].position);
+    assert.notEqual(at(1, 0), at(0, 1));
+});
+
 test('constraint summaries keep global and per-element counts consistent', () => {
     const summary = summarizeConstraints([
         { element: 'H', selectiveDynamics: [false, false, false] },

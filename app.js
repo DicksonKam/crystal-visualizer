@@ -626,6 +626,10 @@ function undoMakeSupercell(op) {
     document.getElementById('periodicADisplay').textContent = settings.periodic.a;
     document.getElementById('periodicBDisplay').textContent = settings.periodic.b;
     document.getElementById('periodicCDisplay').textContent = settings.periodic.c;
+    if (op.selectionBefore) {
+        restoreSelectionContext(op.selectionBefore);
+        selectedAtoms = op.selectionBefore.selected;
+    }
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
     updateUI_forCurrentMode();
@@ -4813,7 +4817,19 @@ function convertToSupercell() {
     pushUndo({
         type: 'make_supercell',
         oldStructure: oldStructure,
-        oldPeriodic: { a: na, b: nb, c: nc }
+        oldPeriodic: { a: na, b: nb, c: nc },
+        selectionBefore: captureSelectionState()
+    });
+
+    // A periodic copy becomes a real atom without moving. Remap its identity
+    // before rebuilding meshes so measurements keep the same physical points.
+    selectedAtoms = selectedAtoms.map(atom => {
+        if (!atom.isGhost) return atom;
+        const index = prepared.atomSources.findIndex(source => source.originalIndex === atom.originalIndex
+            && source.cellOffset.a === atom.cellOffset.a
+            && source.cellOffset.b === atom.cellOffset.b
+            && source.cellOffset.c === atom.cellOffset.c);
+        return { ...atom, index, originalIndex: index, isGhost: false, cellOffset: null };
     });
     
     // Update structure

@@ -1,0 +1,12 @@
+
+Running 5 tests using 1 worker
+
+(node:56218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:60 › measured periodic copies survive a supercell conversion and editing (15.2s)
+  ✓  2 [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:60 › measured periodic copies survive b supercell conversion and editing (9.5s)
+  ✓  3 [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:60 › measured periodic copies survive c supercell conversion and editing (11.2s)
+  ✓  4 [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:60 › measured periodic copies survive abc supercell conversion and editing (13.6s)
+  ✓  5 [chromium] › tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement (5.8s)
+
+  5 passed (56.0s)

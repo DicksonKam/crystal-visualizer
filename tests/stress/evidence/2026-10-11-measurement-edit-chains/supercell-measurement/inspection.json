@@ -8,5 +8,17 @@
   "baselineExit": 1,
   "baselineFailed": 1,
   "rootCause": "Selection restore uses the old ghost identity after periodic repeats reset to1; no mapping to generated real atom. Undo must restore original copy identities.",
-  "fix": "Pending; current varied edit run remains on the unchanged sizing-fix source."
+  "fix": "Builder exposes copy identities; conversion maps selected periodic copies to real atoms and snapshots selection context for undo.",
+  "unitPassed": 148,
+  "browserPassed": 5,
+  "nativeInspected": [
+    "native-converted.png",
+    "native-undone.png",
+    "native-redone.png"
+  ],
+  "productHashes": {
+    "app.js": "bc9bb3257d70be69baa22c770356788da95005267a3f1599aabc9de7f597ac73",
+    "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+    "index.html": "687d5af38a99453ae45b43f5d5c82fbff64db7542683bf6c8b6b02916a360927"
+  }
 }

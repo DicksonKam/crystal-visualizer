@@ -4,7 +4,7 @@
   "requirements": [
     {
       "requirement": "Realistic small examples and edit/measurement combinations",
-      "evidence": "12 ordinary example chains completed on v180; new v182 72-case run varies all six measurement orders and mouse gestures",
+      "evidence": "Current v182 campaign uses six ordinary examples, all six measurement orders, two viewport widths and varied real mouse gestures;54 of72 completed.",
       "status": "v182 sustained coverage pending"
     },
     {
@@ -25,11 +25,11 @@
     {
       "requirement": "Root fixes reproduced through normal interactions",
       "evidence": "Seven confirmed faults with baseline/fixed evidence folders and regression tests",
-      "status": "Implemented; final broader verification pending"
+      "status": "Implemented;154 unit tests and179 full browser regressions passed; final sustained campaign pending"
     },
     {
       "requirement": "Local Git backup, no push or added buttons",
-      "evidence": "Local commits27ca486 and710189b, source change adds only annotation placement math and tests",
+      "evidence": "Seven product fixes and inspected visual evidence saved in local commits; latest evidence commit e637c36. No push performed and no buttons added.",
       "status": "Satisfied for current changes"
     }
   ],
@@ -60,7 +60,7 @@
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0,
-    "sustainedCasesPassed": 48,
+    "sustainedCasesPassed": 54,
     "sustainedTerminalResultPending": true,
     "sourceHashesUnchanged": true,
     "campaignSourceHashesUnchanged": true

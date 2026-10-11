@@ -85,8 +85,8 @@
     "candidateExamplePassed": 12,
     "variationSession": 69404,
     "variationStatus": "Running72 cases on main181; source frozen",
-    "variationPassedSoFar": 7,
-    "fullBrowserPassedSoFar": 86
+    "variationPassedSoFar": 9,
+    "fullBrowserPassedSoFar": 98
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -126,6 +126,8 @@
     "Silicon900",
     "NaCl900/1440",
     "Graphene900",
-    "Mouse capture-loss release with active measurement"
+    "Mouse capture-loss release with active measurement",
+    "Graphene1440 deletion history",
+    "Slab900 measured atom movement and fixed overlays"
   ]
 }

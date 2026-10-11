@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 64,
+    "variationPassedSoFar": 65,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -208,7 +208,8 @@
     "Aluminium900 order231 measured atom, frame and deletion undo;4.5498/2.7571 and29.16 restored",
     "Aluminium1440 order231 frame and deletion undo;4.5520/2.7602 and29.15 restored",
     "Silicon900 order521 measured atom, frame and deletion undo;5.2620/4.6926 and19.63 restored",
-    "Silicon1440 order521 frame and deletion undo;5.2488/4.6870 and19.69 restored"
+    "Silicon1440 order521 frame and deletion undo;5.2488/4.6870 and19.69 restored",
+    "NaCl900 order521 measured atom, frame, bond rebuild and deletion undo;2.9045/3.5247 and45.50 restored"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

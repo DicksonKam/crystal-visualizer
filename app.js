@@ -843,6 +843,9 @@ function animate(timestamp) {
     updateAnnotationSizes();
     updateAtomLabelPositions();
 
+    // Manual controls, inertia and edit previews can change depth without
+    // applying a controller pose. Refresh clipping for the frame we draw.
+    updateCameraClipping();
     // Render main scene
     renderer.render(scene, camera);
     
@@ -5101,6 +5104,7 @@ function getCameraPose() {
 function updateCameraClipping() {
     if (!cameraMath || !structureGroup) return;
     const planes = cameraMath.clipping(getStructureBounds(), getCameraPose());
+    if (camera.near === planes.near && camera.far === planes.far) return;
     camera.near = planes.near;
     camera.far = planes.far;
     camera.updateProjectionMatrix();

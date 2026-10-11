@@ -1,0 +1,52 @@
+--- tests/browser/measurement-example-chains.spec.cjs	2026-10-11 10:07:29
++++ /private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-example-chains.spec.cjs	2026-10-11 10:28:44
+@@ -5,16 +5,19 @@
+ const path = require('node:path');
+ 
+ for (const width of [900, 1440]) test(`example measurements survive a compound edit chain at ${width}px`, async ({ page }, info) => {
+-    test.setTimeout(240000);
++    test.setTimeout(300000);
+     page.setDefaultTimeout(10000);
+     await page.setViewportSize({ width, height: 900 });
+     const variant = info.repeatEachIndex;
+     const files = ['poscar/Al_fcc_cartesian.poscar', 'poscar/Si_diamond.poscar', 'poscar/NaCl_rocksalt.poscar', 'poscar/graphene_sheet.poscar', 'poscar/Al_slab_selective.poscar', 'xyz/H2O.xyz'];
+     const file = files[variant % files.length];
++    const baseNumbers = [[1, 2, 3], [1, 5, 2], [1, 5, 2], [1, 2, 3], [4, 5, 6], [2, 1, 3]][variant % files.length];
++    const orders = [[0, 1, 2], [2, 1, 0], [1, 0, 2], [2, 0, 1], [0, 2, 1], [1, 2, 0]];
++    const numbers = orders[Math.floor(variant / files.length) % orders.length].map(index => baseNumbers[index]);
+     await upload(page, await fs.readFile(path.join(__dirname, '../../examples', file), 'utf8'), path.basename(file));
+     const capability = await capture(page);
+-    await info.attach('example', { body: JSON.stringify({ variant, file, capability: { lattice: capability.lattice, supportsSD: capability.supportsSD } }), contentType: 'application/json' });
+-    for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
++    await info.attach('example', { body: JSON.stringify({ variant, file, numbers, gestureSteps: 2 + variant % 9, capability: { lattice: capability.lattice, supportsSD: capability.supportsSD } }), contentType: 'application/json' });
++    for (const n of numbers) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
+     await page.locator('[data-mode="edit"]').click();
+     const snap = async name => page.screenshot({ path: info.outputPath(`${name}.png`) });
+     await checkMeasurement(page); await snap('initial');
+@@ -22,7 +25,7 @@
+         await page.locator('#sidebarDivider').focus(); await page.keyboard.press(cycle % 2 ? 'Home' : 'End');
+         for (const kind of !capability.lattice ? ['atom'] : variant % 2 ? ['cell', 'atom'] : ['atom', 'cell']) {
+             const before = await checkMeasurement(page);
+-            await dragTarget(page, kind, cycle);
++            await dragTarget(page, kind, cycle, variant);
+             await checkMeasurement(page); await snap(`${cycle}-${kind}-preview`);
+             await page.mouse.up();
+             const after = await checkMeasurement(page); await snap(`${cycle}-${kind}-committed`);
+@@ -34,7 +37,7 @@
+         await page.locator('#shiftA').fill(variant % 2 ? '-.1' : '.1'); await page.locator('#shiftB').fill('0'); await page.locator('#shiftC').fill('0');
+         await page.locator('#applyShiftBtn').click(); await checkMeasurement(page); await snap(`${cycle}-shift`);
+         await page.locator('#addAtomElement').selectOption('C');
+-        for (const [axis, value] of [['X', .3 + cycle * .1], ['Y', .35 + (variant % 4) * .1], ['Z', .4 + cycle * .05]]) await page.locator(`#addAtom${axis}`).fill(String(value));
++        for (const [axis, value] of [['X', .3 + cycle * .1], ['Y', .35 + (variant % 4) * .1], ['Z', .4 + cycle * .05]]) await page.locator(`#addAtom${axis}`).fill(value.toFixed(2));
+         await page.locator('#addAtomBtn').click(); await checkMeasurement(page); await snap(`${cycle}-add`);
+         await page.locator('#undoBtn').click(); await checkMeasurement(page);
+         await page.locator('#redoBtn').click(); await checkMeasurement(page);
+@@ -88,7 +91,7 @@
+     await page.locator('#undoBtn').click();
+     // Start a fresh measurement branch after restoring the deleted atom.
+     await page.locator('[data-mode="measure"]').click();
+-    for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
++    for (const n of numbers) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
+     await checkMeasurement(page);
+     await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+     await snap('final');

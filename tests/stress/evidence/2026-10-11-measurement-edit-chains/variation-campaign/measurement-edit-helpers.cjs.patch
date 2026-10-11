@@ -1,0 +1,87 @@
+--- tests/browser/measurement-edit-helpers.cjs	2026-10-11 10:13:59
++++ /private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-edit-helpers.cjs	2026-10-11 10:30:28
+@@ -39,34 +39,51 @@
+     return state;
+ }
+ 
+-async function dragTarget(page, kind, cycle) {
++async function dragTarget(page, kind, cycle, gestureSeed = 0) {
+     await page.waitForFunction(() => {
+         const r = renderer.domElement.getBoundingClientRect();
+         return r.width === viewport.clientWidth && r.height === viewport.clientHeight;
+     });
+     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+     // Set a known face-on test view; all geometry changes use pointer events.
+-    const point = await page.evaluate(({ kind, cycle }) => {
++    const point = await page.evaluate(async ({ kind, cycle, gestureSeed }) => {
+         cancelCameraAlignment(); controls.staticMoving = true;
+         camera.position.copy(controls.target).add(new THREE.Vector3(0, 0, 30));
+         camera.up.set(0, 1, 0); camera.zoom = .8; camera.updateProjectionMatrix();
+         controls.update(); fitStructureToView(true); camera.updateWorldMatrix(true, false);
+         structureGroup.updateWorldMatrix(true, true); updateVacuumHandles(); requestRender();
++        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+         const r = renderer.domElement.getBoundingClientRect();
+         const screen = world => { const p = world.clone().project(camera); return { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 }; };
+         if (kind === 'atom') {
+             const mesh = atomMeshes[cycle % 3];
+-            let start = screen(mesh.getWorldPosition(new THREE.Vector3()));
+-            if (getAtomIntersection({ clientX: start.x, clientY: start.y })?.object !== mesh) {
+-                // Slab layers may overlap from above. Inspect the same atom
+-                // from below rather than dragging an obscuring neighbor.
+-                camera.position.copy(controls.target).add(new THREE.Vector3(0, 0, -30));
++            const exposedPoint = () => {
++                const center = mesh.getWorldPosition(new THREE.Vector3());
++                const origin = screen(center);
++                const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
++                const radius = (mesh.geometry.parameters.radius || 1) * mesh.getWorldScale(new THREE.Vector3()).x;
++                const edge = screen(center.clone().addScaledVector(right, radius));
++                const pixels = Math.hypot(edge.x - origin.x, edge.y - origin.y);
++                for (const [x, y] of [[0, 0], [.4, 0], [-.4, 0], [0, .4], [0, -.4], [.75, 0], [-.75, 0], [0, .75], [0, -.75]]) {
++                    const point = { x: origin.x + x * pixels, y: origin.y + y * pixels };
++                    if (getAtomIntersection({ clientX: point.x, clientY: point.y })?.object === mesh) return point;
++                }
++                return null;
++            };
++            let start = exposedPoint();
++            // Layered structures sometimes have no exposed pixels from
++            // above or below; inspect the same atom from a side view then.
++            for (const direction of [[0, 0, -30], [30, 0, 0], [-30, 0, 0], [0, 30, 0], [0, -30, 0]]) {
++                if (start) break;
++                camera.position.copy(controls.target).add(new THREE.Vector3(...direction));
++                camera.up.set(0, direction[1] ? 0 : 1, direction[1] ? 1 : 0);
+                 controls.update(); fitStructureToView(true); camera.updateWorldMatrix(true, false);
+                 structureGroup.updateWorldMatrix(true, true); requestRender();
+-                start = screen(mesh.getWorldPosition(new THREE.Vector3()));
++                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
++                start = exposedPoint();
+             }
+-            if (getAtomIntersection({ clientX: start.x, clientY: start.y })?.object !== mesh) throw Error('Fixture atom obscured from both face-on views');
+-            return { ...start, dx: cycle % 2 ? -18 : 18, dy: -12 };
++            if (!start) throw Error('Fixture atom has no exposed sphere pixels from any axial view');
++            return { ...start, dx: (cycle % 2 ? -1 : 1) * (14 + gestureSeed % 5 * 2), dy: -(8 + gestureSeed % 4 * 2) };
+         }
+         for (const handle of vacuumDragState.handles.filter(h => h.userData.extendAxis === 'a' && h.userData.handleType === (cycle % 2 ? 'near' : 'far'))) {
+             // A boundary atom can cover the middle of a face edge. Find an
+@@ -76,11 +93,11 @@
+                 if (handle.parent) handle.parent.localToWorld(world);
+                 const start = screen(world);
+                 const hit = checkVacuumHandleIntersection({ clientX: start.x, clientY: start.y });
+-                if (hit?.extendAxis === 'a' && hit.handleType === handle.userData.handleType) return { ...start, dx: [24, -24, -24, 24][cycle % 4], dy: 0 };
++                if (hit?.extendAxis === 'a' && hit.handleType === handle.userData.handleType) return { ...start, dx: [1, -1, -1, 1][cycle % 4] * (12 + gestureSeed % 4 * 6), dy: 0 };
+             }
+         }
+         throw Error('Fixture frame edge obscured');
+-    }, { kind, cycle });
++    }, { kind, cycle, gestureSeed });
+     await page.mouse.move(point.x, point.y); await page.mouse.down();
+     const ownership = await page.evaluate(({ kind, point }) => ({
+         owns: kind === 'atom' ? !!draggedAtom : vacuumDragState.isDragging,
+@@ -90,7 +107,7 @@
+         kind, point
+     }), { kind, point });
+     expect(ownership.owns, JSON.stringify(ownership)).toBe(true);
+-    await page.mouse.move(point.x + point.dx, point.y + point.dy, { steps: 5 });
++    await page.mouse.move(point.x + point.dx, point.y + point.dy, { steps: 2 + gestureSeed % 9 });
+ }
+ 
+ // A display rebuild must reproduce the bonds already shown after an edit.

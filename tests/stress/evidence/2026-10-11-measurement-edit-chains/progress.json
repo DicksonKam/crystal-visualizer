@@ -79,7 +79,7 @@
     "fullBrowserSession": 90589,
     "fullBrowserStatus": "Running",
     "candidateExampleSession": 17660,
-    "candidateExampleStatus": "Running; first four Al/Si width sequences passed; remaining four examples pending",
+    "candidateExampleStatus": "Running; first six Al/Si/NaCl width sequences passed; graphene/slab/water pending",
     "navigationPassed": 1,
     "deleteHistoryPassed": 2
   },
@@ -89,5 +89,14 @@
     "candidateChainSession": 17660,
     "status": "Promoted main180 after verified focused pointer regression and ordinary Al chains; complete suite and six-example pilot running"
   },
-  "additionalCoverage": "Deleting earlier atoms and restoring preserved measurement identities through history and a fresh edit branch."
+  "additionalCoverage": "Deleting earlier atoms and restoring preserved measurement identities through history and a fresh edit branch.",
+  "preparedVariationCampaign": {
+    "root": "/private/tmp/crystal-measure-variation-campaign",
+    "status": "Prepared, not launched; wait for current ordinary-example pilot to free its browser slot.",
+    "plannedCases": 72,
+    "examples": 6,
+    "measurementOrders": 6,
+    "ordinaryPairs": "Silicon neighbors and Na-Cl, top slab atoms, H-O-H water; includes unmeasured atom editing.",
+    "variations": "Mouse step count and drag size; exposed-pixel picking with side views for layered atoms."
+  }
 }

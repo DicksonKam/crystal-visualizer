@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 60,
+    "variationPassedSoFar": 61,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -204,7 +204,8 @@
     "Graphene1440 order132 frame; captions remain visible in crowded geometry",
     "Slab900 order465 atom edit, fixed overlays and deletion undo;2.8462/2.8638 and59.79 match captions",
     "Slab900/1440 order465 frame, wide deletion undo;2.8462/2.8638 and59.79 match readable captions",
-    "Water900/1440 order231 close atom edit and deletion undo; captions clear of large atoms; sidebar restored1.3130/0.9202 and39.76 narrow,1.3284/0.9326 and39.11 wide"
+    "Water900/1440 order231 close atom edit and deletion undo; captions clear of large atoms; sidebar restored1.3130/0.9202 and39.76 narrow,1.3284/0.9326 and39.11 wide",
+    "Aluminium900 order231 measured atom, frame and deletion undo;4.5498/2.7571 and29.16 restored"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

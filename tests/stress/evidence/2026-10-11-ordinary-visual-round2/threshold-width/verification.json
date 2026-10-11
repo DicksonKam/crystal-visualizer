@@ -1,0 +1,7 @@
+{
+  "problem": "Fresh graphene Edit displays default threshold10.00 with last digit clipped; not a long-value edge case.",
+  "baseline": "failed: text40.81px, available34px; screenshot personally inspected",
+  "candidate": "8 passed,1.1m; default/narrow/wide screenshots inspected; field uses flexible grid track and keeps \u00c5 alongside input",
+  "rootStatus": "CSS promotion pending frozen baseline continuation; canonical regression saved",
+  "initialCandidateCorrection": "Fixed maximum track let spanning label grow unit column to105.5px. Flexible track plus row max-width keeps unit9.05px and field174.95px."
+}

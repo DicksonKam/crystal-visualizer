@@ -1,0 +1,45 @@
+
+Running 8 tests using 1 worker
+
+(node:82636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 1440px (19.5s)
+  ✓  2 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 800px (7.9s)
+  ✓  3 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 390px (4.8s)
+  ✓  4 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:44:1 › divider keyboard controls and canceled drag restore presentation state (2.9s)
+  ✓  5 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:57:1 › file-load status wrapping resizes the canvas without a window or divider gesture (2.9s)
+  ✓  6 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:66:1 › narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling (8.4s)
+  ✓  7 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/sidebar-layout.spec.cjs:94:1 › constraint threshold and its unit stay together across intermediate panel widths (10.7s)
+default {
+  grid: '174.953px 9.04688px',
+  width: 174.953125,
+  display: 'grid',
+  value: '10.00',
+  text: 40.80657958984375,
+  available: 139,
+  unitY: 414.3203125,
+  fieldY: 414.328125
+}
+narrow {
+  grid: '174.953px 9.04688px',
+  width: 174.953125,
+  display: 'grid',
+  value: '10.078234',
+  text: 73.45184326171875,
+  available: 139,
+  unitY: 678.4765625,
+  fieldY: 678.484375
+}
+wide {
+  grid: '174.953px 9.04688px',
+  width: 174.953125,
+  display: 'grid',
+  value: '10.078234',
+  text: 73.45184326171875,
+  available: 139,
+  unitY: 395.1328125,
+  fieldY: 395.140625
+}
+  ✓  8 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/threshold-width.spec.cjs:3:1 › default graphene constraint threshold and typed decimals remain fully readable (7.4s)
+
+  8 passed (1.1m)

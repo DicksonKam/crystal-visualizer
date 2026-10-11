@@ -58,6 +58,11 @@
       "evidence": "coordinate-width/before.png",
       "status": "Candidate fix and responsive regression verified; root promotion pending.",
       "reproduction": "Load H2O, enter Edit, drag oxygen, select atom 1."
+    },
+    {
+      "description": "Default graphene z constraint value10.00 is clipped by70px number field",
+      "evidence": "threshold-width/before.png",
+      "status": "CSS candidate visually verified and8 related checks passed; root promotion pending"
     }
   ],
   "candidateFixes": [

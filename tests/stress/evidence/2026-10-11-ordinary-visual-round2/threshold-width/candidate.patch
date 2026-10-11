@@ -1,0 +1,37 @@
+--- /private/tmp/crystal-ordinary-markers-candidate/styles.css	2026-10-11 14:13:40
++++ /private/tmp/crystal-ordinary-threshold-candidate/styles.css	2026-10-11 15:05:42
+@@ -1384,7 +1384,9 @@
+ }
+ 
+ .sd-batch-row {
+-    display: flex;
++    display: grid;
++    grid-template-columns: minmax(0, 1fr) max-content;
++    max-width: 12rem;
+     align-items: center;
+     gap: 0.5rem;
+     margin-bottom: 0.75rem;
+@@ -1392,8 +1394,13 @@
+     color: var(--text-secondary);
+ }
+ 
++.sd-batch-row label {
++    grid-column: 1 / -1;
++}
++
+ .z-threshold-input {
+-    width: 70px;
++    width: 100%;
++    min-width: 0;
+     padding: 0.35rem 0.5rem;
+     background: var(--bg-tertiary);
+     border: 1px solid var(--border-color);
+@@ -1945,8 +1952,6 @@
+     .info-value { text-align: left; }
+     .periodic-row, .add-atom-coord-type, .add-atom-coords, .shift-coords,
+     .sd-buttons, .sd-batch-buttons, .sd-batch-row { flex-wrap: wrap; }
+-    .sd-batch-row { display: grid; grid-template-columns: 70px max-content; }
+-    .sd-batch-row label { grid-column: 1 / -1; }
+     .periodic-axis { flex: 1 1 74px; min-width: 74px; }
+     .coord-input-group, .shift-input-group { flex: 1 1 60px; min-width: 0; }
+     .element-select { min-width: 0; }

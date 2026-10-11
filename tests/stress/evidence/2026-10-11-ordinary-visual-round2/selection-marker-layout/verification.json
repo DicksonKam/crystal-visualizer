@@ -34,7 +34,8 @@
       "log": "/private/tmp/crystal-ordinary-three-fixes-visual-v2.log",
       "seconds": 1800,
       "seed": 1602,
-      "change": "Only visual harness UI deadline extended from 5s to15s; app source unchanged."
+      "change": "Only visual harness UI deadline extended from 5s to15s; app source unchanged.",
+      "firstChain": "Seed1602:120 actions46 screenshots passed146.58s; earlier screenshot timeout no longer reproduces."
     }
   },
   "combinedBrowserSuite": {

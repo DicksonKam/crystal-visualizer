@@ -1,0 +1,42 @@
+
+Running 1 test using 1 worker
+
+(node:82398) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/threshold-width.spec.cjs:3:1 › default graphene constraint threshold and typed decimals remain fully readable (11.3s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/threshold-width.spec.cjs:3:1 › default graphene constraint threshold and typed decimals remain fully readable 
+
+    Error: default: threshold 10.00 is cut off
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 34
+    Received:    40.80657958984375
+
+      10 |   await page.screenshot({path:info.outputPath(name+'.png')});
+      11 |   const metric=await page.locator('#fixZThreshold').evaluate(o=>{const s=getComputedStyle(o),c=document.createElement('canvas').getContext('2d');c.font=s.font;const unit=o.nextElementSibling.getBoundingClientRect(),b=o.getBoundingClientRect();return{value:o.value,text:c.measureText(o.value).width,available:o.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight)-18,unitY:unit.y+unit.height/2,fieldY:b.y+b.height/2};});
+    > 12 |   expect(metric.text,`${name}: threshold ${metric.value} is cut off`).toBeLessThanOrEqual(metric.available);expect(Math.abs(metric.unitY-metric.fieldY)).toBeLessThan(2);
+         |                                                                       ^
+      13 |   await page.locator('#fixZThreshold').fill('10.078234');
+      14 |  }
+      15 | });
+        at /private/tmp/crystal-ordinary-threshold-candidate/tests/browser/threshold-width.spec.cjs:12:71
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-threshold-baseline/threshold-width-default-gr-e49d2-imals-remain-fully-readable-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-threshold-baseline/threshold-width-default-gr-e49d2-imals-remain-fully-readable-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-threshold-baseline/threshold-width-default-gr-e49d2-imals-remain-fully-readable-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-threshold-baseline/threshold-width-default-gr-e49d2-imals-remain-fully-readable-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/threshold-width.spec.cjs:3:1 › default graphene constraint threshold and typed decimals remain fully readable 

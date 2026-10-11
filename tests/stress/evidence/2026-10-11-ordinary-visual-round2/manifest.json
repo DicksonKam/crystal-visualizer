@@ -174,9 +174,9 @@
     "deviceScaleFactor": 2
   },
   "finalFourFixVisualCampaign": {
-    "status": "running",
+    "status": "complete",
     "session": 58047,
-    "log": "/private/tmp/crystal-ordinary-final-visual-v2.log",
+    "log": "combined-candidate/final-four-fix-campaign.log",
     "seconds": 1200,
     "startSeed": 1801,
     "deviceScaleFactor": 1,
@@ -184,7 +184,29 @@
     "serverRoot": "/private/tmp/crystal-ordinary-threshold-candidate",
     "serverSession": 78229,
     "url": "http://127.0.0.1:4183/",
-    "initialLaunch": "Connection refused before server was started; zero interactions. Corrected launch has passed its first three chains."
+    "initialLaunch": "Connection refused before server was started; zero interactions. Corrected launch has passed its first three chains.",
+    "exitCode": 0,
+    "workflowSteps": 2760,
+    "capturedImages": 1047,
+    "elapsedSeconds": 1216.9314602079999,
+    "lastSourceHashes": {
+      "app.js": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
+      "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+      "camera.js": "00f8eaf6daa9f6f98a4f965f9b56fbcfcf69d7d292e1b1849e8d73446e4a0342",
+      "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+      "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
+      "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+      "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+      "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+      "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+      "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+      "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+      "index.html": "049dd6560975c975734f3e0e5a4509789d5bd23f835cabedcfc70fed9f3cc034",
+      "tests/stress/edit-scenario.cjs": "b6bbbacc93e5d885cc9db11cca9a9a27f62cbd3eb88bd0312ef2ef7917fc1697",
+      "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+      "tests/stress/visual-campaign.cjs": "1be94570514bbd38c1ffd965af677a2b44f8a40920d7452666f0a729f5356157"
+    },
+    "coverage": "combined-candidate/final-sequence-coverage.json"
   },
   "broaderThreeFixBrowserSuite": {
     "status": "terminal",

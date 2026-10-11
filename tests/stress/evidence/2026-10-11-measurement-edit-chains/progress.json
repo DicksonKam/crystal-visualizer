@@ -85,8 +85,8 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 17,
-    "fullBrowserPassedSoFar": 144
+    "variationPassedSoFar": 18,
+    "fullBrowserPassedSoFar": 177
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -152,7 +152,9 @@
     "Silicon900 reverse measurement order251",
     "Silicon1440 reverse order251",
     "Frame release over atom retains markers and labels",
-    "NaCl900 reverse order251 cell edit and bond refresh"
+    "NaCl900 reverse order251 cell edit and bond refresh",
+    "NaCl1440 reverse251 cell edit",
+    "Graphene900 reverse321 cell edit and bond refresh"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

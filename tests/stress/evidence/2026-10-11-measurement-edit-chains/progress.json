@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 23,
+    "variationPassedSoFar": 25,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -161,7 +161,9 @@
     "Aluminium boundary-edit regression final history",
     "Slab900 reverse654 unmeasured atom move, bonds, frame edit and deletion history; distances2.8638/2.8462 and angle59.79 match rendered labels",
     "Slab1440 reverse654 frame and deletion undo",
-    "Water900 reverse312 atom edit and deletion undo;98.35angle and0.9301/0.8784distances agree with labels"
+    "Water900 reverse312 atom edit and deletion undo;98.35angle and0.9301/0.8784distances agree with labels",
+    "Water1440 reverse312 atom edit and deletion history",
+    "Aluminium900 order213 frame edit and deletion undo; camera remains after history changes, partially outside narrow view"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

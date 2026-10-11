@@ -1,0 +1,33 @@
+{
+  "goalScope": "Realistic editing with active three-atom measurements, not large-label formatting",
+  "sourceVersion": 177,
+  "productHashes": {
+    "app.js": "6808fa8b310ecd1fcb4b0f3608e96081f4a1681ea933b9b7bbfe66ceb0ed7ce8",
+    "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
+    "index.html": "d72f9fb973a87611ab2da33aa2730649209be75f3b608371485cba57e5f2497d"
+  },
+  "currentRun": {
+    "session": 29337,
+    "status": "Verified live; results pending",
+    "log": "/private/tmp/crystal-measure-edit-discovery-v4.log",
+    "report": "/private/tmp/crystal-measure-edit-discovery-v4.json"
+  },
+  "sequence": [
+    "Measure three atoms",
+    "Edit mode preserving measurement",
+    "Boundary atom drag",
+    "First cell-frame drag",
+    "Undo and redo each geometry edit",
+    "Shift measured atoms",
+    "Add carbon",
+    "Undo and redo addition",
+    "Measure/edit mode round trip",
+    "Repeat after sidebar resizing"
+  ],
+  "inspected": [
+    "0-atom-committed.png",
+    "0-shift.png"
+  ],
+  "investigation": "Earlier harness failures were an unexported helper and unavailable helium option. Next drag-start failure required waiting for settled renderer/sidebar dimensions before projecting test click. Corrected run still active; no app bug claimed yet.",
+  "productChanges": false
+}

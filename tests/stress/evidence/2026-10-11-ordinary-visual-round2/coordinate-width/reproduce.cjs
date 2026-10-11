@@ -1,0 +1,14 @@
+const {chromium}=require('/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test');
+const fs=require('node:fs/promises');
+const root='/Users/dicksonkam/Projects/crystal-visualizer';
+(async()=>{const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});try{const page=await browser.newPage({viewport:{width:1280,height:800}});
+await page.route('https://cdnjs.cloudflare.com/**/three.min.js',r=>r.fulfill({path:root+'/node_modules/three/build/three.min.js',contentType:'text/javascript'}));for(const c of ['OrbitControls','TrackballControls'])await page.route(`https://cdn.jsdelivr.net/**/${c}.js`,r=>r.fulfill({path:root+`/node_modules/three/examples/js/controls/${c}.js`,contentType:'text/javascript'}));await page.route('https://fonts.googleapis.com/**',r=>r.abort());await page.route('https://fonts.gstatic.com/**',r=>r.abort());
+await page.goto('http://127.0.0.1:4173/');
+await page.locator('#fileInput').setInputFiles({name:'H2O.xyz',mimeType:'text/plain',buffer:await fs.readFile(root+'/examples/xyz/H2O.xyz')});await page.locator('#statusText').filter({hasText:'Loaded'}).waitFor();
+await page.locator('[data-mode="edit"]').click();await page.waitForTimeout(300);
+const point=await page.evaluate(()=>{const r=renderer.domElement.getBoundingClientRect();const p=atomMeshes[0].getWorldPosition(new THREE.Vector3()).project(camera);return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2}});
+await page.mouse.move(point.x,point.y);await page.mouse.down();await page.mouse.move(point.x+37,point.y-22,{steps:6});await page.mouse.up();
+await page.locator('#atomJumpInput').fill('1');await page.locator('#atomJumpInput').press('Enter');await page.locator('#editAtomCoordMode').waitFor();
+await page.locator('#editAtomCoordMode').scrollIntoViewIfNeeded();await page.screenshot({path:'/private/tmp/crystal-ordinary-coordinate-width-before.png'});
+console.log(JSON.stringify(await page.locator('.exact-atom-section input').evaluateAll(inputs=>inputs.map(o=>{const s=getComputedStyle(o),c=document.createElement('canvas').getContext('2d');c.font=s.font;return{value:o.value,width:o.clientWidth,textWidth:c.measureText(o.value).width,padding:parseFloat(s.paddingLeft)+parseFloat(s.paddingRight)}}))));
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

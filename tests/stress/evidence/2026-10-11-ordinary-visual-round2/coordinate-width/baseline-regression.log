@@ -1,0 +1,78 @@
+
+Running 2 tests using 1 worker
+
+(node:79292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:3:31 › precise atom coordinates stay readable while resizing the sidebar at 1280px (12.2s)
+(node:79322) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › ../../../../private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:3:31 › precise atom coordinates stay readable while resizing the sidebar at 900px (10.6s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:3:31 › precise atom coordinates stay readable while resizing the sidebar at 1280px 
+
+    Error: default: complete value 0.041461133 is clipped
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 34.8
+    Received:    89.77447509765625
+
+      15 |   const metrics=await page.locator('.exact-atom-section input').evaluateAll(inputs=>inputs.map(o=>{const s=getComputedStyle(o),c=document.createElement('canvas').getContext('2d');c.font=s.font;return{value:o.value,available:o.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight)-18,text:c.measureText(o.value).width};}));
+      16 |   expect(metrics.map(o=>o.value)).toEqual(values);
+    > 17 |   for(const field of metrics)expect(field.text,`${name}: complete value ${field.value} is clipped`).toBeLessThanOrEqual(field.available);
+         |                                                                                                     ^
+      18 |  }
+      19 | });
+      20 |
+        at /private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:17:101
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-ec8c6-izing-the-sidebar-at-1280px-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-ec8c6-izing-the-sidebar-at-1280px-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-ec8c6-izing-the-sidebar-at-1280px-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-ec8c6-izing-the-sidebar-at-1280px-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › ../../../../private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:3:31 › precise atom coordinates stay readable while resizing the sidebar at 900px 
+
+    Error: default: complete value 0.064372189 is clipped
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 34.8
+    Received:    89.77447509765625
+
+      15 |   const metrics=await page.locator('.exact-atom-section input').evaluateAll(inputs=>inputs.map(o=>{const s=getComputedStyle(o),c=document.createElement('canvas').getContext('2d');c.font=s.font;return{value:o.value,available:o.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight)-18,text:c.measureText(o.value).width};}));
+      16 |   expect(metrics.map(o=>o.value)).toEqual(values);
+    > 17 |   for(const field of metrics)expect(field.text,`${name}: complete value ${field.value} is clipped`).toBeLessThanOrEqual(field.available);
+         |                                                                                                     ^
+      18 |  }
+      19 | });
+      20 |
+        at /private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:17:101
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-54e52-sizing-the-sidebar-at-900px-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-54e52-sizing-the-sidebar-at-900px-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-54e52-sizing-the-sidebar-at-900px-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-ordinary-coordinate-baseline/coordinate-width-precise-a-54e52-sizing-the-sidebar-at-900px-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › ../../../../private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:3:31 › precise atom coordinates stay readable while resizing the sidebar at 1280px 
+    [chromium] › ../../../../private/tmp/crystal-ordinary-coordinate-tests/coordinate-width.spec.cjs:3:31 › precise atom coordinates stay readable while resizing the sidebar at 900px 

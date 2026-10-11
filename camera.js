@@ -109,6 +109,12 @@
             const min = Math.min(...depths), max = Math.max(...depths);
             return { near: Math.max(0.0001, min > 0 ? min * 0.5 : 0.0001), far: Math.max(1, max * 1.25) };
         }
+        function orthographicDistance(bounds, pose) {
+            const direction = back(pose.quaternion);
+            const front = Math.max(...corners(bounds).map(point => point.sub(pose.pivot).dot(direction)));
+            const padding = Math.max(0.01, bounds.getSize(new THREE.Vector3()).length() * 0.01);
+            return Math.max(pose.distance, front + padding);
+        }
         function fit(bounds, quaternion, aspect, frustumHeight = 15, fov = null, padding = POLICY.fitPadding) {
             if (!(aspect > 0) || !Number.isFinite(aspect)) throw new Error('Invalid camera viewport');
             const pivot = bounds.getCenter(new THREE.Vector3());
@@ -127,7 +133,7 @@
             if (![distance, pose.zoom, ...pivot.toArray()].every(Number.isFinite)) throw new Error('Structure cannot be fitted to a finite camera view');
             return { ...pose, ...clipping(bounds, pose) };
         }
-        return { radians, degrees, unit, back, angularDistance, orientation, axes, canonical, nearestAxis, automaticOrientation, clonePose, interpolate, position, fit, clipping };
+        return { radians, degrees, unit, back, angularDistance, orientation, axes, canonical, nearestAxis, automaticOrientation, clonePose, interpolate, position, fit, clipping, orthographicDistance };
     }
 
     // The adapter owns Three.js objects and controls; this controller owns decisions

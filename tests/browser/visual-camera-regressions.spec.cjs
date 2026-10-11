@@ -1,11 +1,13 @@
 const {test, expect, upload} = require('./fixtures.cjs');
 const molecule = '3\nedited small molecule\nC -5 0 0\nO 0 0 0\nC 5 0 0\n';
-test('manual orbit keeps all atom geometry inside the depth range', async ({page}, info) => {
+for(const closeView of [false,true]) test(`manual orbit keeps all atom geometry inside the depth range${closeView?' in a close orthographic view':''}`, async ({page}, info) => {
     await upload(page, molecule, 'edited.xyz');
-    await page.evaluate(() => {
-        cameraController.setPose(cameraMath.fit(getStructureBounds(), cameraMath.orientation([0,0,1],[0,1,0]), perspectiveCamera.aspect), 'fit');
+    await page.evaluate(closeView => {
+        const pose=cameraMath.fit(getStructureBounds(), cameraMath.orientation([0,0,1],[0,1,0]), perspectiveCamera.aspect);
+        if(closeView) pose.distance=2;
+        cameraController.setPose(pose, 'fit');
         clearManualCameraMotion(); controls.staticMoving = true;
-    });
+    }, closeView);
     const canvas = page.locator('canvas[aria-label^="3D structure"]');
     const box = await canvas.boundingBox();
     const failures = [];

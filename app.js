@@ -5130,7 +5130,19 @@ function getCameraPose() {
 
 function updateCameraClipping() {
     if (!cameraMath || !structureGroup) return;
-    const planes = cameraMath.clipping(getStructureBounds(), getCameraPose());
+    const bounds = getStructureBounds(), pose = getCameraPose();
+    if (camera.isOrthographicCamera) {
+        const distance = cameraMath.orthographicDistance(bounds, pose);
+        if (distance > pose.distance) {
+            // Orthographic magnification depends on zoom, not eye distance.
+            // Keep geometry in front of the eye so both rendering and the
+            // controls' camera-origin picking rays can reach every visible atom.
+            pose.distance = distance;
+            camera.position.copy(cameraMath.position(pose));
+            camera.updateMatrixWorld(true);
+        }
+    }
+    const planes = cameraMath.clipping(bounds, pose);
     if (camera.near === planes.near && camera.far === planes.far) return;
     camera.near = planes.near;
     camera.far = planes.far;

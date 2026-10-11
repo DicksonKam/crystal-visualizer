@@ -164,6 +164,29 @@ test('projection-aware fitting and clipping include every bound corner in narrow
     close(POLICY.maxCorrectionDegrees, 5);
 });
 
+test('orthographic depth containment preserves screen positions and puts geometry ahead of picking rays', () => {
+    const bounds = new THREE.Box3(new THREE.Vector3(-5,-1,-1),new THREE.Vector3(5,1,1));
+    for(const angle of [0,45,90,180]) {
+        const pose={quaternion:q(angle),pivot:new THREE.Vector3(2,.5,0),distance:2,zoom:.6};
+        const camera=new THREE.OrthographicCamera(-7.5,7.5,7.5,-7.5,.0001,100);
+        camera.position.copy(math.position(pose));camera.quaternion.copy(pose.quaternion);camera.zoom=pose.zoom;
+        camera.updateProjectionMatrix();camera.updateMatrixWorld(true);
+        const original=bounds.max.clone().project(camera);
+        pose.distance=math.orthographicDistance(bounds,pose);
+        const planes=math.clipping(bounds,pose);
+        camera.position.copy(math.position(pose));camera.near=planes.near;camera.far=planes.far;
+        camera.updateProjectionMatrix();camera.updateMatrixWorld(true);
+        const projected=bounds.max.clone().project(camera);
+        close(projected.x,original.x);close(projected.y,original.y);
+        for(const x of [-5,5])for(const y of [-1,1])for(const z of [-1,1]) {
+            const point=new THREE.Vector3(x,y,z);
+            const depth=-point.clone().applyMatrix4(camera.matrixWorldInverse).z;
+            assert.ok(depth>camera.near && depth<camera.far);
+            assert.ok(Math.abs(point.project(camera).z)<=1);
+        }
+    }
+});
+
 test('recent reversal overrides earlier approach and settled ineligible views leave no pending work', () => {
     const r = rig(); r.controller.begin('rotate', 0);
     r.setAngle(1); r.controller.tick(100);

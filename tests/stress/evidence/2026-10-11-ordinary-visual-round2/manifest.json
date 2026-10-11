@@ -52,6 +52,12 @@
       "evidence": "atom-label-depth/rotated-before.png",
       "status": "Reproduced;root fix pending",
       "reproduction": "LoadNaCl;ShowLabels;Reset;AtomSize ArrowRight6;two normal mouse camera drags."
+    },
+    {
+      "description": "Exact atom coordinates are clipped at the default sidebar width after a normal three-atom molecule drag.",
+      "evidence": "coordinate-width/before.png",
+      "status": "Candidate fix and responsive regression verified; root promotion pending.",
+      "reproduction": "Load H2O, enter Edit, drag oxygen, select atom 1."
     }
   ],
   "candidateFixes": [

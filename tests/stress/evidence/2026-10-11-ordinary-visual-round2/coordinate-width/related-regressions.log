@@ -1,0 +1,19 @@
+
+Running 12 tests using 1 worker
+
+(node:79405) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/selection-history.spec.cjs:17:1 › undo and redo restore the context of an edit multi-selection without making an oversized measurement (12.5s)
+  ✓   2 [chromium] › tests/browser/selection-history.spec.cjs:47:1 › measurement undo replaces the selection, preserves order and resolves current positions (6.3s)
+  ✓   3 [chromium] › tests/browser/selection-history.spec.cjs:81:1 › selection history distinguishes periodic copies and safely omits copies no longer displayed (7.3s)
+  ✓   4 [chromium] › tests/browser/selection-history.spec.cjs:114:1 › document replacement and disappearing periodic selections reset measurement purpose (7.6s)
+  ✓   5 [chromium] › tests/browser/selection-history.spec.cjs:145:1 › selection undo and redo keep the currently displayed trajectory frame (5.1s)
+  ✓   6 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 1440px (9.8s)
+  ✓   7 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 800px (6.0s)
+  ✓   8 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 390px (4.2s)
+  ✓   9 [chromium] › tests/browser/sidebar-layout.spec.cjs:44:1 › divider keyboard controls and canceled drag restore presentation state (2.6s)
+  ✓  10 [chromium] › tests/browser/sidebar-layout.spec.cjs:57:1 › file-load status wrapping resizes the canvas without a window or divider gesture (2.2s)
+  ✓  11 [chromium] › tests/browser/sidebar-layout.spec.cjs:66:1 › narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling (5.4s)
+  ✓  12 [chromium] › tests/browser/sidebar-layout.spec.cjs:94:1 › constraint threshold and its unit stay together across intermediate panel widths (7.6s)
+
+  12 passed (1.3m)

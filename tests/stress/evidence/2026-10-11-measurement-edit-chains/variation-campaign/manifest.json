@@ -1,5 +1,5 @@
 {
-  "status": "Prepared, not launched",
+  "status": "Running",
   "mainVersion": 180,
   "mainAppHash": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
   "repeatEach": 36,
@@ -41,10 +41,15 @@
   ],
   "purpose": "Measure normal bonds across species and slab layers, edit measured and unmeasured atoms, preserve measurements across frame and atom editing/history combinations.",
   "hashes": {
-    "tests/browser/measurement-edit-helpers.cjs": "ef7b9609be8fe62f2831e17f3ed7ce53b443d5854714abe4d2cf93e6d1e8046b",
+    "tests/browser/measurement-edit-helpers.cjs": "b0414a094cdd334c7c8d0becb350774b10dd3bfb18cea69a80f707e6c510caa2",
     "tests/browser/fixtures.cjs": "19f48a1c5a572bfcc1e39b2b06ec7d1f2ce74922fcdde5ef083ddc0aa4887ffd",
-    "tests/browser/measurement-example-chains.spec.cjs": "c29a2a40a34fb5d77be4aecce961c0485231302801a6d1b813094d2eb8a814e3",
+    "tests/browser/measurement-example-chains.spec.cjs": "baacb79083c43617da688791b804528ea7d17c9ab4ebfb337edb3473e7eb60a1",
     "tests/stress/edit-scenario.cjs": "fa6b5b82e96c12f2cb635ce42e743af9dfbb1830194ac5014edbfa0ca8eb0925"
   },
-  "gesturePicking": "Wait for rendered markers after fitting; choose exposed sphere pixels; inspect side views if layers hide the target."
+  "gesturePicking": "Wait for rendered markers after fitting; choose exposed sphere pixels; inspect side views if layers hide the target.",
+  "identityValidation": "Assert original three selected indices after every combination; verify actual distances, angle, markers, anchors, bonds, geometry and selective-dynamics history.",
+  "session": 91395,
+  "log": "/private/tmp/crystal-measure-variation-campaign.log",
+  "report": "/private/tmp/crystal-measure-variation-campaign.json",
+  "output": "/private/tmp/crystal-measure-variation-output"
 }

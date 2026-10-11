@@ -1,0 +1,29 @@
+
+Running 12 tests using 1 worker
+
+(node:58431) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.8m)
+  ✓   2 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (2.2m)
+(node:58731) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.7m)
+  ✓   4 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (2.2m)
+(node:59026) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.7m)
+  ✓   6 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (2.1m)
+(node:59139) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.9m)
+  ✓   8 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (2.0m)
+(node:59563) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (1.6m)
+  ✓  10 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (1.8m)
+(node:59660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 900px (41.8s)
+  ✓  12 [chromium] › tests/browser/measurement-example-chains.spec.cjs:7:34 › example measurements survive a compound edit chain at 1440px (47.2s)
+
+  12 passed (20.5m)

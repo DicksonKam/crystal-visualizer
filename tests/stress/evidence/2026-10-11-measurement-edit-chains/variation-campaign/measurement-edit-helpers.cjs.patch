@@ -1,6 +1,19 @@
 --- tests/browser/measurement-edit-helpers.cjs	2026-10-11 10:13:59
-+++ /private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-edit-helpers.cjs	2026-10-11 10:30:28
-@@ -39,34 +39,51 @@
++++ /private/tmp/crystal-measure-variation-campaign/tests/browser/measurement-edit-helpers.cjs	2026-10-11 10:38:11
+@@ -8,9 +8,11 @@
+     for (let i = 0; i < actual.lattice.length; i++) for (let axis = 0; axis < 3; axis++) expect(actual.lattice[i][axis]).toBeCloseTo(expected.lattice[i][axis], 7);
+ }
+ 
+-async function checkMeasurement(page) {
++async function checkMeasurement(page, expectedIndices) {
+     const state = await capture(page);
+     expect(state.violations).toEqual([]);
++    expect(state.selection.identities).toHaveLength(3);
++    if (expectedIndices) expect(state.selection.identities.map(identity => identity[0])).toEqual(expectedIndices);
+     const view = await page.evaluate(() => {
+         const points = selectedAtoms.map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()));
+         const distances = points.slice(1).map((point, i) => point.distanceTo(points[i]));
+@@ -39,34 +41,51 @@
      return state;
  }
  
@@ -62,7 +75,7 @@
          }
          for (const handle of vacuumDragState.handles.filter(h => h.userData.extendAxis === 'a' && h.userData.handleType === (cycle % 2 ? 'near' : 'far'))) {
              // A boundary atom can cover the middle of a face edge. Find an
-@@ -76,11 +93,11 @@
+@@ -76,11 +95,11 @@
                  if (handle.parent) handle.parent.localToWorld(world);
                  const start = screen(world);
                  const hit = checkVacuumHandleIntersection({ clientX: start.x, clientY: start.y });
@@ -76,7 +89,7 @@
      await page.mouse.move(point.x, point.y); await page.mouse.down();
      const ownership = await page.evaluate(({ kind, point }) => ({
          owns: kind === 'atom' ? !!draggedAtom : vacuumDragState.isDragging,
-@@ -90,7 +107,7 @@
+@@ -90,7 +109,7 @@
          kind, point
      }), { kind, point });
      expect(ownership.owns, JSON.stringify(ownership)).toBe(true);

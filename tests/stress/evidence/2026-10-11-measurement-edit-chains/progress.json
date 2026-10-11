@@ -30,7 +30,7 @@
     "0-atom-committed.png",
     "0-shift.png"
   ],
-  "investigation": "Readable and spaced measurement annotations promoted with visible-marker picking; normal-example combinations continue.",
+  "investigation": "Five confirmed visual/interaction faults corrected across the goal; normal examples pass; broader gesture/order variations and full main regressions continue.",
   "productChanges": true,
   "nextInvestigation": "Inspect all six ordinary examples across near/far growth/shrink and panel collapse; finish current full regression; run sustained campaign.",
   "measurementSizeFix": {
@@ -79,9 +79,12 @@
     "fullBrowserSession": 90589,
     "fullBrowserStatus": "Running",
     "candidateExampleSession": 17660,
-    "candidateExampleStatus": "Running; 8 Al/Si/NaCl/graphene width sequences passed, slab and water pending",
+    "candidateExampleStatus": "Terminal exit0; all12 normal example-width combinations passed in20.5minutes",
     "navigationPassed": 1,
-    "deleteHistoryPassed": 2
+    "deleteHistoryPassed": 2,
+    "candidateExamplePassed": 12,
+    "variationSession": 91395,
+    "variationStatus": "Running72 cases on main180; isolated harness fixed for reproducibility"
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -92,13 +95,14 @@
   "additionalCoverage": "Deleting earlier atoms and restoring preserved measurement identities through history and a fresh edit branch.",
   "preparedVariationCampaign": {
     "root": "/private/tmp/crystal-measure-variation-campaign",
-    "status": "Prepared, not launched; wait for current ordinary-example pilot to free its browser slot.",
+    "status": "Running",
     "plannedCases": 72,
     "examples": 6,
     "measurementOrders": 6,
     "ordinaryPairs": "Silicon neighbors and Na-Cl, top slab atoms, H-O-H water; includes unmeasured atom editing.",
     "variations": "Mouse step count and drag size; exposed-pixel picking with side views for layered atoms.",
-    "collectedCases": 72
+    "collectedCases": 72,
+    "session": 91395
   },
   "personallyInspectedNormalExamples": [
     "Aluminium",

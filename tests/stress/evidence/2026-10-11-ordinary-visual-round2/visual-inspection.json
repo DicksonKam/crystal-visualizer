@@ -164,6 +164,22 @@
         "seed-1803-step-72-rotate-after.png"
       ],
       "observations": "Narrow-window Al FCC rotation shows all twelve cell edges, four atoms and readable selected point 1. Bonds are explicitly disabled; no stale bonds remain visible."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1804,
+      "screenshots": [
+        "seed-1804-step-84-periodic-after.png",
+        "seed-1804-step-90-playback-after.png"
+      ],
+      "observations": "Water trajectory with c periodic replication, hidden cell/bonds and labels enabled. Base and replica atoms remain visible after frame changes; frame counter 5/24 and playback triangle render clearly. Ghost H selection is consistent with its separate projected position; no stale bond geometry is visible with bonds disabled."
+    },
+    {
+      "campaign": "final four-fix focused high-density regression",
+      "screenshots": [
+        "high-density-rotated-atom-numbers-5.png"
+      ],
+      "observations": "NaCl at DPR2: foreground Na obscures portions of rear Cl number 5 and 7; visible labels remain readable. This matches the eight-view passing pixel occlusion check."
     }
   ],
   "candidateInspections": [

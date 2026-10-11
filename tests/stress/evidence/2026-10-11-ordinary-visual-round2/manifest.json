@@ -210,5 +210,22 @@
       "app.js": 183,
       "styles.css": 54
     }
+  },
+  "finalFourFixHighDensity": {
+    "status": "passed",
+    "tests": 7,
+    "duration": "4.2 minutes",
+    "deviceScaleFactor": 2,
+    "log": "combined-candidate/final-density/passed.log",
+    "appHash": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
+    "cssHash": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+    "scope": [
+      "eight-view rendered label-depth comparison",
+      "coordinate widths at two window sizes",
+      "marker guide colors",
+      "twelve rotations and marker picking",
+      "displaced marker drag with undo/redo",
+      "constraint input widths"
+    ]
   }
 }

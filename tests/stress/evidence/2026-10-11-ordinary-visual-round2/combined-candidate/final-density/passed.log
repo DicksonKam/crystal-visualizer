@@ -1,0 +1,14 @@
+
+Running 7 tests using 1 worker
+
+(node:84479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/atom-label-depth.spec.cjs:5:1 › ordinary atom numbers cannot paint over a nearer atom after rotation (2.8m)
+  ✓  2 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/coordinate-width.spec.cjs:4:31 › precise atom coordinates stay readable while resizing the sidebar at 1280px (11.0s)
+  ✓  3 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/coordinate-width.spec.cjs:4:31 › precise atom coordinates stay readable while resizing the sidebar at 900px (8.2s)
+  ✓  4 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-colors.spec.cjs:3:1 › crowded edit checkmarks and measurement numbers retain matching guide colors (10.0s)
+  ✓  5 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-layout.spec.cjs:4:1 › ordinary rotated perovskite retains readable and selectable measurement point numbers (25.0s)
+  ✓  6 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-layout.spec.cjs:37:1 › a displaced point marker starts the correct atom drag and survives undo (14.7s)
+  ✓  7 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/threshold-width.spec.cjs:3:1 › default graphene constraint threshold and typed decimals remain fully readable (12.6s)
+
+  7 passed (4.2m)

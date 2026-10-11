@@ -1,0 +1,1 @@
+const c=require('/private/tmp/crystal-ordinary-threshold-candidate/playwright.config.cjs');module.exports={...c,use:{...c.use,deviceScaleFactor:2},projects:c.projects.map(p=>({...p,use:{...p.use,deviceScaleFactor:2}}))};

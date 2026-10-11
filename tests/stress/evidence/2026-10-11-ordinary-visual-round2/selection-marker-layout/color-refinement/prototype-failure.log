@@ -1,0 +1,46 @@
+
+Running 1 test using 1 worker
+
+(node:83742) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-colors.spec.cjs:3:1 › crowded edit checkmarks and measurement numbers retain matching guide colors (10.7s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-colors.spec.cjs:3:1 › crowded edit checkmarks and measurement numbers retain matching guide colors 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        62932,
+    -   62932,
+    +   15817653,
+      ]
+
+      11 |  const colors=()=>page.evaluate(()=>selectionRings.map((s,i)=>({index:i,color:s.userData.annotationLeader?.material.color.getHex(),visible:!!s.userData.annotationLeader?.visible})).filter(s=>s.visible));
+      12 |  await expect.poll(async()=> (await colors()).length).toBe(2);
+    > 13 |  const edit=await colors();expect(edit).toHaveLength(2);expect(edit.map(s=>s.color)).toEqual([0x00f5d4,0x00f5d4]);
+         |                                                                                      ^
+      14 |  await page.screenshot({path:info.outputPath('edit-guides.png')});
+      15 |  await page.locator('#clearSelectionBtn').click();await page.locator('[data-mode="measure"]').click();
+      16 |  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
+        at /private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-colors.spec.cjs:13:86
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-color-prototype-v2/selection-marker-colors-cr-db1d7-etain-matching-guide-colors-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-marker-color-prototype-v2/selection-marker-colors-cr-db1d7-etain-matching-guide-colors-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-color-prototype-v2/selection-marker-colors-cr-db1d7-etain-matching-guide-colors-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-marker-color-prototype-v2/selection-marker-colors-cr-db1d7-etain-matching-guide-colors-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-colors.spec.cjs:3:1 › crowded edit checkmarks and measurement numbers retain matching guide colors 

@@ -1,0 +1,17 @@
+
+Running 10 tests using 1 worker
+
+(node:83541) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode (11.8s)
+  ✓   2 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode (14.8s)
+  ✓   3 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement.spec.cjs:28:1 › distances and angle connect the actual selected atoms across the cell (4.0s)
+  ✓   4 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement.spec.cjs:60:1 › mode changes, clear, undo and document replacement dispose and restore actual measurements (7.8s)
+  ✓   5 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement.spec.cjs:96:1 › zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle (5.0s)
+  ✓   6 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement.spec.cjs:112:1 › explicit ghost selections measure their world positions without substituting another image (5.1s)
+  ✓   7 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/measurement.spec.cjs:132:1 › canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry (6.5s)
+  ✓   8 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-colors.spec.cjs:3:1 › crowded edit checkmarks and measurement numbers retain matching guide colors (7.1s)
+  ✓   9 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-layout.spec.cjs:4:1 › ordinary rotated perovskite retains readable and selectable measurement point numbers (26.3s)
+  ✓  10 [chromium] › ../../../../private/tmp/crystal-ordinary-threshold-candidate/tests/browser/selection-marker-layout.spec.cjs:37:1 › a displaced point marker starts the correct atom drag and survives undo (9.6s)
+
+  10 passed (1.6m)

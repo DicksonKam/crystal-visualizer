@@ -1,0 +1,8 @@
+{
+  "scope": "Refinement of the new marker layout, not an additional original-product bug",
+  "reproduction": "Fresh SrTiO3, Edit, selectTi bynumber2, Shift-click visible lower edge ofSr; two cyan checkmarks produce cyan and pink guide lines in initial prototype",
+  "prototypeRegression": "fails on expected actual guide colors after waiting for rendered guides",
+  "candidateRegression": "10 passed1.6m including colors, marker layout/drag, old marker-edge picking, measurement geometry and cleanup",
+  "appHash": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
+  "fullSuiteScope": "Ongoing184-test suite verifies previous marker algorithm; this refinement changes only annotation color metadata and comments, separately covered by10 checks"
+}

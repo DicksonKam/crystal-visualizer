@@ -1,0 +1,38 @@
+--- /private/tmp/crystal-ordinary-markers-candidate/app.js	2026-10-11 14:45:21
++++ /private/tmp/crystal-ordinary-threshold-candidate/app.js	2026-10-11 15:19:21
+@@ -2121,6 +2121,7 @@
+     sprite.scale.set(labelSize, labelSize, labelSize);
+     sprite.renderOrder = 999;
+     sprite.userData.isSelectionLabel = true;
++    sprite.userData.annotationColor = 0x00f5d4;
+     
+     measurementGroup.add(sprite);
+     selectionRings.push(sprite);
+@@ -3640,6 +3641,7 @@
+     
+     sprite.renderOrder = 999; // Render last (on top)
+     sprite.userData.isSelectionLabel = true;
++    sprite.userData.annotationColor = getSelectionColor(selectionNumber);
+     
+     measurementGroup.add(sprite);
+     selectionRings.push(sprite);
+@@ -3679,8 +3681,8 @@
+ }
+ 
+ // Keep annotation text readable in CSS pixels as the camera and panel change.
+-// Retain the original world-space proportions whenever they are already large
+-// enough, and leave the atom geometry and measured positions untouched.
++// Keep point markers within a readable size range and leave measured positions
++// untouched; captions retain their world-space proportions above the size floor.
+ function updateAnnotationSizes() {
+     if (!measurementGroup || !renderer || !camera) return;
+     const height = renderer.domElement.clientHeight;
+@@ -3750,7 +3752,7 @@
+         const owner = selectedAtoms[item.index]?.mesh;
+         const obstacles = [...occupied, ...bodies.filter(body => body.mesh !== owner).map(body => body.rect)];
+         const [target] = CrystalAnnotations.placeLabels([item.rect], obstacles, { width, height });
+-        placeMeasurementAnnotation(item.sprite, item.rect, target, width, height, false, getSelectionColor(item.index + 1));
++        placeMeasurementAnnotation(item.sprite, item.rect, target, width, height, false, item.sprite.userData.annotationColor);
+         occupied.push(target);
+     }
+     const obstacles = [...selectionRings.map(screenRect).filter(Boolean), ...bodies.map(body => body.rect)];

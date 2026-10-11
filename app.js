@@ -2817,6 +2817,8 @@ function setFittedLabelFont(ctx, text, preferredSize) {
 // Create a subtle, camera-facing label sprite for an atom
 function updateAtomLabelPositions() {
     if (!settings.showLabels || !structureGroup) return;
+    const height = renderer.domElement.clientHeight;
+    if (!height) return;
     structureGroup.updateWorldMatrix(true, false);
     const facing = new THREE.Vector3(0, 0, 1).applyQuaternion(camera.quaternion);
     const position = new THREE.Vector3();
@@ -2836,6 +2838,14 @@ function updateAtomLabelPositions() {
         // atoms and bonds to obscure it through normal scene depth testing.
         position.addScaledVector(direction, radius * 1.001);
         label.position.copy(structureGroup.worldToLocal(position));
+        const worldPerPixel = getAnnotationWorldPerPixel(label.getWorldPosition(position), height);
+        if (worldPerPixel > 0) {
+            // Size in CSS pixels, independent of display density. Preserve
+            // natural proportions between a readable floor and a modest cap.
+            const base = label.userData.labelBaseScale;
+            const size = THREE.MathUtils.clamp(base.y / worldPerPixel, 24, 40) * worldPerPixel;
+            label.scale.copy(base).multiplyScalar(size / base.y);
+        }
     });
 }
 
@@ -2855,12 +2865,12 @@ function createAtomLabel(indexNumber, position) {
     ctx.textBaseline = 'middle';
     
     // Subtle dark outline for visibility against light atoms
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+    ctx.lineWidth = 8;
     ctx.strokeText(labelText, 64, 64);
     
     // Semi-transparent light text - visible but not distracting
-    ctx.fillStyle = 'rgba(220, 220, 240, 0.6)';
+    ctx.fillStyle = 'rgba(245, 245, 250, 0.95)';
     ctx.fillText(labelText, 64, 64);
     
     const texture = new THREE.CanvasTexture(canvas);
@@ -2884,7 +2894,7 @@ function createAtomLabel(indexNumber, position) {
     // Lower render order so selection markers appear on top
     sprite.renderOrder = -10;
     
-    sprite.userData = { isAtomLabel: true, atomIndex: indexNumber - 1 };
+    sprite.userData = { isAtomLabel: true, atomIndex: indexNumber - 1, labelBaseScale: sprite.scale.clone() };
     
     return sprite;
 }
@@ -4298,7 +4308,9 @@ function getStructureBounds() {
     const box = new THREE.Box3();
     const childBox = new THREE.Box3();
     structureGroup.children.forEach(child => {
-        if (!child.userData.vacuumEdge) box.union(childBox.setFromObject(child));
+        // Labels describe atoms; their screen size must never enlarge the
+        // physical model bounds used for fitting and camera clipping.
+        if (!child.userData.vacuumEdge && !child.userData.isAtomLabel) box.union(childBox.setFromObject(child));
     });
     return box;
 }

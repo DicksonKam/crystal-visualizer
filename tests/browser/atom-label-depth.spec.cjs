@@ -12,8 +12,16 @@ test('ordinary atom numbers cannot paint over a nearer atom after rotation', asy
     await page.locator('#resetView').click();
     await page.waitForTimeout(400);
     const rect=await page.locator('canvas[aria-label^="3D structure"]').boundingBox();
+    // Start with a known overlap. Bounded label sizes no longer guarantee
+    // that every arbitrary rotation has an occluded glyph rectangle.
+    await page.evaluate(()=>{
+        cameraController.setPose(cameraMath.fit(getStructureBounds(),cameraMath.orientation([0,0,1],[0,1,0]),perspectiveCamera.aspect),'fit');
+        clearManualCameraMotion();requestRender();
+    });
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    let totalOccludedPixels=0;
     for(let view=0;view<8;view++) {
-    for(let i=0;i<2;i++) {
+    for(let i=0;i<(view===0?0:2);i++) {
         const x=rect.x+rect.width*.85,y=rect.y+rect.height*.15;
         await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+15,y+35,{steps:8});await page.mouse.up();await page.waitForTimeout(250);
     }
@@ -52,8 +60,9 @@ test('ordinary atom numbers cannot paint over a nearer atom after rotation', asy
         return{occludedPixels,paintedOccludedPixels,visibleNumberPixels};
     });
     await info.attach(`rendered-label-occlusion-${view}`,{body:JSON.stringify(result),contentType:'application/json'});
-    expect(result.occludedPixels).toBeGreaterThan(0);
+    totalOccludedPixels+=result.occludedPixels;
     expect(result.visibleNumberPixels).toBeGreaterThan(20);
     expect(result.paintedOccludedPixels).toBe(0);
     }
+    expect(totalOccludedPixels).toBeGreaterThan(0);
 });

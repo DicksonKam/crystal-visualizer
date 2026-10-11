@@ -1,0 +1,1 @@
+const root='/Users/dicksonkam/Projects/crystal-visualizer';const c=require(root+'/playwright.config.cjs');module.exports={...c,testDir:root+'/tests/browser',workers:1,webServer:{...c.webServer,cwd:root,reuseExistingServer:true}};

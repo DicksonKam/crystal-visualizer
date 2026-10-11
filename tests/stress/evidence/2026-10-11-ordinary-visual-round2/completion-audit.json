@@ -1,0 +1,71 @@
+{
+  "status": "complete",
+  "scope": "Sustained visual testing of ordinary structures and common combinations; finite coverage, not a claim that every possible bug is absent.",
+  "requirements": [
+    {
+      "requirement": "Sustained testing for hours on ordinary small structures",
+      "evidence": [
+        "timeout-replays/baseline-campaign.log",
+        "combined-candidate/baseline-continuation-complete.log"
+      ],
+      "result": "8880 completed workflow steps and 7764.885 seconds across successful baseline chains; continuation completed."
+    },
+    {
+      "requirement": "Rotate, zoom, pan and change window/display state",
+      "evidence": [
+        "combined-candidate/final-sequence-coverage.json",
+        "visual-inspection.json"
+      ],
+      "result": "Performed actions recorded in completed candidate run; representative rendered results directly inspected."
+    },
+    {
+      "requirement": "Selection and measurement combined with atom, boundary and frame editing",
+      "evidence": [
+        "combined-candidate/broader-three-fix-suite.log",
+        "selection-marker-layout/measurement-edit-chains-pass.log",
+        "combined-candidate/main-app/browser-22-pass.log"
+      ],
+      "result": "Wide/narrow visual boundary editing and sustained measurement edit chains passed; actual distance, periodic selection, marker picking and drag behavior pass in updated main app."
+    },
+    {
+      "requirement": "Sidebar resize/collapse, file changes and undo/redo",
+      "evidence": [
+        "combined-candidate/final-sequence-coverage.json",
+        "combined-candidate/main-app/browser-22-pass.log"
+      ],
+      "result": "Performed varied actions, directly inspected representative UI, and main-app regressions passed."
+    },
+    {
+      "requirement": "Reproduce and fix common visual defects",
+      "evidence": [
+        "atom-label-depth/verification.json",
+        "coordinate-width/verification.json",
+        "selection-marker-layout/verification.json",
+        "threshold-width/verification.json",
+        "combined-candidate/final-density/passed.log"
+      ],
+      "result": "Four reproduced defects fixed: label depth, point marker overlap/wrong picking, coordinate clipping, constraint value clipping. All seven focused DPR2 checks pass."
+    },
+    {
+      "requirement": "Verify updated current product",
+      "evidence": [
+        "combined-candidate/main-app/browser-22-pass.log",
+        "combined-candidate/main-app/crystal-final-root-unit.log",
+        "combined-candidate/main-app/crystal-final-main-smoke.json",
+        "combined-candidate/main-app/crystal-final-main-smoke.png"
+      ],
+      "result": "22 browser checks and 154 unit tests pass. Main app serves v183 and CSS v54 with no page errors; screenshot inspected."
+    },
+    {
+      "requirement": "Save locally without pushes, new buttons or modifying existing unsaved browser tab",
+      "evidence": "Local commit 4ecc8a0, scoped app/CSS/index/test diff and tool action history",
+      "result": "Fixes committed locally. Only isolated headless browser contexts used; original IAB tab untouched. No remote push or new button added."
+    }
+  ],
+  "currentProductHashes": {
+    "app.js": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
+    "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+    "index.html": "a4f55ded2df84a89502b04c20d4c3be731c65e72c72b03f0dfea7b6ac016a457"
+  },
+  "knownLimitation": "Synthetic 499-atom continuous-playback stress test exceeds its 240-second capture deadline. Outside requested ordinary small-structure scope; full broader suite is not reported as all green."
+}

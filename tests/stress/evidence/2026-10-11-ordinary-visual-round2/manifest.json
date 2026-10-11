@@ -1,5 +1,5 @@
 {
-  "status": "Running continuation after preserved timeout",
+  "status": "complete",
   "session": 43566,
   "log": "/private/tmp/crystal-ordinary-visual-oct11-continuation.log",
   "output": "/private/tmp/crystal-ordinary-visual-oct11-continuation",
@@ -32,12 +32,7 @@
   },
   "scope": "Ordinary real examples; desktop widths; sustained common visualization/edit/navigation combinations; screenshots require personal inspection.",
   "pilot": "240 actions across2 sessions passed. Terminal failure on next trajectory was harness attempting intentionally disabled Edit mode; harness corrected.",
-  "personallyInspected": [
-    "pilot slab active measurement",
-    "pilot slab display change and viewport resize",
-    "FreshNaClresetwithnumbers",
-    "NaClrotationwithmoderateatomsize"
-  ],
+  "personallyInspected": "Representative screenshots directly inspected; see visual-inspection.json and saved PNGs. Automated captures were not all manually reviewed.",
   "productChanges": true,
   "completionGates": [
     "Finish sustained run",
@@ -50,24 +45,24 @@
     {
       "description": "Atom number labels ignore scene depth; ordinary NaCl size adjustment and rotation draws atom3 number over nearer atom1 sphere.",
       "evidence": "atom-label-depth/rotated-before.png",
-      "status": "Reproduced;root fix pending",
+      "status": "Fixed in main app; relevant browser and visual checks pass.",
       "reproduction": "LoadNaCl;ShowLabels;Reset;AtomSize ArrowRight6;two normal mouse camera drags."
     },
     {
       "description": "Exact atom coordinates are clipped at the default sidebar width after a normal three-atom molecule drag.",
       "evidence": "coordinate-width/before.png",
-      "status": "Candidate fix and responsive regression verified; root promotion pending.",
+      "status": "Fixed in main app; relevant browser and visual checks pass.",
       "reproduction": "Load H2O, enter Edit, drag oxygen, select atom 1."
     },
     {
       "description": "Default graphene z constraint value10.00 is clipped by70px number field",
       "evidence": "threshold-width/before.png",
-      "status": "CSS candidate visually verified and8 related checks passed; root promotion pending"
+      "status": "Fixed in main app; relevant browser and visual checks pass."
     },
     {
       "description": "Measurement point numbers overlap during ordinary perovskite rotation; clicking a visible point number can pick another selected atom.",
       "evidence": "selection-marker-layout/verification.json",
-      "status": "Twelve-view marker placement/picking and displaced drag verified at both screen densities; root promotion pending.",
+      "status": "Fixed in main app; relevant browser and visual checks pass.",
       "reproduction": "Load SrTiO3, select atoms 1/2/3, reset view, then rotate normally."
     }
   ],
@@ -90,12 +85,21 @@
     }
   ],
   "rootProductPromotion": {
-    "status": "applied; final main-app verification pending",
+    "status": "applied and verified",
     "appHash": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
     "cssHash": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
     "cacheVersions": {
       "app": 183,
       "css": 54
+    },
+    "codeCommit": "4ecc8a0",
+    "browserTests": {
+      "passed": 22,
+      "log": "combined-candidate/main-app/browser-22-pass.log"
+    },
+    "unitTests": {
+      "passed": 154,
+      "log": "combined-candidate/main-app/crystal-final-root-unit.log"
     }
   },
   "combinedCandidateCampaign": {
@@ -262,7 +266,7 @@
       "app.js": 183,
       "styles.css": 54
     },
-    "status": "applied"
+    "status": "complete"
   },
   "finalFourFixHighDensity": {
     "status": "passed",
@@ -285,5 +289,12 @@
     "result": "passed",
     "log": "timeout-replays/measurement-unrelated-render/rendered-pass.log",
     "testPatch": "timeout-replays/measurement-unrelated-render/test.patch"
-  }
+  },
+  "baselineSummary": {
+    "completedWorkflowSteps": 8880,
+    "capturedImages": 3361,
+    "successfulChainElapsedSeconds": 7764.884831875,
+    "segments": "Original run stopped at a short automation click timeout; exact shift replay and continuation passed. No product file changed during baseline segments."
+  },
+  "remainingKnownLimitation": "Synthetic 499-atom continuous-playback stress test exceeds its 240-second capture deadline. Outside requested ordinary small-structure scope; full broader suite is not reported as all green."
 }

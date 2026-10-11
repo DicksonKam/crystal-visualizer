@@ -1,0 +1,29 @@
+
+Running 22 tests using 1 worker
+
+(node:85890) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/atom-label-depth.spec.cjs:5:1 › ordinary atom numbers cannot paint over a nearer atom after rotation (39.5s)
+  ✓   2 [chromium] › tests/browser/coordinate-width.spec.cjs:4:31 › precise atom coordinates stay readable while resizing the sidebar at 1280px (4.9s)
+  ✓   3 [chromium] › tests/browser/coordinate-width.spec.cjs:4:31 › precise atom coordinates stay readable while resizing the sidebar at 900px (3.5s)
+  ✓   4 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode (2.1s)
+  ✓   5 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode (5.7s)
+  ✓   6 [chromium] › tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement (5.7s)
+  ✓   7 [chromium] › tests/browser/measurement.spec.cjs:28:1 › distances and angle connect the actual selected atoms across the cell (1.8s)
+  ✓   8 [chromium] › tests/browser/measurement.spec.cjs:60:1 › mode changes, clear, undo and document replacement dispose and restore actual measurements (4.1s)
+  ✓   9 [chromium] › tests/browser/measurement.spec.cjs:96:1 › zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle (3.0s)
+  ✓  10 [chromium] › tests/browser/measurement.spec.cjs:112:1 › explicit ghost selections measure their world positions without substituting another image (2.6s)
+  ✓  11 [chromium] › tests/browser/measurement.spec.cjs:132:1 › canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry (2.9s)
+  ✓  12 [chromium] › tests/browser/selection-marker-colors.spec.cjs:3:1 › crowded edit checkmarks and measurement numbers retain matching guide colors (3.9s)
+  ✓  13 [chromium] › tests/browser/selection-marker-layout.spec.cjs:4:1 › ordinary rotated perovskite retains readable and selectable measurement point numbers (12.8s)
+  ✓  14 [chromium] › tests/browser/selection-marker-layout.spec.cjs:37:1 › a displaced point marker starts the correct atom drag and survives undo (5.2s)
+  ✓  15 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 1440px (5.3s)
+  ✓  16 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 800px (3.6s)
+  ✓  17 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 390px (1.9s)
+  ✓  18 [chromium] › tests/browser/sidebar-layout.spec.cjs:44:1 › divider keyboard controls and canceled drag restore presentation state (1.7s)
+  ✓  19 [chromium] › tests/browser/sidebar-layout.spec.cjs:57:1 › file-load status wrapping resizes the canvas without a window or divider gesture (1.5s)
+  ✓  20 [chromium] › tests/browser/sidebar-layout.spec.cjs:66:1 › narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling (3.4s)
+  ✓  21 [chromium] › tests/browser/sidebar-layout.spec.cjs:94:1 › constraint threshold and its unit stay together across intermediate panel widths (4.1s)
+  ✓  22 [chromium] › tests/browser/threshold-width.spec.cjs:3:1 › default graphene constraint threshold and typed decimals remain fully readable (4.0s)
+
+  22 passed (2.1m)

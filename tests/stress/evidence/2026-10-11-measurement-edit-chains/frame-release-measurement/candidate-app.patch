@@ -1,0 +1,12 @@
+--- app.js	2026-10-11 09:57:41
++++ /private/tmp/crystal-annotation-interaction-candidate/app.js	2026-10-11 10:17:10
+@@ -1885,6 +1885,9 @@
+     
+     // Handle vacuum drag end
+     if (vacuumDragState.isDragging) {
++        // A frame gesture owns its release even if a resized atom is now
++        // under the cursor. Suppress the subsequent compatibility click.
++        wasDragging = true;
+         endVacuumDrag();
+         controls.enabled = true;
+         releaseEditPointer();

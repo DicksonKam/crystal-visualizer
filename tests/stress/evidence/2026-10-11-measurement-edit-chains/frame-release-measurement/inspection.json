@@ -1,0 +1,11 @@
+{
+  "finding": "A completed cell drag releases over an atom; compatibility click clears preserved measurements and selects that atom.",
+  "baselineVersion": 179,
+  "baselineResult": "Actual mouse regression fails: selected [0], expected [0,1,2].",
+  "candidateChange": "Mark cell completion as dragging before endVacuumDrag so onClickFallback suppresses the compatibility click, sharing the atom-drag behavior.",
+  "candidateResult": "Actual mouse regression passes, including undo/redo.",
+  "visualInspection": "Personally inspected before and after release images for baseline and candidate. Candidate retains markers 1,2,3, both distances and angle.",
+  "mainStatus": "Unchanged v179 while full regression remains active. Candidate ordinary-example rerun active on port4175.",
+  "candidateHash": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
+  "exampleSession": 17660
+}

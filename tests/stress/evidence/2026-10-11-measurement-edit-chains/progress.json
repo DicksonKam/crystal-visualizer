@@ -80,6 +80,12 @@
     "fullBrowserSession": 65199,
     "fullBrowserStatus": "Running",
     "examplePilotSession": 17646,
-    "examplePilotStatus": "Running; v2 scans exposed frame sections. v1 stopped because midpoint was covered by an atom; no product bug claimed."
+    "examplePilotStatus": "Terminal exit 1: v2 revealed compatibility click after cell release clears measurement; focused baseline reproduces."
+  },
+  "newConfirmedBug": {
+    "evidence": "frame-release-measurement",
+    "candidateFocusedPassed": 1,
+    "candidateChainSession": 17660,
+    "status": "Candidate fix verified; longer examples running; main v179 unchanged during frozen full suite."
   }
 }

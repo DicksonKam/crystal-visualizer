@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 55,
+    "variationPassedSoFar": 57,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -200,7 +200,9 @@
     "Silicon1440 order125 frame;2.336/4.527 and95.1 remain readable",
     "NaCl900 order125 measured atom, frame, bond rebuild and deletion undo;3.4862/2.9429 and46.80 restored; camera remains at current position through undo",
     "NaCl1440 order125 frame and deletion undo;3.4862/2.9367 and46.66 restored",
-    "Graphene900 order132 measured atom, frame, bond rebuild and deletion undo;2.1728/1.0455 and15.91 restored"
+    "Graphene900 order132 measured atom, frame, bond rebuild and deletion undo;2.1728/1.0455 and15.91 restored",
+    "Graphene1440 order132 frame; captions remain visible in crowded geometry",
+    "Slab900 order465 atom edit, fixed overlays and deletion undo;2.8462/2.8638 and59.79 match captions"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

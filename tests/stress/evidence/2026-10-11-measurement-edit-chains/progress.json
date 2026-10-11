@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 51,
+    "variationPassedSoFar": 52,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -195,7 +195,9 @@
     "Water1440 order321 edit and deletion history;1.3463/0.8566 and43.53match captions",
     "Aluminium900 order132 frame and deletion undo;2.7380/4.4478 and29.87restored",
     "Aluminium1440 order132 frame and deletion undo; captions remain consistent with restored sidebar",
-    "Silicon900 order125 measured atom edit;2.336/4.535 and94.9 captions visible clear of atoms"
+    "Silicon900 order125 measured atom edit;2.336/4.535 and94.9 captions visible clear of atoms",
+    "Silicon900 order125 frame and deletion undo;4.3809/5.0967 and22.80 restored",
+    "Silicon1440 order125 frame;2.336/4.527 and95.1 remain readable"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

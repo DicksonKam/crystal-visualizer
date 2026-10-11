@@ -103,6 +103,27 @@
       "step": 114,
       "action": "atom drag preview",
       "observation": "Coordinate fields remain readable; ordinary number depth respects foreground geometry; edit check marker still oversized in two-fix candidate, addressed by third marker fix."
+    },
+    {
+      "source": "three-fix candidate, DPR2",
+      "seed": 1604,
+      "step": 38,
+      "action": "cancel atom drag preview",
+      "observation": "Benzene carbon hover/drag highlight and selected H check remain distinct; sidebar intentionally preserves edit selection while independent atom moves. Cropped viewer content matches intentional earlier zoom and pan."
+    },
+    {
+      "source": "three-fix candidate, DPR2",
+      "seed": 1604,
+      "step": 101,
+      "action": "display after replacement and editing",
+      "observation": "Large methane foreground H selection check is legible; atom body depth and bond joins are consistent; periodic controls correctly disabled for nonperiodic molecule."
+    },
+    {
+      "source": "baseline continuation, DPR2",
+      "seed": 1242,
+      "step": 60,
+      "action": "undo after Escape cancellation",
+      "observation": "18 graphene atoms and additional b periodic copy render in matching base/ghost frames; no bonds appear while ShowBonds is off. Additional copy outside base frame is intentional."
     }
   ],
   "candidateInspections": [

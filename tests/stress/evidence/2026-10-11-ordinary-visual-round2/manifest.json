@@ -153,5 +153,10 @@
     ],
     "deviceScaleFactor": 1,
     "log": "combined-candidate/corrected-campaign.log"
+  },
+  "baselineReplay": {
+    "seed": 1242,
+    "result": "full120 action chain passed in continuation, after standalone exact-geometry shift replay passed",
+    "caveat": "Presentation flags originate from replaying preceding seeds1240/1241 in a fresh persistent context; not an exact restoration of earlier long-lived browser state."
   }
 }

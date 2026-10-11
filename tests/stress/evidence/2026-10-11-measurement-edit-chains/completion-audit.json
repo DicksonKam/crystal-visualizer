@@ -60,7 +60,7 @@
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0,
-    "sustainedCasesPassed": 20,
+    "sustainedCasesPassed": 27,
     "sustainedTerminalResultPending": true,
     "sourceHashesUnchanged": true
   }

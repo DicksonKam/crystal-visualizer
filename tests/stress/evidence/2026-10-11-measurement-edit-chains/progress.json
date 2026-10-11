@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 26,
+    "variationPassedSoFar": 27,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -165,7 +165,8 @@
     "Water1440 reverse312 atom edit and deletion history",
     "Aluminium900 order213 frame edit and deletion undo; camera remains after history changes, partially outside narrow view",
     "Aluminium1440 order213 frame edit and deletion history",
-    "Silicon900 order512 third atom move; rendered distances4.712/5.422 and25.1angle remain readable"
+    "Silicon900 order512 third atom move; rendered distances4.712/5.422 and25.1angle remain readable",
+    "Silicon900 order512 frame edit and deletion undo; markers and logical measurement preserved, camera stays at current position"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

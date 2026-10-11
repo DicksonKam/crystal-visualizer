@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 38,
+    "variationPassedSoFar": 39,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -180,7 +180,8 @@
     "Water1440 order123 hydrogen angle and deletion undo;0.8640/1.3624 and42.91match captions",
     "Aluminium900 order312 frame edit;2.452/3.025 and60.4readable",
     "Aluminium900 order312 deletion undo;2.7120/2.4518 and117.16restored",
-    "Aluminium1440 order312 frame edit"
+    "Aluminium1440 order312 frame edit",
+    "Silicon900 order215 measured atom move, frame edit and deletion undo;4.8456/1.8108 and100.47restored"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

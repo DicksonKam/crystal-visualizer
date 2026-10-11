@@ -189,6 +189,15 @@
         "seed-1809-step-58-drag-atom-preview.png"
       ],
       "observations": "Slab exact coordinates fit the narrow sidebar with fixed atom 5 still marked. Later direct atom drag has a translation plane attached to the dragged atom and no stale bonds when bonds are hidden. Atom sizes are small after camera changes and the 20-angstrom slab cell; not missing geometry."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1815,
+      "screenshots": [
+        "seed-1815-step-84-mode-after.png",
+        "seed-1815-step-92-reset-after.png"
+      ],
+      "observations": "Al FCC b-periodic copies remain correctly offset after edit-to-measure change. Subsequent measurement 2.7034 angstrom in panel matches rounded 2.703 caption, with markers 1 and 2 separate after reset. Shared boundary spheres represent periodic copies; no residual translation plane or edit checkmarks remain."
     }
   ],
   "candidateInspections": [

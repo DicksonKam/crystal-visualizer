@@ -1,0 +1,9 @@
+{
+  "status": "isolated candidate; root product remains frozen for ongoing two-hour discovery campaign",
+  "reproduction": "Load H2O, enter Edit, drag oxygen by 37px/-22px, select atom 1. The default-width coordinate fields show only the beginning of eleven-character coordinates.",
+  "rootCause": "Three equally squeezed fields ignore the precision of generated atom positions.",
+  "change": "Wrap exact-coordinate fields using a nine-rem basis; narrower panels show one complete field per row, while wider panels retain three. Input values and precision are unchanged.",
+  "baseline": "Both 1280px and 900px browser regressions fail: text is 89.77px wide, with only 34.8px available.",
+  "candidate": "Both browser regressions pass through default, narrow and wide sidebar widths; complete values fit including spinner allowance. Screenshots personally inspected.",
+  "remaining": "Related sidebar/history regressions and root promotion after discovery completes."
+}

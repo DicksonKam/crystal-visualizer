@@ -1,0 +1,20 @@
+--- a/styles.css
++++ b/styles.css
+@@ -350,6 +350,17 @@
+     margin-bottom: 0.65rem;
+ }
+ 
++/* Dragging creates precise values; keep the complete number readable at
++   the current sidebar width instead of squeezing three fields into one row. */
++.exact-atom-section .add-atom-coords {
++    flex-wrap: wrap;
++}
++
++.exact-atom-section .coord-input-group {
++    flex: 1 1 9rem;
++    min-width: 0;
++}
++
+ .exact-atom-section .btn {
+     width: 100%;
+ }

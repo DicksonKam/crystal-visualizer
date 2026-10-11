@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 20,
+    "variationPassedSoFar": 21,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -158,7 +158,8 @@
     "Graphene900 reverse321 cell edit and bond refresh",
     "Graphene900 reverse321 deletion undo restores actual measurement",
     "Graphene1440 reverse321 cell edit",
-    "Aluminium boundary-edit regression final history"
+    "Aluminium boundary-edit regression final history",
+    "Slab900 reverse654 unmeasured atom move, bonds, frame edit and deletion history; distances2.8638/2.8462 and angle59.79 match rendered labels"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

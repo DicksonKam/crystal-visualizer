@@ -158,5 +158,57 @@
     "seed": 1242,
     "result": "full120 action chain passed in continuation, after standalone exact-geometry shift replay passed",
     "caveat": "Presentation flags originate from replaying preceding seeds1240/1241 in a fresh persistent context; not an exact restoration of earlier long-lived browser state."
+  },
+  "threeFixVisualCampaign": {
+    "status": "complete",
+    "log": "combined-candidate/three-fix-complete.log",
+    "workflowSteps": 2040,
+    "capturedImages": 749,
+    "elapsedSeconds": 1895.3362280840001,
+    "deviceScaleFactor": 2
+  },
+  "finalFourFixVisualCampaign": {
+    "status": "running",
+    "session": 58047,
+    "log": "/private/tmp/crystal-ordinary-final-visual-v2.log",
+    "seconds": 1200,
+    "startSeed": 1801,
+    "deviceScaleFactor": 1,
+    "candidateRoot": "/private/tmp/crystal-ordinary-final-stress",
+    "serverRoot": "/private/tmp/crystal-ordinary-threshold-candidate",
+    "serverSession": 78229,
+    "url": "http://127.0.0.1:4183/",
+    "initialLaunch": "Connection refused before server was started; zero interactions. Corrected launch has passed its first three chains."
+  },
+  "broaderThreeFixBrowserSuite": {
+    "status": "running",
+    "session": 57524,
+    "log": "/private/tmp/crystal-three-fixes-browser-suite.log",
+    "total": 184,
+    "lastObservedPass": 137,
+    "excluded": "Synthetic dense continuous playback only; not representative of requested ordinary workflows."
+  },
+  "coreUnitTests": {
+    "status": "passed",
+    "count": 154,
+    "log": "combined-candidate/unchanged-core-unit.log",
+    "scope": "Root core modules; final candidate changes are app.js/styles.css, verified by browser tests. Candidate unit launch had no copied unit files and is not used as evidence."
+  },
+  "pendingPromotion": {
+    "source": "/private/tmp/crystal-ordinary-threshold-candidate",
+    "appHash": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
+    "cssHash": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+    "waitFor": "Baseline continuation terminal before changing root product; final campaign and broader suite must also finish before completion.",
+    "files": [
+      "app.js",
+      "styles.css",
+      "tests/browser/selection-marker-layout.spec.cjs",
+      "tests/browser/selection-marker-colors.spec.cjs",
+      "tests/browser/measurement-edit-helpers.cjs"
+    ],
+    "cacheVersions": {
+      "app.js": 183,
+      "styles.css": 54
+    }
   }
 }

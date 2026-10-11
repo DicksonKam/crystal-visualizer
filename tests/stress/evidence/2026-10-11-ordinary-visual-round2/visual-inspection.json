@@ -147,6 +147,23 @@
         "seed-1801-step-14-cancel-atom-preview.png"
       ],
       "observations": "Methane labels follow visible atom surfaces; selected atom checkmark remains visible. During another atom drag the existing selected atom and exact-coordinate panel remain preserved. Coordinate values fit the default sidebar. Escape-canceled preview is an intentional action."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1802,
+      "screenshots": [
+        "seed-1802-step-1-drag-atom-preview.png",
+        "seed-1802-step-8-panel-panel-preview.png"
+      ],
+      "observations": "Benzene drag retains three measurement markers, readable captions and preserved measurement panel at a narrow width. Collapsed sidebar leaves its restore handle visible. Geometry after intervening add/display/camera actions is deliberately cropped at the existing camera focus; this capture alone is not evidence of a resize bug."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1803,
+      "screenshots": [
+        "seed-1803-step-72-rotate-after.png"
+      ],
+      "observations": "Narrow-window Al FCC rotation shows all twelve cell edges, four atoms and readable selected point 1. Bonds are explicitly disabled; no stale bonds remain visible."
     }
   ],
   "candidateInspections": [

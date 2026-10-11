@@ -1,35 +1,42 @@
 const { test, expect, upload } = require('./fixtures.cjs');
 
-test('measurement annotations remain readable for small atoms after sidebar resizing', async ({ page }, info) => {
-    await page.setViewportSize({ width: 900, height: 900 });
-    await upload(page, 'small atom measurements\n1\n8 0 0\n0 8 0\n0 0 8\nH O\n3 2\nDirect\n0 .2 .2\n.6 .2 .2\n.6 .7 .2\n.3 .4 .5\n.8 .8 .7\n', 'small-atoms.poscar');
-    for (const n of [1, 2, 3]) {
-        await page.locator('#atomJumpInput').fill(String(n));
-        await page.locator('#atomJumpInput').press('Enter');
-    }
-    await page.locator('[data-mode="edit"]').click();
-    await page.locator('#sidebarDivider').focus(); await page.keyboard.press('End');
-    await page.locator('#resetView').click();
-    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    await page.screenshot({ path: info.outputPath('small-atom-measurement.png') });
-    const sizes = await page.evaluate(() => {
-        camera.updateWorldMatrix(true, false);
-        const height = renderer.domElement.getBoundingClientRect().height;
-        const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
-        const pixels = sprite => {
-            const center = sprite.getWorldPosition(new THREE.Vector3());
-            const half = sprite.getWorldScale(new THREE.Vector3()).y / 2;
-            const top = center.clone().addScaledVector(up, half).project(camera);
-            const bottom = center.clone().addScaledVector(up, -half).project(camera);
-            return Math.abs(top.y - bottom.y) * height / 2;
-        };
-        return {
-            labels: measurementGroup.children.filter(object => object.userData.isMeasurementLabel).map(pixels),
-            markers: selectionRings.map(pixels)
-        };
+for (const width of [220, 280, 320]) {
+    test(`measurement values stay inside their cards at ${width}px panel width`, async ({ page }, info) => {
+        await page.setViewportSize({ width: 900, height: 900 });
+        await upload(page, '3\nlarge measured coordinates\nH 0 0 0\nO 123456.789 234567.89 345678.9\nC -123456.789 0 0\n', 'measurements.xyz');
+        for (const n of [1, 2, 3]) {
+            await page.locator('#atomJumpInput').fill(String(n));
+            await page.locator('#atomJumpInput').press('Enter');
+        }
+        const divider = await page.locator('#sidebarDivider').boundingBox();
+        await page.mouse.move(divider.x + divider.width / 2, divider.y + divider.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(width, divider.y + divider.height / 2, { steps: 5 });
+        await page.mouse.up();
+        for (const mode of ['measure', 'edit']) {
+            await page.locator(`[data-mode="${mode}"]`).click();
+            await page.locator('#measurementPanel').scrollIntoViewIfNeeded();
+            await page.screenshot({ path: info.outputPath(`${mode}.png`) });
+            // Scroll width misses text hidden by a card's overflow clipping.
+            // Inspect the painted text fragments against their actual container.
+            const clipped = await page.evaluate(() => {
+                const result = [];
+                for (const element of document.querySelectorAll('.meas-value, .delta-item')) {
+                    const container = element.closest('.meas-content, .meas-delta');
+                    const bounds = container.getBoundingClientRect();
+                    const range = document.createRange();
+                    range.selectNodeContents(element);
+                    for (const rect of range.getClientRects()) {
+                        if (rect.left < bounds.left - 1 || rect.right > bounds.right + 1) {
+                            result.push({ text: element.textContent, left: rect.left, right: rect.right, bounds: [bounds.left, bounds.right] });
+                        }
+                    }
+                }
+                return result;
+            });
+            expect(clipped).toEqual([]);
+            await expect(page.locator('#measurementPanel')).toContainText('435611.7258');
+            await expect(page.locator('#measurementPanel')).toContainText('345678.90');
+        }
     });
-    await info.attach('annotation-css-pixels', { body: JSON.stringify(sizes), contentType: 'application/json' });
-    expect(sizes.labels).toHaveLength(3);
-    for (const height of sizes.labels) expect(height).toBeGreaterThanOrEqual(18 - .01);
-    for (const height of sizes.markers) expect(height).toBeGreaterThanOrEqual(14 - .01);
-});
+}

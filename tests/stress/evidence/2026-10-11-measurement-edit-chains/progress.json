@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 48,
+    "variationPassedSoFar": 49,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -191,7 +191,9 @@
     "Graphene1440 order312 frame edit;2.6angle caption clear of atoms",
     "Slab900 order645 atom movement, constraints, frame edit and deletion undo;2.8462/2.8462 and60.41match readable captions",
     "Slab1440 order645 frame edit and deletion undo",
-    "Water900 order321 hydrogen-centered angle after edits and undo;1.3322/0.8576 and43.51match readable captions"
+    "Water900 order321 hydrogen-centered angle after edits and undo;1.3322/0.8576 and43.51match readable captions",
+    "Water1440 order321 edit and deletion history;1.3463/0.8566 and43.53match captions",
+    "Aluminium900 order132 frame and deletion undo;2.7380/4.4478 and29.87restored"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

@@ -90,10 +90,10 @@ function displayedSelection(selection, state) {
     return { ...selection, identities, measurement: Boolean(identities.length && selection.measurement) };
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
-async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null, advanced = false }) {
+async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null, advanced = false, ordinarySources = null }) {
     page.setDefaultTimeout(5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
-    const source = sourceOverride || sourceFor(seed);
+    const source = sourceOverride || (ordinarySources ? ordinarySources[seed % ordinarySources.length] : sourceFor(seed));
     let acceptDialogs = true;
     const handleDialog = async dialog => { log.push({ dialog: dialog.message(), response: acceptDialogs ? 'accept' : 'dismiss' }); if(acceptDialogs) await dialog.accept(); else await dialog.dismiss(); };
     if (extended) {
@@ -112,6 +112,17 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
     await page.locator('#fileInput').setInputFiles({ name: source.name, mimeType: 'text/plain', buffer: Buffer.from(source.content) });
     if (extended) await page.waitForFunction(() => window.stressLoadSerial > 0);
     await page.locator('#statusText').filter({ hasText: 'Loaded' }).waitFor();
+    if (ordinarySources) {
+        // Start with the everyday measure-then-edit workflow rather than an empty selection.
+        await page.locator('[data-mode="measure"]').click();
+        const numberToMeasure = Math.min(3, await page.evaluate(() => currentStructure.atoms.length));
+        for (let number = 1; number <= numberToMeasure; number++) {
+            await page.locator('#atomJumpInput').fill(String(number));
+            await page.locator('#atomJumpInput').press('Enter');
+        }
+        const editMode = page.locator('[data-mode="edit"]');
+        if (await editMode.isEnabled()) await editMode.click();
+    }
     const known = new Map(); const counts = {}, operations = {};
     let previous = await capture(page);
     assert.deepEqual(previous.violations, []);
@@ -126,7 +137,8 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
         if (visual) choices.push('panel','zoom','pan','viewport','scale','bond_length');
         if (visual && previous.trajectory) choices.push('playback');
         if (advanced && extended) choices.push('roundtrip');
-        const action = choices[integer(choices.length)];
+        const ordinaryChoices = ordinarySources ? choices.filter(action => !['invalid', 'invalid_load', 'decline_load', 'supercell', 'export', 'download', 'roundtrip'].includes(action)) : choices;
+        const action = ordinaryChoices[integer(ordinaryChoices.length)];
         const record = { step, action, before: previous }; log.push(record);
         let performed = true;
         const click = async selector => { if (!await visible(page, selector)) { performed = false; return false; } await page.locator(selector).click(); return true; };
@@ -144,12 +156,13 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 await page.mouse.up();
             } else if (action === 'viewport') {
                 const viewports=[{width:390,height:844},{width:900,height:760},{width:1440,height:900}];
+                if(ordinarySources) viewports.splice(0,1,{width:1280,height:800});
                 if(advanced) viewports.push({width:844,height:390},{width:641,height:480},{width:769,height:600},{width:1920,height:540});
                 record.viewport=viewports[integer(viewports.length)];
                 await page.setViewportSize(record.viewport);
             } else if (action === 'scale' || action === 'bond_length') {
                 const slider=page.locator(action==='scale'?'#atomScale':'#bondThreshold');
-                record.key=integer(2)?'Home':'End'; await slider.focus(); await slider.press(record.key);
+                record.key=ordinarySources ? (integer(2)?'ArrowLeft':'ArrowRight') : (integer(2)?'Home':'End'); await slider.focus(); await slider.press(record.key);
             } else if (action === 'playback') {
                 await page.locator('#playPause').click(); await page.waitForTimeout(180);
                 await page.locator('#playPause').click();
@@ -210,6 +223,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             } else if (action === 'replace' || action === 'invalid_load' || action === 'decline_load') {
                 let replacement;
                 if (action === 'invalid_load') replacement = { name:'invalid.xyz', content:'2\ninvalid\nH not-a-number 0 0\nH 0 0 0\n' };
+                else if (ordinarySources) replacement = ordinarySources[integer(ordinarySources.length)];
                 else if (integer(5) === 0) replacement = {name:'trajectory.xdatcar',content:await fs.readFile(require('node:path').resolve(__dirname,'../../examples/xdatcar/H2_vibration.xdatcar'),'utf8')};
                 else { const variant=integer(4); record.variant=variant; replacement=sourceFor(variant);
                     if (variant === 3) replacement.content = replacement.content.replace('Properties=', 'energy=-1.23 Properties='); }

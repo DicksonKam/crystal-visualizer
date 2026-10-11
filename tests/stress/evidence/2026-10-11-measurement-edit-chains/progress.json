@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 35,
+    "variationPassedSoFar": 37,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -176,7 +176,9 @@
     "Graphene1440 order213 frame edit",
     "Slab900 order546 middle atom move, first subsequent frame drag, constraints and deletion undo;2.8462/2.8462 and60.41match captions",
     "Slab1440 order546 frame and deletion history",
-    "Water900 order123 hydrogen-centered angle after edit and deletion undo;0.8651/1.3498 and42.86match labels"
+    "Water900 order123 hydrogen-centered angle after edit and deletion undo;0.8651/1.3498 and42.86match labels",
+    "Water1440 order123 hydrogen angle and deletion undo;0.8640/1.3624 and42.91match captions",
+    "Aluminium900 order312 frame edit;2.452/3.025 and60.4readable"
   ],
   "completedV182BaseExamples": {
     "examples": 6,
@@ -186,5 +188,6 @@
     ],
     "passed": 12,
     "remainingMeasurementOrders": 5
-  }
+  },
+  "finalRunProvenance": "Main product and private campaign helper/spec/fixtures SHA256 hashes verified unchanged after first36 cases."
 }

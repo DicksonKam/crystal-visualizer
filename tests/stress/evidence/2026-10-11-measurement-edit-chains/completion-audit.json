@@ -60,8 +60,9 @@
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0,
-    "sustainedCasesPassed": 27,
+    "sustainedCasesPassed": 37,
     "sustainedTerminalResultPending": true,
-    "sourceHashesUnchanged": true
+    "sourceHashesUnchanged": true,
+    "campaignSourceHashesUnchanged": true
   }
 }

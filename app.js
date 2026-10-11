@@ -2093,8 +2093,7 @@ function createEditSelectionMarker(atomMesh, selectionNumber) {
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.position.copy(worldPos);
     
-    const smallestRadius = getSmallestAtomRadius();
-    const labelSize = smallestRadius * 1.4;
+    const labelSize = getSelectionLabelSize(atomMesh.userData.element);
     sprite.scale.set(labelSize, labelSize, labelSize);
     sprite.renderOrder = 999;
     sprite.userData.isSelectionLabel = true;
@@ -3512,7 +3511,7 @@ function getSmallestAtomRadius() {
 }
 
 // Create selection label directly on atom center (no ring)
-// Size scales with the smallest atom to ensure labels are always smaller
+// Each marker stays smaller than the atom it identifies.
 // isGhost: if true, creates a dashed circle style for ghost atoms
 function createSelectionRing(atomMesh, selectionNumber, isGhost = false) {
     const worldPos = new THREE.Vector3();
@@ -3586,9 +3585,8 @@ function createSelectionRing(atomMesh, selectionNumber, isGhost = false) {
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.position.copy(worldPos);
     
-    // Scale label based on smallest atom - always 70% of smallest atom's diameter
-    const smallestRadius = getSmallestAtomRadius();
-    const labelSize = smallestRadius * 1.4; // 70% of diameter (radius * 2 * 0.7)
+    // Keep the marker proportional to its atom, regardless of other species.
+    const labelSize = getSelectionLabelSize(atomMesh.userData.element);
     sprite.scale.set(labelSize, labelSize, labelSize);
     
     sprite.renderOrder = 999; // Render last (on top)
@@ -3631,10 +3629,16 @@ function updateMeasurements() {
     requestRender();
 }
 
-// Get the floating label size (matches selection label size)
+function getSelectionLabelSize(element) {
+    const radius = (ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT).radius;
+    return radius * 0.4 * settings.atomScale * 1.4;
+}
+
+// Only the measured atoms determine the size of their measurement text.
 function getFloatingLabelSize() {
-    const smallestRadius = getSmallestAtomRadius();
-    return smallestRadius * 1.4; // Same as selection labels
+    return selectedAtoms.length
+        ? Math.min(...selectedAtoms.map(atom => getSelectionLabelSize(atom.element)))
+        : getSmallestAtomRadius() * 1.4;
 }
 
 // Helper: Draw rounded rectangle on canvas

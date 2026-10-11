@@ -1,0 +1,209 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/measurement-unrelated-atom.spec.cjs",
+      "tests/browser/measurement-edit-combinations.spec.cjs",
+      "--config=/private/tmp/crystal-oct11-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-measure-size-fix",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-oct11-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-measure-size-fix",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-edit-combinations.spec.cjs",
+      "file": "measurement-edit-combinations.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "measurement survives a sustained edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 58102,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:21:47.714Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-d483597cee581722702e",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        },
+        {
+          "title": "measurement survives a sustained edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61365,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:22:46.177Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a68898d05e89323d3d48-e807a63c0101c65ce682",
+          "file": "measurement-edit-combinations.spec.cjs",
+          "line": 80,
+          "column": 34
+        }
+      ]
+    },
+    {
+      "title": "measurement-unrelated-atom.spec.cjs",
+      "file": "measurement-unrelated-atom.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "adding an unselected smaller atom does not shrink an existing measurement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3924,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:23:47.553Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "measurement-sizes",
+                      "contentType": "application/json",
+                      "body": "eyJiZWZvcmUiOlt7InBvc2l0aW9uIjpbLTEuODMxNDAwMDk1MzY3NDMxNiwtMS44MzE0MDAwOTUzNjc0MzE2LC0xLjgzMTQwMDA5NTM2NzQzMTZdLCJzY2FsZSI6WzAuNTQyMDc5OTk5OTk5OTk5OSwwLjU0MjA3OTk5OTk5OTk5OTksMC41NDIwNzk5OTk5OTk5OTk5XSwibGFiZWwiOmZhbHNlfSx7InBvc2l0aW9uIjpbMC4xOTM1OTk5MDQ2MzI1NjgyNiwwLjE5MzU5OTkwNDYzMjU2ODI2LC0xLjgzMTQwMDA5NTM2NzQzMTZdLCJzY2FsZSI6WzAuNTQyMDc5OTk5OTk5OTk5OSwwLjU0MjA3OTk5OTk5OTk5OTksMC41NDIwNzk5OTk5OTk5OTk5XSwibGFiZWwiOmZhbHNlfSx7InBvc2l0aW9uIjpbMC4xOTM1OTk5MDQ2MzI1NjgyNiwtMS44MzE0MDAwOTUzNjc0MzE2LDAuMTkzNTk5OTA0NjMyNTY4MjZdLCJzY2FsZSI6WzAuNTQyMDc5OTk5OTk5OTk5OSwwLjU0MjA3OTk5OTk5OTk5OTksMC41NDIwNzk5OTk5OTk5OTk5XSwibGFiZWwiOmZhbHNlfSx7InBvc2l0aW9uIjpbLTAuODE4OTAwMDk1MzY3NDMxNywtMC44MTg5MDAwOTUzNjc0MzE3LC0xLjgzMTQwMDA5NTM2NzQzMTZdLCJzY2FsZSI6WzEuMTkyNTc1OTk5OTk5OTk5OSwwLjI5ODE0Mzk5OTk5OTk5OTk2LDFdLCJsYWJlbCI6dHJ1ZX0seyJwb3NpdGlvbiI6WzAuMTkzNTk5OTA0NjMyNTY4MjYsLTAuODE4OTAwMDk1MzY3NDMxNywtMC44MTg5MDAwOTUzNjc0MzE3XSwic2NhbGUiOlsxLjE5MjU3NTk5OTk5OTk5OTksMC4yOTgxNDM5OTk5OTk5OTk5NiwxXSwibGFiZWwiOnRydWV9LHsicG9zaXRpb24iOlstMC4yNjE2NTI0NjEwMDIxNDIxLC0wLjcxNjkwNDgyNjYzNjg1MjUsLTEuMzc2MTQ3NzI5NzMyNzIxMV0sInNjYWxlIjpbMC44MTMxMTk5OTk5OTk5OTk4LDAuMzI1MjQ3OTk5OTk5OTk5OSwxXSwibGFiZWwiOnRydWV9XSwiYWZ0ZXIiOlt7InBvc2l0aW9uIjpbLTEuODMxNDAwMDk1MzY3NDMxNiwtMS44MzE0MDAwOTUzNjc0MzE2LC0xLjgzMTQwMDA5NTM2NzQzMTZdLCJzY2FsZSI6WzAuNTQyMDc5OTk5OTk5OTk5OSwwLjU0MjA3OTk5OTk5OTk5OTksMC41NDIwNzk5OTk5OTk5OTk5XSwibGFiZWwiOmZhbHNlfSx7InBvc2l0aW9uIjpbMC4xOTM1OTk5MDQ2MzI1NjgyNiwwLjE5MzU5OTkwNDYzMjU2ODI2LC0xLjgzMTQwMDA5NTM2NzQzMTZdLCJzY2FsZSI6WzAuNTQyMDc5OTk5OTk5OTk5OSwwLjU0MjA3OTk5OTk5OTk5OTksMC41NDIwNzk5OTk5OTk5OTk5XSwibGFiZWwiOmZhbHNlfSx7InBvc2l0aW9uIjpbMC4xOTM1OTk5MDQ2MzI1NjgyNiwtMS44MzE0MDAwOTUzNjc0MzE2LDAuMTkzNTk5OTA0NjMyNTY4MjZdLCJzY2FsZSI6WzAuNTQyMDc5OTk5OTk5OTk5OSwwLjU0MjA3OTk5OTk5OTk5OTksMC41NDIwNzk5OTk5OTk5OTk5XSwibGFiZWwiOmZhbHNlfSx7InBvc2l0aW9uIjpbLTAuODE4OTAwMDk1MzY3NDMxNywtMC44MTg5MDAwOTUzNjc0MzE3LC0xLjgzMTQwMDA5NTM2NzQzMTZdLCJzY2FsZSI6WzEuMTkyNTc1OTk5OTk5OTk5OSwwLjI5ODE0Mzk5OTk5OTk5OTk2LDFdLCJsYWJlbCI6dHJ1ZX0seyJwb3NpdGlvbiI6WzAuMTkzNTk5OTA0NjMyNTY4MjYsLTAuODE4OTAwMDk1MzY3NDMxNywtMC44MTg5MDAwOTUzNjc0MzE3XSwic2NhbGUiOlsxLjE5MjU3NTk5OTk5OTk5OTksMC4yOTgxNDM5OTk5OTk5OTk5NiwxXSwibGFiZWwiOnRydWV9LHsicG9zaXRpb24iOlstMC4yNjE2NTI0NjEwMDIxNDIxLC0wLjcxNjkwNDgyNjYzNjg1MjUsLTEuMzc2MTQ3NzI5NzMyNzIxMV0sInNjYWxlIjpbMC44MTMxMTk5OTk5OTk5OTk4LDAuMzI1MjQ3OTk5OTk5OTk5OSwxXSwibGFiZWwiOnRydWV9XX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "53e41842997127cdc6d0-bcf0299974ecbb66a0ce",
+          "file": "measurement-unrelated-atom.spec.cjs",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T01:21:47.435Z",
+    "duration": 124196.28700000001,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

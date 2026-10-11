@@ -109,5 +109,28 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
         await page.locator('[data-mode="measure"]').click(); await checkMeasurement(page);
         await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
     }
+    // Switch from the measured trio to an edit selection, delete, and walk
+    // back through both geometry history and the measurement context.
+    const measured = await checkMeasurement(page);
+    await page.locator('#clearSelectionBtn').click();
+    await page.locator('#atomJumpInput').fill('4'); await page.locator('#atomJumpInput').press('Enter');
+    await page.locator('#deleteSelectedBtn').click(); await snap('deleted-after-measurement');
+    expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
+    expect(await page.evaluate(() => measurementGroup.children.filter(object => object.userData.isMeasurementVisual).length)).toBe(0);
+    await page.locator('#undoBtn').click();
+    expect((await capture(page)).selection.identities).toHaveLength(1);
+    await page.locator('#undoBtn').click();
+    expect((await capture(page)).selection.identities).toHaveLength(0);
+    await page.locator('#undoBtn').click();
+    compareGeometry((await checkMeasurement(page)).geometry, measured.geometry);
+    await snap('measurement-restored-through-deletion');
+    for (let i = 0; i < 3; i++) await page.locator('#redoBtn').click();
+    expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
+    await page.locator('#undoBtn').click();
+    // Start a fresh measurement branch after restoring the deleted atom.
+    await page.locator('[data-mode="measure"]').click();
+    for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
+    await checkMeasurement(page);
+    await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
     await snap('final');
 });

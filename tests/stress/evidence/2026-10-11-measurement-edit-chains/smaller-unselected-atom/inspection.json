@@ -12,5 +12,13 @@
   ],
   "baselineExit": 1,
   "baselineFailed": 1,
-  "cause": "Measurement and selection display sizes derive from the smallest atom in the whole structure, including atoms outside the measurement."
+  "cause": "Measurement and selection display sizes derive from the smallest atom in the whole structure, including atoms outside the measurement.",
+  "fixed": {
+    "browserPassed": 3,
+    "unitPassed": 147,
+    "inspected": "fixed-after-add.png",
+    "result": "Al markers, distance text and angle retain their original visible size after adding unselected H.",
+    "appHash": "524e14e4834da253d16327464467317b7eb66d54b7c6e08caf8e834eaaacef85",
+    "extendedBranches": "running, session97358"
+  }
 }

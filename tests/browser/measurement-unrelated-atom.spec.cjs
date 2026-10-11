@@ -17,4 +17,9 @@ test('adding an unselected smaller atom does not shrink an existing measurement'
     await info.attach('measurement-sizes', { body: JSON.stringify({ before, after }), contentType: 'application/json' });
     expect(after.map(object => object.scale)).toEqual(before.map(object => object.scale));
     await expect(page.locator('#measurementPanel')).toContainText('2.8638 Å');
+    await page.locator('#undoBtn').click();
+    expect((await sizes()).map(object => object.scale)).toEqual(before.map(object => object.scale));
+    await page.locator('#redoBtn').click();
+    expect((await sizes()).map(object => object.scale)).toEqual(before.map(object => object.scale));
+    await page.screenshot({ path: info.outputPath('after-redo-add.png') });
 });

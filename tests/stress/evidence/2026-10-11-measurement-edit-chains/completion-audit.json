@@ -37,5 +37,14 @@
     "fullBrowser": 3682,
     "sustainedVariations": 69404
   },
-  "limitations": "Finite reproducible workflows cannot prove the absence of every possible bug."
+  "limitations": "Finite reproducible workflows cannot prove the absence of every possible bug.",
+  "additionalVisualInspection": {
+    "example": "Silicon at900px",
+    "states": [
+      "unmeasured atom edit",
+      "cell edit",
+      "measurement restored through deletion history"
+    ],
+    "observation": "Retained labels and sidebar values agree. Atom-jump camera position remains after undo, so some geometry is outside the narrow canvas; no stale geometry or incorrect values confirmed."
+  }
 }

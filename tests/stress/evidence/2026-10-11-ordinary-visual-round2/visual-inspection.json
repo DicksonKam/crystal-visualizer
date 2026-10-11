@@ -1,0 +1,59 @@
+{
+  "status": "interim; long campaign still running",
+  "inspected": [
+    {
+      "seed": 1204,
+      "step": 60,
+      "action": "fix",
+      "observation": "Stacked silicon atom numbers paint over nearer atoms; same reproduced label-depth defect."
+    },
+    {
+      "seed": 1205,
+      "step": 48,
+      "action": "center",
+      "observation": "Silicon measurement marker and caption are visible; ordinary numbers also stack due to confirmed depth defect."
+    },
+    {
+      "seed": 1206,
+      "step": -1,
+      "action": "load",
+      "observation": "NaCl three-point measurement captions remain visible with preserved measurement in Edit."
+    },
+    {
+      "seed": 1204,
+      "step": 79,
+      "action": "panel",
+      "observation": "Slab periodic copies and large atom size; visible ghost transparency, panel and controls fit."
+    },
+    {
+      "seed": 1205,
+      "step": 63,
+      "action": "viewport",
+      "observation": "Water molecule: hidden hydrogen number draws over oxygen; same depth defect with just three atoms."
+    },
+    {
+      "seed": 1206,
+      "step": 16,
+      "action": "panel",
+      "observation": "Aluminum one-point selection and sidebar resize: content remains readable."
+    },
+    {
+      "seed": 1210,
+      "step": 1,
+      "action": "playback",
+      "observation": "H2 trajectory: two measurement markers and caption visible; trajectory controls fit at 900px."
+    },
+    {
+      "seed": 1211,
+      "step": 113,
+      "action": "viewport",
+      "observation": "Water edit selection and coordinate inputs visible after viewport resize."
+    },
+    {
+      "seed": 1212,
+      "step": -1,
+      "action": "load",
+      "observation": "Silicon three-point preserved measurement visible; no additional defect confirmed."
+    }
+  ]
+}

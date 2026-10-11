@@ -1,0 +1,11 @@
+{"event":"start","timestamp":"2026-10-11T06:56:36.901Z","seconds":1800,"initialSeed":1602,"steps":120,"persistent":true,"advanced":false,"ordinary":true,"sourceHashes":{"app.js":"17c0d72d4b238e820f17eb2af1c9e212fcf9e071b30f039fbdc13a015819bf4a","annotations.js":"a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce","camera.js":"00f8eaf6daa9f6f98a4f965f9b56fbcfcf69d7d292e1b1849e8d73446e4a0342","structure.js":"a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e","geometry.js":"4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1","formats.js":"fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1","document.js":"aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17","history.js":"6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa","measurement.js":"cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62","layout.js":"2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a","styles.css":"8e07fe140fdce1a1a40eb2cf81ff398a943c60a5fa073f0531e1133a84a0658d","index.html":"049dd6560975c975734f3e0e5a4509789d5bd23f835cabedcfc70fed9f3cc034","tests/stress/edit-scenario.cjs":"8379d0df8d85c31273c42c32c0be683262306ae39f1ea1f88ab613a58d837af7","tests/stress/visual-observer.cjs":"84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a","tests/stress/visual-campaign.cjs":"e40a09a3681af4c501e43e32052153df082d1b0953c9d357fe0b798d98b610b1"}}
+{"event":"failure","seed":1602,"error":"Seed 1602, step 7, action reset: page.screenshot: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n","actions":0,"images":0,"evidence":"/private/tmp/crystal-ordinary-three-fixes-visual/seed-1602","elapsedSeconds":50.355952583000004}
+page.screenshot: Timeout 5000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+    at observe (/private/tmp/crystal-ordinary-markers-candidate/tests/stress/visual-observer.cjs:100:20)
+    at async runScenario (/private/tmp/crystal-ordinary-markers-candidate/tests/stress/edit-scenario.cjs:409:39)
+    at async /private/tmp/crystal-ordinary-markers-candidate/tests/stress/visual-campaign.cjs:40:51

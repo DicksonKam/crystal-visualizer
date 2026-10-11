@@ -1,8 +1,8 @@
 {
-  "status": "Running",
-  "session": 53587,
-  "log": "/private/tmp/crystal-ordinary-visual-oct11-v2.log",
-  "output": "/private/tmp/crystal-ordinary-visual-oct11-v2",
+  "status": "Running continuation after preserved timeout",
+  "session": 43566,
+  "log": "/private/tmp/crystal-ordinary-visual-oct11-continuation.log",
+  "output": "/private/tmp/crystal-ordinary-visual-oct11-continuation",
   "campaign": {
     "event": "start",
     "timestamp": "2026-10-11T05:47:29.338Z",
@@ -114,5 +114,39 @@
       "tests/browser/coordinate-width.spec.cjs"
     ],
     "boundaryTest": "Existing visual-edit.spec.cjs now enables atom numbers; equivalent candidate workflow passed at 1440px and 900px."
+  },
+  "baselineSegments": [
+    {
+      "log": "timeout-replays/baseline-campaign.log",
+      "elapsedSeconds": 4198.034480083,
+      "actions": 4800,
+      "images": 1842,
+      "result": "click timeout; normal shift replay passed at 973ms"
+    },
+    {
+      "log": "/private/tmp/crystal-ordinary-visual-oct11-continuation.log",
+      "session": 43566,
+      "seconds": 3600,
+      "seed": 1240,
+      "status": "running"
+    }
+  ],
+  "labelOnlyFullSuite": {
+    "result": "181 passed; 1 synthetic dense playback timeout",
+    "seconds": 3468,
+    "log": "atom-label-depth/full-browser-suite.log",
+    "failureScope": "499-atom trajectory continuous playback while other visual runs were active; outside ordinary-use focus"
+  },
+  "twoFixVisualCampaign": {
+    "result": "complete",
+    "seconds": 1857.605686791,
+    "actions": 4680,
+    "images": 1739,
+    "seeds": [
+      1407,
+      1445
+    ],
+    "deviceScaleFactor": 1,
+    "log": "combined-candidate/corrected-campaign.log"
   }
 }

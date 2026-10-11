@@ -91,7 +91,9 @@ function displayedSelection(selection, state) {
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
 async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null, advanced = false, ordinarySources = null }) {
-    page.setDefaultTimeout(5000);
+    // High-resolution visual runs share software-rendered browser resources.
+    // Keep ordinary data checks fast while allowing UI capture to settle.
+    page.setDefaultTimeout(visual ? 15000 : 5000);
     const rng = random(seed); const integer = n => Math.floor(rng() * n);
     const source = sourceOverride || (ordinarySources ? ordinarySources[seed % ordinarySources.length] : sourceFor(seed));
     let acceptDialogs = true;
@@ -113,6 +115,10 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
     if (extended) await page.waitForFunction(() => window.stressLoadSerial > 0);
     await page.locator('#statusText').filter({ hasText: 'Loaded' }).waitFor();
     if (ordinarySources) {
+        if (!await page.locator('#atomJumpInput').isVisible()) {
+            await page.locator('#sidebarDivider').press('ArrowRight');
+            log.push({ startupPanelReopened: true });
+        }
         // Start with the everyday measure-then-edit workflow rather than an empty selection.
         await page.locator('[data-mode="measure"]').click();
         const numberToMeasure = Math.min(3, await page.evaluate(() => currentStructure.atoms.length));

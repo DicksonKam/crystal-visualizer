@@ -28,12 +28,27 @@
     "deviceScaleFactor": 2,
     "structures": 11,
     "persistent": true,
-    "status": "running"
+    "status": "original run ended on screenshot timeout; replay running",
+    "replay": {
+      "session": 40986,
+      "log": "/private/tmp/crystal-ordinary-three-fixes-visual-v2.log",
+      "seconds": 1800,
+      "seed": 1602,
+      "change": "Only visual harness UI deadline extended from 5s to15s; app source unchanged."
+    }
   },
   "combinedBrowserSuite": {
     "session": 57524,
     "log": "/private/tmp/crystal-three-fixes-browser-suite.log",
     "status": "running",
     "excluded": "One synthetic dense continuous playback workload; outside ordinary-use audit, previously timed out under concurrent load in label-only suite."
+  },
+  "measurementEditChains": {
+    "result": "2 passed, 6.3m",
+    "windows": [
+      900,
+      1440
+    ],
+    "evidence": "measurement-edit-chains-pass.log"
   }
 }

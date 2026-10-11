@@ -1,0 +1,22 @@
+const {chromium}=require('/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test');
+const fs=require('node:fs/promises');
+const root='/Users/dicksonkam/Projects/crystal-visualizer';
+(async()=>{const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});try{const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:2});
+await page.route('https://cdnjs.cloudflare.com/**/three.min.js',r=>r.fulfill({path:root+'/node_modules/three/build/three.min.js',contentType:'text/javascript'}));for(const c of ['OrbitControls','TrackballControls'])await page.route(`https://cdn.jsdelivr.net/**/${c}.js`,r=>r.fulfill({path:root+`/node_modules/three/examples/js/controls/${c}.js`,contentType:'text/javascript'}));await page.route('https://fonts.googleapis.com/**',r=>r.abort());await page.route('https://fonts.gstatic.com/**',r=>r.abort());
+await page.goto('http://127.0.0.1:4173/');
+const failure=JSON.parse(await fs.readFile('/private/tmp/crystal-ordinary-visual-oct11-v2/seed-1242/failure.json','utf8'));
+const state=failure.log.at(-1).before,g=state.geometry;
+const source=['shift replay','1',...g.lattice.map(v=>v.join(' ')),g.species.map(s=>s.element).join(' '),g.counts.join(' '),'Cartesian',...g.atoms.map(a=>a.position.join(' ')),''].join('\n');
+await page.locator('#fileInput').setInputFiles({name:'shift-replay.poscar',mimeType:'text/plain',buffer:Buffer.from(source)});await page.locator('#statusText').filter({hasText:'Loaded'}).waitFor();
+for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
+await page.locator('[data-mode="edit"]').click();await page.locator('#showBonds').uncheck();
+const box=await page.locator('#sidebarDivider').boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(420,box.y+box.height/2,{steps:5});await page.mouse.up();
+await page.locator('input[name="shiftCoordType"][value="cartesian"]').check();
+for(const [id,value] of [['#shiftA','.051338'],['#shiftB','-.124783'],['#shiftC','.136724']])await page.locator(id).fill(value);
+await page.screenshot({path:'/private/tmp/crystal-shift-timeout-replay-before.png',timeout:15000});
+const before=await page.evaluate(()=>currentStructure.atoms.map(a=>a.position.toArray()));
+const started=Date.now();await page.locator('#applyShiftBtn').click({timeout:5000});
+const after=await page.evaluate(()=>currentStructure.atoms.map(a=>a.position.toArray()));
+console.log(JSON.stringify({milliseconds:Date.now()-started,changed:JSON.stringify(before)!==JSON.stringify(after),status:await page.locator('#statusText').textContent(),selection:await page.evaluate(()=>selectedAtoms.length)}));
+await page.screenshot({path:'/private/tmp/crystal-shift-timeout-replay-after.png',timeout:15000});
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

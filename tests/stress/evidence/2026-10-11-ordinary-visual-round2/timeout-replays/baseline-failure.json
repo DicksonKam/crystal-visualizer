@@ -1,0 +1,3436 @@
+{
+  "seed": 1242,
+  "error": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#applyShiftBtn')\u001b[22m\n\u001b[2m    - locator resolved to <button id=\"applyShiftBtn\" class=\"btn btn-shift\">Shift 3 Selected</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\n    at runScenario (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:214:159)\n    at async /Users/dicksonkam/Projects/crystal-visualizer/tests/stress/visual-campaign.cjs:40:51",
+  "errors": [],
+  "sourceHashes": {
+    "app.js": "14565c0843446f859f44af77eab9124e9f58881fcbf3142b4d5f0841be8edaf1",
+    "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+    "camera.js": "00f8eaf6daa9f6f98a4f965f9b56fbcfcf69d7d292e1b1849e8d73446e4a0342",
+    "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+    "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
+    "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+    "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+    "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+    "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
+    "index.html": "049dd6560975c975734f3e0e5a4509789d5bd23f835cabedcfc70fed9f3cc034",
+    "tests/stress/edit-scenario.cjs": "7e4e50f8f897d8f46b7fa1d965940b1b16d14cf27042b5c3f007645a98e2a128",
+    "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+    "tests/stress/visual-campaign.cjs": "8660e16a9082fa5cd0e0f6746f0c6c666f955c9041b1b9d220b9a8db5730a405"
+  },
+  "log": [
+    {
+      "dialog": "Discard unsaved structure edits and open another file?",
+      "response": "accept"
+    },
+    {
+      "step": 0,
+      "action": "panel",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              7.38,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 0,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "width": 420,
+      "preview": {
+        "filename": "seed-1242-step-0-panel-panel-preview.png",
+        "metrics": {
+          "content": 115178,
+          "cyan": 14458,
+          "transparent": 0,
+          "checksum": 587432886,
+          "nonBackground": 118810,
+          "maxAtomRadiusPixels": 42.325763534007955,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 2030,
+          "height": 1510,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": true,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              7.38,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 0,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "visual": {
+        "filename": "seed-1242-step-0-panel-after.png",
+        "metrics": {
+          "content": 115178,
+          "cyan": 14458,
+          "transparent": 0,
+          "checksum": 587432886,
+          "nonBackground": 118810,
+          "maxAtomRadiusPixels": 42.325763534007955,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 2030,
+          "height": 1510,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": true,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      }
+    },
+    {
+      "step": 1,
+      "action": "resize",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              7.38,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          }
+        ],
+        "redo": [],
+        "dirty": false,
+        "revision": 0,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "sign": 1,
+      "pointer": {
+        "x": 897.6498387067975,
+        "y": 217.17175000402415,
+        "dx": 2.082970027439318e-15,
+        "dy": -12
+      },
+      "preview": {
+        "filename": "seed-1242-step-1-resize-cell-preview.png",
+        "metrics": {
+          "content": 77800,
+          "cyan": 5314,
+          "transparent": 0,
+          "checksum": 534933217,
+          "nonBackground": 81359,
+          "maxAtomRadiusPixels": 35.80512119832523,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 2030,
+          "height": 1510,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": true,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              7.74,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          },
+          {
+            "id": 1266,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 1,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "visual": null
+    },
+    {
+      "step": 2,
+      "action": "reset",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              7.74,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          },
+          {
+            "id": 1266,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 1,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              7.74,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          },
+          {
+            "id": 1266,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 1,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "visual": {
+        "filename": "seed-1242-step-2-reset-after.png",
+        "metrics": {
+          "content": 113863,
+          "cyan": 14441,
+          "transparent": 0,
+          "checksum": 585606245,
+          "nonBackground": 117445,
+          "maxAtomRadiusPixels": 42.01554715303837,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 2030,
+          "height": 1510,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": true,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      }
+    },
+    {
+      "step": 3,
+      "action": "batch_fix",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              7.74,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          },
+          {
+            "id": 1266,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 1,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "selector": "#unfixAllBtn",
+      "performed": true,
+      "after": {
+        "geometry": {
+          "lattice": [
+            [
+              7.74,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          },
+          {
+            "id": 1266,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 1,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "visual": null
+    },
+    {
+      "step": 4,
+      "action": "shift",
+      "before": {
+        "geometry": {
+          "lattice": [
+            [
+              7.74,
+              0,
+              0
+            ],
+            [
+              -3.69,
+              6.3912674799,
+              0
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "species": [
+            {
+              "id": "species-1",
+              "element": "C"
+            }
+          ],
+          "elements": [
+            "C"
+          ],
+          "counts": [
+            18
+          ],
+          "sd": false,
+          "atoms": [
+            {
+              "id": "atom-1",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-2",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                0,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-3",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-4",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -1.230000000246,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-5",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-6",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-7",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-8",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.459999999754,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-9",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.229999999877,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-10",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                1.2299999995079998,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-11",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-12",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                -3.6899994171335493e-10,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-13",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                0,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-14",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                4.920000000246,
+                1.420281662057972,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-15",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6900000003689994,
+                2.1304224930869577,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-16",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                3.6899999999999995,
+                3.5507041557840564,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-17",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                4.260844986813042,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            },
+            {
+              "id": "atom-18",
+              "speciesId": "species-1",
+              "element": "C",
+              "position": [
+                2.460000000123,
+                5.681126648871014,
+                10
+              ],
+              "sd": [
+                true,
+                true,
+                true
+              ]
+            }
+          ]
+        },
+        "selection": {
+          "mode": "edit",
+          "measurement": true,
+          "identities": [
+            [
+              0,
+              false,
+              null
+            ],
+            [
+              1,
+              false,
+              null
+            ],
+            [
+              2,
+              false,
+              null
+            ]
+          ]
+        },
+        "violations": [],
+        "undo": [
+          {
+            "id": 1263,
+            "type": "select_atom"
+          },
+          {
+            "id": 1264,
+            "type": "select_atom"
+          },
+          {
+            "id": 1265,
+            "type": "select_atom"
+          },
+          {
+            "id": 1266,
+            "type": "vacuum_drag"
+          }
+        ],
+        "redo": [],
+        "dirty": true,
+        "revision": 1,
+        "atomCount": 18,
+        "lattice": true,
+        "periodic": true,
+        "supportsSD": true,
+        "trajectory": false,
+        "frameCount": 0,
+        "repeats": {
+          "a": 1,
+          "b": 1,
+          "c": 1
+        }
+      },
+      "values": [
+        "0.051338",
+        "-0.124783",
+        "0.136724"
+      ]
+    }
+  ]
+}

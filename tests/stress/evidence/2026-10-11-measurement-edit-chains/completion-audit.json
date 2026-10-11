@@ -46,5 +46,13 @@
       "measurement restored through deletion history"
     ],
     "observation": "Retained labels and sidebar values agree. Atom-jump camera position remains after undo, so some geometry is outside the narrow canvas; no stale geometry or incorrect values confirmed."
+  },
+  "naclVisualInspection": {
+    "status": "First900px NaCl compound chain passed on v181",
+    "evidence": [
+      "v181-visual-samples/nacl-900-unmeasured-atom-edit.png",
+      "v181-visual-samples/nacl-900-label-clear-of-atom.png"
+    ],
+    "observation": "2.570angstrom caption stays below unselected sodium sphere with a leader to its actual measurement midpoint; retained markers and angle are visible."
   }
 }

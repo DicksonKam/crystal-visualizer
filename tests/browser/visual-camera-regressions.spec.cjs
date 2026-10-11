@@ -27,3 +27,35 @@ test('manual orbit keeps all atom geometry inside the depth range', async ({page
     }
     expect(failures).toEqual([]);
 });
+
+test('sidebar resizing draws each resized canvas before returning to the browser', async ({page}, info) => {
+    await upload(page, '3\nwater\nO 0 0 .1173\nH .7572 0 -.4692\nH -.7572 0 -.4692\n', 'water.xyz');
+    await page.evaluate(() => {
+        window.blankResizeFrames = [];
+        let draws = 0;
+        const render = renderer.render.bind(renderer), resize = renderer.setSize.bind(renderer);
+        renderer.render = (...args) => { draws++; return render(...args); };
+        renderer.setSize = (...args) => {
+            const before = draws;
+            const result = resize(...args);
+            queueMicrotask(() => { if(draws === before) blankResizeFrames.push(args.slice(0,2)); });
+            return result;
+        };
+        window.poseBeforeResize = getCameraPose();
+    });
+    const divider = page.locator('#sidebarDivider');
+    for(const target of [560,310,220,400,280]) {
+        const box = await divider.boundingBox();
+        await page.mouse.move(box.x+box.width/2,box.y+box.height/2);
+        await page.mouse.down();
+        await page.mouse.move(target,box.y+box.height/2,{steps:15});
+        await page.mouse.up();
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+        await page.screenshot({path:info.outputPath(`sidebar-${target}.png`)});
+    }
+    expect(await page.evaluate(() => blankResizeFrames)).toEqual([]);
+    const state = await page.evaluate(() => ({before:poseBeforeResize.quaternion.toArray(), after:camera.quaternion.toArray(),
+        panBefore:poseBeforeResize.pivot.toArray(), panAfter:controls.target.toArray()}));
+    state.after.forEach((value,i) => expect(value).toBeCloseTo(state.before[i], 10));
+    state.panAfter.forEach((value,i) => expect(value).toBeCloseTo(state.panBefore[i], 10));
+});

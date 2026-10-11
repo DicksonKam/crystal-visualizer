@@ -148,6 +148,7 @@ const sharedAtomMaterials = new Map();
 let smallestAtomRadiusCache = null;
 let displayedAtomCount = 0;
 let renderPending = true;
+let viewportResizePending = false;
 let lastRenderedAt = -Infinity;
 let lastCameraMotionAt = -Infinity;
 
@@ -830,6 +831,12 @@ function animate(timestamp) {
     if (dense && timestamp - lastRenderedAt < 1000 / 30) return;
     lastRenderedAt = timestamp;
     renderPending = false;
+    // Resizing clears the drawing buffer. Do it inside the render transaction,
+    // never in a layout observer after the completed frame has been drawn.
+    if (viewportResizePending) {
+        viewportResizePending = false;
+        resizeViewportForFrame();
+    }
     
     // Make selection rings face the camera
     if (measurementGroup) {
@@ -876,8 +883,16 @@ function animate(timestamp) {
 }
 
 function onWindowResize() {
+    viewportResizePending = true;
+    requestRender();
+}
+
+function resizeViewportForFrame() {
     if (!viewport.clientWidth || !viewport.clientHeight) return;
     const aspect = viewport.clientWidth / viewport.clientHeight;
+    const size = renderer.getSize(new THREE.Vector2());
+    if (size.x === viewport.clientWidth && size.y === viewport.clientHeight
+        && aspect === perspectiveCamera.aspect) return;
     const frustumSize = 15;
     let framing = null;
     if (currentStructure && cameraMath && cameraController && aspect !== perspectiveCamera.aspect) {
@@ -5116,6 +5131,8 @@ function applyCameraPose(pose) {
     controls.target.copy(pose.pivot);
     camera.position.copy(cameraMath.position(pose));
     camera.zoom = pose.zoom;
+    // Zoom changes projection even when the depth planes remain unchanged.
+    camera.updateProjectionMatrix();
     camera.updateMatrixWorld(true);
     updateCameraClipping();
     requestRender();

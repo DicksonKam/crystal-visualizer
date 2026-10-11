@@ -85,8 +85,8 @@
     "candidateExamplePassed": 12,
     "variationSession": 69404,
     "variationStatus": "Running72 cases on main181; source frozen",
-    "variationPassedSoFar": 9,
-    "fullBrowserPassedSoFar": 98
+    "variationPassedSoFar": 11,
+    "fullBrowserPassedSoFar": 119
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -128,6 +128,8 @@
     "Graphene900",
     "Mouse capture-loss release with active measurement",
     "Graphene1440 deletion history",
-    "Slab900 measured atom movement and fixed overlays"
+    "Slab900 measured atom movement and fixed overlays",
+    "Slab1440 unmeasured atom edit",
+    "Water900 repeated atom edits"
   ]
 }

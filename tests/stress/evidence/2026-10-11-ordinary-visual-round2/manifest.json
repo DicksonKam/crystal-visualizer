@@ -93,6 +93,26 @@
       "benzene.xyz",
       "H2O_wobble.xdatcar"
     ],
-    "status": "Running; first 120-action chain passed"
+    "status": "Terminal after 840 actions: harness tried hidden sidebar input at next sequence setup; corrected in isolated candidate."
+  },
+  "correctedCombinedCandidateCampaign": {
+    "session": 45903,
+    "log": "/private/tmp/crystal-ordinary-combined-visual-oct11-v2.log",
+    "output": "/private/tmp/crystal-ordinary-combined-visual-oct11-v2",
+    "candidate": "/private/tmp/crystal-ordinary-coordinates-candidate",
+    "seconds": 1800,
+    "seed": 1407,
+    "steps": 120,
+    "status": "Live; seed1407 passed, seed1408 running",
+    "harnessCorrection": "combined-candidate/startup-harness.patch"
+  },
+  "canonicalRegressions": {
+    "log": "combined-candidate/canonical-regressions.log",
+    "result": "3 passed on combined candidate",
+    "files": [
+      "tests/browser/atom-label-depth.spec.cjs",
+      "tests/browser/coordinate-width.spec.cjs"
+    ],
+    "boundaryTest": "Existing visual-edit.spec.cjs now enables atom numbers; equivalent candidate workflow passed at 1440px and 900px."
   }
 }

@@ -1,0 +1,10 @@
+{
+  "version": 180,
+  "appHash": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
+  "passed": 2,
+  "cyclesEach": 3,
+  "workflow": "Measure the last three atoms, edit, clear measurement, select/delete the first atom, undo all three history actions, redo all three, undo all three, shift measured atoms to create a new history branch, undo/redo shift, Reset View.",
+  "checked": "Exact atom IDs, species membership, coordinates, lattice and selective-dynamics flags restored; selected indices and measurement purpose match original context; distances and angle independently recomputed.",
+  "visualInspection": "Personally inspected slab restoration and branch screenshots and water final branch; markers, angle and lengths correspond to restored atoms.",
+  "productBugFound": false
+}

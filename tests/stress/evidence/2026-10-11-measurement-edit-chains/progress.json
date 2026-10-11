@@ -79,13 +79,15 @@
     "fullBrowserSession": 90589,
     "fullBrowserStatus": "Running",
     "candidateExampleSession": 17660,
-    "candidateExampleStatus": "Running; first two aluminium widths passed; source identical to main180",
-    "navigationPassed": 1
+    "candidateExampleStatus": "Running; first four Al/Si width sequences passed; remaining four examples pending",
+    "navigationPassed": 1,
+    "deleteHistoryPassed": 2
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
     "candidateFocusedPassed": 1,
     "candidateChainSession": 17660,
     "status": "Promoted main180 after verified focused pointer regression and ordinary Al chains; complete suite and six-example pilot running"
-  }
+  },
+  "additionalCoverage": "Deleting earlier atoms and restoring preserved measurement identities through history and a fresh edit branch."
 }

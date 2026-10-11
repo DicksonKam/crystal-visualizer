@@ -1,0 +1,11 @@
+{
+  "version": 180,
+  "mainAppHash": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
+  "runSession": 17660,
+  "runStatus": "Running; first 8 cases pass. These inspected cases completed.",
+  "silicon": "Inspected atom drag preview with full plane and measurements, and refreshed bonds after repeating edits.",
+  "salt": "Inspected cell commit with three retained markers, two distances and angle, then fresh measurement following deletion history.",
+  "graphene": "Inspected near-straight 179.4 degree measurement after atom commit, full frame, and refreshed bonds after the fourth cycle.",
+  "assessment": "No additional confirmed product bug in these inspected images. End-of-sequence camera may focus the last selected atom in the narrowed viewport; no claim that clipped parts outside the viewport are a missing-edge defect.",
+  "harnessArtifact": "Long decimal strings in add-coordinate fields originate from generated floating-point test input, not an observed user-input formatting bug; variation campaign formats simple inputs to two decimals."
+}

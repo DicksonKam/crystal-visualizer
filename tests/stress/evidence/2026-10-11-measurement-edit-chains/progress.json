@@ -79,7 +79,7 @@
     "fullBrowserSession": 90589,
     "fullBrowserStatus": "Running",
     "candidateExampleSession": 17660,
-    "candidateExampleStatus": "Running; first six Al/Si/NaCl width sequences passed; graphene/slab/water pending",
+    "candidateExampleStatus": "Running; 8 Al/Si/NaCl/graphene width sequences passed, slab and water pending",
     "navigationPassed": 1,
     "deleteHistoryPassed": 2
   },
@@ -97,6 +97,15 @@
     "examples": 6,
     "measurementOrders": 6,
     "ordinaryPairs": "Silicon neighbors and Na-Cl, top slab atoms, H-O-H water; includes unmeasured atom editing.",
-    "variations": "Mouse step count and drag size; exposed-pixel picking with side views for layered atoms."
-  }
+    "variations": "Mouse step count and drag size; exposed-pixel picking with side views for layered atoms.",
+    "collectedCases": 72
+  },
+  "personallyInspectedNormalExamples": [
+    "Aluminium",
+    "Silicon",
+    "NaCl",
+    "Graphene",
+    "Slab deletion history",
+    "Water navigation and deletion history"
+  ]
 }

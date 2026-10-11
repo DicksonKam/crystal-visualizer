@@ -1,0 +1,42 @@
+
+Running 1 test using 1 worker
+
+(node:81531) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-ordinary-markers-candidate/tests/browser/selection-marker-layout.spec.cjs:4:1 › ordinary rotated perovskite retains readable and selectable measurement point numbers (12.9s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-ordinary-markers-candidate/tests/browser/selection-marker-layout.spec.cjs:4:1 › ordinary rotated perovskite retains readable and selectable measurement point numbers 
+
+    Error: point number must select its owner
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      24 |   });
+      25 |   expect(state.source).toBe(source);expect(state.markers).toHaveLength(3);
+    > 26 |   for(const m of state.markers){expect(m.anchorError).toBeLessThan(1e-6);expect(m.leaderStartError).toBeLessThan(1e-5);expect(m.hit,'point number must select its owner').toBe(true);}
+         |                                                                                                                                                                           ^
+      27 |   for(let i=0;i<3;i++)for(let j=0;j<i;j++){
+      28 |    const a=state.markers[i],b=state.markers[j];
+      29 |    expect(Math.abs(a.x-b.x)>=(a.width+b.width)/2-1 || Math.abs(a.y-b.y)>=(a.height+b.height)/2-1,'point numbers overlap').toBe(true);
+        at /private/tmp/crystal-ordinary-markers-candidate/tests/browser/selection-marker-layout.spec.cjs:26:171
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-layout-baseline-v2/selection-marker-layout-or-514f3-e-measurement-point-numbers-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-marker-layout-baseline-v2/selection-marker-layout-or-514f3-e-measurement-point-numbers-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-layout-baseline-v2/selection-marker-layout-or-514f3-e-measurement-point-numbers-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-marker-layout-baseline-v2/selection-marker-layout-or-514f3-e-measurement-point-numbers-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../../../private/tmp/crystal-ordinary-markers-candidate/tests/browser/selection-marker-layout.spec.cjs:4:1 › ordinary rotated perovskite retains readable and selectable measurement point numbers 

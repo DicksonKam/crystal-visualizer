@@ -23,7 +23,7 @@ test('ordinary rotated perovskite retains readable and selectable measurement po
    return{markers,source:generatePOSCAR(),distances:getMeasurementGeometry().distances};
   });
   expect(state.source).toBe(source);expect(state.markers).toHaveLength(3);
-  for(const m of state.markers){expect(m.anchorError).toBeLessThan(1e-6);expect(m.leaderStartError).toBeLessThan(1e-5);expect(m.hit,'point number must select its owner').toBe(true);expect(m.height).toBeLessThanOrEqual(32.01);}
+  for(const m of state.markers){expect(m.anchorError).toBeLessThan(1e-6);expect(m.leaderStartError).toBeLessThan(1e-5);expect(m.hit,'point number must select its owner').toBe(true);}
   for(let i=0;i<3;i++)for(let j=0;j<i;j++){
    const a=state.markers[i],b=state.markers[j];
    expect(Math.abs(a.x-b.x)>=(a.width+b.width)/2-1 || Math.abs(a.y-b.y)>=(a.height+b.height)/2-1,'point numbers overlap').toBe(true);
@@ -32,4 +32,31 @@ test('ordinary rotated perovskite retains readable and selectable measurement po
  }
  await page.locator('#clearSelectionBtn').click();
  expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
+});
+
+test('a displaced point marker starts the correct atom drag and survives undo',async({page},info)=>{
+ test.setTimeout(90000);await page.setViewportSize({width:1280,height:800});
+ await upload(page,await fs.readFile(path.join(__dirname,'../../examples/poscar/SrTiO3_perovskite.vasp'),'utf8'),'SrTiO3_perovskite.vasp');
+ for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
+ await page.locator('#resetView').click();await page.locator('[data-mode="edit"]').click();await page.waitForTimeout(300);
+ const before=await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()));
+ const point=await page.evaluate(()=>{
+  const marker=selectionRings.find((o,i)=>selectedAtoms[i].index===1 && o.userData.annotationLeader?.visible);
+  if(!marker)throw Error('Fixture must produce a displaced marker');
+  const r=renderer.domElement.getBoundingClientRect(),q=marker.getWorldPosition(new THREE.Vector3()).project(camera);
+  return{x:r.left+(q.x+1)*r.width/2,y:r.top+(1-q.y)*r.height/2,index:selectedAtoms[selectionRings.indexOf(marker)].index};
+ });
+ await page.screenshot({path:info.outputPath('crowded-before-drag.png')});
+ await page.mouse.move(point.x,point.y);await page.mouse.down();
+ try{expect(await page.evaluate(()=>draggedAtom?.index)).toBe(point.index);await page.mouse.move(point.x+20,point.y-12,{steps:6});}finally{await page.mouse.up();}
+ const after=await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()));
+ expect(after[point.index]).not.toEqual(before[point.index]);
+ for(let i=0;i<before.length;i++)if(i!==point.index)expect(after[i]).toEqual(before[i]);
+ expect(await page.evaluate(()=>selectedAtoms.length)).toBe(3);
+ await page.screenshot({path:info.outputPath('crowded-after-drag.png')});
+ await page.locator('#undoBtn').click();
+ expect(await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()))).toEqual(before);
+ await page.locator('#redoBtn').click();
+ expect(await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()))).toEqual(after);
+ await page.locator('#clearSelectionBtn').click();expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
 });

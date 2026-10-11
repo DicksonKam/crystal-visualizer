@@ -84,6 +84,25 @@
       "step": 46,
       "action": "panel",
       "observation": "Aluminum two-point measurement caption remains readable after wide sidebar adjustment."
+    },
+    {
+      "source": "candidate3",
+      "action": "frame drag preview",
+      "file": "/private/tmp/crystal-marker-edit-regressions/measurement-edit-combinati-5d46f-stained-edit-chain-at-900px-chromium/1-cell-preview.png",
+      "observation": "Three point numbers, distance captions and angle visible during frame drag with wide sidebar; narrow viewport preserves intentional pan."
+    },
+    {
+      "source": "candidate3",
+      "action": "displaced marker atom drag",
+      "file": "selection-marker-layout/crowded-after-drag.png",
+      "observation": "Ti moves; point numbers remain distinct; distance/angle captions follow moved atom and remain visible."
+    },
+    {
+      "source": "candidate2",
+      "seed": 1440,
+      "step": 114,
+      "action": "atom drag preview",
+      "observation": "Coordinate fields remain readable; ordinary number depth respects foreground geometry; edit check marker still oversized in two-fix candidate, addressed by third marker fix."
     }
   ],
   "candidateInspections": [

@@ -8,5 +8,15 @@
     "result": "1 passed, 23.8s",
     "scope": "12 ordinary mouse rotations, all 3 marker rectangles separated, pointer picking maps each to owner, physical anchors and exported structure unchanged, leader starts at owner, clearing selection leaves no group children",
     "testCorrection": "Initial attempt supplied client coordinates to an NDC function; corrected to getAtomIntersection(event) and reran successfully."
+  },
+  "baselinePicking": {
+    "result": "failed",
+    "reason": "Clicking the center of an overlapping number selects the wrong point. Pixel coordinates supplied to normal getAtomIntersection(event).",
+    "evidence": "baseline-picking-failure.log"
+  },
+  "displacedMarkerDrag": {
+    "result": "1 passed, 19.5s",
+    "scope": "Normal mouse drag at displaced Ti marker; correct drag owner; only Ti moves; measurement selection preserved; undo/redo match geometry; clearing removes all visuals",
+    "fixtureCorrection": "First attempt used Sr at the cell corner, whose oblique cell-bounded movement plane has no area. Retest uses displaced central Ti, a physically movable atom."
   }
 }

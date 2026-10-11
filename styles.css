@@ -350,6 +350,17 @@ body {
     margin-bottom: 0.65rem;
 }
 
+/* Dragging creates precise values; keep the complete number readable at
+   the current sidebar width instead of squeezing three fields into one row. */
+.exact-atom-section .add-atom-coords {
+    flex-wrap: wrap;
+}
+
+.exact-atom-section .coord-input-group {
+    flex: 1 1 9rem;
+    min-width: 0;
+}
+
 .exact-atom-section .btn {
     width: 100%;
 }
@@ -1373,7 +1384,9 @@ body.edit-mode-active .panel-title {
 }
 
 .sd-batch-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    max-width: 12rem;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
@@ -1381,8 +1394,13 @@ body.edit-mode-active .panel-title {
     color: var(--text-secondary);
 }
 
+.sd-batch-row label {
+    grid-column: 1 / -1;
+}
+
 .z-threshold-input {
-    width: 70px;
+    width: 100%;
+    min-width: 0;
     padding: 0.35rem 0.5rem;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
@@ -1934,8 +1952,6 @@ body.edit-mode-active .panel-title {
     .info-value { text-align: left; }
     .periodic-row, .add-atom-coord-type, .add-atom-coords, .shift-coords,
     .sd-buttons, .sd-batch-buttons, .sd-batch-row { flex-wrap: wrap; }
-    .sd-batch-row { display: grid; grid-template-columns: 70px max-content; }
-    .sd-batch-row label { grid-column: 1 / -1; }
     .periodic-axis { flex: 1 1 74px; min-width: 74px; }
     .coord-input-group, .shift-input-group { flex: 1 1 60px; min-width: 0; }
     .element-select { min-width: 0; }

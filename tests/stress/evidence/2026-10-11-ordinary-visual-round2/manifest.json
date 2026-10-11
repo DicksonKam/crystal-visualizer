@@ -38,7 +38,7 @@
     "FreshNaClresetwithnumbers",
     "NaClrotationwithmoderateatomsize"
   ],
-  "productChanges": false,
+  "productChanges": true,
   "completionGates": [
     "Finish sustained run",
     "Inspect representative screenshots across examples and operations",
@@ -89,7 +89,15 @@
       "relatedRegressionsLog": "/private/tmp/crystal-ordinary-coordinate-related.log"
     }
   ],
-  "rootProductPromotion": "Pending two-hour discovery campaign completion; root app.js and styles.css remain unchanged.",
+  "rootProductPromotion": {
+    "status": "applied; final main-app verification pending",
+    "appHash": "91b33919756e7319766676e859711a8d6288c9405fb5b8ddf999e48c0827f70d",
+    "cssHash": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+    "cacheVersions": {
+      "app": 183,
+      "css": 54
+    }
+  },
   "combinedCandidateCampaign": {
     "session": 66397,
     "log": "/private/tmp/crystal-ordinary-combined-visual-oct11.log",
@@ -135,11 +143,15 @@
       "result": "click timeout; normal shift replay passed at 973ms"
     },
     {
-      "log": "/private/tmp/crystal-ordinary-visual-oct11-continuation.log",
+      "log": "combined-candidate/baseline-continuation-complete.log",
       "session": 43566,
       "seconds": 3600,
       "seed": 1240,
-      "status": "running"
+      "status": "complete",
+      "exitCode": 0,
+      "workflowSteps": 4080,
+      "capturedImages": 1519,
+      "elapsedSeconds": 3617.8178728750004
     }
   ],
   "labelOnlyFullSuite": {
@@ -249,7 +261,8 @@
     "cacheVersions": {
       "app.js": 183,
       "styles.css": 54
-    }
+    },
+    "status": "applied"
   },
   "finalFourFixHighDensity": {
     "status": "passed",

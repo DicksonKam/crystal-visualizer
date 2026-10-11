@@ -1,0 +1,20 @@
+{
+  "assets": [
+    {
+      "path": "/styles.css",
+      "query": "?v=54",
+      "status": 200
+    },
+    {
+      "path": "/app.js",
+      "query": "?v=183",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "selection": [
+    0,
+    1,
+    2
+  ]
+}

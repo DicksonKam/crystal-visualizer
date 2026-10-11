@@ -207,6 +207,13 @@
         "seed-1820-step-12-panel-after.png"
       ],
       "observations": "Water atom drag preserves the three measurement markers and captions: 0.948 and 1.515 angstrom correspond to sidebar values 0.9484 and 1.5149. Later sidebar resize and intentional Escape cancellation remove measurement overlays after edit selection replaces the measurement; selected H checkmark remains. The camera is deliberately zoomed/panned near the right edge, so widening the panel crops the right atom; this is not evidence that its geometry disappeared."
+    },
+    {
+      "campaign": "updated main app v183 / CSS v54",
+      "screenshots": [
+        "combined-candidate/main-app/crystal-final-main-smoke.png"
+      ],
+      "observations": "Fresh main-app perovskite load has separate markers 1/2/3 with correctly colored guides. Measurement values 3.382 and 1.952 angstrom and angle 54.7 degrees agree with panel rounding. Foreground titanium label stays on its surface; no duplicate atom labels paint over it. Frame and playback-free layout render correctly."
     }
   ],
   "candidateInspections": [

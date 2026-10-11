@@ -23,7 +23,7 @@ async function checkMeasurement(page) {
             distances, angle,
             labelPositions: labels.slice(0, 2).map(label => (label.userData.annotationAnchor || label.position).toArray()),
             midpoints: midpoints.map(point => point.toArray()),
-            markers: selectionRings.map(ring => ring.position.toArray()),
+            markers: selectionRings.map(ring => (ring.userData.annotationAnchor || ring.position).toArray()),
             points: points.map(point => point.toArray()),
             arc: measurementGroup.children.filter(object => object.userData.isMeasurementArc).length
         };

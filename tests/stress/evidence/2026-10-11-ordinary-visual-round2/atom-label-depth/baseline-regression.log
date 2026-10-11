@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:78577) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/atom-label-depth.spec.cjs:5:1 › ordinary atom numbers cannot paint over a nearer atom after rotation (16.9s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/atom-label-depth.spec.cjs:5:1 › ordinary atom numbers cannot paint over a nearer atom after rotation 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 0
+    Received: 589
+
+      54 |     expect(result.occludedPixels).toBeGreaterThan(0);
+      55 |     expect(result.visibleNumberPixels).toBeGreaterThan(20);
+    > 56 |     expect(result.paintedOccludedPixels).toBe(0);
+         |                                          ^
+      57 |     }
+      58 | });
+      59 |
+        at /private/tmp/crystal-ordinary-label-candidate/tests/browser/atom-label-depth.spec.cjs:56:42
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-ordinary-label-depth-baseline-v3/atom-label-depth-ordinary--1608b--nearer-atom-after-rotation-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-ordinary-label-depth-baseline-v3/atom-label-depth-ordinary--1608b--nearer-atom-after-rotation-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-ordinary-label-depth-baseline-v3/atom-label-depth-ordinary--1608b--nearer-atom-after-rotation-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-ordinary-label-depth-baseline-v3/atom-label-depth-ordinary--1608b--nearer-atom-after-rotation-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/atom-label-depth.spec.cjs:5:1 › ordinary atom numbers cannot paint over a nearer atom after rotation 

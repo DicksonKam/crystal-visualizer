@@ -1,0 +1,50 @@
+--- a/app.js
++++ b/app.js
+@@ -841,6 +841,7 @@
+     }
+     
+     updateAnnotationSizes();
++    updateAtomLabelPositions();
+ 
+     // Render main scene
+     renderer.render(scene, camera);
+@@ -2795,6 +2796,30 @@
+ }
+ 
+ // Create a subtle, camera-facing label sprite for an atom
++function updateAtomLabelPositions() {
++    if (!settings.showLabels || !structureGroup) return;
++    structureGroup.updateWorldMatrix(true, false);
++    const facing = new THREE.Vector3(0, 0, 1).applyQuaternion(camera.quaternion);
++    const position = new THREE.Vector3();
++    const scale = new THREE.Vector3();
++    const direction = new THREE.Vector3();
++    structureGroup.children.forEach(label => {
++        if (!label.userData.isAtomLabel) return;
++        const mesh = atomMeshes[label.userData.atomIndex];
++        if (!mesh) return;
++        mesh.getWorldPosition(position);
++        mesh.getWorldScale(scale);
++        if (!mesh.geometry.boundingSphere) mesh.geometry.computeBoundingSphere();
++        const radius = mesh.geometry.boundingSphere.radius * Math.max(scale.x, scale.y, scale.z);
++        if (camera.isOrthographicCamera) direction.copy(facing);
++        else direction.copy(camera.position).sub(position).normalize();
++        // Keep the text just outside its own sphere, while allowing nearer
++        // atoms and bonds to obscure it through normal scene depth testing.
++        position.addScaledVector(direction, radius * 1.001);
++        label.position.copy(structureGroup.worldToLocal(position));
++    });
++}
++
+ function createAtomLabel(indexNumber, position) {
+     const canvas = document.createElement('canvas');
+     canvas.width = 128;
+@@ -2825,7 +2850,7 @@
+     const spriteMaterial = new THREE.SpriteMaterial({
+         map: texture,
+         transparent: true,
+-        depthTest: false,  // Always visible, even behind atoms
++        depthTest: true,
+         depthWrite: false,
+         sizeAttenuation: true
+     });

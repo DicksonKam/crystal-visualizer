@@ -1,0 +1,8 @@
+{
+  "status": "candidate verified; product promotion awaits discovery campaign completion",
+  "baseline": "Rendered-pixel test fails on overlapping atom-number ink",
+  "candidate": "Eight ordinary camera views pass; occlusion tests exclude the two-pixel antialias fringe",
+  "baselineLog": "baseline-regression.log",
+  "candidateLog": "candidate-regression.log",
+  "note": "Further atom-edit and frame-change visual verification is still running"
+}

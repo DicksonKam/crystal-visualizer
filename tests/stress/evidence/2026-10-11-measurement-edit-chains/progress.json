@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 11,
+    "variationPassedSoFar": 12,
     "fullBrowserPassedSoFar": 119
   },
   "newConfirmedBug": {
@@ -146,6 +146,16 @@
     "Graphene900",
     "Slab900 constraint overlays and crowded edits",
     "Slab1440",
-    "Water900 close angle after multiple edits"
-  ]
+    "Water900 close angle after multiple edits",
+    "Water1440 close angle and deletion history"
+  ],
+  "completedV182BaseExamples": {
+    "examples": 6,
+    "widths": [
+      900,
+      1440
+    ],
+    "passed": 12,
+    "remainingMeasurementOrders": 5
+  }
 }

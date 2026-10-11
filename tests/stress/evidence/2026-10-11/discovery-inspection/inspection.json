@@ -38,6 +38,18 @@
     {
       "file": "seed-4291-step-99-display-after.png",
       "result": "Late campaign edited-file replacement and display changes: intact frame, atoms and fixed-state selection indicators."
+    },
+    {
+      "file": "seed-4400-step-62-panel-panel-preview.png",
+      "result": "Applied-fix replay at DPR2: playback timeline, canvas molecule and sidebar divider fit; inspected full screenshot, emitted display was resized from3840x1080."
+    },
+    {
+      "file": "seed-4405-step-179-display-after.png",
+      "result": "Applied-fix DPR2: edited trajectory replacement, full atom labels and playback controls fit."
+    },
+    {
+      "file": "seed-4406-step-179-reset-after.png",
+      "result": "Applied-fix DPR2: preserved molecule and full labels after invalid-file rejection and reset. Error status correctly remains visible."
     }
   ],
   "lastVerifiedWait": {
@@ -57,5 +69,14 @@
     "actions": 34380,
     "images": 12101,
     "elapsedSeconds": 7205.348160875
+  },
+  "finalReplayTerminal": {
+    "session": 88257,
+    "exit": 0,
+    "event": "complete",
+    "nextSeed": 4410,
+    "actions": 1800,
+    "images": 671,
+    "elapsedSeconds": 639.4943919159999
   }
 }

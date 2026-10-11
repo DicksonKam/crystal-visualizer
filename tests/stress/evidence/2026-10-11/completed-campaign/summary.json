@@ -9,5 +9,37 @@
   },
   "completedSequences": 191,
   "distinctSourceHashSets": 1,
-  "coverage": "Persistent browser DPR1, advanced mixed actions, 180 steps per sequence; screenshots captured are not all personally inspected."
+  "coverage": "Persistent browser DPR1, advanced mixed actions, 180 steps per sequence; screenshots captured are not all personally inspected.",
+  "mainVerification": {
+    "unit": {
+      "passed": 147,
+      "failed": 0,
+      "exit": 0
+    },
+    "browser": {
+      "passed": 20,
+      "failed": 0,
+      "flaky": 0,
+      "exit": 0
+    },
+    "productCommit": "46606df",
+    "mainHashes": {
+      "app.js": "6808fa8b310ecd1fcb4b0f3608e96081f4a1681ea933b9b7bbfe66ceb0ed7ce8",
+      "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
+      "index.html": "d72f9fb973a87611ab2da33aa2730649209be75f3b608371485cba57e5f2497d"
+    },
+    "finalReplay": {
+      "session": 88257,
+      "exit": 0,
+      "completedSequences": 10,
+      "deviceScaleFactor": 2,
+      "sourceHashesUnchanged": true,
+      "event": "complete",
+      "nextSeed": 4410,
+      "actions": 1800,
+      "images": 671,
+      "elapsedSeconds": 639.4943919159999
+    }
+  },
+  "limits": "Randomized campaign action counts include attempts; screenshot counts are captures, with only selected images individually inspected. Passing this campaign does not prove the absence of every possible bug."
 }

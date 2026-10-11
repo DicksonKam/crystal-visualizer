@@ -21,7 +21,7 @@
     "root": "/private/tmp/crystal-labels-final-candidate-oct11",
     "port": 4176,
     "session": 30366,
-    "status": "Running; focused actual-document tests passed"
+    "status": "Stopped after successful verification; main server retained"
   },
   "finalCandidateHashes": {
     "app.js": "6808fa8b310ecd1fcb4b0f3608e96081f4a1681ea933b9b7bbfe66ceb0ed7ce8",
@@ -64,6 +64,6 @@
       "index.html"
     ],
     "exactTestedSource": true,
-    "freshMainVerification": "running"
+    "freshMainVerification": "147 unit tests, 20 browser checks, and 10.66-minute persistent advanced DPR2 replay passed"
   }
 }

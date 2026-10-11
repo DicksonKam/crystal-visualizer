@@ -1,0 +1,27 @@
+
+Running 20 tests using 1 worker
+
+(node:50789) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers (8.3s)
+  ✓   2 [chromium] › tests/browser/floating-label-readability.spec.cjs:4:1 › floating measurements retain their full number and unit at longer distances and straight angles (2.6s)
+  ✓   3 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 220px panel width (3.6s)
+  ✓   4 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 280px panel width (3.1s)
+  ✓   5 [chromium] › tests/browser/measurement-readability.spec.cjs:4:5 › measurement values stay inside their cards at 320px panel width (3.1s)
+  ✓   6 [chromium] › tests/browser/measurement.spec.cjs:28:1 › distances and angle connect the actual selected atoms across the cell (2.7s)
+  ✓   7 [chromium] › tests/browser/measurement.spec.cjs:60:1 › mode changes, clear, undo and document replacement dispose and restore actual measurements (4.9s)
+  ✓   8 [chromium] › tests/browser/measurement.spec.cjs:93:1 › zero and straight angles have finite arcs and labels; coincident arms omit an undefined angle (3.4s)
+  ✓   9 [chromium] › tests/browser/measurement.spec.cjs:109:1 › explicit ghost selections measure their world positions without substituting another image (7.2s)
+  ✓  10 [chromium] › tests/browser/measurement.spec.cjs:129:1 › canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry (2.7s)
+  ✓  11 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 1440px (11.7s)
+  ✓  12 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 800px (4.7s)
+  ✓  13 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 390px (2.7s)
+  ✓  14 [chromium] › tests/browser/sidebar-layout.spec.cjs:44:1 › divider keyboard controls and canceled drag restore presentation state (1.7s)
+  ✓  15 [chromium] › tests/browser/sidebar-layout.spec.cjs:57:1 › file-load status wrapping resizes the canvas without a window or divider gesture (2.0s)
+  ✓  16 [chromium] › tests/browser/sidebar-layout.spec.cjs:66:1 › narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling (4.9s)
+  ✓  17 [chromium] › tests/browser/sidebar-layout.spec.cjs:94:1 › constraint threshold and its unit stay together across intermediate panel widths (8.5s)
+  ✓  18 [chromium] › tests/browser/status-readability.spec.cjs:6:5 › loaded filename and coordinates remain readable at 390×844 (2.4s)
+  ✓  19 [chromium] › tests/browser/status-readability.spec.cjs:6:5 › loaded filename and coordinates remain readable at 641×480 (1.9s)
+  ✓  20 [chromium] › tests/browser/status-readability.spec.cjs:6:5 › loaded filename and coordinates remain readable at 844×390 (1.8s)
+
+  20 passed (1.4m)

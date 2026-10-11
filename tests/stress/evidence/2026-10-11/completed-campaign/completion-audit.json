@@ -1,0 +1,33 @@
+{
+  "sustainedRun": {
+    "passed": true,
+    "seconds": 7205.348160875,
+    "randomizedSteps": 34380,
+    "screenshotsCaptured": 12101
+  },
+  "visualEvidence": {
+    "passed": true,
+    "method": "Direct PNG inspection and native-browser before/after fixture loads; manifests name individually inspected images"
+  },
+  "confirmedFixes": [
+    "Measurement card values/deltas reflow within intermediate sidebar widths",
+    "Atom label textures fit larger numbers",
+    "Floating distance textures fit full values and units; shared fit also pads angles"
+  ],
+  "regressionEvidence": {
+    "labelBaselineFailed": 2,
+    "labelAndCardCandidatePassed": 5,
+    "cssFullBrowserPassed": 154,
+    "combinedFullBrowserPassed": 156,
+    "mainUnitPassed": 147,
+    "mainFreshBrowserPassed": 20,
+    "mainReplayExit": 0
+  },
+  "testedSourceApplied": true,
+  "localProductCommit": "46606df",
+  "noPush": true,
+  "newButtons": 0,
+  "originalBrowserTabPreserved": true,
+  "unrelatedDSStorePreserved": true,
+  "scopeLimit": "Selected visual captures reviewed; not a claim that every possible bug was found."
+}

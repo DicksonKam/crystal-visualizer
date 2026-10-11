@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 28,
+    "variationPassedSoFar": 29,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -168,7 +168,8 @@
     "Silicon900 order512 third atom move; rendered distances4.712/5.422 and25.1angle remain readable",
     "Silicon900 order512 frame edit and deletion undo; markers and logical measurement preserved, camera stays at current position",
     "Silicon1440 order512 frame and deletion undo",
-    "NaCl900 order512 middle atom edit; captions3.335/2.283 and59.8clear of atom bodies"
+    "NaCl900 order512 middle atom edit; captions3.335/2.283 and59.8clear of atom bodies",
+    "NaCl900 order512 frame, bond rebuild and deletion undo;2.5078/3.3816 and57.79 match readable captions"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

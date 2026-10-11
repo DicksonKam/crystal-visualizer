@@ -139,6 +139,8 @@
   "v182InspectedExamples": [
     "Aluminium900/1440",
     "Silicon900/1440",
-    "NaCl900"
+    "NaCl900",
+    "NaCl1440",
+    "Graphene900"
   ]
 }

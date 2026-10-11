@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 52,
+    "variationPassedSoFar": 53,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -197,7 +197,8 @@
     "Aluminium1440 order132 frame and deletion undo; captions remain consistent with restored sidebar",
     "Silicon900 order125 measured atom edit;2.336/4.535 and94.9 captions visible clear of atoms",
     "Silicon900 order125 frame and deletion undo;4.3809/5.0967 and22.80 restored",
-    "Silicon1440 order125 frame;2.336/4.527 and95.1 remain readable"
+    "Silicon1440 order125 frame;2.336/4.527 and95.1 remain readable",
+    "NaCl900 order125 measured atom, frame, bond rebuild and deletion undo;3.4862/2.9429 and46.80 restored; camera remains at current position through undo"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

@@ -1,0 +1,53 @@
+
+Running 1 test using 1 worker
+
+(node:55640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:1 › measurements of displayed periodic copies survive making those copies editable (11.0s)
+
+
+  1) [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:1 › measurements of displayed periodic copies survive making those copies editable 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 5
+    + Received  + 0
+
+    @@ -7,11 +7,6 @@
+        Array [
+          0.19359990463256826,
+          0.19359990463256826,
+          -1.8314000953674316,
+        ],
+    -   Array [
+    -     2.218599904632568,
+    -     -1.8314000953674316,
+    -     -1.8314000953674316,
+    -   ],
+      ]
+
+      27 |     await page.locator('#makeSupercellBtn').click();
+      28 |     await page.screenshot({ path: info.outputPath('converted-measurement.png') });
+    > 29 |     expect(await positions()).toEqual(before);
+         |                               ^
+      30 |     await expect(page.locator('#measurementPanel')).toContainText('Angle');
+      31 |     expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(false);
+      32 | });
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-supercell-conversion.spec.cjs:29:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/browser/measurement-supercell-conversion.spec.cjs:5:1 › measurements of displayed periodic copies survive making those copies editable 

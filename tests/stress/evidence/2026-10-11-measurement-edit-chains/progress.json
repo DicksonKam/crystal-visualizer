@@ -43,5 +43,6 @@
     "status": "Launched; live status requires polling",
     "log": "/private/tmp/crystal-measure-variants-v2.log"
   },
-  "harnessCorrection": "Deletion undo leaves selection empty under existing app semantics; test now checks geometry restoration and continues to measurement selection history."
+  "harnessCorrection": "Deletion undo leaves selection empty under existing app semantics; test now checks geometry restoration and continues to measurement selection history.",
+  "secondConfirmedBug": "Supercell conversion loses a measured periodic copy; visual baseline retained under supercell-measurement"
 }

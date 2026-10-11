@@ -1,0 +1,166 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/measurement-supercell-conversion.spec.cjs",
+      "--config=/private/tmp/crystal-oct11-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-measure-supercell",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-oct11-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-measure-supercell",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-supercell-conversion.spec.cjs",
+      "file": "measurement-supercell-conversion.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "measurements of displayed periodic copies survive making those copies editable",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11013,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 5\u001b[39m\n\u001b[31m+ Received  + 0\u001b[39m\n\n\u001b[33m@@ -7,11 +7,6 @@\u001b[39m\n\u001b[2m    Array [\u001b[22m\n\u001b[2m      0.19359990463256826,\u001b[22m\n\u001b[2m      0.19359990463256826,\u001b[22m\n\u001b[2m      -1.8314000953674316,\u001b[22m\n\u001b[2m    ],\u001b[22m\n\u001b[32m-   Array [\u001b[39m\n\u001b[32m-     2.218599904632568,\u001b[39m\n\u001b[32m-     -1.8314000953674316,\u001b[39m\n\u001b[32m-     -1.8314000953674316,\u001b[39m\n\u001b[32m-   ],\u001b[39m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 5\u001b[39m\n\u001b[31m+ Received  + 0\u001b[39m\n\n\u001b[33m@@ -7,11 +7,6 @@\u001b[39m\n\u001b[2m    Array [\u001b[22m\n\u001b[2m      0.19359990463256826,\u001b[22m\n\u001b[2m      0.19359990463256826,\u001b[22m\n\u001b[2m      -1.8314000953674316,\u001b[22m\n\u001b[2m    ],\u001b[22m\n\u001b[32m-   Array [\u001b[39m\n\u001b[32m-     2.218599904632568,\u001b[39m\n\u001b[32m-     -1.8314000953674316,\u001b[39m\n\u001b[32m-     -1.8314000953674316,\u001b[39m\n\u001b[32m-   ],\u001b[39m\n\u001b[2m  ]\u001b[22m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-supercell-conversion.spec.cjs:29:31",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-supercell-conversion.spec.cjs",
+                      "column": 31,
+                      "line": 29
+                    },
+                    "snippet": "  27 |     await page.locator('#makeSupercellBtn').click();\n  28 |     await page.screenshot({ path: info.outputPath('converted-measurement.png') });\n> 29 |     expect(await positions()).toEqual(before);\n     |                               ^\n  30 |     await expect(page.locator('#measurementPanel')).toContainText('Angle');\n  31 |     expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(false);\n  32 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-supercell-conversion.spec.cjs",
+                        "column": 31,
+                        "line": 29
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 5\u001b[39m\n\u001b[31m+ Received  + 0\u001b[39m\n\n\u001b[33m@@ -7,11 +7,6 @@\u001b[39m\n\u001b[2m    Array [\u001b[22m\n\u001b[2m      0.19359990463256826,\u001b[22m\n\u001b[2m      0.19359990463256826,\u001b[22m\n\u001b[2m      -1.8314000953674316,\u001b[22m\n\u001b[2m    ],\u001b[22m\n\u001b[32m-   Array [\u001b[39m\n\u001b[32m-     2.218599904632568,\u001b[39m\n\u001b[32m-     -1.8314000953674316,\u001b[39m\n\u001b[32m-     -1.8314000953674316,\u001b[39m\n\u001b[32m-   ],\u001b[39m\n\u001b[2m  ]\u001b[22m\n\n  27 |     await page.locator('#makeSupercellBtn').click();\n  28 |     await page.screenshot({ path: info.outputPath('converted-measurement.png') });\n> 29 |     expect(await positions()).toEqual(before);\n     |                               ^\n  30 |     await expect(page.locator('#measurementPanel')).toContainText('Angle');\n  31 |     expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(false);\n  32 | });\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-supercell-conversion.spec.cjs:29:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:29:00.099Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-measure-supercell/measurement-supercell-conv-cd643-aking-those-copies-editable-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-supercell-conversion.spec.cjs",
+                    "column": 31,
+                    "line": 29
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5bf4c5562d24dbaf4032-45c2f1d3c4b54a6a9a75",
+          "file": "measurement-supercell-conversion.spec.cjs",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T01:28:59.758Z",
+    "duration": 11682.773000000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

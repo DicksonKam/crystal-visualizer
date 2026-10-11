@@ -1,0 +1,12 @@
+{
+  "confirmed": "Converting measured periodic copies to real supercell atoms drops the third measured atom although it remains physically present. Marker3, distance2 and angle disappear.",
+  "inspected": [
+    "measured-periodic-copy.png",
+    "converted-measurement.png"
+  ],
+  "reproduction": "Load Al FCC, display2a cells, select atoms1 and2 and click visible ghost, edit mode, Make Supercell. All selections used normal UI/pointer events.",
+  "baselineExit": 1,
+  "baselineFailed": 1,
+  "rootCause": "Selection restore uses the old ghost identity after periodic repeats reset to1; no mapping to generated real atom. Undo must restore original copy identities.",
+  "fix": "Pending; current varied edit run remains on the unchanged sizing-fix source."
+}

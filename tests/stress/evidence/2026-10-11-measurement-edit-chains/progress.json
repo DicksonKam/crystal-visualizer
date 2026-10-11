@@ -31,5 +31,17 @@
   ],
   "investigation": "Earlier harness failures were an unexported helper and unavailable helium option. Next drag-start failure required waiting for settled renderer/sidebar dimensions before projecting test click. Corrected run still active; no app bug claimed yet.",
   "productChanges": false,
-  "nextInvestigation": "Normal Al FCC measurement then add unselected H; compare rendered before/after and scale persistence"
+  "nextInvestigation": "Deletion followed by undo through selection operations back to measurement; six repeated species/cell/order variants running",
+  "measurementSizeFix": {
+    "commit": "5ca253c",
+    "unitPassed": 147,
+    "focusedBrowserPassed": 3,
+    "visualProof": "smaller-unselected-atom/fixed-after-add.png"
+  },
+  "activeRun": {
+    "session": 19086,
+    "status": "Launched; live status requires polling",
+    "log": "/private/tmp/crystal-measure-variants-v2.log"
+  },
+  "harnessCorrection": "Deletion undo leaves selection empty under existing app semantics; test now checks geometry restoration and continues to measurement selection history."
 }

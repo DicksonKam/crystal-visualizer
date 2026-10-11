@@ -81,7 +81,11 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
     test.setTimeout(180000);
     page.setDefaultTimeout(10000);
     await page.setViewportSize({ width, height: 900 });
-    await upload(page, 'measured editing\n1\n8 0 0\n0 8 0\n0 0 8\nH O\n3 2\nDirect\n0 .2 .2\n.6 .2 .2\n.6 .7 .2\n.3 .4 .5\n.8 .8 .7\n', 'measured-editing.poscar');
+    const variant = info.repeatEachIndex;
+    const lattice = variant % 3 === 1 ? '8 1 0\n1 8 0\n0 0 8' : '8 0 0\n0 8 0\n0 0 8';
+    const species = ['H O', 'Si O', 'Al H'][variant % 3];
+    await upload(page, `measured editing\n1\n${lattice}\n${species}\n3 2\nDirect\n0 .2 .2\n.6 .2 .2\n.6 .7 .2\n.3 .4 .5\n.8 .8 .7\n`, 'measured-editing.poscar');
+    await info.attach('variant', { body: JSON.stringify({ variant, lattice, species }), contentType: 'application/json' });
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await page.locator('[data-mode="edit"]').click();
     const snap = async name => page.screenshot({ path: info.outputPath(`${name}.png`) });
@@ -89,7 +93,7 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
     for (let cycle = 0; cycle < 4; cycle++) {
         await page.locator('#sidebarDivider').focus(); await page.keyboard.press(cycle % 2 ? 'End' : 'Home');
         await page.keyboard.press('ArrowRight');
-        for (const kind of ['atom', 'cell']) {
+        for (const kind of variant % 2 ? ['cell', 'atom'] : ['atom', 'cell']) {
             const before = await checkMeasurement(page);
             await dragTarget(page, kind, cycle);
             await checkMeasurement(page); await snap(`${cycle}-${kind}-preview`);
@@ -99,7 +103,7 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
             await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, before.geometry, 'undo');
             await page.locator('#redoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, after.geometry, 'redo');
         }
-        await page.locator('#shiftA').fill('.1'); await page.locator('#shiftB').fill('0'); await page.locator('#shiftC').fill('0');
+        await page.locator('#shiftA').fill(variant % 2 ? '-.1' : '.1'); await page.locator('#shiftB').fill('0'); await page.locator('#shiftC').fill('0');
         await page.locator('#applyShiftBtn').click(); await checkMeasurement(page); await snap(`${cycle}-shift`);
         await page.locator('#addAtomElement').selectOption('C');
         for (const axis of ['X', 'Y', 'Z']) await page.locator(`#addAtom${axis}`).fill('.4');
@@ -118,7 +122,10 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
     expect(await page.evaluate(() => measurementGroup.children.filter(object => object.userData.isMeasurementVisual).length)).toBe(0);
     await page.locator('#undoBtn').click();
-    expect((await capture(page)).selection.identities).toHaveLength(1);
+    // Deletion undo restores geometry; selection is restored by its own
+    // earlier history operations rather than reselecting the deleted atom.
+    expect((await capture(page)).selection.identities).toHaveLength(0);
+    compareGeometry((await capture(page)).geometry, measured.geometry);
     await page.locator('#undoBtn').click();
     expect((await capture(page)).selection.identities).toHaveLength(0);
     await page.locator('#undoBtn').click();

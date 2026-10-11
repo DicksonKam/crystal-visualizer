@@ -1,0 +1,8 @@
+{
+  "initialRun": "840 actions, 313 screenshots; terminal at next sequence setup because atomJumpInput was inside a collapsed sidebar.",
+  "classification": "Test harness fault: the app correctly retained the collapsed sidebar between file loads.",
+  "correction": "Reopen using the existing divider keyboard control before measuring atoms in a new sequence; do not change application behavior.",
+  "correctedCampaign": "/private/tmp/crystal-ordinary-combined-visual-oct11-v2.log",
+  "correctedStartSeed": 1407,
+  "canonicalRegressions": "3 passed: label depth and precise coordinate visibility on combined source."
+}

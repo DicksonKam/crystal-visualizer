@@ -1,0 +1,13 @@
+--- a/tests/stress/edit-scenario.cjs
++++ b/tests/stress/edit-scenario.cjs
+@@ -113,6 +113,10 @@
+     if (extended) await page.waitForFunction(() => window.stressLoadSerial > 0);
+     await page.locator('#statusText').filter({ hasText: 'Loaded' }).waitFor();
+     if (ordinarySources) {
++        if (!await page.locator('#atomJumpInput').isVisible()) {
++            await page.locator('#sidebarDivider').press('ArrowRight');
++            log.push({ startupPanelReopened: true });
++        }
+         // Start with the everyday measure-then-edit workflow rather than an empty selection.
+         await page.locator('[data-mode="measure"]').click();
+         const numberToMeasure = Math.min(3, await page.evaluate(() => currentStructure.atoms.length));

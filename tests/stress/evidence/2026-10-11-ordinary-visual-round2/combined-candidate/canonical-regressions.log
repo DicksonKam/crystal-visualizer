@@ -1,0 +1,10 @@
+
+Running 3 tests using 1 worker
+
+(node:80156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/atom-label-depth.spec.cjs:5:1 › ordinary atom numbers cannot paint over a nearer atom after rotation (55.9s)
+  ✓  2 [chromium] › tests/browser/coordinate-width.spec.cjs:4:31 › precise atom coordinates stay readable while resizing the sidebar at 1280px (7.3s)
+  ✓  3 [chromium] › tests/browser/coordinate-width.spec.cjs:4:31 › precise atom coordinates stay readable while resizing the sidebar at 900px (5.1s)
+
+  3 passed (1.2m)

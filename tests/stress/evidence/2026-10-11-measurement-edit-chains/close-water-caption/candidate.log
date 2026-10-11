@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:62702) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › ../../../../private/tmp/crystal-annotation-interaction-candidate/tests/browser/measurement-close-body.spec.cjs:2:1 › close water angle caption clears the oxygen body after editing (11.5s)
+
+  1 passed (12.1s)

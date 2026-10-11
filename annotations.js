@@ -18,24 +18,39 @@
             // atoms cannot affect placement, including at viewport edges.
             const nearby = occupied.filter(rect => rect.x + rect.width / 2 >= left && rect.x - rect.width / 2 <= right
                 && rect.y + rect.height / 2 >= top && rect.y - rect.height / 2 <= bottom);
-            let best, score = Infinity;
+            let best, bestArea = Infinity, bestDistance = Infinity;
+            const consider = (x, y, rectangles) => {
+                const candidate = { ...label, x: clampX(x), y: clampY(y) };
+                const area = rectangles.reduce((sum, rectangle) => sum + overlap(candidate, rectangle), 0);
+                const distance = (candidate.x - label.x) ** 2 + (candidate.y - label.y) ** 2;
+                if (area < bestArea || area === bestArea && distance < bestDistance) {
+                    best = candidate; bestArea = area; bestDistance = distance;
+                }
+            };
             // Prefer the anchor, then the closest available position. The
             // bounded search is deterministic and never changes geometry.
             for (let ring = 0; ring <= rings; ring++) {
                 for (let dx = -ring; dx <= ring; dx++) for (let dy = -ring; dy <= ring; dy++) {
                     if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue;
-                    const candidate = { ...label,
-                        x: clampX(label.x + dx * step),
-                        y: clampY(label.y + dy * step)
-                    };
-                    const area = nearby.reduce((sum, rectangle) => sum + overlap(candidate, rectangle), 0);
-                    const distance = (candidate.x - label.x) ** 2 + (candidate.y - label.y) ** 2;
-                    const cost = area * 1e6 + distance;
-                    if (cost < score) { score = cost; best = candidate; }
+                    consider(label.x + dx * step, label.y + dy * step, nearby);
                 }
                 // No later ring can improve an already unobstructed position
                 // closer than the next ring's minimum displacement.
-                if (score < ((ring + 1) * step) ** 2) break;
+                if (bestArea === 0 && bestDistance < ((ring + 1) * step) ** 2) break;
+            }
+            // A close-view atom may cover the entire local search. Try its
+            // perimeter directly instead of growing a costly pixel grid.
+            // These destinations can reach other atoms, so score all obstacles.
+            if (bestArea > 0) {
+                for (const rectangle of nearby) {
+                    const xs = [rectangle.x - (rectangle.width + label.width) / 2 - gap,
+                        rectangle.x + (rectangle.width + label.width) / 2 + gap];
+                    const ys = [rectangle.y - (rectangle.height + label.height) / 2 - gap,
+                        rectangle.y + (rectangle.height + label.height) / 2 + gap];
+                    for (const x of xs) consider(x, label.y, occupied);
+                    for (const y of ys) consider(label.x, y, occupied);
+                    for (const x of xs) for (const y of ys) consider(x, y, occupied);
+                }
             }
             occupied.push(best);
             return best;

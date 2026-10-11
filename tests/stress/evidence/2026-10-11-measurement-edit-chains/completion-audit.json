@@ -1,6 +1,6 @@
 {
-  "version": 181,
-  "status": "Incomplete: full178 and sustained72 cases still running",
+  "version": 182,
+  "status": "Incomplete: full179 and sustained72 running on frozenv182",
   "requirements": [
     {
       "requirement": "Realistic small examples and edit/measurement combinations",
@@ -34,8 +34,8 @@
     }
   ],
   "liveSessions": {
-    "fullBrowser": 3682,
-    "sustainedVariations": 69404
+    "fullBrowser": 5171,
+    "sustainedVariations": 57627
   },
   "limitations": "Finite reproducible workflows cannot prove the absence of every possible bug.",
   "additionalVisualInspection": {

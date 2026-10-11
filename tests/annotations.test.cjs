@@ -45,3 +45,22 @@ test('viewport clamping retains collisions far from the original anchor', () => 
     assert.ok(placed.y - placed.height / 2 >= 4);
     assert.ok(placed.y + placed.height / 2 <= 396);
 });
+
+
+test('close-view atom bodies can move a caption beyond the local search radius', () => {
+    const label = { x: 500, y: 400, width: 100, height: 40 };
+    const body = { x: 500, y: 400, width: 320, height: 320 };
+    const [placed] = placeLabels([label], [body], { width: 1000, height: 800 });
+    assert.equal(intersects(placed, body), false);
+    assert.ok(Math.hypot(placed.x - label.x, placed.y - label.y) > 96);
+    assert.equal(placed.width, label.width);
+    assert.equal(placed.height, label.height);
+});
+
+test('perimeter fallback checks obstacles outside the original search area', () => {
+    const label = { x: 500, y: 400, width: 100, height: 40 };
+    const bodies = [{ x: 500, y: 400, width: 320, height: 320 },
+        { x: 500, y: 210, width: 120, height: 40 }];
+    const [placed] = placeLabels([label], bodies, { width: 1000, height: 800 });
+    for (const body of bodies) assert.equal(intersects(placed, body), false);
+});

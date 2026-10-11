@@ -1,11 +1,11 @@
 {
   "goalScope": "Realistic editing with active three-atom measurements, not large-label formatting",
-  "sourceVersion": 181,
+  "sourceVersion": 182,
   "productHashes": {
     "app.js": "14565c0843446f859f44af77eab9124e9f58881fcbf3142b4d5f0841be8edaf1",
-    "annotations.js": "94b743472a958a216ded11e32a685f5f2ec5a72308348d6bc9a736ef8a84883d",
+    "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
     "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
-    "index.html": "c56bf1b3ae5c36bbee20141a9752a4ab081e68cf83f567f47b95f4bfcfca00d5"
+    "index.html": "049dd6560975c975734f3e0e5a4509789d5bd23f835cabedcfc70fed9f3cc034"
   },
   "currentRun": {
     "session": 29337,
@@ -74,19 +74,17 @@
     "chainPassed": 6
   },
   "currentMainValidation": {
-    "version": 181,
-    "unitPassed": 152,
-    "fullBrowserSession": 3682,
-    "fullBrowserStatus": "Running v181; source frozen",
+    "version": 182,
+    "unitPassed": 154,
+    "fullBrowserSession": 5171,
+    "fullBrowserStatus": "Running179 tests on frozenv182",
     "candidateExampleSession": 17660,
     "candidateExampleStatus": "Terminal exit0; all12 normal example-width combinations passed in20.5minutes",
     "navigationPassed": 1,
     "deleteHistoryPassed": 2,
     "candidateExamplePassed": 12,
-    "variationSession": 69404,
-    "variationStatus": "Running72 cases on main181; source frozen",
-    "variationPassedSoFar": 11,
-    "fullBrowserPassedSoFar": 119
+    "variationSession": 57627,
+    "variationStatus": "Running72 cases on frozenv182"
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -135,6 +133,7 @@
   "seventhConfirmedBug": {
     "description": "Close axial water view leaves the angle caption inside the oxygen sphere; placement search capped at96 CSSpixels",
     "evidence": "close-water-caption",
-    "status": "Baseline visually inspected and circle-clearance regression fails; isolated candidate fix pending; main181 source remains frozen for live runs"
+    "status": "Promotedv182;154units,16focusedbrowser checks passed;final sustained validation pending",
+    "mainFocusedPassed": 1
   }
 }

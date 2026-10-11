@@ -1,0 +1,55 @@
+{
+  "status": "Interrupted for v182 promotion;15 completed cases;not a full pass",
+  "mainVersion": 181,
+  "mainAppHash": "14565c0843446f859f44af77eab9124e9f58881fcbf3142b4d5f0841be8edaf1",
+  "repeatEach": 36,
+  "plannedCases": 72,
+  "ordinaryExamples": 6,
+  "measurementOrdersPerExample": 6,
+  "gestureVariations": "2-10 pointer steps; atom and cell movement sizes vary by seed; four near/far growth/shrink cycles per case",
+  "measurementBaseNumbers": [
+    [
+      1,
+      2,
+      3
+    ],
+    [
+      1,
+      5,
+      2
+    ],
+    [
+      1,
+      5,
+      2
+    ],
+    [
+      1,
+      2,
+      3
+    ],
+    [
+      4,
+      5,
+      6
+    ],
+    [
+      2,
+      1,
+      3
+    ]
+  ],
+  "purpose": "Measure normal bonds across species and slab layers, edit measured and unmeasured atoms, preserve measurements across frame and atom editing/history combinations.",
+  "hashes": {
+    "tests/browser/measurement-edit-helpers.cjs": "b0414a094cdd334c7c8d0becb350774b10dd3bfb18cea69a80f707e6c510caa2",
+    "tests/browser/fixtures.cjs": "19f48a1c5a572bfcc1e39b2b06ec7d1f2ce74922fcdde5ef083ddc0aa4887ffd",
+    "tests/browser/measurement-example-chains.spec.cjs": "baacb79083c43617da688791b804528ea7d17c9ab4ebfb337edb3473e7eb60a1",
+    "tests/stress/edit-scenario.cjs": "fa6b5b82e96c12f2cb635ce42e743af9dfbb1830194ac5014edbfa0ca8eb0925"
+  },
+  "gesturePicking": "Wait for rendered markers after fitting; choose exposed sphere pixels; inspect side views if layers hide the target.",
+  "identityValidation": "Assert original three selected indices after every combination; verify actual distances, angle, markers, anchors, bonds, geometry and selective-dynamics history.",
+  "log": "/private/tmp/crystal-v181-measure-variation.log",
+  "report": "/private/tmp/crystal-v181-measure-variation.json",
+  "output": "/private/tmp/crystal-v181-measure-variation",
+  "session": 69404
+}

@@ -1,6 +1,6 @@
 {
   "status": "Running",
-  "mainVersion": 181,
+  "mainVersion": 182,
   "mainAppHash": "14565c0843446f859f44af77eab9124e9f58881fcbf3142b4d5f0841be8edaf1",
   "repeatEach": 36,
   "plannedCases": 72,
@@ -48,8 +48,9 @@
   },
   "gesturePicking": "Wait for rendered markers after fitting; choose exposed sphere pixels; inspect side views if layers hide the target.",
   "identityValidation": "Assert original three selected indices after every combination; verify actual distances, angle, markers, anchors, bonds, geometry and selective-dynamics history.",
-  "log": "/private/tmp/crystal-v181-measure-variation.log",
-  "report": "/private/tmp/crystal-v181-measure-variation.json",
-  "output": "/private/tmp/crystal-v181-measure-variation",
-  "session": 69404
+  "log": "/private/tmp/crystal-v182-measure-variation.log",
+  "report": "/private/tmp/crystal-v182-measure-variation.json",
+  "output": "/private/tmp/crystal-v182-measure-variation",
+  "annotationsHash": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+  "session": 57627
 }

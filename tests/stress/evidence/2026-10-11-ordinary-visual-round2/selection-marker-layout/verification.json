@@ -1,0 +1,7 @@
+{
+  "status": "candidate verification ongoing",
+  "reproduction": "Ordinary SrTiO3 load, measure atoms 1/2/3, reset and rotate using background mouse drags. Point 2 covers point 1 glyph.",
+  "baseline": "v182, root unmodified",
+  "candidate": "isolated port 4182; uses bounded marker size and collision solver with physical anchors and leaders",
+  "caveat": "Full rotation/picking/history regressions still required; no root product promotion yet"
+}

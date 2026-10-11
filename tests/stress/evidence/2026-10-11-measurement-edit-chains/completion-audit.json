@@ -1,6 +1,6 @@
 {
   "version": 182,
-  "status": "Incomplete: full179 and sustained72 running on frozenv182",
+  "status": "Incomplete: full179 passed; sustained72 running on frozenv182",
   "requirements": [
     {
       "requirement": "Realistic small examples and edit/measurement combinations",
@@ -34,7 +34,6 @@
     }
   ],
   "liveSessions": {
-    "fullBrowser": 5171,
     "sustainedVariations": 57627
   },
   "limitations": "Finite reproducible workflows cannot prove the absence of every possible bug.",
@@ -56,8 +55,13 @@
     "observation": "2.570angstrom caption stays below unselected sodium sphere with a leader to its actual measurement midpoint; retained markers and angle are visible."
   },
   "latestProgress": {
-    "fullBrowserPassed": 144,
-    "sustainedCasesPassed": 17,
-    "terminalResultsPending": true
+    "fullBrowserPassed": 179,
+    "fullBrowserExitCode": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "sustainedCasesPassed": 20,
+    "sustainedTerminalResultPending": true,
+    "sourceHashesUnchanged": true
   }
 }

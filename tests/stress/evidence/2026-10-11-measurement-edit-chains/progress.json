@@ -77,7 +77,7 @@
     "version": 182,
     "unitPassed": 154,
     "fullBrowserSession": 5171,
-    "fullBrowserStatus": "Running179 tests on frozenv182",
+    "fullBrowserStatus": "Terminal exit0;179 passed in35.2minutes",
     "candidateExampleSession": 17660,
     "candidateExampleStatus": "Terminal exit0; all12 normal example-width combinations passed in20.5minutes",
     "navigationPassed": 1,
@@ -85,8 +85,9 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 18,
-    "fullBrowserPassedSoFar": 177
+    "variationPassedSoFar": 20,
+    "fullBrowserPassedSoFar": 179,
+    "fullBrowserPassed": 179
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -154,7 +155,10 @@
     "Frame release over atom retains markers and labels",
     "NaCl900 reverse order251 cell edit and bond refresh",
     "NaCl1440 reverse251 cell edit",
-    "Graphene900 reverse321 cell edit and bond refresh"
+    "Graphene900 reverse321 cell edit and bond refresh",
+    "Graphene900 reverse321 deletion undo restores actual measurement",
+    "Graphene1440 reverse321 cell edit",
+    "Aluminium boundary-edit regression final history"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

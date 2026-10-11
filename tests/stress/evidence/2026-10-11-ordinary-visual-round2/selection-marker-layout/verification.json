@@ -3,5 +3,10 @@
   "reproduction": "Ordinary SrTiO3 load, measure atoms 1/2/3, reset and rotate using background mouse drags. Point 2 covers point 1 glyph.",
   "baseline": "v182, root unmodified",
   "candidate": "isolated port 4182; uses bounded marker size and collision solver with physical anchors and leaders",
-  "caveat": "Full rotation/picking/history regressions still required; no root product promotion yet"
+  "caveat": "Broader marker editing regressions ongoing; root product remains unchanged.",
+  "rotationPicking": {
+    "result": "1 passed, 23.8s",
+    "scope": "12 ordinary mouse rotations, all 3 marker rectangles separated, pointer picking maps each to owner, physical anchors and exported structure unchanged, leader starts at owner, clearing selection leaves no group children",
+    "testCorrection": "Initial attempt supplied client coordinates to an NDC function; corrected to getAtomIntersection(event) and reran successfully."
+  }
 }

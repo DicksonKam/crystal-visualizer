@@ -6,6 +6,7 @@ for (const size of [{width:1440,height:900},{width:900,height:760}]) {
     test(`visual boundary editing with changing panel width at ${size.width}px`, async ({page},testInfo) => {
         test.setTimeout(180000);
         await page.setViewportSize(size); await upload(page,source,'Al_fcc_cartesian.poscar');
+        await page.locator('#showLabels').check();
         await page.locator('[data-mode="edit"]').click();
         await page.evaluate(() => {
             cancelCameraAlignment(); controls.staticMoving=true;

@@ -85,8 +85,8 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 9,
-    "fullBrowserPassedSoFar": 99
+    "variationPassedSoFar": 11,
+    "fullBrowserPassedSoFar": 119
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
@@ -144,6 +144,8 @@
     "NaCl900",
     "NaCl1440",
     "Graphene900",
-    "Slab900 constraint overlays and crowded edits"
+    "Slab900 constraint overlays and crowded edits",
+    "Slab1440",
+    "Water900 close angle after multiple edits"
   ]
 }

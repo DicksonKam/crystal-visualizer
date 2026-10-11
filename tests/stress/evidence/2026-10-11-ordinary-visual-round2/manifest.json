@@ -63,6 +63,12 @@
       "description": "Default graphene z constraint value10.00 is clipped by70px number field",
       "evidence": "threshold-width/before.png",
       "status": "CSS candidate visually verified and8 related checks passed; root promotion pending"
+    },
+    {
+      "description": "Measurement point numbers overlap during ordinary perovskite rotation; clicking a visible point number can pick another selected atom.",
+      "evidence": "selection-marker-layout/verification.json",
+      "status": "Twelve-view marker placement/picking and displaced drag verified at both screen densities; root promotion pending.",
+      "reproduction": "Load SrTiO3, select atoms 1/2/3, reset view, then rotate normally."
     }
   ],
   "candidateFixes": [
@@ -181,17 +187,23 @@
     "initialLaunch": "Connection refused before server was started; zero interactions. Corrected launch has passed its first three chains."
   },
   "broaderThreeFixBrowserSuite": {
-    "status": "running",
+    "status": "terminal",
     "session": 57524,
-    "log": "/private/tmp/crystal-three-fixes-browser-suite.log",
+    "log": "combined-candidate/broader-three-fix-suite.log",
     "total": 184,
-    "lastObservedPass": 137,
+    "lastObservedPass": 184,
     "excluded": null,
     "attemptedExclusion": "Anchored title-only expression did not match full Playwright title.",
     "observedFailures": [
       "measurement-unrelated-atom: pre-render scale observation, corrected replay passed",
       "dense continuous playback: synthetic 499-atom capture exceeded 240s"
-    ]
+    ],
+    "exitCode": 1,
+    "passed": 182,
+    "failed": 2,
+    "duration": "56.5 minutes",
+    "resolvedOrdinaryFailure": "measurement-unrelated-atom pre-render assertion; rendered replay passes final candidate",
+    "remainingOutOfScopeFailure": "synthetic 499-atom continuous playback timed out at capture after 240 seconds"
   },
   "coreUnitTests": {
     "status": "passed",

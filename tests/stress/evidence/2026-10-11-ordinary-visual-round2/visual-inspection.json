@@ -198,6 +198,15 @@
         "seed-1815-step-92-reset-after.png"
       ],
       "observations": "Al FCC b-periodic copies remain correctly offset after edit-to-measure change. Subsequent measurement 2.7034 angstrom in panel matches rounded 2.703 caption, with markers 1 and 2 separate after reset. Shared boundary spheres represent periodic copies; no residual translation plane or edit checkmarks remain."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1820,
+      "screenshots": [
+        "seed-1820-step-3-cancel-atom-preview.png",
+        "seed-1820-step-12-panel-after.png"
+      ],
+      "observations": "Water atom drag preserves the three measurement markers and captions: 0.948 and 1.515 angstrom correspond to sidebar values 0.9484 and 1.5149. Later sidebar resize and intentional Escape cancellation remove measurement overlays after edit selection replaces the measurement; selected H checkmark remains. The camera is deliberately zoomed/panned near the right edge, so widening the panel crops the right atom; this is not evidence that its geometry disappeared."
     }
   ],
   "candidateInspections": [

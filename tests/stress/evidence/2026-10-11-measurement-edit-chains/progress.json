@@ -131,5 +131,10 @@
     "Slab900 measured atom movement and fixed overlays",
     "Slab1440 unmeasured atom edit",
     "Water900 repeated atom edits"
-  ]
+  ],
+  "seventhConfirmedBug": {
+    "description": "Close axial water view leaves the angle caption inside the oxygen sphere; placement search capped at96 CSSpixels",
+    "evidence": "close-water-caption",
+    "status": "Baseline visually inspected and circle-clearance regression fails; isolated candidate fix pending; main181 source remains frozen for live runs"
+  }
 }

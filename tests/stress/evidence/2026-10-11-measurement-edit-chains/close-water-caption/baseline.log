@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:62532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › ../../../../private/tmp/crystal-annotation-interaction-candidate/tests/browser/measurement-close-body.spec.cjs:2:1 › close water angle caption clears the oxygen body after editing (10.4s)
+
+
+  1) [chromium] › ../../../../private/tmp/crystal-annotation-interaction-candidate/tests/browser/measurement-close-body.spec.cjs:2:1 › close water angle caption clears the oxygen body after editing 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 3.9
+    Received:    -75.41928020153713
+
+      23 |     });
+      24 |     await info.attach('body-clearance',{body:JSON.stringify(view),contentType:'application/json'});
+    > 25 |     expect(view.clearance).toBeGreaterThanOrEqual(3.9);
+         |                            ^
+      26 |     await expect(page.locator('#measurementPanel')).toContainText('104.48°');
+      27 | });
+      28 |
+        at /private/tmp/crystal-annotation-interaction-candidate/tests/browser/measurement-close-body.spec.cjs:25:28
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-close-body-baseline/measurement-close-body-clo-9ea6c-e-oxygen-body-after-editing-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-close-body-baseline/measurement-close-body-clo-9ea6c-e-oxygen-body-after-editing-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-close-body-baseline/measurement-close-body-clo-9ea6c-e-oxygen-body-after-editing-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-close-body-baseline/measurement-close-body-clo-9ea6c-e-oxygen-body-after-editing-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › ../../../../private/tmp/crystal-annotation-interaction-candidate/tests/browser/measurement-close-body.spec.cjs:2:1 › close water angle caption clears the oxygen body after editing 

@@ -138,6 +138,15 @@
       "step": 48,
       "action": "trajectory frame switch with explicit periodic-image measurement",
       "observation": "Selected O(+ac) ghost is distinctly primed; world distance15.0928\u00c5 agrees with rounded15.093\u00c5 caption. Base H marker2 and ghost marker1 remain visible across periodic frames; slider shows correct first frame."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1801,
+      "screenshots": [
+        "seed-1801-step-12-batch_fix-after.png",
+        "seed-1801-step-14-cancel-atom-preview.png"
+      ],
+      "observations": "Methane labels follow visible atom surfaces; selected atom checkmark remains visible. During another atom drag the existing selected atom and exact-coordinate panel remain preserved. Coordinate values fit the default sidebar. Escape-canceled preview is an intentional action."
     }
   ],
   "candidateInspections": [

@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:97278) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:110:1 › releasing the primary mouse button during a chord places the atom once (7.9s)
+
+  1 passed (8.8s)

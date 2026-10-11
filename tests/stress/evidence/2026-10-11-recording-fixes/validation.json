@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-11",
+  "app_version": 187,
+  "camera_asset_version": 7,
+  "product_commits": [
+    {
+      "commit": "f7aed6a",
+      "fix": "Refresh clipping after manual camera movement and geometry edits; before/after screenshot shows the lost atom."
+    },
+    {
+      "commit": "36049d5",
+      "fix": "Coalesce layout notifications and resize only inside a render frame; synchronize zoom projection."
+    },
+    {
+      "commit": "7f65548",
+      "fix": "Clarify that the existing covalent radii checkbox controls bond detection."
+    },
+    {
+      "commit": "da30db9",
+      "fix": "Bound ordinary atom label screen sizes, improve contrast, exclude labels from physical model bounds."
+    },
+    {
+      "commit": "4338847",
+      "fix": "Keep orthographic geometry ahead of the camera without changing screen magnification or pan."
+    }
+  ],
+  "unit": {
+    "passed": 155,
+    "failed": 0,
+    "log": "unit.log"
+  },
+  "browser": {
+    "combined_passed": 39,
+    "combined_failed": 1,
+    "combined_log": "combined-browser.log",
+    "resolved_failure": "Mouse-chord test compared recomputed coordinates for exact bit equality; difference was approximately 4e-16 angstrom. Compare to 12 decimal places; commit-once assertion is unchanged.",
+    "corrected_replay_passed": 1,
+    "corrected_replay_log": "chord-replay.log",
+    "unique_scenarios_verified": 40
+  },
+  "label_depth_pixels": "Passed eight views including a known overlap: visible numbers change rendered pixels and rear labels paint zero pixels over nearer atoms.",
+  "native_browser": "Separate in-app browser tab loaded version 187, water, labels, sidebar width 347 -> 596 -> 347, rotation, three-point measurement preserved in edit mode; screenshots inspected. Temporary tab closed; original unsaved user tab untouched.",
+  "visual_review": "Directly inspected rotation before/after, close-depth after, wide and narrow sidebar views, normal and Retina far labels, crowded label occlusion, native browser screenshots, and representative atom/cell edit chain screenshots at 900 and 1440 pixels. Not every captured screenshot was inspected.",
+  "scope": "No buttons added; no GitHub push. Original recordings demonstrate symptoms, but exact unsaved geometry in the first recording was not available for deterministic replay."
+}

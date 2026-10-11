@@ -1,0 +1,90 @@
+
+Running 40 tests using 1 worker
+
+(node:96199) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/camera.spec.cjs:37:1 › real approaching rotation settles with normal damping and snaps within the total correction budget (8.2s)
+  ✓   2 [chromium] › tests/browser/camera.spec.cjs:56:1 › departing rotation, an elongated cell outside the cone, zoom, pan and clicks do not snap (7.2s)
+  ✓   3 [chromium] › tests/browser/camera.spec.cjs:86:1 › signed controller alignments preserve pose contracts and camera actions leave the document unchanged (4.5s)
+  ✓   4 [chromium] › tests/browser/camera.spec.cjs:106:1 › pointer interruption, focus, Escape and scene changes invalidate active movement (6.0s)
+  ✓   5 [chromium] › tests/browser/camera.spec.cjs:158:1 › internal fitting fits narrow large scenes and existing Reset restores deterministic roll (1.8s)
+  ✓   6 [chromium] › tests/browser/camera.spec.cjs:186:1 › original interface, reduced motion, keyboard Reset and molecule navigation remain intact (3.5s)
+  ✓   7 [chromium] › tests/browser/camera.spec.cjs:211:1 › the real controls and controller produce equivalent timestamped gestures at 30, 60 and 120 Hz (1.7s)
+  ✓   8 [chromium] › tests/browser/camera.spec.cjs:269:1 › a close-zoom approach still snaps after damping and a pause before release (7.1s)
+  ✓   9 [chromium] › tests/browser/camera.spec.cjs:296:1 › near-axis overshoot captures consistently across zoom and release delay, while a deliberate departure does not (11.5s)
+  ✓  10 [chromium] › tests/browser/camera.spec.cjs:329:1 › touch intent follows consumed one-finger input and ignores pointer duplicates and multifinger navigation (4.1s)
+  ✓  11 [chromium] › tests/browser/display-setting-clarity.spec.cjs:3:1 › the bond radii setting describes connectivity and preserves atom sizes and measurements (3.4s)
+  ✓  12 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:41:5 › native capture loss preserves mouse placement (4.0s)
+  ✓  13 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:41:5 › native capture loss preserves mouse placement outside the canvas (3.5s)
+  ✓  14 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit escape rollback (2.5s)
+  ✓  15 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit blur rollback (2.5s)
+  ✓  16 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit pointercancel rollback (3.7s)
+  ✓  17 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:75:1 › a missed mouse release commits the held preview once, ignoring unrelated pointers (3.1s)
+  ✓  18 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:93:1 › released-button capture loss immediately commits without a delivered pointerup (2.3s)
+  ✘  19 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:110:1 › releasing the primary mouse button during a chord places the atom once (2.5s)
+(node:96335) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  20 [chromium] › tests/browser/drag-release.spec.cjs:2:48 › release UI refresh cannot roll back a committed mouse move: blur (8.3s)
+  ✓  21 [chromium] › tests/browser/drag-release.spec.cjs:2:48 › release UI refresh cannot roll back a committed mouse move: capture-loss (2.8s)
+  ✓  22 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 1 › small atom annotations survive sidebar resizing and zoom at 900px (5.0s)
+  ✓  23 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 1 › small atom annotations survive sidebar resizing and zoom at 1440px (5.4s)
+  ✓  24 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 2 › small atom annotations survive sidebar resizing and zoom at 900px (17.1s)
+  ✓  25 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:24:38 › annotation CSS sizing at device scale 2 › small atom annotations survive sidebar resizing and zoom at 1440px (8.9s)
+  ✓  26 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:5:34 › measurement survives a sustained edit chain at 900px (1.4m)
+  ✓  27 [chromium] › tests/browser/measurement-edit-combinations.spec.cjs:5:34 › measurement survives a sustained edit chain at 1440px (1.6m)
+  ✓  28 [chromium] › tests/browser/ordinary-label-size.spec.cjs:4:5 › ordinary labels at display scale 1 › atom numbers remain readable without changing model bounds or measurements (3.3s)
+  ✓  29 [chromium] › tests/browser/ordinary-label-size.spec.cjs:4:5 › ordinary labels at display scale 2 › atom numbers remain readable without changing model bounds or measurements (4.4s)
+  ✓  30 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 1440px (5.0s)
+  ✓  31 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 800px (3.2s)
+  ✓  32 [chromium] › tests/browser/sidebar-layout.spec.cjs:19:5 › sidebar resizing, collapse and restore preserve the document at 390px (2.5s)
+  ✓  33 [chromium] › tests/browser/sidebar-layout.spec.cjs:44:1 › divider keyboard controls and canceled drag restore presentation state (970ms)
+  ✓  34 [chromium] › tests/browser/sidebar-layout.spec.cjs:57:1 › file-load status wrapping resizes the canvas without a window or divider gesture (1.3s)
+  ✓  35 [chromium] › tests/browser/sidebar-layout.spec.cjs:66:1 › narrow-panel editing and periodic controls stay inside the panel without horizontal scrolling (2.8s)
+  ✓  36 [chromium] › tests/browser/sidebar-layout.spec.cjs:94:1 › constraint threshold and its unit stay together across intermediate panel widths (3.7s)
+  ✓  37 [chromium] › tests/browser/transient-layout-load.spec.cjs:3:1 › file replacement during a zero-width layout retains a fitted view after the sidebar settles (1.3s)
+  ✓  38 [chromium] › tests/browser/visual-camera-regressions.spec.cjs:3:38 › manual orbit keeps all atom geometry inside the depth range (9.2s)
+  ✓  39 [chromium] › tests/browser/visual-camera-regressions.spec.cjs:3:38 › manual orbit keeps all atom geometry inside the depth range in a close orthographic view (10.9s)
+  ✓  40 [chromium] › tests/browser/visual-camera-regressions.spec.cjs:33:1 › sidebar resizing draws each resized canvas before returning to the browser (18.1s)
+
+
+  1) [chromium] › tests/browser/drag-capture-recovery.spec.cjs:110:1 › releasing the primary mouse button during a chord places the atom once 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Array [
+        -0.9081330901416176,
+    -   -0.058867274645956424,
+    -   -0.0447730901416179,
+    +   -0.05886727464595598,
+    +   -0.044773090141617455,
+      ]
+
+      115 |     await idle(page);
+      116 |     await page.mouse.up({ button: 'right' });
+    > 117 |     expect(await page.evaluate(() => currentStructure.atoms[0].position.toArray())).toEqual(preview);
+          |                                                                                     ^
+      118 |     expect(await page.evaluate(() => editHistory.undoStack.length)).toBe(1);
+      119 | });
+      120 |
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/drag-capture-recovery.spec.cjs:117:85
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-visual-fixes-results/drag-capture-recovery-rele-f1eb3--chord-places-the-atom-once-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-visual-fixes-results/drag-capture-recovery-rele-f1eb3--chord-places-the-atom-once-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-visual-fixes-results/drag-capture-recovery-rele-f1eb3--chord-places-the-atom-once-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-visual-fixes-results/drag-capture-recovery-rele-f1eb3--chord-places-the-atom-once-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/browser/drag-capture-recovery.spec.cjs:110:1 › releasing the primary mouse button during a chord places the atom once 
+  39 passed (6.4m)

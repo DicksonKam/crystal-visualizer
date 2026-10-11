@@ -114,6 +114,9 @@ test('releasing the primary mouse button during a chord places the atom once', a
     await page.mouse.up({ button: 'left' });
     await idle(page);
     await page.mouse.up({ button: 'right' });
-    expect(await page.evaluate(() => currentStructure.atoms[0].position.toArray())).toEqual(preview);
+    // Pointer release may intersect the same plane again. Compare at physical
+    // precision rather than requiring identical floating-point rounding.
+    const placed = await page.evaluate(() => currentStructure.atoms[0].position.toArray());
+    placed.forEach((value, axis) => expect(value).toBeCloseTo(preview[axis], 12));
     expect(await page.evaluate(() => editHistory.undoStack.length)).toBe(1);
 });

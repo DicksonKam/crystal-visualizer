@@ -30,7 +30,7 @@
     "0-atom-committed.png",
     "0-shift.png"
   ],
-  "investigation": "Seven confirmed visual/interaction faults corrected. Frozen v182 final regression and 72 realistic measurement/edit combinations remain running.",
+  "investigation": "Seven confirmed visual/interaction faults corrected. Frozen v182 full regression passed all179; sustained72 realistic measurement/edit combinations still running.",
   "productChanges": true,
   "nextInvestigation": "Inspect all six ordinary examples across near/far growth/shrink and panel collapse; finish current full regression; run sustained campaign.",
   "measurementSizeFix": {
@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 49,
+    "variationPassedSoFar": 51,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -193,7 +193,9 @@
     "Slab1440 order645 frame edit and deletion undo",
     "Water900 order321 hydrogen-centered angle after edits and undo;1.3322/0.8576 and43.51match readable captions",
     "Water1440 order321 edit and deletion history;1.3463/0.8566 and43.53match captions",
-    "Aluminium900 order132 frame and deletion undo;2.7380/4.4478 and29.87restored"
+    "Aluminium900 order132 frame and deletion undo;2.7380/4.4478 and29.87restored",
+    "Aluminium1440 order132 frame and deletion undo; captions remain consistent with restored sidebar",
+    "Silicon900 order125 measured atom edit;2.336/4.535 and94.9 captions visible clear of atoms"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

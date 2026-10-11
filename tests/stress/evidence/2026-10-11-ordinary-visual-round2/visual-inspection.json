@@ -124,6 +124,20 @@
       "step": 60,
       "action": "undo after Escape cancellation",
       "observation": "18 graphene atoms and additional b periodic copy render in matching base/ghost frames; no bonds appear while ShowBonds is off. Additional copy outside base frame is intentional."
+    },
+    {
+      "source": "three-fix candidate, DPR2",
+      "seed": 1605,
+      "step": 14,
+      "action": "trajectory playback toggle",
+      "observation": "Water trajectory frame7/24 and play icon render correctly; edit is gated for trajectory. One H is physically occluded by O in this view, rather than missing geometry."
+    },
+    {
+      "source": "three-fix candidate, DPR2",
+      "seed": 1605,
+      "step": 48,
+      "action": "trajectory frame switch with explicit periodic-image measurement",
+      "observation": "Selected O(+ac) ghost is distinctly primed; world distance15.0928\u00c5 agrees with rounded15.093\u00c5 caption. Base H marker2 and ghost marker1 remain visible across periodic frames; slider shows correct first frame."
     }
   ],
   "candidateInspections": [

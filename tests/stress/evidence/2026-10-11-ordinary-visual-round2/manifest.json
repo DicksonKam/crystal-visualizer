@@ -34,7 +34,9 @@
   "pilot": "240 actions across2 sessions passed. Terminal failure on next trajectory was harness attempting intentionally disabled Edit mode; harness corrected.",
   "personallyInspected": [
     "pilot slab active measurement",
-    "pilot slab display change and viewport resize"
+    "pilot slab display change and viewport resize",
+    "FreshNaClresetwithnumbers",
+    "NaClrotationwithmoderateatomsize"
   ],
   "productChanges": false,
   "completionGates": [
@@ -43,5 +45,13 @@
     "Reproduce suspicious visuals through ordinary UI interactions",
     "Fix confirmed product faults and verify relevant regressions",
     "Save evidence and fixes locally;no push,no new buttons"
+  ],
+  "confirmedFindings": [
+    {
+      "description": "Atom number labels ignore scene depth; ordinary NaCl size adjustment and rotation draws atom3 number over nearer atom1 sphere.",
+      "evidence": "atom-label-depth/rotated-before.png",
+      "status": "Reproduced;root fix pending",
+      "reproduction": "LoadNaCl;ShowLabels;Reset;AtomSize ArrowRight6;two normal mouse camera drags."
+    }
   ]
 }

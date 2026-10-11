@@ -53,5 +53,24 @@
       "status": "Reproduced;root fix pending",
       "reproduction": "LoadNaCl;ShowLabels;Reset;AtomSize ArrowRight6;two normal mouse camera drags."
     }
-  ]
+  ],
+  "candidateFixes": [
+    {
+      "problem": "Hidden atom numbers paint over nearer atoms",
+      "evidence": "atom-label-depth/verification.json",
+      "candidate": "/private/tmp/crystal-ordinary-label-candidate",
+      "serverPort": 4180,
+      "fullBrowserSuiteSession": 63100,
+      "fullBrowserSuiteLog": "/private/tmp/crystal-ordinary-label-full.log"
+    },
+    {
+      "problem": "Exact-coordinate values are truncated after ordinary dragging",
+      "evidence": "coordinate-width/verification.json",
+      "candidate": "/private/tmp/crystal-ordinary-coordinates-candidate",
+      "serverPort": 4181,
+      "relatedRegressionsSession": 84581,
+      "relatedRegressionsLog": "/private/tmp/crystal-ordinary-coordinate-related.log"
+    }
+  ],
+  "rootProductPromotion": "Pending two-hour discovery campaign completion; root app.js and styles.css remain unchanged."
 }

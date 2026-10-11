@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 45,
+    "variationPassedSoFar": 48,
     "fullBrowserPassedSoFar": 179,
     "fullBrowserPassed": 179
   },
@@ -189,7 +189,9 @@
     "Graphene900 order312 atom edit;6.151/1.497 and117.2captions visible",
     "Graphene900 order312 frame edit and deletion undo;2.5006/1.2273 and2.39restored",
     "Graphene1440 order312 frame edit;2.6angle caption clear of atoms",
-    "Slab900 order645 atom movement, constraints, frame edit and deletion undo;2.8462/2.8462 and60.41match readable captions"
+    "Slab900 order645 atom movement, constraints, frame edit and deletion undo;2.8462/2.8462 and60.41match readable captions",
+    "Slab1440 order645 frame edit and deletion undo",
+    "Water900 order321 hydrogen-centered angle after edits and undo;1.3322/0.8576 and43.51match readable captions"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

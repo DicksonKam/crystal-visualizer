@@ -54,6 +54,23 @@
       "step": -1,
       "action": "load",
       "observation": "Silicon three-point preserved measurement visible; no additional defect confirmed."
+    },
+    {
+      "seed": 1213,
+      "step": -1,
+      "action": "load",
+      "observation": "NaCl three-point measurement remains readable with wide sidebar at 900px."
+    },
+    {
+      "seed": 1214,
+      "step": 5,
+      "action": "resize",
+      "observation": "Graphene frame preview, measurement captions and atom labels are visible; boundary bond segments end at cell edges."
     }
+  ],
+  "candidateInspections": [
+    "Atom drag preview at 1440px: numbers follow spheres, full translation plane visible.",
+    "Frame drag preview at 1440px: numbers retained, frame and bonds update.",
+    "Atom drag preview at 900px: numbers, plane and toolbar remain visible."
   ]
 }

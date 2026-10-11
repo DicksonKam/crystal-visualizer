@@ -4,5 +4,8 @@
   "candidate": "Eight ordinary camera views pass; occlusion tests exclude the two-pixel antialias fringe",
   "baselineLog": "baseline-regression.log",
   "candidateLog": "candidate-regression.log",
-  "note": "Further atom-edit and frame-change visual verification is still running"
+  "note": "Further atom-edit and frame-change visual verification is still running",
+  "relatedRegressions": "10 passed (5.1m): original label readability, measurement occlusion, trajectory scrubbing, and boundary edit/undo/redo workflows",
+  "remaining": "Label-enabled edit workflow rerun and full browser suite; two-hour ordinary visual campaign; promotion to root and final verification",
+  "labelEnabledEditInterim": "1440px completed all 16 edit cycles; screenshot hit 180s test limit, so this is incomplete and must be rerun. 900px still running."
 }

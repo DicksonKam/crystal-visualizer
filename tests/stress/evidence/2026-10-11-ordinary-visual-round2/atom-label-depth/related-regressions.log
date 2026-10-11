@@ -1,0 +1,17 @@
+
+Running 10 tests using 1 worker
+
+(node:78612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers (14.5s)
+  ✓   2 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/measurement-atom-occlusion.spec.cjs:5:1 › a distance caption stays clear of an unselected atom projected onto its midpoint (7.3s)
+  ✓   3 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/trajectory-interaction-visual.spec.cjs:6:75 › keyboard trajectory scrubbing ArrowRight pauses playback at 900px (5.0s)
+  ✓   4 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/trajectory-interaction-visual.spec.cjs:6:75 › keyboard trajectory scrubbing Home pauses playback at 900px (3.8s)
+  ✓   5 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/trajectory-interaction-visual.spec.cjs:6:75 › keyboard trajectory scrubbing End pauses playback at 900px (3.4s)
+  ✓   6 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/trajectory-interaction-visual.spec.cjs:6:75 › keyboard trajectory scrubbing ArrowRight pauses playback at 390px (2.8s)
+  ✓   7 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/trajectory-interaction-visual.spec.cjs:6:75 › keyboard trajectory scrubbing Home pauses playback at 390px (4.0s)
+  ✓   8 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/trajectory-interaction-visual.spec.cjs:6:75 › keyboard trajectory scrubbing End pauses playback at 390px (3.6s)
+  ✓   9 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/visual-edit.spec.cjs:6:5 › visual boundary editing with changing panel width at 1440px (2.3m)
+  ✓  10 [chromium] › ../../../../private/tmp/crystal-ordinary-label-candidate/tests/browser/visual-edit.spec.cjs:6:5 › visual boundary editing with changing panel width at 900px (2.0m)
+
+  10 passed (5.1m)

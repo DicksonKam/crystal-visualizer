@@ -840,6 +840,8 @@ function animate(timestamp) {
         });
     }
     
+    updateAnnotationSizes();
+
     // Render main scene
     renderer.render(scene, camera);
     
@@ -1456,9 +1458,21 @@ function getMouseNDC(event) {
 // Atoms take priority over invisible cell-resize hitboxes, regardless of the
 // hitbox's depth. Refresh transforms so picking agrees with the current view.
 function getAtomIntersection(event) {
+    return getAtomIntersectionAt(getMouseNDC(event));
+}
+
+function getAtomIntersectionAt(mouseNDC) {
     camera.updateWorldMatrix(true, false);
     structureGroup.updateWorldMatrix(true, true);
-    raycaster.setFromCamera(getMouseNDC(event), camera);
+    measurementGroup?.updateWorldMatrix(true, true);
+    raycaster.setFromCamera(mouseNDC, camera);
+    // Numbered markers are visible handles for their atoms. Their readable
+    // screen size can exceed a small sphere, so they share the atom's action.
+    const markerHit = raycaster.intersectObjects(selectionRings, false)[0];
+    if (markerHit) {
+        const selected = selectedAtoms[selectionRings.indexOf(markerHit.object)];
+        if (selected?.mesh?.parent === structureGroup) return { ...markerHit, object: selected.mesh };
+    }
     return raycaster.intersectObjects(atomMeshes, false)[0] || null;
 }
 
@@ -1962,7 +1976,8 @@ function handleMeasureClick(mouseNDC) {
     mouse.copy(mouseNDC);
     raycaster.setFromCamera(mouse, camera);
     
-    const intersects = raycaster.intersectObjects(atomMeshes);
+    const hit = getAtomIntersectionAt(mouseNDC);
+    const intersects = hit ? [hit] : [];
     
     if (intersects.length > 0) {
         const clickedMesh = intersects[0].object;
@@ -1999,7 +2014,8 @@ function onClickFallback(event) {
     raycaster.setFromCamera(mouse, camera);
     
     // Check if clicking on an atom
-    const intersects = raycaster.intersectObjects(atomMeshes, false);
+    const hit = getAtomIntersection(event);
+    const intersects = hit ? [hit] : [];
     
     if (intersects.length > 0) {
         const clickedMesh = intersects[0].object;
@@ -3589,7 +3605,7 @@ function createSelectionRing(atomMesh, selectionNumber, isGhost = false) {
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.position.copy(worldPos);
     
-    // Keep the marker proportional to its atom, regardless of other species.
+    // Start proportional to the atom; the screen-size floor keeps its number readable.
     const labelSize = getSelectionLabelSize(atomMesh.userData.element);
     sprite.scale.set(labelSize, labelSize, labelSize);
     
@@ -3631,6 +3647,81 @@ function updateMeasurements() {
         createFloatingAngleLabel(arc.labelPosition, geometry.angle.angleDeg);
     }
     requestRender();
+}
+
+// Keep annotation text readable in CSS pixels as the camera and panel change.
+// Retain the original world-space proportions whenever they are already large
+// enough, and leave the atom geometry and measured positions untouched.
+function updateAnnotationSizes() {
+    if (!measurementGroup || !renderer || !camera) return;
+    const height = renderer.domElement.clientHeight;
+    if (!height) return;
+    camera.updateMatrixWorld();
+    for (const sprite of measurementGroup.children) {
+        if (sprite.userData.isMeasurementLabel) {
+            const anchor = sprite.userData.annotationAnchor || (sprite.userData.annotationAnchor = sprite.position.clone());
+            sprite.position.copy(anchor);
+        }
+        const minimumPixels = sprite.userData.isMeasurementLabel ? 18
+            : sprite.userData.isSelectionLabel ? 14 : 0;
+        if (!minimumPixels) continue;
+        const base = sprite.userData.annotationBaseScale || (sprite.userData.annotationBaseScale = sprite.scale.clone());
+        let worldPerPixel;
+        if (camera.isOrthographicCamera) {
+            worldPerPixel = (camera.top - camera.bottom) / (camera.zoom * height);
+        } else {
+            const depth = -sprite.getWorldPosition(new THREE.Vector3()).applyMatrix4(camera.matrixWorldInverse).z;
+            worldPerPixel = depth > 0 ? 2 * depth * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / (camera.zoom * height) : 0;
+        }
+        const factor = Math.max(1, minimumPixels * worldPerPixel / base.y);
+        sprite.scale.copy(base).multiplyScalar(factor);
+        sprite.userData.annotationWorldPerPixel = worldPerPixel;
+    }
+    positionMeasurementLabels();
+}
+
+function positionMeasurementLabels() {
+    const width = renderer.domElement.clientWidth, height = renderer.domElement.clientHeight;
+    if (!width || !height) return;
+    const screenRect = sprite => {
+        const point = sprite.getWorldPosition(new THREE.Vector3()).project(camera);
+        const unit = sprite.userData.annotationWorldPerPixel;
+        if (!(unit > 0) || !Number.isFinite(unit) || ![point.x, point.y, point.z, sprite.scale.x / unit, sprite.scale.y / unit].every(Number.isFinite) || Math.abs(point.x) > 1 || Math.abs(point.y) > 1 || Math.abs(point.z) > 1) return null;
+        return { x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2,
+            width: sprite.scale.x / unit, height: sprite.scale.y / unit, depth: point.z };
+    };
+    const labels = measurementGroup.children.filter(sprite => sprite.userData.isMeasurementLabel);
+    const visible = labels.map(sprite => ({ sprite, rect: screenRect(sprite) })).filter(item => item.rect);
+    const obstacles = selectionRings.map(screenRect).filter(Boolean);
+    const placed = CrystalAnnotations.placeLabels(visible.map(item => item.rect), obstacles, { width, height });
+    const world = (x, y, depth) => new THREE.Vector3(x / width * 2 - 1, 1 - y / height * 2, depth).unproject(camera);
+    labels.forEach(sprite => { if (sprite.userData.annotationLeader) sprite.userData.annotationLeader.visible = false; });
+    visible.forEach(({ sprite, rect }, i) => {
+        const target = placed[i];
+        if (Math.hypot(target.x - rect.x, target.y - rect.y) < .01) return;
+        sprite.position.copy(measurementGroup.worldToLocal(world(target.x, target.y, rect.depth)));
+        if (Math.hypot(target.x - rect.x, target.y - rect.y) < 2) return;
+        let leader = sprite.userData.annotationLeader;
+        if (!leader) {
+            const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+            leader = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: .35, depthTest: false, depthWrite: false }));
+            leader.userData.isMeasurementVisual = true;
+            leader.userData.isAnnotationLeader = true;
+            leader.renderOrder = 997;
+            measurementGroup.add(leader);
+            sprite.userData.annotationLeader = leader;
+        }
+        const endX = Math.max(target.x - target.width / 2, Math.min(target.x + target.width / 2, rect.x));
+        const endY = Math.max(target.y - target.height / 2, Math.min(target.y + target.height / 2, rect.y));
+        const end = measurementGroup.worldToLocal(world(endX, endY, rect.depth));
+        const positions = leader.geometry.attributes.position;
+        const anchor = sprite.userData.annotationAnchor;
+        positions.setXYZ(0, anchor.x, anchor.y, anchor.z);
+        positions.setXYZ(1, end.x, end.y, end.z);
+        positions.needsUpdate = true;
+        leader.geometry.computeBoundingSphere();
+        leader.visible = true;
+    });
 }
 
 function getSelectionLabelSize(element) {

@@ -1,0 +1,239 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/measurement-marker-picking.spec.cjs",
+      "--config=/private/tmp/crystal-annotation-candidate-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-marker-picking-baseline",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-annotation-candidate-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-marker-picking-baseline",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "cwd": "/private/tmp/crystal-annotation-candidate",
+      "url": "http://127.0.0.1:4174",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-marker-picking.spec.cjs",
+      "file": "measurement-marker-picking.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "visible numbered marker edges select the atom in measure mode",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8205,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[31m+   0,\u001b[39m\n\u001b[2m    1,\u001b[22m\n\u001b[2m    2,\u001b[22m\n\u001b[2m  ]\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[31m+   0,\u001b[39m\n\u001b[2m    1,\u001b[22m\n\u001b[2m    2,\u001b[22m\n\u001b[2m  ]\u001b[22m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs:27:78",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs",
+                      "column": 78,
+                      "line": 27
+                    },
+                    "snippet": "  25 |     await page.mouse.click(point.x, point.y);\n  26 |     await page.screenshot({ path: info.outputPath('marker-after-click.png') });\n> 27 |     expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([1, 2]);\n     |                                                                              ^\n  28 | });\n  29 |\n  30 | test('visible numbered marker edges drag their boundary atom in edit mode', async ({ page }, info) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs",
+                        "column": 78,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 0\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Array [\u001b[22m\n\u001b[31m+   0,\u001b[39m\n\u001b[2m    1,\u001b[22m\n\u001b[2m    2,\u001b[22m\n\u001b[2m  ]\u001b[22m\n\n  25 |     await page.mouse.click(point.x, point.y);\n  26 |     await page.screenshot({ path: info.outputPath('marker-after-click.png') });\n> 27 |     expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([1, 2]);\n     |                                                                              ^\n  28 | });\n  29 |\n  30 | test('visible numbered marker edges drag their boundary atom in edit mode', async ({ page }, info) => {\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs:27:78"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:56:30.259Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs",
+                    "column": 78,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "de035f544cb16126fdcc-cfad0b720190d1d93777",
+          "file": "measurement-marker-picking.spec.cjs",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "title": "visible numbered marker edges drag their boundary atom in edit mode",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 10627,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 2\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"atom\": 0,\u001b[39m\n\u001b[32m-   \"frame\": false,\u001b[39m\n\u001b[31m+   \"atom\": undefined,\u001b[39m\n\u001b[31m+   \"frame\": true,\u001b[39m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 2\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"atom\": 0,\u001b[39m\n\u001b[32m-   \"frame\": false,\u001b[39m\n\u001b[31m+   \"atom\": undefined,\u001b[39m\n\u001b[31m+   \"frame\": true,\u001b[39m\n\u001b[2m  }\u001b[22m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs:38:23",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs",
+                      "column": 23,
+                      "line": 38
+                    },
+                    "snippet": "  36 |     const owner = await page.evaluate(() => ({ atom: draggedAtom?.index, frame: vacuumDragState.isDragging }));\n  37 |     try {\n> 38 |         expect(owner).toEqual({ atom: 0, frame: false });\n     |                       ^\n  39 |         await page.mouse.move(point.x + 12, point.y - 8, { steps: 5 });\n  40 |     } finally { await page.mouse.up(); }\n  41 |     await page.screenshot({ path: info.outputPath('marker-after-drag.png') });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs",
+                        "column": 23,
+                        "line": 38
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 2\u001b[39m\n\u001b[31m+ Received  + 2\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"atom\": 0,\u001b[39m\n\u001b[32m-   \"frame\": false,\u001b[39m\n\u001b[31m+   \"atom\": undefined,\u001b[39m\n\u001b[31m+   \"frame\": true,\u001b[39m\n\u001b[2m  }\u001b[22m\n\n  36 |     const owner = await page.evaluate(() => ({ atom: draggedAtom?.index, frame: vacuumDragState.isDragging }));\n  37 |     try {\n> 38 |         expect(owner).toEqual({ atom: 0, frame: false });\n     |                       ^\n  39 |         await page.mouse.move(point.x + 12, point.y - 8, { steps: 5 });\n  40 |     } finally { await page.mouse.up(); }\n  41 |     await page.screenshot({ path: info.outputPath('marker-after-drag.png') });\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs:38:23"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:56:39.086Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs",
+                    "column": 23,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "de035f544cb16126fdcc-db6bfd831cf8627281a7",
+          "file": "measurement-marker-picking.spec.cjs",
+          "line": 30,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T01:56:29.916Z",
+    "duration": 20088.271,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

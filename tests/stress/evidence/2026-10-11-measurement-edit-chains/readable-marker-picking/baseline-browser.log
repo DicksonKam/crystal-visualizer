@@ -1,0 +1,87 @@
+
+Running 2 tests using 1 worker
+
+(node:57422) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode (8.2s)
+(node:57429) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode (10.6s)
+
+
+  1) [chromium] › tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 0
+    + Received  + 1
+
+      Array [
+    +   0,
+        1,
+        2,
+      ]
+
+      25 |     await page.mouse.click(point.x, point.y);
+      26 |     await page.screenshot({ path: info.outputPath('marker-after-click.png') });
+    > 27 |     expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([1, 2]);
+         |                                                                              ^
+      28 | });
+      29 |
+      30 | test('visible numbered marker edges drag their boundary atom in edit mode', async ({ page }, info) => {
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs:27:78
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-6113d-ct-the-atom-in-measure-mode-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "atom": 0,
+    -   "frame": false,
+    +   "atom": undefined,
+    +   "frame": true,
+      }
+
+      36 |     const owner = await page.evaluate(() => ({ atom: draggedAtom?.index, frame: vacuumDragState.isDragging }));
+      37 |     try {
+    > 38 |         expect(owner).toEqual({ atom: 0, frame: false });
+         |                       ^
+      39 |         await page.mouse.move(point.x + 12, point.y - 8, { steps: 5 });
+      40 |     } finally { await page.mouse.up(); }
+      41 |     await page.screenshot({ path: info.outputPath('marker-after-drag.png') });
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-marker-picking.spec.cjs:38:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-marker-picking-baseline/measurement-marker-picking-a22ef--boundary-atom-in-edit-mode-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode 
+    [chromium] › tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode 

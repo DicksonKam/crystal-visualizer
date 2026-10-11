@@ -1,0 +1,9 @@
+{
+  "finding": "Readable selection marker extends beyond a small boundary atom. The marker pixels previously selected the frame or ignored a measurement click.",
+  "baseline": "Annotation candidate without marker picking: two actual pointer regressions fail. This is a candidate regression, not an asserted historical main-app bug.",
+  "fix": "Use the selected atom as the action target when its visible numbered marker is hit.",
+  "visualInspection": "Before and after drag screenshots inspected; fixed atom moves with frame unchanged and measurement updated.",
+  "sourceVersion": 179,
+  "focusedPassed": 13,
+  "unitPassed": 151
+}

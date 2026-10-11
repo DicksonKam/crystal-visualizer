@@ -1,0 +1,190 @@
+
+> crystal-visualizer@1.0.0 test
+> node --test tests/*.test.cjs
+
+✔ unobstructed measurement labels retain their anchor and proportions (1.549875ms)
+✔ crowded distance and angle labels avoid each other and atom markers deterministically (2.967667ms)
+✔ labels near viewport edges remain within the visible area (0.5795ms)
+Edit drag canceled: {
+  reason: 'another action started',
+  eventType: 'application action',
+  eventButtons: null,
+  pointerId: 7,
+  lastPointerEvent: { type: undefined, buttons: undefined, pointerType: undefined },
+  hadMoved: true,
+  documentFocused: null
+}
+Edit drag canceled: {
+  reason: 'Undo requested',
+  eventType: 'application action',
+  eventButtons: null,
+  pointerId: 7,
+  lastPointerEvent: { type: undefined, buttons: undefined, pointerType: undefined },
+  hadMoved: true,
+  documentFocused: null
+}
+Edit drag canceled: {
+  reason: 'another action started',
+  eventType: 'application action',
+  eventButtons: null,
+  pointerId: 7,
+  lastPointerEvent: { type: undefined, buttons: undefined, pointerType: undefined },
+  hadMoved: true,
+  documentFocused: null
+}
+✔ all supplied structures parse (18.511333ms)
+✔ atom materials are reused without sharing selection glow (2.47675ms)
+✔ dense views use lower-detail spheres and skip shadow passes (1.746375ms)
+✔ dense atoms batch by element and ghost state while preserving pick and selection meshes (1.941834ms)
+✔ idle frames skip WebGL work while edits and camera movement render promptly (1.2815ms)
+✔ POSCAR examples preserve coordinates and constraints after export (3.080792ms)
+✔ POSCAR scales Cartesian coordinates and supports volume scale (11.19ms)
+✔ fractional and Cartesian coordinates round-trip in a tilted cell (1.492792ms)
+✔ Cartesian measurement deltas use x/y/z components in a tilted cell (2.157166ms)
+✔ periodic measurements always use actual selections, including explicit ghost copies (1.843459ms)
+✔ XYZ periodicity never changes the measured selected positions (3.073667ms)
+✔ malformed coordinates and constraints report errors (1.595542ms)
+✔ plain XYZ keeps molecule coordinates and exports XYZ (1.452208ms)
+✔ extended XYZ honors declared property order and blank comments (1.3435ms)
+✔ extended XYZ export updates lattice metadata and column schema (1.891667ms)
+✔ XDATCAR export preserves every frame and its fractional coordinates (3.445708ms)
+✔ trajectory frames reuse atom meshes and update periodic copies (3.299584ms)
+✔ a successful replacement clears undo history; a failed parse preserves it (2.215833ms)
+✔ loading an example hides the picker and restores focus to its trigger (2.34575ms)
+✔ a malformed XYZ property schema preserves the open document, source, and edit history (2.449667ms)
+✔ a slow example response cannot replace a newer document or its edits (2.300625ms)
+✔ local opens supersede pending examples and stale file callbacks (1.6015ms)
+✔ file read failures preserve the current document and undo history (3.79475ms)
+✔ trajectory controls announce the frame and next playback action (1.362875ms)
+✔ canceling a replacement preserves unsaved structure and history (2.823125ms)
+✔ export keeps its Blob URL alive during download and preserves edits if click fails (5.011542ms)
+✔ POSCAR with extra data exports unchanged text and asks before a lossy edited export (1.401166ms)
+✔ XYZ exports exact source until edited and asks before omitting extra atom data (6.087708ms)
+✔ unchanged geometry-only XYZ export preserves precision and a blank comment (1.546291ms)
+✔ deleting every atom remains reversible and exports only after atoms are restored or added (5.007584ms)
+✔ empty structures show recovery guidance and disable atom-number navigation (2.191042ms)
+✔ undo and redo restore an edit; a new edit invalidates redo (1.383167ms)
+✔ redoing regular and periodic-image selections reuses atom meshes (2.312292ms)
+✔ redoing cleared selections does not rebuild the structure (1.843791ms)
+✔ supercell undo and redo preserve lattice-bearing XYZ metadata (1.943416ms)
+✔ failed supercell preparation preserves structure, preview, selections, and both history stacks (2.358333ms)
+✔ prepared supercells export and reopen with matching positions, constraints, and fractional coordinates (1.412417ms)
+✔ exact fractional coordinates update one atom and round-trip through undo (1.495375ms)
+✔ overflowing exact coordinates leave the atom and undo history unchanged (1.491083ms)
+✔ atom drag keeps tilted-cell coordinates current and skips a stationary drag (5.092209ms)
+✔ canceled atom drag restores coordinates, history, and pointer control (1.947083ms)
+✔ undo cancels an unfinished drag before touching existing history (1.374208ms)
+✔ export finishes a live drag and saves the moved coordinates with undo intact (1.366833ms)
+✔ cell drags update fractional coordinates, skip no changes, and roll back cancellation (3.748916ms)
+✔ cell drag proposals stay valid and rejected proposals preserve preview and history (1.455166ms)
+✔ coordinate edit proposals reject every invalid atom before changing document or history (1.097667ms)
+✔ shift form rejects invalid moves atomically and keeps success feedback visible (1.70425ms)
+✔ add atom form rejects partial numbers and shows feedback after rebuilding (1.370709ms)
+✔ selected fractional shift wraps in a tilted cell and undo restores coordinates (1.226917ms)
+✔ center in cell moves a boundary-spanning cluster to the middle of a tilted cell (1.378458ms)
+✔ whole-cell periodic shifts preserve exact positions, redo history, and the clean state (1.137791ms)
+✔ XYZ shifts wrap periodic axes and retain unrestricted coordinates through undo and export (1.246166ms)
+✔ XYZ previews and supercells repeat only permitted axes (1.337958ms)
+✔ XYZ periodic controls disable individual axes while retaining the cell display (1.093375ms)
+✔ a nonperiodic XYZ cell translates without wrapping and centers using its actual coordinates (2.432958ms)
+✔ constraint controls reject invalid thresholds and skip unchanged atoms (1.634416ms)
+✔ XYZ and trajectory constraint calls leave atoms, history, and dirty state unchanged (3.079708ms)
+✔ only POSCAR edit panels offer constraints while XYZ keeps coordinate editing (2.548792ms)
+✔ POSCAR constraint edits survive export and undo restores the original flags (1.193ms)
+✔ panel refresh retains keyboard focus, falls back for removed controls, and leaves outside focus alone (1.024125ms)
+✔ default constraint threshold handles large structures without overflowing the call stack (18.502834ms)
+✔ sidebar counts constraints in one pass while preserving totals and element badges (9.834458ms)
+✔ multi-atom shift validates every result before changing any atom (1.198209ms)
+✔ bond rebuild uses one policy for normal and periodic atoms (1.467792ms)
+✔ dense bonds use two disposable batches with correct transforms (1.522375ms)
+✔ element radii exclude the false H–H bond in water (1.623833ms)
+✔ periodic bonds cross opposite cell faces without a long interior bond (1.848708ms)
+✔ XYZ boundary bonds do not cross a nonperiodic face (2.257625ms)
+✔ dense periodic boundary segments join the ghost batch (1.343958ms)
+✔ periodic bonds reach neighbors across multiple vectors of a tilted basis (1.596834ms)
+✔ smallest atom radius is reused until render scale changes (1.040417ms)
+✔ xyz exports normalize accumulated suffixes and preserve meaningful filename text (1.482167ms)
+✔ poscar exports normalize accumulated suffixes and preserve meaningful filename text (1.426917ms)
+✔ xdatcar exports normalize accumulated suffixes and preserve meaningful filename text (1.565083ms)
+✔ layout resize preserves camera intent and cannot be overwritten by a running alignment (3.134542ms)
+✔ axis capture depends on angle, including boundaries, not lattice proportions (0.422541ms)
+✔ orthonormal bases and canonical rolls remain finite for skewed and nearly parallel references (0.988625ms)
+✔ automatic direction and optional roll corrections share a hard total-angle budget (4.323125ms)
+✔ candidate hysteresis retains equivalent axes while ambiguous distinct axes do not capture (0.62125ms)
+✔ only meaningful approaching rotations snap; zoom, pan, clicks, departing and ambiguous jitter retain views (2.393416ms)
+✔ settling uses angular speed and continuous elapsed time, and candidates outside the cone are rechecked (0.537917ms)
+✔ equivalent timestamped movement settles and aligns consistently at 30, 60 and 120 Hz (2.504916ms)
+✔ transitions preserve pivot, radius and zoom, clear motion, and never survive cancellation (1.863292ms)
+✔ reduced motion finishes exactly and Auto Snap off suppresses pending corrections (1.376792ms)
+✔ projection-aware fitting and clipping include every bound corner in narrow and large scenes (7.009167ms)
+✔ recent reversal overrides earlier approach and settled ineligible views leave no pending work (0.271ms)
+✔ a changing candidate must independently complete its continuous stability interval (0.206042ms)
+✔ instant camera actions cancel movement, clear controls and copy the requested pose (0.110833ms)
+✔ slow approach and holding before release retain intent at any zoom or distance (28.967041ms)
+✔ inertial overshoot retains manual approach but cannot expand the capture cone (0.23825ms)
+✔ inertia while holding the pointer cannot erase approach, and release delay does not change capture (0.135167ms)
+✔ deliberate departure uses the current pose even after a large inertial approach (0.067125ms)
+✔ damping with no actual rotation input cannot create a snap gesture (0.061416ms)
+✔ deleting, restoring, adding and copying atoms retain independent species groups (2.035416ms)
+✔ capabilities distinguish molecules, cells, mixed periodicity, constraints and trajectories (0.189083ms)
+✔ XYZ atom order may interleave elements without changing species membership (2.066083ms)
+✔ coordinate preparation rejects malformed molecule coordinates without changing its document (0.294041ms)
+✔ cube: all boundary faces include all four corners despite roundoff (4.253583ms)
+✔ tilted: all boundary faces include all four corners despite roundoff (1.226041ms)
+✔ sections retain true oblique slices, tangent edges/corners and empty planes (0.309583ms)
+✔ boundary classification scales with cell size (0.272334ms)
+✔ POSCAR duplicate species groups round-trip positions and constraints exactly once (2.99425ms)
+✔ format parsers run without a browser or rendering engine (1.374167ms)
+✔ XYZ comments and POSCAR titles do not masquerade as trajectory headers (0.244333ms)
+✔ overflowing cell and atom coordinates are rejected before rendering (0.722958ms)
+✔ XDATCAR rejects atom counts larger than the available frame (0.088875ms)
+✔ XDATCAR rejects unexpected frame text instead of silently dropping data (0.502542ms)
+✔ XYZ rejects a second frame instead of exporting only the first (0.245334ms)
+✔ XYZ detects atom data that a geometry-only edited export would omit (0.380625ms)
+✔ POSCAR applies three scale factors to lattice components and Cartesian positions (2.957625ms)
+✔ POSCAR identifies additional data after atom positions without flagging blank lines (0.393792ms)
+✔ counts-only POSCAR export does not invent species names (0.277458ms)
+✔ XYZ reads per-axis periodicity and preserves it in edited exports (1.06525ms)
+✔ XYZ validates property declarations before interpreting atom columns (0.356333ms)
+✔ XYZ scientific numbers accept D exponents and reject non-decimal syntax (0.443792ms)
+✔ edited XYZ drops geometry-dependent and unknown metadata but retains descriptions (1.083209ms)
+✔ XYZ header fields honor quoted keys and values and reject duplicate structural fields (0.276583ms)
+✔ cell validation and coordinate conversion reject non-finite results (0.838084ms)
+✔ coordinate conversion round-trips arrays and objects in a tilted cell (0.193625ms)
+✔ nearest images honor every periodic-axis mask in tilted cells (15.243ms)
+✔ centering and bond clipping wrap only periodic axes (0.7635ms)
+✔ periodic center keeps atoms together across a cell boundary (0.169791ms)
+✔ minimum image crosses a cubic cell boundary (0.156583ms)
+✔ tilted-cell nearest image agrees with exhaustive lattice search (12.996542ms)
+✔ translated copies and singular lattices are handled (0.178375ms)
+✔ periodic bond segments clip at cell faces in cubic and tilted cells (0.364375ms)
+✔ near-degenerate periodic distances complete within a bounded process deadline (53.143125ms)
+✔ reduced-basis measurements preserve exact distances and offsets in the source basis (1.050125ms)
+✔ boundary bond workload is rejected before allocating huge ranges (0.471416ms)
+✔ nearest-image accuracy does not depend on an absolute squared-distance tolerance (0.171209ms)
+✔ history tracks saved revisions across edits, selection, undo, redo and branching (0.608083ms)
+✔ history bounds retained operations without reusing revision identities (0.253167ms)
+✔ distances, signed displacements and angle share the actual selected positions (1.121875ms)
+✔ adding the third atom never changes the first measured arm (0.345084ms)
+✔ ghost copies are measured at their selected world positions (0.247083ms)
+✔ invalid coordinates and unrepresentable distances omit the affected arm and angle (0.107166ms)
+✔ large finite coordinates require no periodic search or safe-integer offsets (0.1255ms)
+✔ coincident and collinear selections remain finite, with correct zero and straight angles (0.10225ms)
+✔ the silicon example measures the selected atoms without translating an endpoint (27.216834ms)
+✔ stress selection oracle omits hidden periodic copies without losing ordered visible selections (1.109125ms)
+✔ supercells prepare tilted-cell copies with current fractional coordinates and independent constraints (1.353708ms)
+✔ supercell validation rejects overflow, invalid repeats, and excessive copies without changing the source (0.422875ms)
+✔ supercell copy identities distinguish coincident boundary atoms in every direction (1.095042ms)
+✔ constraint summaries keep global and per-element counts consistent (0.284125ms)
+✔ z midpoint remains finite for extreme coordinates and handles empty or one-atom structures (0.120334ms)
+✔ cell resize cannot collapse or reverse a cell with atoms outside its bounds (0.294542ms)
+✔ cell resize validates every proposed position before committing a tilted near-face shift (0.225542ms)
+✔ oblique cell faces stop at atom fractional extents on both sides (0.327709ms)
+ℹ tests 151
+ℹ suites 0
+ℹ pass 151
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 295.426792

@@ -1,10 +1,11 @@
 {
   "goalScope": "Realistic editing with active three-atom measurements, not large-label formatting",
-  "sourceVersion": 178,
+  "sourceVersion": 179,
   "productHashes": {
-    "app.js": "6808fa8b310ecd1fcb4b0f3608e96081f4a1681ea933b9b7bbfe66ceb0ed7ce8",
+    "app.js": "0007c7b0ed4e51a53f81c6a26244ef9dfa9903c5d7062b042d5f1e44d5060f0e",
+    "annotations.js": "cf97ddf3368d7f6819e055e4cd47581e30fbb1270b51936bba52d97bba6c4af7",
     "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
-    "index.html": "d72f9fb973a87611ab2da33aa2730649209be75f3b608371485cba57e5f2497d"
+    "index.html": "0e075acaa478b3a6b219661800c1513f2c49ba26a412bfedcc2e48625ecccee1"
   },
   "currentRun": {
     "session": 29337,
@@ -29,9 +30,9 @@
     "0-atom-committed.png",
     "0-shift.png"
   ],
-  "investigation": "Two confirmed measurement/edit visual bugs fixed; focused combinations continue.",
+  "investigation": "Readable and spaced measurement annotations promoted with visible-marker picking; normal-example combinations continue.",
   "productChanges": true,
-  "nextInvestigation": "Finish current main regression and candidate chains, then promote readable and spaced annotations and launch longer measurement/edit campaign",
+  "nextInvestigation": "Inspect all six ordinary examples across near/far growth/shrink and panel collapse; finish current full regression; run sustained campaign.",
   "measurementSizeFix": {
     "commit": "5ca253c",
     "unitPassed": 147,
@@ -60,14 +61,25 @@
   "supercellFixCommit": "88e7b84",
   "fullBrowserRun": {
     "session": 41424,
-    "status": "Running on frozen app v178; collection predates new readability test",
-    "log": "/private/tmp/crystal-measure-full-browser.log"
+    "status": "Terminal exit 0 on v178; 163 passed in 30.1 minutes",
+    "log": "/private/tmp/crystal-measure-full-browser.log",
+    "passed": 163
   },
-  "thirdVisualFinding": "Small-atom measurement annotation readability; personally inspected two screenshots, regression added but unrun",
+  "thirdVisualFinding": "Confirmed small-atom annotation text below 2 CSS pixels; fixed minimum readable size and label overlap with anchored leaders.",
   "annotationCandidate": {
     "browserPassed": 7,
     "root": "/private/tmp/crystal-annotation-candidate",
     "activeChainSession": 69410,
-    "status": "Candidate only; main app not changed"
+    "status": "Terminal; 7 focused and 6 compound chains passed; promoted to v179 after marker picking checks",
+    "chainPassed": 6
+  },
+  "currentMainValidation": {
+    "version": 179,
+    "unitPassed": 151,
+    "focusedBrowserPassed": 13,
+    "fullBrowserSession": 65199,
+    "fullBrowserStatus": "Running",
+    "examplePilotSession": 17646,
+    "examplePilotStatus": "Running; v2 scans exposed frame sections. v1 stopped because midpoint was covered by an atom; no product bug claimed."
   }
 }

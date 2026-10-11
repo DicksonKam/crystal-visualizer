@@ -18,5 +18,22 @@
     "result": "1 passed, 19.5s",
     "scope": "Normal mouse drag at displaced Ti marker; correct drag owner; only Ti moves; measurement selection preserved; undo/redo match geometry; clearing removes all visuals",
     "fixtureCorrection": "First attempt used Sr at the cell corner, whose oblique cell-bounded movement plane has no area. Retest uses displaced central Ti, a physically movable atom."
+  },
+  "combinedVisualCampaign": {
+    "session": 83803,
+    "log": "/private/tmp/crystal-ordinary-three-fixes-visual.log",
+    "output": "/private/tmp/crystal-ordinary-three-fixes-visual",
+    "seconds": 1800,
+    "seed": 1602,
+    "deviceScaleFactor": 2,
+    "structures": 11,
+    "persistent": true,
+    "status": "running"
+  },
+  "combinedBrowserSuite": {
+    "session": 57524,
+    "log": "/private/tmp/crystal-three-fixes-browser-suite.log",
+    "status": "running",
+    "excluded": "One synthetic dense continuous playback workload; outside ordinary-use audit, previously timed out under concurrent load in label-only suite."
   }
 }

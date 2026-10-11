@@ -1,0 +1,19 @@
+{
+  "source": "Candidate app identical to promoted main v180",
+  "passed": 1,
+  "cycles": 6,
+  "durationSeconds": 58.1,
+  "interactions": [
+    "actual mouse rotation",
+    "actual right-button pan",
+    "wheel zoom",
+    "window resize",
+    "measured atom drag",
+    "undo/redo geometry",
+    "bond rebuild",
+    "clear measurement and undo",
+    "mode round trip",
+    "Reset View"
+  ],
+  "visualInspection": "Personally inspected initial navigation, cycle1 and cycle5 restored measurements; labels, distances, angle and numbered atoms remain consistent."
+}

@@ -1885,6 +1885,9 @@ function onMouseUp(event) {
     
     // Handle vacuum drag end
     if (vacuumDragState.isDragging) {
+        // A frame gesture owns its release even if a resized atom is now
+        // under the cursor. Suppress the subsequent compatibility click.
+        wasDragging = true;
         endVacuumDrag();
         controls.enabled = true;
         releaseEditPointer();

@@ -5,7 +5,13 @@
   "candidateChange": "Mark cell completion as dragging before endVacuumDrag so onClickFallback suppresses the compatibility click, sharing the atom-drag behavior.",
   "candidateResult": "Actual mouse regression passes, including undo/redo.",
   "visualInspection": "Personally inspected before and after release images for baseline and candidate. Candidate retains markers 1,2,3, both distances and angle.",
-  "mainStatus": "Unchanged v179 while full regression remains active. Candidate ordinary-example rerun active on port4175.",
+  "mainStatus": "Promoted to main v180. Full browser regression started after interrupting outdated v179 suite deliberately, with 69 passing and 1 interrupted.",
   "candidateHash": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
-  "exampleSession": 17660
+  "exampleSession": 17660,
+  "candidateUnitPassed": 151,
+  "firstLongSequence": "Al FCC at 900px passes the four-cycle sequence, including frame release over an atom and measurement restoration through deletion; committed frame and restored measurement screenshots inspected.",
+  "mainSourceHash": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
+  "mainUnitPassed": 151,
+  "ordinaryExampleStatus": "Al FCC 900 and1440 width sequences passed; remaining five examples running on identical candidate source.",
+  "fullBrowserSession": 90589
 }

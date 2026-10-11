@@ -1,0 +1,118 @@
+
+Running 173 tests using 1 worker
+
+(node:58171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓    1 [chromium] › tests/browser/app.spec.cjs:33:1 › all example URLs are served and the VASP example loads through the picker (6.4s)
+  ✓    2 [chromium] › tests/browser/app.spec.cjs:47:1 › duplicate species preserve membership through editing, deletion, undo/redo and downloads (7.0s)
+  ✓    3 [chromium] › tests/browser/app.spec.cjs:66:1 › adding to a repeated species requires a visible group choice (4.7s)
+  ✓    4 [chromium] › tests/browser/app.spec.cjs:82:1 › undo adding a new element restores the original species header (4.4s)
+  ✓    5 [chromium] › tests/browser/app.spec.cjs:98:1 › XYZ edits warn about stale results, allow cancellation and preserve original results after undo (4.8s)
+  ✓    6 [chromium] › tests/browser/app.spec.cjs:119:1 › real cell resize preview cannot collapse and remains reversible (3.7s)
+  ✓    7 [chromium] › tests/browser/app.spec.cjs:141:1 › skew-cell load and measurements stay responsive with an explicit boundary-bond warning (3.5s)
+  ✓    8 [chromium] › tests/browser/app.spec.cjs:151:1 › large finite selected positions do not require periodic-image offsets (1.7s)
+  ✓    9 [chromium] › tests/browser/app.spec.cjs:161:1 › trajectory playback shows the correct icon, navigates frames and preserves export (5.3s)
+  ✓   10 [chromium] › tests/browser/atom-label-readability.spec.cjs:4:1 › dense-structure labels retain every digit of larger atom numbers (4.6s)
+  ✓   11 [chromium] › tests/browser/atom-picking.spec.cjs:33:5 › cubic, view -1: boundary atoms win hover, click and drag over overlapping frame handles (7.0s)
+  ✓   12 [chromium] › tests/browser/atom-picking.spec.cjs:33:5 › cubic, view 1: boundary atoms win hover, click and drag over overlapping frame handles (6.4s)
+  ✓   13 [chromium] › tests/browser/atom-picking.spec.cjs:33:5 › skewed, view -1: boundary atoms win hover, click and drag over overlapping frame handles (7.1s)
+  ✓   14 [chromium] › tests/browser/atom-picking.spec.cjs:33:5 › skewed, view 1: boundary atoms win hover, click and drag over overlapping frame handles (6.0s)
+  ✓   15 [chromium] › tests/browser/axes-overlay.spec.cjs:43:9 › axes overlay at device scale 1 › preserves opaque background and underlying content at wide and narrow sizes (2.1s)
+  ✓   16 [chromium] › tests/browser/axes-overlay.spec.cjs:43:9 › axes overlay at device scale 2 › preserves opaque background and underlying content at wide and narrow sizes (2.7s)
+  ✓   17 [chromium] › tests/browser/camera.spec.cjs:37:1 › real approaching rotation settles with normal damping and snaps within the total correction budget (3.6s)
+  ✓   18 [chromium] › tests/browser/camera.spec.cjs:56:1 › departing rotation, an elongated cell outside the cone, zoom, pan and clicks do not snap (6.6s)
+  ✓   19 [chromium] › tests/browser/camera.spec.cjs:86:1 › signed controller alignments preserve pose contracts and camera actions leave the document unchanged (3.8s)
+  ✓   20 [chromium] › tests/browser/camera.spec.cjs:106:1 › pointer interruption, focus, Escape and scene changes invalidate active movement (5.7s)
+  ✓   21 [chromium] › tests/browser/camera.spec.cjs:158:1 › internal fitting fits narrow large scenes and existing Reset restores deterministic roll (1.3s)
+  ✓   22 [chromium] › tests/browser/camera.spec.cjs:186:1 › original interface, reduced motion, keyboard Reset and molecule navigation remain intact (3.0s)
+  ✓   23 [chromium] › tests/browser/camera.spec.cjs:211:1 › the real controls and controller produce equivalent timestamped gestures at 30, 60 and 120 Hz (1.6s)
+  ✓   24 [chromium] › tests/browser/camera.spec.cjs:269:1 › a close-zoom approach still snaps after damping and a pause before release (6.0s)
+  ✓   25 [chromium] › tests/browser/camera.spec.cjs:296:1 › near-axis overshoot captures consistently across zoom and release delay, while a deliberate departure does not (10.9s)
+  ✓   26 [chromium] › tests/browser/camera.spec.cjs:329:1 › touch intent follows consumed one-finger input and ignores pointer duplicates and multifinger navigation (3.5s)
+  ✓   27 [chromium] › tests/browser/cell-containment.spec.cjs:34:5 › tilted cell -5: near shrink cannot cross atom centers (6.1s)
+  ✓   28 [chromium] › tests/browser/cell-containment.spec.cjs:34:5 › tilted cell -5: far shrink cannot cross atom centers (6.3s)
+  ✓   29 [chromium] › tests/browser/cell-containment.spec.cjs:34:5 › tilted cell 5: near shrink cannot cross atom centers (6.9s)
+  ✓   30 [chromium] › tests/browser/cell-containment.spec.cjs:34:5 › tilted cell 5: far shrink cannot cross atom centers (6.7s)
+  ✓   31 [chromium] › tests/browser/cell-containment.spec.cjs:54:5 › graphene a face remains outside every atom during shrink (6.1s)
+  ✓   32 [chromium] › tests/browser/cell-containment.spec.cjs:54:5 › graphene b face remains outside every atom during shrink (6.6s)
+  ✓   33 [chromium] › tests/browser/cell-file-load-visual.spec.cjs:30:5 › local accept load during cell drag preserves geometry and the next frame drag (8.0s)
+  ✓   34 [chromium] › tests/browser/cell-file-load-visual.spec.cjs:30:5 › local accept load during cell drag after portrait resize preserves geometry and the next frame drag (7.5s)
+  ✓   35 [chromium] › tests/browser/cell-file-load-visual.spec.cjs:30:5 › local decline load during cell drag preserves geometry and the next frame drag (10.5s)
+  ✓   36 [chromium] › tests/browser/cell-file-load-visual.spec.cjs:30:5 › local decline load during cell drag after portrait resize preserves geometry and the next frame drag (9.5s)
+  ✓   37 [chromium] › tests/browser/cell-file-load-visual.spec.cjs:30:5 › local invalid load during cell drag preserves geometry and the next frame drag (10.6s)
+  ✓   38 [chromium] › tests/browser/cell-file-load-visual.spec.cjs:30:5 › local invalid load during cell drag after portrait resize preserves geometry and the next frame drag (10.0s)
+  ✓   39 [chromium] › tests/browser/cell-frame.spec.cjs:45:5 › cubic cell image is unaffected by resize hitboxes at aligned directions and zoom levels (2.4s)
+  ✓   40 [chromium] › tests/browser/cell-frame.spec.cjs:45:5 › skewed cell image is unaffected by resize hitboxes at aligned directions and zoom levels (2.4s)
+  ✓   41 [chromium] › tests/browser/cell-frame.spec.cjs:104:1 › picking-only handles remain immediately pickable and do not affect camera bounds (2.0s)
+  ✓   42 [chromium] › tests/browser/cell-frame.spec.cjs:137:1 › handle references refresh after rebuilds and disappear when the cell or edit mode is hidden (4.0s)
+  ✓   43 [chromium] › tests/browser/cell-frame.spec.cjs:169:5 › cubic pointer resizing keeps hover, Escape, undo and redo working with picking-only handles (10.0s)
+  ✓   44 [chromium] › tests/browser/cell-frame.spec.cjs:169:5 › skewed pointer resizing keeps hover, Escape, undo and redo working with picking-only handles (10.3s)
+  ✓   45 [chromium] › tests/browser/cell-frame.spec.cjs:213:1 › axis alignment and wheel input restore handles without obsolete transitions (3.3s)
+  ✓   46 [chromium] › tests/browser/dense-edit-visual.spec.cjs:28:1 › dense atom/bond rendering survives movement cancellation, 501/500 transitions and cell resizing (34.9s)
+  ✓   47 [chromium] › tests/browser/display-placement.spec.cjs:16:1 › editing and undo preserve the world positions of untouched atoms (3.9s)
+  ✓   48 [chromium] › tests/browser/display-placement.spec.cjs:42:5 › molecule: display rebuilds retain atom centers and camera pose (3.5s)
+  ✓   49 [chromium] › tests/browser/display-placement.spec.cjs:42:5 › vacuum-cell: display rebuilds retain atom centers and camera pose (5.5s)
+  ✓   50 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:41:5 › native capture loss preserves mouse placement (3.1s)
+  ✓   51 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:41:5 › native capture loss preserves mouse placement outside the canvas (3.5s)
+  ✓   52 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit escape rollback (1.9s)
+  ✓   53 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit blur rollback (2.7s)
+  ✓   54 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit pointercancel rollback (2.9s)
+  ✓   55 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:75:1 › a missed mouse release commits the held preview once, ignoring unrelated pointers (2.4s)
+  ✓   56 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:93:1 › released-button capture loss immediately commits without a delivered pointerup (2.5s)
+  ✓   57 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:110:1 › releasing the primary mouse button during a chord places the atom once (2.8s)
+  ✓   58 [chromium] › tests/browser/drag-plane.spec.cjs:4:1 › boundary guide and movement cover all six cell faces and constrain tangent sections (1.3s)
+  ✓   59 [chromium] › tests/browser/drag-plane.spec.cjs:57:1 › pointer dragging reaches both halves of a boundary face and supports undo/redo (4.8s)
+  ✓   60 [chromium] › tests/browser/drag-plane.spec.cjs:96:1 › boundary atom drag preview rebuilds bonds before pointer release (2.7s)
+  ✓   61 [chromium] › tests/browser/drag-release.spec.cjs:2:48 › release UI refresh cannot roll back a committed mouse move: blur (2.4s)
+  ✓   62 [chromium] › tests/browser/drag-release.spec.cjs:2:48 › release UI refresh cannot roll back a committed mouse move: capture-loss (2.4s)
+  ✓   63 [chromium] › tests/browser/drag-status.spec.cjs:3:1 › a new mouse drag replaces the previous cancellation message before release (3.6s)
+  ✓   64 [chromium] › tests/browser/edit-stress.spec.cjs:4:33 › seeded Edit-mode combinations, seed 1 (11.9s)
+  ✓   65 [chromium] › tests/browser/edit-stress.spec.cjs:4:33 › seeded Edit-mode combinations, seed 2 (17.5s)
+  ✓   66 [chromium] › tests/browser/edit-stress.spec.cjs:4:33 › seeded Edit-mode combinations, seed 3 (12.7s)
+  ✓   67 [chromium] › tests/browser/edit-stress.spec.cjs:4:33 › seeded Edit-mode combinations, seed 4 (11.5s)
+  ✓   68 [chromium] › tests/browser/edit-stress.spec.cjs:11:28 › seeded document replacement and download combinations, seed 21 (22.3s)
+  ✓   69 [chromium] › tests/browser/edit-stress.spec.cjs:11:28 › seeded document replacement and download combinations, seed 22 (18.7s)
+  ✘   70 [chromium] › tests/browser/edit-stress.spec.cjs:18:1 › seeded compound selection actions at the history capacity, seed 39 (24.2s)
+
+
+  1) [chromium] › tests/browser/edit-stress.spec.cjs:18:1 › seeded compound selection actions at the history capacity, seed 39 
+
+    Test was interrupted.
+
+    Error: Seed 39, step 99, action redo: locator.isVisible: Test ended.
+    Call log:
+        - checking visibility of locator('#redoBtn')
+
+
+       at ../stress/edit-scenario.cjs:92
+
+      90 |     return { ...selection, identities, measurement: Boolean(identities.length && selection.measurement) };
+      91 | }
+    > 92 | async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
+         |                                                                                                                           ^
+      93 | async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null, advanced = false }) {
+      94 |     page.setDefaultTimeout(5000);
+      95 |     const rng = random(seed); const integer = n => Math.floor(rng() * n);
+        at visible (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:92:123)
+        at click (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:132:48)
+        at runScenario (/Users/dicksonkam/Projects/crystal-visualizer/tests/stress/edit-scenario.cjs:164:64)
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/edit-stress.spec.cjs:21:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-v179-full/edit-stress-seeded-compoun-35400-he-history-capacity-seed-39-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-v179-full/edit-stress-seeded-compoun-35400-he-history-capacity-seed-39-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-v179-full/edit-stress-seeded-compoun-35400-he-history-capacity-seed-39-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-v179-full/edit-stress-seeded-compoun-35400-he-history-capacity-seed-39-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    [chromium] › tests/browser/edit-stress.spec.cjs:18:1 › seeded compound selection actions at the history capacity, seed 39 
+  103 did not run
+  69 passed (7.7m)

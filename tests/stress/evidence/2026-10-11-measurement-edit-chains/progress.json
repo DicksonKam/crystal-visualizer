@@ -1,11 +1,11 @@
 {
   "goalScope": "Realistic editing with active three-atom measurements, not large-label formatting",
-  "sourceVersion": 179,
+  "sourceVersion": 180,
   "productHashes": {
-    "app.js": "0007c7b0ed4e51a53f81c6a26244ef9dfa9903c5d7062b042d5f1e44d5060f0e",
+    "app.js": "c8de5ac612124beab559788c0cb4fef64dc5abb1c069c27e708dd58c278990fd",
     "annotations.js": "cf97ddf3368d7f6819e055e4cd47581e30fbb1270b51936bba52d97bba6c4af7",
     "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
-    "index.html": "0e075acaa478b3a6b219661800c1513f2c49ba26a412bfedcc2e48625ecccee1"
+    "index.html": "00d96b3f4a812e39d692b1fc5de0a45acb31c2db842c89040093734d44180d9a"
   },
   "currentRun": {
     "session": 29337,
@@ -74,18 +74,18 @@
     "chainPassed": 6
   },
   "currentMainValidation": {
-    "version": 179,
+    "version": 180,
     "unitPassed": 151,
-    "focusedBrowserPassed": 13,
-    "fullBrowserSession": 65199,
+    "fullBrowserSession": 90589,
     "fullBrowserStatus": "Running",
-    "examplePilotSession": 17646,
-    "examplePilotStatus": "Terminal exit 1: v2 revealed compatibility click after cell release clears measurement; focused baseline reproduces."
+    "candidateExampleSession": 17660,
+    "candidateExampleStatus": "Running; first two aluminium widths passed; source identical to main180",
+    "navigationPassed": 1
   },
   "newConfirmedBug": {
     "evidence": "frame-release-measurement",
     "candidateFocusedPassed": 1,
     "candidateChainSession": 17660,
-    "status": "Candidate fix verified; longer examples running; main v179 unchanged during frozen full suite."
+    "status": "Promoted main180 after verified focused pointer regression and ordinary Al chains; complete suite and six-example pilot running"
   }
 }

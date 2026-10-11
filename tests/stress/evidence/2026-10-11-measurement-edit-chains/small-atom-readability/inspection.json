@@ -1,0 +1,11 @@
+{
+  "status": "Visual issue confirmed; screen-size regression test added but not yet run. No product fix yet.",
+  "observed": "Ordinary five-atom H/O cell, selected H atoms: distance/angle text and numbered markers are almost unreadable at fit-to-view. Widening sidebar makes them smaller.",
+  "inspected": [
+    "wide-initial.png",
+    "narrow-fixed.png"
+  ],
+  "causeToInvestigate": "World-space label sizes track atomic radius and shrink in screen pixels with camera framing and viewport width.",
+  "sourceVersion": 178,
+  "next": "Run measurement-readability baseline, verify screen-pixel sizing root cause, implement bounded annotation sizing without changing physical geometry."
+}

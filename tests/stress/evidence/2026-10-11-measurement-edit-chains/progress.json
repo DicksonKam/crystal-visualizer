@@ -55,5 +55,12 @@
     "unitPassed": 148,
     "focusedBrowserPassed": 5,
     "nativeVisualProof": "supercell-measurement/native-converted.png"
-  }
+  },
+  "supercellFixCommit": "88e7b84",
+  "fullBrowserRun": {
+    "session": 41424,
+    "status": "Running on frozen app v178; collection predates new readability test",
+    "log": "/private/tmp/crystal-measure-full-browser.log"
+  },
+  "thirdVisualFinding": "Small-atom measurement annotation readability; personally inspected two screenshots, regression added but unrun"
 }

@@ -4,5 +4,17 @@
   "correction": "Reopen using the existing divider keyboard control before measuring atoms in a new sequence; do not change application behavior.",
   "correctedCampaign": "/private/tmp/crystal-ordinary-combined-visual-oct11-v2.log",
   "correctedStartSeed": 1407,
-  "canonicalRegressions": "3 passed: label depth and precise coordinate visibility on combined source."
+  "canonicalRegressions": "3 passed: label depth and precise coordinate visibility on combined source.",
+  "harnessCorrectionVerified": {
+    "seed": 1408,
+    "startupPanelReopened": [
+      {
+        "startupPanelReopened": true,
+        "beforeHash": null,
+        "afterHash": null
+      }
+    ],
+    "steps": 120,
+    "result": "Full 120-action sequence passed after native keyboard reopening of the persisted collapsed panel."
+  }
 }

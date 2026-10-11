@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:56639) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/browser/measurement-annotation-size.spec.cjs:3:1 › measurement annotations remain readable for small atoms after sidebar resizing (9.1s)
+
+
+  1) [chromium] › tests/browser/measurement-annotation-size.spec.cjs:3:1 › measurement annotations remain readable for small atoms after sidebar resizing 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 17.99
+    Received:    1.6337036919752883
+
+      31 |     await info.attach('annotation-css-pixels', { body: JSON.stringify(sizes), contentType: 'application/json' });
+      32 |     expect(sizes.labels).toHaveLength(3);
+    > 33 |     for (const height of sizes.labels) expect(height).toBeGreaterThanOrEqual(18 - .01);
+         |                                                       ^
+      34 |     for (const height of sizes.markers) expect(height).toBeGreaterThanOrEqual(14 - .01);
+      35 | });
+      36 |
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-annotation-size.spec.cjs:33:55
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/browser/measurement-annotation-size.spec.cjs:3:1 › measurement annotations remain readable for small atoms after sidebar resizing 

@@ -31,7 +31,7 @@
   ],
   "investigation": "Two confirmed measurement/edit visual bugs fixed; focused combinations continue.",
   "productChanges": true,
-  "nextInvestigation": "Expanded constraints, display rebuilding, periodic preview changes, then sustained varied measurement/edit campaign",
+  "nextInvestigation": "Finish current main regression and candidate chains, then promote readable and spaced annotations and launch longer measurement/edit campaign",
   "measurementSizeFix": {
     "commit": "5ca253c",
     "unitPassed": 147,
@@ -40,8 +40,9 @@
   },
   "activeRun": {
     "session": 77504,
-    "status": "Expanded four-chain pilot running; verify terminal state before counting results",
-    "log": "/private/tmp/crystal-measure-expanded-pilot.log"
+    "status": "Terminal exit 0",
+    "passed": 4,
+    "duration": "7.2 minutes"
   },
   "harnessCorrection": "Deletion undo leaves selection empty under existing app semantics; test now checks geometry restoration and continues to measurement selection history.",
   "secondConfirmedBug": "Supercell conversion loses a measured periodic copy; visual baseline retained under supercell-measurement",
@@ -62,5 +63,11 @@
     "status": "Running on frozen app v178; collection predates new readability test",
     "log": "/private/tmp/crystal-measure-full-browser.log"
   },
-  "thirdVisualFinding": "Small-atom measurement annotation readability; personally inspected two screenshots, regression added but unrun"
+  "thirdVisualFinding": "Small-atom measurement annotation readability; personally inspected two screenshots, regression added but unrun",
+  "annotationCandidate": {
+    "browserPassed": 7,
+    "root": "/private/tmp/crystal-annotation-candidate",
+    "activeChainSession": 69410,
+    "status": "Candidate only; main app not changed"
+  }
 }

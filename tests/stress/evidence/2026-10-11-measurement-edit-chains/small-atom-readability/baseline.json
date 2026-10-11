@@ -1,0 +1,171 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "tests/browser/measurement-annotation-size.spec.cjs",
+      "--config=/private/tmp/crystal-oct11-baseline-config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-annotation-baseline",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-oct11-baseline-config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-annotation-baseline",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-annotation-size.spec.cjs",
+      "file": "measurement-annotation-size.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "measurement annotations remain readable for small atoms after sidebar resizing",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 9145,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m17.99\u001b[39m\nReceived:    \u001b[31m1.6337036919752883\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m17.99\u001b[39m\nReceived:    \u001b[31m1.6337036919752883\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-annotation-size.spec.cjs:33:55",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-annotation-size.spec.cjs",
+                      "column": 55,
+                      "line": 33
+                    },
+                    "snippet": "  31 |     await info.attach('annotation-css-pixels', { body: JSON.stringify(sizes), contentType: 'application/json' });\n  32 |     expect(sizes.labels).toHaveLength(3);\n> 33 |     for (const height of sizes.labels) expect(height).toBeGreaterThanOrEqual(18 - .01);\n     |                                                       ^\n  34 |     for (const height of sizes.markers) expect(height).toBeGreaterThanOrEqual(14 - .01);\n  35 | });\n  36 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-annotation-size.spec.cjs",
+                        "column": 55,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m17.99\u001b[39m\nReceived:    \u001b[31m1.6337036919752883\u001b[39m\n\n  31 |     await info.attach('annotation-css-pixels', { body: JSON.stringify(sizes), contentType: 'application/json' });\n  32 |     expect(sizes.labels).toHaveLength(3);\n> 33 |     for (const height of sizes.labels) expect(height).toBeGreaterThanOrEqual(18 - .01);\n     |                                                       ^\n  34 |     for (const height of sizes.markers) expect(height).toBeGreaterThanOrEqual(14 - .01);\n  35 | });\n  36 |\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-annotation-size.spec.cjs:33:55"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T01:40:11.130Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "annotation-css-pixels",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlsxLjYzMzcwMzY5MTk3NTI4ODMsMS42MzM3MDM2OTE5NzUyODEsMS43ODIyMjIyMDk0Mjc1ODRdLCJtYXJrZXJzIjpbMi45NzAzNzAzNDkwNDU5NzI1LDIuOTcwMzcwMzQ5MDQ1OTY0NSwyLjk3MDM3MDM0OTA0NTk3NV19"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-annotation-baseline/measurement-annotation-siz-0fb5c-toms-after-sidebar-resizing-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-annotation-size.spec.cjs",
+                    "column": 55,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "94f4adcd340e3e0c876d-661fe38c1becc9c213c7",
+          "file": "measurement-annotation-size.spec.cjs",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T01:40:10.724Z",
+    "duration": 9901.032,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

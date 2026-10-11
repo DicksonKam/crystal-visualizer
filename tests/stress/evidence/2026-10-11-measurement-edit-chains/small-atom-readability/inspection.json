@@ -1,11 +1,53 @@
 {
-  "status": "Visual issue confirmed; screen-size regression test added but not yet run. No product fix yet.",
+  "status": "Baseline regression fails with 1.63px text and 2.97px markers. Isolated candidate fixes screen sizing and crowding; not promoted into main app yet.",
   "observed": "Ordinary five-atom H/O cell, selected H atoms: distance/angle text and numbered markers are almost unreadable at fit-to-view. Widening sidebar makes them smaller.",
   "inspected": [
     "wide-initial.png",
-    "narrow-fixed.png"
+    "narrow-fixed.png",
+    "candidate-water-spaced.png",
+    "candidate-native-spaced.png"
   ],
   "causeToInvestigate": "World-space label sizes track atomic radius and shrink in screen pixels with camera framing and viewport width.",
   "sourceVersion": 178,
-  "next": "Run measurement-readability baseline, verify screen-pixel sizing root cause, implement bounded annotation sizing without changing physical geometry."
+  "next": "Finish candidate edit chains and main v178 full regression before promoting. Wire annotations.js, bump app cache, retain anchor checks, run final main checks and a sustained varied measurement/edit campaign.",
+  "baselineCssPixels": {
+    "distanceLabels": [
+      1.6337,
+      1.6337
+    ],
+    "angleLabel": 1.7822,
+    "markers": [
+      2.97037,
+      2.97037,
+      2.97037
+    ]
+  },
+  "candidateBrowserPassed": 7,
+  "candidateCoverage": [
+    "water O-H-H and H-O-H ordering",
+    "normal and Retina displays",
+    "900/1440 viewport widths",
+    "panel resize",
+    "wheel zoom",
+    "atom scale changes",
+    "unrelated atom add/undo/redo"
+  ],
+  "expandedEditPilot": {
+    "session": 77504,
+    "exitCode": 0,
+    "passed": 4,
+    "duration": "7.2 minutes"
+  },
+  "candidateRoot": "/private/tmp/crystal-annotation-candidate",
+  "candidateHashes": {
+    "app.js": "2b3995577fbf752a876be5b32ff15c51f36bb254ccdab68c19395973ff0388e8",
+    "annotations.js": "cf97ddf3368d7f6819e055e4cd47581e30fbb1270b51936bba52d97bba6c4af7",
+    "index.html": "cdf068a962c27d06d6c1a06fd1b0d7c3cac0da955843d251c34b7a58810cfb82"
+  },
+  "mainAppHash": "bc9bb3257d70be69baa22c770356788da95005267a3f1599aabc9de7f597ac73",
+  "activeCandidateChains": {
+    "session": 69410,
+    "status": "Started; live verification required",
+    "log": "/private/tmp/crystal-annotation-edit-chains.log"
+  }
 }

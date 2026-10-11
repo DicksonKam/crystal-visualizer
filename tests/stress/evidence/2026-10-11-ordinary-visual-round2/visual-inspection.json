@@ -180,6 +180,15 @@
         "high-density-rotated-atom-numbers-5.png"
       ],
       "observations": "NaCl at DPR2: foreground Na obscures portions of rear Cl number 5 and 7; visible labels remain readable. This matches the eight-view passing pixel occlusion check."
+    },
+    {
+      "campaign": "final four-fix candidate",
+      "seed": 1809,
+      "screenshots": [
+        "seed-1809-step-48-coordinates-after.png",
+        "seed-1809-step-58-drag-atom-preview.png"
+      ],
+      "observations": "Slab exact coordinates fit the narrow sidebar with fixed atom 5 still marked. Later direct atom drag has a translation plane attached to the dragged atom and no stale bonds when bonds are hidden. Atom sizes are small after camera changes and the 20-angstrom slab cell; not missing geometry."
     }
   ],
   "candidateInspections": [

@@ -85,7 +85,7 @@
     "candidateExamplePassed": 12,
     "variationSession": 57627,
     "variationStatus": "Running72 cases on frozenv182",
-    "variationPassedSoFar": 12,
+    "variationPassedSoFar": 16,
     "fullBrowserPassedSoFar": 119
   },
   "newConfirmedBug": {
@@ -149,7 +149,9 @@
     "Water900 close angle after multiple edits",
     "Water1440 close angle and deletion history",
     "Aluminium900 reverse measurement order321",
-    "Silicon900 reverse measurement order251"
+    "Silicon900 reverse measurement order251",
+    "Silicon1440 reverse order251",
+    "Frame release over atom retains markers and labels"
   ],
   "completedV182BaseExamples": {
     "examples": 6,

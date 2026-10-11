@@ -1,0 +1,1178 @@
+{
+  "productHashes": {
+    "app.js": "14565c0843446f859f44af77eab9124e9f58881fcbf3142b4d5f0841be8edaf1",
+    "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+    "styles.css": "ed4c34284d78081c2a22f056f2f3e1c526468477a261a179423b88b8295b3ad1",
+    "index.html": "049dd6560975c975734f3e0e5a4509789d5bd23f835cabedcfc70fed9f3cc034"
+  },
+  "campaignHashes": {
+    "tests/browser/measurement-edit-helpers.cjs": "b0414a094cdd334c7c8d0becb350774b10dd3bfb18cea69a80f707e6c510caa2",
+    "tests/browser/fixtures.cjs": "19f48a1c5a572bfcc1e39b2b06ec7d1f2ce74922fcdde5ef083ddc0aa4887ffd",
+    "tests/browser/measurement-example-chains.spec.cjs": "baacb79083c43617da688791b804528ea7d17c9ab4ebfb337edb3473e7eb60a1",
+    "tests/stress/edit-scenario.cjs": "fa6b5b82e96c12f2cb635ce42e743af9dfbb1830194ac5014edbfa0ca8eb0925"
+  },
+  "verifiedUnchangedAtCompletion": true,
+  "terminalExitCode": 0,
+  "stats": {
+    "startTime": "2026-10-11T03:31:10.086Z",
+    "duration": 6676385.162,
+    "expected": 72,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "coverage": [
+    {
+      "variant": 0,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 99705
+    },
+    {
+      "variant": 0,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 103071
+    },
+    {
+      "variant": 1,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        1,
+        5,
+        2
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 96907
+    },
+    {
+      "variant": 1,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        1,
+        5,
+        2
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 113835
+    },
+    {
+      "variant": 2,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        1,
+        5,
+        2
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 103201
+    },
+    {
+      "variant": 2,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        1,
+        5,
+        2
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 114646
+    },
+    {
+      "variant": 3,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 101583
+    },
+    {
+      "variant": 3,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 112832
+    },
+    {
+      "variant": 4,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        4,
+        5,
+        6
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 101577
+    },
+    {
+      "variant": 4,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        4,
+        5,
+        6
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 114513
+    },
+    {
+      "variant": 5,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 900,
+      "durationMs": 49777
+    },
+    {
+      "variant": 5,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 1440,
+      "durationMs": 56287
+    },
+    {
+      "variant": 6,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 112829
+    },
+    {
+      "variant": 6,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 120124
+    },
+    {
+      "variant": 7,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        2,
+        5,
+        1
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 114492
+    },
+    {
+      "variant": 7,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        2,
+        5,
+        1
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 128721
+    },
+    {
+      "variant": 8,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        2,
+        5,
+        1
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 117725
+    },
+    {
+      "variant": 8,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        2,
+        5,
+        1
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 132732
+    },
+    {
+      "variant": 9,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 101512
+    },
+    {
+      "variant": 9,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 106590
+    },
+    {
+      "variant": 10,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        6,
+        5,
+        4
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 85412
+    },
+    {
+      "variant": 10,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        6,
+        5,
+        4
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 92449
+    },
+    {
+      "variant": 11,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        3,
+        1,
+        2
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 900,
+      "durationMs": 36574
+    },
+    {
+      "variant": 11,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        3,
+        1,
+        2
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 1440,
+      "durationMs": 42383
+    },
+    {
+      "variant": 12,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 89759
+    },
+    {
+      "variant": 12,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 99066
+    },
+    {
+      "variant": 13,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        5,
+        1,
+        2
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 93392
+    },
+    {
+      "variant": 13,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        5,
+        1,
+        2
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 105225
+    },
+    {
+      "variant": 14,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        5,
+        1,
+        2
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 96373
+    },
+    {
+      "variant": 14,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        5,
+        1,
+        2
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 108612
+    },
+    {
+      "variant": 15,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 101429
+    },
+    {
+      "variant": 15,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 113778
+    },
+    {
+      "variant": 16,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        5,
+        4,
+        6
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 102724
+    },
+    {
+      "variant": 16,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        5,
+        4,
+        6
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 113245
+    },
+    {
+      "variant": 17,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 900,
+      "durationMs": 40464
+    },
+    {
+      "variant": 17,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 1440,
+      "durationMs": 48841
+    },
+    {
+      "variant": 18,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        3,
+        1,
+        2
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 80516
+    },
+    {
+      "variant": 18,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        3,
+        1,
+        2
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 88592
+    },
+    {
+      "variant": 19,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        2,
+        1,
+        5
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 84687
+    },
+    {
+      "variant": 19,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        2,
+        1,
+        5
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 94551
+    },
+    {
+      "variant": 20,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        2,
+        1,
+        5
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 86675
+    },
+    {
+      "variant": 20,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        2,
+        1,
+        5
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 98963
+    },
+    {
+      "variant": 21,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        3,
+        1,
+        2
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 92075
+    },
+    {
+      "variant": 21,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        3,
+        1,
+        2
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 102366
+    },
+    {
+      "variant": 22,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        6,
+        4,
+        5
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 91873
+    },
+    {
+      "variant": 22,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        6,
+        4,
+        5
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 102862
+    },
+    {
+      "variant": 23,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 900,
+      "durationMs": 39127
+    },
+    {
+      "variant": 23,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 1440,
+      "durationMs": 43170
+    },
+    {
+      "variant": 24,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        1,
+        3,
+        2
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 99246
+    },
+    {
+      "variant": 24,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        1,
+        3,
+        2
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 108104
+    },
+    {
+      "variant": 25,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        1,
+        2,
+        5
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 102042
+    },
+    {
+      "variant": 25,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        1,
+        2,
+        5
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 112043
+    },
+    {
+      "variant": 26,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        1,
+        2,
+        5
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 104436
+    },
+    {
+      "variant": 26,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        1,
+        2,
+        5
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 114630
+    },
+    {
+      "variant": 27,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        1,
+        3,
+        2
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 83686
+    },
+    {
+      "variant": 27,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        1,
+        3,
+        2
+      ],
+      "gestureSteps": 2,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 90072
+    },
+    {
+      "variant": 28,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        4,
+        6,
+        5
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 82791
+    },
+    {
+      "variant": 28,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        4,
+        6,
+        5
+      ],
+      "gestureSteps": 3,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 90985
+    },
+    {
+      "variant": 29,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        2,
+        3,
+        1
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 900,
+      "durationMs": 39094
+    },
+    {
+      "variant": 29,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        2,
+        3,
+        1
+      ],
+      "gestureSteps": 4,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 1440,
+      "durationMs": 41395
+    },
+    {
+      "variant": 30,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        2,
+        3,
+        1
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 88660
+    },
+    {
+      "variant": 30,
+      "file": "poscar/Al_fcc_cartesian.poscar",
+      "numbers": [
+        2,
+        3,
+        1
+      ],
+      "gestureSteps": 5,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 99565
+    },
+    {
+      "variant": 31,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        5,
+        2,
+        1
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 94320
+    },
+    {
+      "variant": 31,
+      "file": "poscar/Si_diamond.poscar",
+      "numbers": [
+        5,
+        2,
+        1
+      ],
+      "gestureSteps": 6,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 107185
+    },
+    {
+      "variant": 32,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        5,
+        2,
+        1
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 96792
+    },
+    {
+      "variant": 32,
+      "file": "poscar/NaCl_rocksalt.poscar",
+      "numbers": [
+        5,
+        2,
+        1
+      ],
+      "gestureSteps": 7,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 104522
+    },
+    {
+      "variant": 33,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        2,
+        3,
+        1
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 103167
+    },
+    {
+      "variant": 33,
+      "file": "poscar/graphene_sheet.poscar",
+      "numbers": [
+        2,
+        3,
+        1
+      ],
+      "gestureSteps": 8,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 111017
+    },
+    {
+      "variant": 34,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        5,
+        6,
+        4
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 900,
+      "durationMs": 100575
+    },
+    {
+      "variant": 34,
+      "file": "poscar/Al_slab_selective.poscar",
+      "numbers": [
+        5,
+        6,
+        4
+      ],
+      "gestureSteps": 9,
+      "capability": {
+        "lattice": true,
+        "supportsSD": true
+      },
+      "width": 1440,
+      "durationMs": 115348
+    },
+    {
+      "variant": 35,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        1,
+        3,
+        2
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 900,
+      "durationMs": 40384
+    },
+    {
+      "variant": 35,
+      "file": "xyz/H2O.xyz",
+      "numbers": [
+        1,
+        3,
+        2
+      ],
+      "gestureSteps": 10,
+      "capability": {
+        "lattice": false,
+        "supportsSD": false
+      },
+      "width": 1440,
+      "durationMs": 47599
+    }
+  ]
+}

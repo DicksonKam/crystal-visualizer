@@ -1,0 +1,2973 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/.bin/playwright",
+      "test",
+      "--repeat-each=36",
+      "--max-failures=1",
+      "--config=/private/tmp/crystal-measure-variation-campaign/playwright.config.cjs",
+      "--workers=1",
+      "--output=/private/tmp/crystal-v182-measure-variation",
+      "--reporter=list,json"
+    ],
+    "configFile": "/private/tmp/crystal-measure-variation-campaign/playwright.config.cjs",
+    "rootDir": "/private/tmp/crystal-measure-variation-campaign/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-v182-measure-variation",
+        "repeatEach": 36,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/private/tmp/crystal-measure-variation-campaign/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-example-chains.spec.cjs",
+      "file": "measurement-example-chains.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 99705,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:31:10.338Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjowLCJmaWxlIjoicG9zY2FyL0FsX2ZjY19jYXJ0ZXNpYW4ucG9zY2FyIiwibnVtYmVycyI6WzEsMiwzXSwiZ2VzdHVyZVN0ZXBzIjoyLCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-b24365e58d28b35a96da",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 103071,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:32:50.185Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjowLCJmaWxlIjoicG9zY2FyL0FsX2ZjY19jYXJ0ZXNpYW4ucG9zY2FyIiwibnVtYmVycyI6WzEsMiwzXSwiZ2VzdHVyZVN0ZXBzIjoyLCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-dd6f7c67a13ba5f8e451",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 96907,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:34:33.695Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxLCJmaWxlIjoicG9zY2FyL1NpX2RpYW1vbmQucG9zY2FyIiwibnVtYmVycyI6WzEsNSwyXSwiZ2VzdHVyZVN0ZXBzIjozLCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-72980fe504f58f9a7c52",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 113835,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:36:10.769Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxLCJmaWxlIjoicG9zY2FyL1NpX2RpYW1vbmQucG9zY2FyIiwibnVtYmVycyI6WzEsNSwyXSwiZ2VzdHVyZVN0ZXBzIjozLCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-0b2e662cc20020d1c62c",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 103201,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:38:05.071Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyLCJmaWxlIjoicG9zY2FyL05hQ2xfcm9ja3NhbHQucG9zY2FyIiwibnVtYmVycyI6WzEsNSwyXSwiZ2VzdHVyZVN0ZXBzIjo0LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-de5e1d8ccb03973f7202",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 114646,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:39:48.489Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyLCJmaWxlIjoicG9zY2FyL05hQ2xfcm9ja3NhbHQucG9zY2FyIiwibnVtYmVycyI6WzEsNSwyXSwiZ2VzdHVyZVN0ZXBzIjo0LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-61f1eec4cb07b0a5d2ad",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 101583,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:41:43.565Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozLCJmaWxlIjoicG9zY2FyL2dyYXBoZW5lX3NoZWV0LnBvc2NhciIsIm51bWJlcnMiOlsxLDIsM10sImdlc3R1cmVTdGVwcyI6NSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-cfc6cda39c99395aa899",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 112832,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:43:25.366Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozLCJmaWxlIjoicG9zY2FyL2dyYXBoZW5lX3NoZWV0LnBvc2NhciIsIm51bWJlcnMiOlsxLDIsM10sImdlc3R1cmVTdGVwcyI6NSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-6c2b8600bcffc86fa365",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 101577,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:45:18.660Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo0LCJmaWxlIjoicG9zY2FyL0FsX3NsYWJfc2VsZWN0aXZlLnBvc2NhciIsIm51bWJlcnMiOls0LDUsNl0sImdlc3R1cmVTdGVwcyI6NiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-dbda838b2603bf4d0e6c",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 114513,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:47:00.398Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo0LCJmaWxlIjoicG9zY2FyL0FsX3NsYWJfc2VsZWN0aXZlLnBvc2NhciIsIm51bWJlcnMiOls0LDUsNl0sImdlc3R1cmVTdGVwcyI6NiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-962b80e67723248268cb",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 49777,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:48:55.402Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo1LCJmaWxlIjoieHl6L0gyTy54eXoiLCJudW1iZXJzIjpbMiwxLDNdLCJnZXN0dXJlU3RlcHMiOjcsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6ZmFsc2UsInN1cHBvcnRzU0QiOmZhbHNlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-4634bafa9c77018b30bf",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 56287,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:49:45.330Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo1LCJmaWxlIjoieHl6L0gyTy54eXoiLCJudW1iZXJzIjpbMiwxLDNdLCJnZXN0dXJlU3RlcHMiOjcsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6ZmFsc2UsInN1cHBvcnRzU0QiOmZhbHNlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-41c2643dc47212236cf3",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 112829,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:50:42.016Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo2LCJmaWxlIjoicG9zY2FyL0FsX2ZjY19jYXJ0ZXNpYW4ucG9zY2FyIiwibnVtYmVycyI6WzMsMiwxXSwiZ2VzdHVyZVN0ZXBzIjo4LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-49340bcc16d0ca88f17e",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 120124,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:52:35.018Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo2LCJmaWxlIjoicG9zY2FyL0FsX2ZjY19jYXJ0ZXNpYW4ucG9zY2FyIiwibnVtYmVycyI6WzMsMiwxXSwiZ2VzdHVyZVN0ZXBzIjo4LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-103f6be20cf511828c3e",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 114492,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:54:35.607Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo3LCJmaWxlIjoicG9zY2FyL1NpX2RpYW1vbmQucG9zY2FyIiwibnVtYmVycyI6WzIsNSwxXSwiZ2VzdHVyZVN0ZXBzIjo5LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-7a9568420d8029bf2696",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 128721,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:56:30.263Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo3LCJmaWxlIjoicG9zY2FyL1NpX2RpYW1vbmQucG9zY2FyIiwibnVtYmVycyI6WzIsNSwxXSwiZ2VzdHVyZVN0ZXBzIjo5LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOnRydWUsInN1cHBvcnRzU0QiOnRydWV9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-1c3388889ac4e8923a01",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 117725,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T03:58:39.499Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo4LCJmaWxlIjoicG9zY2FyL05hQ2xfcm9ja3NhbHQucG9zY2FyIiwibnVtYmVycyI6WzIsNSwxXSwiZ2VzdHVyZVN0ZXBzIjoxMCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-40ef8a4937f76e5d1632",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 132732,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:00:37.374Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo4LCJmaWxlIjoicG9zY2FyL05hQ2xfcm9ja3NhbHQucG9zY2FyIiwibnVtYmVycyI6WzIsNSwxXSwiZ2VzdHVyZVN0ZXBzIjoxMCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-f4e21771c011191f46fc",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 101512,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:02:50.588Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo5LCJmaWxlIjoicG9zY2FyL2dyYXBoZW5lX3NoZWV0LnBvc2NhciIsIm51bWJlcnMiOlszLDIsMV0sImdlc3R1cmVTdGVwcyI6MiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-2dae7f1009322ab77a95",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 106590,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:04:32.278Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50Ijo5LCJmaWxlIjoicG9zY2FyL2dyYXBoZW5lX3NoZWV0LnBvc2NhciIsIm51bWJlcnMiOlszLDIsMV0sImdlc3R1cmVTdGVwcyI6MiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-0b69962243f7543045a5",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 85412,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:06:19.306Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMCwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNiw1LDRdLCJnZXN0dXJlU3RlcHMiOjMsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-d48b816da9776227cdba",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 92449,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:07:44.872Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMCwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNiw1LDRdLCJnZXN0dXJlU3RlcHMiOjMsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-32cedbd49e26d5366f03",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36574,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:09:17.744Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMSwiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzMsMSwyXSwiZ2VzdHVyZVN0ZXBzIjo0LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOmZhbHNlLCJzdXBwb3J0c1NEIjpmYWxzZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-d15ac545eb08630a89ec",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 11,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42383,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:09:54.499Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMSwiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzMsMSwyXSwiZ2VzdHVyZVN0ZXBzIjo0LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOmZhbHNlLCJzdXBwb3J0c1NEIjpmYWxzZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-f9f7ec07154cadfca094",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 89759,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:10:37.230Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMiwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlsyLDEsM10sImdlc3R1cmVTdGVwcyI6NSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-373ba39daad30292a58a",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 12,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 99066,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:12:07.139Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMiwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlsyLDEsM10sImdlc3R1cmVTdGVwcyI6NSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-d0f3b55e893928f35702",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 93392,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:13:46.597Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMywiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOls1LDEsMl0sImdlc3R1cmVTdGVwcyI6NiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-a83ca90aaddf2d85f439",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 13,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 105225,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:15:20.147Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxMywiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOls1LDEsMl0sImdlc3R1cmVTdGVwcyI6NiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-a564abef96a9a62e91bd",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 14,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 96373,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:17:05.786Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNCwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOls1LDEsMl0sImdlc3R1cmVTdGVwcyI6NywiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-f4a08b9c558778c34579",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 14,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 108612,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:18:42.322Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNCwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOls1LDEsMl0sImdlc3R1cmVTdGVwcyI6NywiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-cc9bf99434414a3d2cce",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 15,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 101429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:20:31.336Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNSwiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMiwxLDNdLCJnZXN0dXJlU3RlcHMiOjgsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-d5c1fcfd10bba2b6e9aa",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 15,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 113778,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:22:12.907Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNSwiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMiwxLDNdLCJnZXN0dXJlU3RlcHMiOjgsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-962b1e4a87d332e7b7b3",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 16,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 102724,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:24:07.099Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNiwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNSw0LDZdLCJnZXN0dXJlU3RlcHMiOjksImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-58772cd01b3b1a483023",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 16,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 113245,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:25:49.979Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNiwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNSw0LDZdLCJnZXN0dXJlU3RlcHMiOjksImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-273017f0f87fcda431d0",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 17,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 40464,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:27:43.672Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNywiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzEsMiwzXSwiZ2VzdHVyZVN0ZXBzIjoxMCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjpmYWxzZSwic3VwcG9ydHNTRCI6ZmFsc2V9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-c7d0034f86211ed20c9e",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 17,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 48841,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:28:24.294Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxNywiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzEsMiwzXSwiZ2VzdHVyZVN0ZXBzIjoxMCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjpmYWxzZSwic3VwcG9ydHNTRCI6ZmFsc2V9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-15fc50e218c592d21a70",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 18,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 80516,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:29:13.523Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxOCwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlszLDEsMl0sImdlc3R1cmVTdGVwcyI6MiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-091a840641cd535e3064",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 18,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 88592,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:30:34.193Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxOCwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlszLDEsMl0sImdlc3R1cmVTdGVwcyI6MiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-09338b114fab6bc196a9",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 19,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 84687,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:32:03.210Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxOSwiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOlsyLDEsNV0sImdlc3R1cmVTdGVwcyI6MywiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-3ce52db2c69e9aecf56a",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 19,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 94551,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:33:28.087Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoxOSwiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOlsyLDEsNV0sImdlc3R1cmVTdGVwcyI6MywiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-23a1836f50187e75484a",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 20,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 86675,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:35:03.054Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMCwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOlsyLDEsNV0sImdlc3R1cmVTdGVwcyI6NCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-2fceb891fc853432975e",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 20,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 98963,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:36:29.888Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMCwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOlsyLDEsNV0sImdlc3R1cmVTdGVwcyI6NCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-82ac79e97554eb33f311",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 21,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 92075,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:38:09.251Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMSwiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMywxLDJdLCJnZXN0dXJlU3RlcHMiOjUsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-f7aa933c6288faad3159",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 21,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 102366,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:39:41.477Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMSwiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMywxLDJdLCJnZXN0dXJlU3RlcHMiOjUsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-22957e9e0118c0703c0d",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 22,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 91873,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:41:24.271Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMiwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNiw0LDVdLCJnZXN0dXJlU3RlcHMiOjYsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-8cacde54d04abd681b29",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 22,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 102862,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:42:56.307Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMiwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNiw0LDVdLCJnZXN0dXJlU3RlcHMiOjYsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-9776d36a5806213cde0e",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 23,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 39127,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:44:39.592Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMywiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzMsMiwxXSwiZ2VzdHVyZVN0ZXBzIjo3LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOmZhbHNlLCJzdXBwb3J0c1NEIjpmYWxzZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-28d9334b56a1ce3b70dd",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 23,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:45:18.879Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyMywiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzMsMiwxXSwiZ2VzdHVyZVN0ZXBzIjo3LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOmZhbHNlLCJzdXBwb3J0c1NEIjpmYWxzZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-b7d67135cdc1ec74fe00",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 24,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 99246,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:46:02.408Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNCwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlsxLDMsMl0sImdlc3R1cmVTdGVwcyI6OCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-dc7c7efbd87576e07805",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 24,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 108104,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:47:41.802Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNCwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlsxLDMsMl0sImdlc3R1cmVTdGVwcyI6OCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-07163e574881e4a85e91",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 25,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 102042,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:49:30.324Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNSwiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOlsxLDIsNV0sImdlc3R1cmVTdGVwcyI6OSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-e5e6d2302e1378d75f31",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 25,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 112043,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:51:12.522Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNSwiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOlsxLDIsNV0sImdlc3R1cmVTdGVwcyI6OSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-45d47e888be893e7e441",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 26,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 104436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:53:04.956Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNiwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOlsxLDIsNV0sImdlc3R1cmVTdGVwcyI6MTAsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-2851bd8274bdcdefeff4",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 26,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 114630,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:54:49.545Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNiwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOlsxLDIsNV0sImdlc3R1cmVTdGVwcyI6MTAsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-aac854f2ef34d2cf01f3",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 27,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 83686,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:56:44.571Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNywiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMSwzLDJdLCJnZXN0dXJlU3RlcHMiOjIsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-2ea226b97c82d2ec2047",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 27,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 90072,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:58:08.411Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyNywiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMSwzLDJdLCJnZXN0dXJlU3RlcHMiOjIsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-a92c0b85058367e7485a",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 28,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 82791,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T04:59:38.868Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyOCwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNCw2LDVdLCJnZXN0dXJlU3RlcHMiOjMsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-cc8f4f4671d636cb1ce2",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 28,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 90985,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:01:01.803Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyOCwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNCw2LDVdLCJnZXN0dXJlU3RlcHMiOjMsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-78c53434d2ea12738197",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 29,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 39094,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:02:33.191Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyOSwiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzIsMywxXSwiZ2VzdHVyZVN0ZXBzIjo0LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOmZhbHNlLCJzdXBwb3J0c1NEIjpmYWxzZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-722da9be4ec681e6be84",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 29,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 41395,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:03:12.432Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjoyOSwiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzIsMywxXSwiZ2VzdHVyZVN0ZXBzIjo0LCJjYXBhYmlsaXR5Ijp7ImxhdHRpY2UiOmZhbHNlLCJzdXBwb3J0c1NEIjpmYWxzZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-b02690a80ae5d1d3cccf",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 30,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 88660,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:03:54.198Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMCwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlsyLDMsMV0sImdlc3R1cmVTdGVwcyI6NSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-aa9c30593096e6348f28",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 30,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 99565,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:05:22.994Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMCwiZmlsZSI6InBvc2Nhci9BbF9mY2NfY2FydGVzaWFuLnBvc2NhciIsIm51bWJlcnMiOlsyLDMsMV0sImdlc3R1cmVTdGVwcyI6NSwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-676b53483912f9e73607",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 31,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 94320,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:07:02.985Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMSwiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOls1LDIsMV0sImdlc3R1cmVTdGVwcyI6NiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-ac07ae02679429b24f2f",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 31,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 107185,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:08:37.463Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMSwiZmlsZSI6InBvc2Nhci9TaV9kaWFtb25kLnBvc2NhciIsIm51bWJlcnMiOls1LDIsMV0sImdlc3R1cmVTdGVwcyI6NiwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-7de01be53a199c7d5ea5",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 32,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 96792,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:10:25.043Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMiwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOls1LDIsMV0sImdlc3R1cmVTdGVwcyI6NywiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-069e71a59d414887f0c8",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 32,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 104522,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:12:01.982Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMiwiZmlsZSI6InBvc2Nhci9OYUNsX3JvY2tzYWx0LnBvc2NhciIsIm51bWJlcnMiOls1LDIsMV0sImdlc3R1cmVTdGVwcyI6NywiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjp0cnVlLCJzdXBwb3J0c1NEIjp0cnVlfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-004bcb2931d227be117d",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 33,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 103167,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:13:46.976Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMywiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMiwzLDFdLCJnZXN0dXJlU3RlcHMiOjgsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-57da1a0232a522f47b17",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 33,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 111017,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:15:30.300Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozMywiZmlsZSI6InBvc2Nhci9ncmFwaGVuZV9zaGVldC5wb3NjYXIiLCJudW1iZXJzIjpbMiwzLDFdLCJnZXN0dXJlU3RlcHMiOjgsImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-8fd6f048c8b29cbf33c4",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 34,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 100575,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:17:21.728Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozNCwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNSw2LDRdLCJnZXN0dXJlU3RlcHMiOjksImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-3b54a3c8466e7bc554ac",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 34,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 115348,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:19:02.456Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozNCwiZmlsZSI6InBvc2Nhci9BbF9zbGFiX3NlbGVjdGl2ZS5wb3NjYXIiLCJudW1iZXJzIjpbNSw2LDRdLCJnZXN0dXJlU3RlcHMiOjksImNhcGFiaWxpdHkiOnsibGF0dGljZSI6dHJ1ZSwic3VwcG9ydHNTRCI6dHJ1ZX19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-84fd390bde7be6cec408",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 35,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 40384,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:20:58.228Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozNSwiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzEsMywyXSwiZ2VzdHVyZVN0ZXBzIjoxMCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjpmYWxzZSwic3VwcG9ydHNTRCI6ZmFsc2V9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-ee6e1d96c11a0c6265f0",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        },
+        {
+          "title": "example measurements survive a compound edit chain at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 35,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 47599,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T05:21:38.762Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "example",
+                      "contentType": "application/json",
+                      "body": "eyJ2YXJpYW50IjozNSwiZmlsZSI6Inh5ei9IMk8ueHl6IiwibnVtYmVycyI6WzEsMywyXSwiZ2VzdHVyZVN0ZXBzIjoxMCwiY2FwYWJpbGl0eSI6eyJsYXR0aWNlIjpmYWxzZSwic3VwcG9ydHNTRCI6ZmFsc2V9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ce73f4e80c259b4a4b16-01cb07914fe4a695f97b",
+          "file": "measurement-example-chains.spec.cjs",
+          "line": 7,
+          "column": 34
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T03:31:10.086Z",
+    "duration": 6676385.162,
+    "expected": 72,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

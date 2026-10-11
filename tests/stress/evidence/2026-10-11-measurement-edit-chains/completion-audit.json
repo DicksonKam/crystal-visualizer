@@ -1,68 +1,81 @@
 {
   "version": 182,
-  "status": "Incomplete: full179 passed; sustained72 running on frozenv182",
+  "status": "Complete",
   "requirements": [
     {
-      "requirement": "Realistic small examples and edit/measurement combinations",
-      "evidence": "Current v182 campaign uses six ordinary examples, all six measurement orders, two viewport widths and varied real mouse gestures;54 of72 completed.",
-      "status": "v182 sustained coverage pending"
+      "requirement": "Realistic small examples and combined edit/measurement workflows",
+      "evidence": [
+        "final-v182-regression/variation-report.json",
+        "final-v182-regression/variation-coverage.json"
+      ],
+      "verified": "72 passed: six examples \u00d7 six selected-atom orders \u00d7 two widths; four cycles per case varying pointer steps, measured/unmeasured atom edits, cell growth/shrink, sidebar resizing/collapse, shifting, addition, mode switching, display rebuilds, periodic copies, constraints and deletion/history."
     },
     {
-      "requirement": "Visual inspection, not numeric checks alone",
-      "evidence": "Six ordinary example visual samples, seven confirmed before/after faults, new v182-visual-samples inspected personally",
-      "status": "Continue inspection of later v182 cases"
+      "requirement": "Inspect visible rendering, not numerical state alone",
+      "evidence": [
+        "v182-visual-samples",
+        "progress.json"
+      ],
+      "verified": "Personally inspected rendered states across all six examples, all six measurement orders and both widths, including close water, small angles, crowded bonds, fixed overlays and history. Final inspection found no new confirmed fault."
     },
     {
-      "requirement": "Measurements match selected actual atoms after edit/history changes",
-      "evidence": "Campaign checks exact selected indices, Cartesian distances, angles, logical anchors and displayed sidebar values after each transition",
-      "status": "Full v182 campaign pending"
+      "requirement": "Measurements track actual selected atoms during editing and history",
+      "evidence": [
+        "variation-campaign",
+        "final-v182-regression/variation-report.json"
+      ],
+      "verified": "Campaign asserts three exact selected indices, actual Cartesian distances and angle, logical caption anchors, physical marker positions and displayed sidebar values after every transition; undo/redo verifies coordinates, lattice, atom identities and selective dynamics."
     },
     {
-      "requirement": "Bond rendering stays consistent after geometry changes",
-      "evidence": "Campaign compares rendered bond endpoints before/after display rebuild plus screenshots",
-      "status": "Full v182 campaign pending"
+      "requirement": "Bond rendering follows edited geometry without stale segments",
+      "evidence": [
+        "v182-visual-samples",
+        "final-v182-regression/variation-report.json"
+      ],
+      "verified": "Rendered segment endpoints and ghost classifications equal a fresh display rebuild after each cycle; screenshots inspected for stale visible bonds."
     },
     {
-      "requirement": "Root fixes reproduced through normal interactions",
-      "evidence": "Seven confirmed faults with baseline/fixed evidence folders and regression tests",
-      "status": "Implemented;154 unit tests and179 full browser regressions passed; final sustained campaign pending"
+      "requirement": "Reproduce confirmed faults and fix root causes through ordinary interactions",
+      "evidence": [
+        "smaller-unselected-atom",
+        "supercell-measurement",
+        "small-atom-readability",
+        "readable-marker-picking",
+        "frame-release-measurement",
+        "caption-atom-overlap",
+        "close-water-caption"
+      ],
+      "verified": "Seven confirmed fixes implemented and saved; focused regressions and before/after evidence retained."
     },
     {
-      "requirement": "Local Git backup, no push or added buttons",
-      "evidence": "Seven product fixes and inspected visual evidence saved in local commits; latest evidence commit e637c36. No push performed and no buttons added.",
-      "status": "Satisfied for current changes"
+      "requirement": "Run relevant regressions on the final source",
+      "evidence": [
+        "final-v182-regression/unit.log",
+        "final-v182-regression/browser-report.json",
+        "final-v182-regression/variation-report.json",
+        "final-v182-regression/variation-coverage.json"
+      ],
+      "verified": "154 unit tests,179 full browser regressions,72 sustained chains passed; no skips, failures or flaky results. Product and campaign source hashes unchanged at completion."
+    },
+    {
+      "requirement": "Save changes locally without pushing or adding buttons",
+      "evidence": [
+        "Local Git history",
+        "app.js",
+        "annotations.js",
+        "index.html"
+      ],
+      "verified": "Product fixes and visual evidence saved in local commits on codex/structure-and-usability-fixes; no push performed and no new buttons added. Original user browser tab left untouched."
     }
   ],
-  "liveSessions": {
-    "sustainedVariations": 57627
+  "liveTestSessions": [],
+  "knownLimits": "Finite tested workflows cannot prove absence of every possible bug. Some history screenshots retain a user-positioned camera with atoms outside the viewport; numeric identities and geometry were verified, and this was not treated as a stale-geometry fault.",
+  "results": {
+    "units": 154,
+    "fullBrowser": 179,
+    "sustainedChains": 72,
+    "sustainedDurationMs": 6676385.162,
+    "exitCode": 0
   },
-  "limitations": "Finite reproducible workflows cannot prove the absence of every possible bug.",
-  "additionalVisualInspection": {
-    "example": "Silicon at900px",
-    "states": [
-      "unmeasured atom edit",
-      "cell edit",
-      "measurement restored through deletion history"
-    ],
-    "observation": "Retained labels and sidebar values agree. Atom-jump camera position remains after undo, so some geometry is outside the narrow canvas; no stale geometry or incorrect values confirmed."
-  },
-  "naclVisualInspection": {
-    "status": "First900px NaCl compound chain passed on v181",
-    "evidence": [
-      "v181-visual-samples/nacl-900-unmeasured-atom-edit.png",
-      "v181-visual-samples/nacl-900-label-clear-of-atom.png"
-    ],
-    "observation": "2.570angstrom caption stays below unselected sodium sphere with a leader to its actual measurement midpoint; retained markers and angle are visible."
-  },
-  "latestProgress": {
-    "fullBrowserPassed": 179,
-    "fullBrowserExitCode": 0,
-    "skipped": 0,
-    "unexpected": 0,
-    "flaky": 0,
-    "sustainedCasesPassed": 54,
-    "sustainedTerminalResultPending": true,
-    "sourceHashesUnchanged": true,
-    "campaignSourceHashesUnchanged": true
-  }
+  "provenance": "final-v182-regression/variation-coverage.json"
 }

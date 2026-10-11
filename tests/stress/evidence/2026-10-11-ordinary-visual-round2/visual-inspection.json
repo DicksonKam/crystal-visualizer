@@ -66,11 +66,32 @@
       "step": 5,
       "action": "resize",
       "observation": "Graphene frame preview, measurement captions and atom labels are visible; boundary bond segments end at cell edges."
+    },
+    {
+      "seed": 1220,
+      "step": -1,
+      "action": "load",
+      "observation": "NaCl focus after atom jump moves the last selected atom toward the center; other atoms can leave the viewport. Existing label overlay defect repeats."
+    },
+    {
+      "seed": 1220,
+      "step": 94,
+      "action": "display",
+      "observation": "Small edited NaCl atoms and periodic bond fragments are visible with the cell hidden."
+    },
+    {
+      "seed": 1221,
+      "step": 46,
+      "action": "panel",
+      "observation": "Aluminum two-point measurement caption remains readable after wide sidebar adjustment."
     }
   ],
   "candidateInspections": [
     "Atom drag preview at 1440px: numbers follow spheres, full translation plane visible.",
     "Frame drag preview at 1440px: numbers retained, frame and bonds update.",
-    "Atom drag preview at 900px: numbers, plane and toolbar remain visible."
+    "Atom drag preview at 900px: numbers, plane and toolbar remain visible.",
+    "Combined seed1401 step29: methane selection and precise coordinate fields visible at narrow panel width.",
+    "Combined seed1401 step39: water trajectory, cell edges and marker visible after window resize.",
+    "Combined seed1401 step108: edited benzene and one-point measurement selection visible after atom jump."
   ]
 }

@@ -78,5 +78,21 @@
       "relatedRegressionsLog": "/private/tmp/crystal-ordinary-coordinate-related.log"
     }
   ],
-  "rootProductPromotion": "Pending two-hour discovery campaign completion; root app.js and styles.css remain unchanged."
+  "rootProductPromotion": "Pending two-hour discovery campaign completion; root app.js and styles.css remain unchanged.",
+  "combinedCandidateCampaign": {
+    "session": 66397,
+    "log": "/private/tmp/crystal-ordinary-combined-visual-oct11.log",
+    "output": "/private/tmp/crystal-ordinary-combined-visual-oct11",
+    "candidate": "/private/tmp/crystal-ordinary-coordinates-candidate",
+    "seconds": 1800,
+    "seed": 1401,
+    "steps": 120,
+    "sources": [
+      "SrTiO3_perovskite.vasp",
+      "CH4.xyz",
+      "benzene.xyz",
+      "H2O_wobble.xdatcar"
+    ],
+    "status": "Running; first 120-action chain passed"
+  }
 }

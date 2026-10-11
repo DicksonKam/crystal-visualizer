@@ -7,5 +7,7 @@
   "note": "Further atom-edit and frame-change visual verification is still running",
   "relatedRegressions": "10 passed (5.1m): original label readability, measurement occlusion, trajectory scrubbing, and boundary edit/undo/redo workflows",
   "remaining": "Label-enabled edit workflow rerun and full browser suite; two-hour ordinary visual campaign; promotion to root and final verification",
-  "labelEnabledEditInterim": "1440px completed all 16 edit cycles; screenshot hit 180s test limit, so this is incomplete and must be rerun. 900px still running."
+  "labelEnabledEditInterim": "1440px completed all 16 edit cycles; screenshot hit 180s test limit, so this is incomplete and must be rerun. 900px still running.",
+  "labelEnabledEditVerification": "Both 1440px and 900px pass in the full browser suite (2.4m, 1.7m); full suite still running. Previous parallel screenshot timeout preserved under /private/tmp.",
+  "trajectoryVisualVerification": "Normal keyboard frame changes, play/pause, label toggling, periodic rebuild and resize executed; Home, playback-paused and resized images personally inspected. Labels follow frames and remain on their own visible atoms."
 }

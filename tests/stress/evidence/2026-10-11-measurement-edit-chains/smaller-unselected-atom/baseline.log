@@ -1,0 +1,88 @@
+
+Running 1 test using 1 worker
+
+(node:54889) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement (9.2s)
+
+
+  1) [chromium] › tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 15
+    + Received  + 15
+
+      Array [
+        Array [
+    -     0.5420799999999999,
+    -     0.5420799999999999,
+    -     0.5420799999999999,
+    +     0.13888,
+    +     0.13888,
+    +     0.13888,
+        ],
+        Array [
+    -     0.5420799999999999,
+    -     0.5420799999999999,
+    -     0.5420799999999999,
+    +     0.13888,
+    +     0.13888,
+    +     0.13888,
+        ],
+        Array [
+    -     0.5420799999999999,
+    -     0.5420799999999999,
+    -     0.5420799999999999,
+    +     0.13888,
+    +     0.13888,
+    +     0.13888,
+        ],
+        Array [
+    -     1.1925759999999999,
+    -     0.29814399999999996,
+    +     0.30553600000000003,
+    +     0.07638400000000001,
+          1,
+        ],
+        Array [
+    -     1.1925759999999999,
+    -     0.29814399999999996,
+    +     0.30553600000000003,
+    +     0.07638400000000001,
+          1,
+        ],
+        Array [
+    -     0.8131199999999998,
+    -     0.3252479999999999,
+    +     0.20832,
+    +     0.083328,
+          1,
+        ],
+      ]
+
+      16 |     const after = await sizes();
+      17 |     await info.attach('measurement-sizes', { body: JSON.stringify({ before, after }), contentType: 'application/json' });
+    > 18 |     expect(after.map(object => object.scale)).toEqual(before.map(object => object.scale));
+         |                                               ^
+      19 |     await expect(page.locator('#measurementPanel')).toContainText('2.8638 Å');
+      20 | });
+      21 |
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-unrelated-atom.spec.cjs:18:47
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measure-smaller-atom/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-measure-smaller-atom/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-measure-smaller-atom/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-measure-smaller-atom/measurement-unrelated-atom-183b1-ink-an-existing-measurement-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/browser/measurement-unrelated-atom.spec.cjs:5:1 › adding an unselected smaller atom does not shrink an existing measurement 

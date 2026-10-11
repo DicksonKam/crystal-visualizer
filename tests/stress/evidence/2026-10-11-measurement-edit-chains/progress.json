@@ -8,9 +8,10 @@
   },
   "currentRun": {
     "session": 29337,
-    "status": "Verified live; results pending",
+    "status": "Terminal exit 0; 2 sustained chains passed, 2 minutes",
     "log": "/private/tmp/crystal-measure-edit-discovery-v4.log",
-    "report": "/private/tmp/crystal-measure-edit-discovery-v4.json"
+    "report": "/private/tmp/crystal-measure-edit-discovery-v4.json",
+    "passed": 2
   },
   "sequence": [
     "Measure three atoms",
@@ -29,5 +30,6 @@
     "0-shift.png"
   ],
   "investigation": "Earlier harness failures were an unexported helper and unavailable helium option. Next drag-start failure required waiting for settled renderer/sidebar dimensions before projecting test click. Corrected run still active; no app bug claimed yet.",
-  "productChanges": false
+  "productChanges": false,
+  "nextInvestigation": "Normal Al FCC measurement then add unselected H; compare rendered before/after and scale persistence"
 }

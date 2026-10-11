@@ -1,0 +1,16 @@
+{
+  "confirmed": "Adding unselected H inside the Al FCC cell shrinks unchanged Al selection markers and floating measurement labels by0.31/1.21, about74%, while distances and angles remain correct.",
+  "inspected": [
+    "before-add.png",
+    "after-add.png"
+  ],
+  "reproduction": [
+    "Load public Al FCC example",
+    "Measure atoms1,2,3",
+    "Switch toEdit preserving measurement",
+    "Add hydrogen at fractional .25 .25 .25"
+  ],
+  "baselineExit": 1,
+  "baselineFailed": 1,
+  "cause": "Measurement and selection display sizes derive from the smallest atom in the whole structure, including atoms outside the measurement."
+}

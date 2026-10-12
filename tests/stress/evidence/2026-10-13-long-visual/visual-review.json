@@ -286,6 +286,28 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14003",
       "finding": "No additional defect confirmed in overview. Measured modes, rotation, panel collapse and atom placement retain geometry; native corner immobility separately reproduced and recorded."
+    },
+    {
+      "seed": 15000,
+      "version": 191,
+      "checkpoint_count": 55,
+      "contact_sheets": 3,
+      "full_size": [
+        "initial benzene measurements"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15000",
+      "finding": "No additional confirmed defect in reviewed images. Full-size benzene angle/distance captions remain readable; NaCl committed drag retains continuous frame. Later tiny trajectory views give limited caption detail."
+    },
+    {
+      "seed": 15001,
+      "version": 191,
+      "checkpoint_count": 67,
+      "contact_sheets": 3,
+      "full_size": [
+        "step108 committed NaCl atom drag"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15001",
+      "finding": "No additional confirmed defect in reviewed images. Full-size benzene angle/distance captions remain readable; NaCl committed drag retains continuous frame. Later tiny trajectory views give limited caption detail."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -320,7 +342,25 @@
     13058,
     13059,
     13060,
-    13061
+    13061,
+    14004,
+    14005,
+    14006,
+    14007,
+    14008,
+    14009,
+    14010,
+    14011,
+    14012,
+    14013,
+    14014,
+    14015,
+    14016,
+    14017,
+    14018,
+    15002,
+    15003,
+    15004
   ],
   "status": "campaign active; review continues"
 }

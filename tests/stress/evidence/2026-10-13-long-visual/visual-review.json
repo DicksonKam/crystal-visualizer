@@ -69,10 +69,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13008",
       "finding": "No confirmed new bug in overview review. Tiny trajectory atoms follow periodic-image expansion at step22; zoom and Find atom focus account for later cropped views. Further targeted trajectory framing review remains useful."
+    },
+    {
+      "seed": 13009,
+      "checkpoint_count": 66,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13009",
+      "finding": "No new bug confirmed in overview images. Several sections use very small atoms or no active measurements; a supplementary close-up measured workflow has therefore been started to improve scope coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13009,
     13010,
     13011,
     13012,
@@ -81,7 +88,12 @@
     13015,
     13016,
     13017,
-    13018
+    13018,
+    13019,
+    13020,
+    13021,
+    13022,
+    13023
   ],
   "status": "campaign active; review continues"
 }

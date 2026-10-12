@@ -552,6 +552,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16011",
       "finding": "No additional confirmed defect in overview. Measured trajectory and NaCl views retain captions across panel changes. Display/history/periodic rebuilds, canceled guides and mode switches retain geometry. Later tiny trajectory scale and cropped focus views are recorded coverage limitations, not proof of missing atoms."
+    },
+    {
+      "seed": 14004,
+      "version": 190,
+      "checkpoint_count": 62,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14004",
+      "finding": "Retrospective review of preserved phase190 captures: no additional confirmed defect in overview. Measured Si/Al, periodic/display rebuilds, panel changes and atom edits retain scene. Boundary bond stubs are intentional cell-clipped bonds; known focus recentering crops surrounding atoms. This evidence does not independently verify version192."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -586,7 +595,6 @@
     13059,
     13060,
     13061,
-    14004,
     14005,
     14006,
     14007,

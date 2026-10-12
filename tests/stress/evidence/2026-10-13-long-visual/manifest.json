@@ -8,7 +8,7 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "51 random chains plus prior focused/compound/native captures reviewed. Three root fixes saved. Version192 measured review has180 captures reviewed; full8-case report pending.",
+  "visual_review": "53 random chains plus prior focused/compound/native captures reviewed. Three root fixes saved. All8 version192 measured cases passed and240 captures reviewed.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
@@ -19,7 +19,7 @@
     "images": 4194,
     "elapsedSeconds": 3351.23121625
   },
-  "reviewed_checkpoints": 3686,
+  "reviewed_checkpoints": 3832,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
@@ -71,10 +71,10 @@
     "log": "/private/tmp/crystal-oct13-long-visual-v192.log",
     "status": "running",
     "latest_pass": {
-      "seed": 16005,
-      "actions": 1080,
-      "images": 448,
-      "elapsedSeconds": 1061.810782958
+      "seed": 16006,
+      "actions": 1260,
+      "images": 517,
+      "elapsedSeconds": 1162.439049625
     }
   },
   "measured_v192_verification": {

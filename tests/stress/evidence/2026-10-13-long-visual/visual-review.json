@@ -467,6 +467,26 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16002",
       "finding": "No additional confirmed defect in overview. Camera/viewport/panel changes, measured atom previews, periodic rebuilds, cancellation, deletion and subsequent selection retain scene. Most later captions are sparse or small; focused measured tests supply close-view evidence."
+    },
+    {
+      "seed": 16003,
+      "version": 192,
+      "checkpoint_count": 68,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16003",
+      "finding": "No additional confirmed defect. Panel collapse/reopen, measured reset, display/periodic changes, canceled atom previews and source replacements retain scene. Version192 water captions clear bright bonds in full-size reset view. Small particles in later views reflect retained atom-size/zoom settings and provide limited detailed visual coverage."
+    },
+    {
+      "seed": 16004,
+      "version": 192,
+      "checkpoint_count": 78,
+      "contact_sheets": 4,
+      "full_size": [
+        "step12 water reset with bright bonds"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16004",
+      "finding": "No additional confirmed defect. Panel collapse/reopen, measured reset, display/periodic changes, canceled atom previews and source replacements retain scene. Version192 water captions clear bright bonds in full-size reset view. Small particles in later views reflect retained atom-size/zoom settings and provide limited detailed visual coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -516,8 +536,8 @@
     14016,
     14017,
     14018,
-    16003,
-    16004
+    16005,
+    16006
   ],
   "status": "campaign active; review continues"
 }

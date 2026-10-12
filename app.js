@@ -2847,10 +2847,19 @@ function updateAtomLabelPositions() {
     const position = new THREE.Vector3();
     const scale = new THREE.Vector3();
     const direction = new THREE.Vector3();
+    // A numbered measurement marker is the atom's active annotation. Keeping
+    // its index underneath creates two competing numbers when that marker
+    // moves aside. Ordinary edit checkmarks do not replace atom indices.
+    const numberedMeshes = new Set(selectedAtoms.filter((atom, index) => {
+        const marker = selectionRings[index];
+        return marker?.userData.isNumberedAtomMarker && marker.visible && marker.parent === measurementGroup;
+    }).map(atom => atom.mesh));
     structureGroup.children.forEach(label => {
         if (!label.userData.isAtomLabel) return;
         const mesh = atomMeshes[label.userData.atomIndex];
         if (!mesh) return;
+        label.visible = !numberedMeshes.has(mesh);
+        if (!label.visible) return;
         mesh.getWorldPosition(position);
         mesh.getWorldScale(scale);
         if (!mesh.geometry.boundingSphere) mesh.geometry.computeBoundingSphere();
@@ -3692,6 +3701,7 @@ function createSelectionRing(atomMesh, selectionNumber, isGhost = false) {
     
     sprite.renderOrder = 999; // Render last (on top)
     sprite.userData.isSelectionLabel = true;
+    sprite.userData.isNumberedAtomMarker = true;
     sprite.userData.annotationColor = getSelectionColor(selectionNumber);
     
     measurementGroup.add(sprite);

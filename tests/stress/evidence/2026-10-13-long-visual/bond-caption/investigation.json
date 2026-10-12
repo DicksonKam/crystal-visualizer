@@ -1,0 +1,9 @@
+{
+  "status": "reproduced; diagnosis in progress",
+  "version": 191,
+  "seed": 15009,
+  "checkpoint": "step0 atom scale change after initial water triad selection",
+  "finding": "The 0.958 Angstrom distance caption is laid directly across a bright bond cylinder. It remains numerically correct but loses contrast. Current placement collects atom body and selected-marker rectangles; bond obstacles are not included.",
+  "raw_source": "/private/tmp/crystal-oct13-long-visual-v191/seed-15009/seed-15009-step-0-scale-after.png",
+  "fix_applied": false
+}

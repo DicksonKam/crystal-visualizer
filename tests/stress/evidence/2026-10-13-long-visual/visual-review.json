@@ -391,6 +391,17 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15008",
       "finding": "No additional confirmed defect in reviewed images. Edit/mode/history changes retain intended selection, canceled drag planes clear, and measured Al pair retains readable caption after panel resizing, reset and rotation. Some Find atom focus crops surrounding atoms as previously recorded; overview alone cannot prove all bond occlusion details."
+    },
+    {
+      "seed": 15009,
+      "version": 191,
+      "checkpoint_count": 62,
+      "contact_sheets": 3,
+      "full_size": [
+        "step0 water distance caption over bright bond"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15009",
+      "finding": "Confirmed caption/bond readability issue in initial/step0 water view; diagnosis recorded separately. Later ordinary benzene edit/history/panel sequences show no additional confirmed defect."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -440,7 +451,6 @@
     14016,
     14017,
     14018,
-    15009,
     15010
   ],
   "status": "campaign active; review continues"

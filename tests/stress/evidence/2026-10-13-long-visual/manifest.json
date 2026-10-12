@@ -60,5 +60,21 @@
     }
   },
   "corner_fix_commit": "b22360b",
-  "corner_production_verification": "160 unit tests and29 production browser regressions passed; native and rendered checks completed."
+  "corner_production_verification": "160 unit tests and29 production browser regressions passed; native and rendered checks completed.",
+  "bond_caption_fix_commit": "d9ad59f",
+  "latest_campaign_v192": {
+    "version": 192,
+    "seed": 16000,
+    "seconds": 3824,
+    "session": 18691,
+    "output": "/private/tmp/crystal-oct13-long-visual-v192",
+    "log": "/private/tmp/crystal-oct13-long-visual-v192.log",
+    "status": "running"
+  },
+  "measured_v192_verification": {
+    "session": 81766,
+    "output": "/private/tmp/crystal-oct13-measured-v192",
+    "report": "/private/tmp/crystal-oct13-measured-v192.json",
+    "status": "running"
+  }
 }

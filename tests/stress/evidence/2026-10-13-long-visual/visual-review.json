@@ -496,6 +496,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16005",
       "finding": "No additional confirmed defect in overview. Periodic rebuilds, atom/cell previews, cancellation, mode changes and panel gestures retain scene without stale guide copies. Most captures have small atoms from retained size/zoom settings and sparse measurements, so typography/bond assessment is limited; close focused tests provide stronger evidence."
+    },
+    {
+      "seed": 16006,
+      "version": 192,
+      "checkpoint_count": 69,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16006",
+      "finding": "No additional confirmed defect in overview. Added atoms, shifts, undo/delete, canceled previews, periodic and panel changes retain scene. Large portions use very small atoms and no active captions, limiting detailed assessment; focused measured tests provide close-view coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -545,8 +554,8 @@
     14016,
     14017,
     14018,
-    16006,
-    16007
+    16007,
+    16008
   ],
   "status": "campaign active; review continues"
 }

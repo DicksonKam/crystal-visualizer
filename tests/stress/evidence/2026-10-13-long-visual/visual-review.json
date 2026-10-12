@@ -43,19 +43,45 @@
         "step140 panel after"
       ],
       "finding": "No confirmed new bug. Full-size narrow-panel measurement view retained distinct distance and angle captions and displaced numbered markers. Viewport cropping after focus/zoom remains the previously recorded framing observation."
+    },
+    {
+      "seed": 13006,
+      "checkpoint_count": 88,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13006",
+      "finding": "No new bug confirmed in overview review. Apparent zoom reduction at step0 came from the resize test setting camera.zoom=.65 before checking handle availability; performed=false describes geometry drag only. Record this harness limitation for subsequent focused tests."
+    },
+    {
+      "seed": 13007,
+      "checkpoint_count": 73,
+      "contact_sheets": 4,
+      "full_size": [
+        "step84 jump after"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13007",
+      "finding": "No confirmed new bug. Full-size angle and distance captions remain legible beside a wide sidebar. Some focus selections crop other atoms, consistent with the recorded focus framing behavior."
+    },
+    {
+      "seed": 13008,
+      "checkpoint_count": 60,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13008",
+      "finding": "No confirmed new bug in overview review. Tiny trajectory atoms follow periodic-image expansion at step22; zoom and Find atom focus account for later cropped views. Further targeted trajectory framing review remains useful."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13006,
-    13007,
-    13008,
     13009,
     13010,
     13011,
     13012,
     13013,
     13014,
-    13015
+    13015,
+    13016,
+    13017,
+    13018
   ],
   "status": "campaign active; review continues"
 }

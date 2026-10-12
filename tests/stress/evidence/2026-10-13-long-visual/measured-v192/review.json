@@ -1,0 +1,29 @@
+{
+  "status": "visual review in progress; full8-case run still live",
+  "version": 192,
+  "reviewed": [
+    {
+      "source": "NaCl",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-0829e-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "5-atom-held.png"
+      ],
+      "finding": "No additional confirmed visual defect in reviewed captures. Measurements follow moved atoms, rotation/panel gestures retain their geometry, undo/redo and mode changes clear guides. Caption avoids bright bonds in methane close view; NaCl guide remains bounded."
+    },
+    {
+      "source": "methane",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-dcba1-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "4-history-and-mode.png"
+      ],
+      "finding": "No additional confirmed visual defect in reviewed captures. Measurements follow moved atoms, rotation/panel gestures retain their geometry, undo/redo and mode changes clear guides. Caption avoids bright bonds in methane close view; NaCl guide remains bounded."
+    }
+  ],
+  "report": "/private/tmp/crystal-oct13-measured-v192.json"
+}

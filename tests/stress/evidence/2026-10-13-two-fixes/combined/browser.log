@@ -1,0 +1,24 @@
+
+Running 17 tests using 1 worker
+
+(node:92270) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/camera.spec.cjs:37:1 › real approaching rotation settles with normal damping and snaps within the total correction budget (8.5s)
+  ✓   2 [chromium] › tests/browser/camera.spec.cjs:56:1 › departing rotation, an elongated cell outside the cone, zoom, pan and clicks do not snap (6.5s)
+  ✓   3 [chromium] › tests/browser/camera.spec.cjs:86:1 › signed controller alignments preserve pose contracts and camera actions leave the document unchanged (4.0s)
+  ✓   4 [chromium] › tests/browser/camera.spec.cjs:106:1 › pointer interruption, focus, Escape and scene changes invalidate active movement (5.2s)
+  ✓   5 [chromium] › tests/browser/camera.spec.cjs:158:1 › internal fitting fits narrow large scenes and existing Reset restores deterministic roll (1.9s)
+  ✓   6 [chromium] › tests/browser/camera.spec.cjs:186:1 › original interface, reduced motion, keyboard Reset and molecule navigation remain intact (3.1s)
+  ✓   7 [chromium] › tests/browser/camera.spec.cjs:211:1 › the real controls and controller produce equivalent timestamped gestures at 30, 60 and 120 Hz (1.8s)
+  ✓   8 [chromium] › tests/browser/camera.spec.cjs:269:1 › a close-zoom approach still snaps after damping and a pause before release (6.8s)
+  ✓   9 [chromium] › tests/browser/camera.spec.cjs:296:1 › near-axis overshoot captures consistently across zoom and release delay, while a deliberate departure does not (10.4s)
+  ✓  10 [chromium] › tests/browser/camera.spec.cjs:329:1 › touch intent follows consumed one-finger input and ignores pointer duplicates and multifinger navigation (3.7s)
+  ✓  11 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:22:1 › visible numbered marker edges select the atom in measure mode (2.3s)
+  ✓  12 [chromium] › tests/browser/measurement-marker-picking.spec.cjs:30:1 › visible numbered marker edges drag their boundary atom in edit mode (5.8s)
+  ✓  13 [chromium] › tests/browser/measurement-rotation-click.spec.cjs:3:1 › rotating over a measured atom must not deselect it (3.7s)
+  ✓  14 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: xyz/H2O.xyz at 900px (29.3s)
+  ✓  15 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: xyz/benzene.xyz at 1280px (45.9s)
+  ✓  16 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/NaCl_rocksalt.poscar at 900px (35.6s)
+  ✓  17 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/graphene_sheet.poscar at 1280px (51.5s)
+
+  17 passed (3.8m)

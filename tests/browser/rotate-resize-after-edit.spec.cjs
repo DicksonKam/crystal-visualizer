@@ -74,4 +74,5 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
   await checkMeasurement(page);await snapshot(`${cycle}-undo-redo`);
  }
  await fs.writeFile(info.outputPath('findings.json'),JSON.stringify(findings,null,2));
+ expect(findings.filter(finding=>finding.mode==='measure'), 'A camera rotation must preserve measured atoms').toEqual([]);
 });

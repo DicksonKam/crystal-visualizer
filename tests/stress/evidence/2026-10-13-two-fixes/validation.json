@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-13",
+  "version": 189,
+  "fix_commits": {
+    "pointer_intent": "256d2e8",
+    "annotation_priority": "f04ed96"
+  },
+  "unit_passed": 155,
+  "browser_runs": {
+    "pointer_and_release": 11,
+    "label_priority_and_depth": 5,
+    "combined_camera_and_workflows": 17,
+    "unique_tests": 32
+  },
+  "stress": {
+    "cycles": 16,
+    "rotations": 48,
+    "sidebar_drags": 16,
+    "screenshots": 128,
+    "unexpected_selection_changes": {
+      "graphene": [],
+      "salt": [],
+      "water": [],
+      "benzene": []
+    }
+  },
+  "visual_review": "All 128 final stress screenshots reviewed as contact sheets; focused rotation reproduction, marker priority, clearing/restoration, and representative water/benzene frames reviewed at full size. Pixel occlusion test also passed. Not every animation frame was inspected.",
+  "native_browser": "Separate version 189 tab: water with labels, three measured points, mouse drag over the third atom, sidebar resize, verified all three points preserved and no duplicate indices. Sidebar preference restored to 220, temporary tab closed. Original user tab untouched.",
+  "click_behavior": "Movement beyond three CSS pixels suppresses the click emitted after the pointer gesture; an out-and-back path remains a drag. Ordinary clicks and one-pixel jitter still select atoms. Geometry drag ownership and camera damping remain independent.",
+  "label_behavior": "Numbered measurement markers override ordinary indices on their own meshes. Clear restores indices; ordinary edit checkmarks retain indices. Ghost markers do not hide a different real atom index.",
+  "limits": "Previously observed Find atom recentering/framing is outside these two fixes.",
+  "github_push": false,
+  "new_buttons": false
+}

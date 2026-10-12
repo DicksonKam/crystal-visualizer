@@ -30,4 +30,13 @@ test('rotating over a measured atom must not deselect it',async({page},info)=>{
  expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual([0,1]);
  await page.mouse.click(center.x,center.y);
  expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual(before);
+ // Returning to the origin must not turn a completed drag into a click.
+ await page.mouse.move(center.x,center.y);await page.mouse.down();
+ await page.mouse.move(center.x+12,center.y+8,{steps:5});
+ await page.mouse.move(center.x,center.y,{steps:5});await page.mouse.up();
+ expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual(before);
+ // Small pointer jitter still counts as an ordinary click.
+ await page.mouse.move(center.x,center.y);await page.mouse.down();
+ await page.mouse.move(center.x+1,center.y+1);await page.mouse.up();
+ expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual([0,1]);
 });

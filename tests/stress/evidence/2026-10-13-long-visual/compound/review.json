@@ -10,5 +10,6 @@
   "raw_output": "/private/tmp/crystal-oct13-compound-results",
   "report": "/private/tmp/crystal-oct13-compound.json",
   "process_session": 52110,
-  "reviewed_overview": 44
+  "reviewed_overview": 88,
+  "additional_overview": "Al 1440px 44 captures; no new confirmed defect. Extreme panel widths and focus can crop other atoms; full-size readability for all narrow-view samples is not established."
 }

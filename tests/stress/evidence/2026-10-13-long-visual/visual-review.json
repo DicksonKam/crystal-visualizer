@@ -143,10 +143,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13017",
       "finding": "No confirmed new bug in overview review. Atom/cancel previews, labels, measurements, periodic copies and panel changes retain visible geometry; detailed caption assessment still requires full-size images."
+    },
+    {
+      "seed": 13018,
+      "checkpoint_count": 66,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13018",
+      "finding": "No confirmed new bug in overview review. Cell drag previews, constraint indicators and display rebuilds retain geometry. Focus and narrow viewport cropping remain known framing observations."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13018,
     13019,
     13020,
     13021,
@@ -161,7 +168,9 @@
     13030,
     13031,
     13032,
-    13033
+    13033,
+    13034,
+    13035
   ],
   "status": "campaign active; review continues"
 }

@@ -8,18 +8,18 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "First seventeen random chains overview-reviewed; 120 focused captures and first 44 compound-workflow captures reviewed. Long and compound suites remain active.",
+  "visual_review": "First eighteen random chains overview-reviewed, all 120 focused close-up captures reviewed, and 88 aluminum compound workflow captures reviewed at two viewport widths. Both longer suites active.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
   "latest_process_event": {
     "event": "pass",
-    "seed": 13033,
-    "actions": 5940,
-    "images": 2283,
-    "elapsedSeconds": 1829.7070497079999
+    "seed": 13035,
+    "actions": 6300,
+    "images": 2420,
+    "elapsedSeconds": 1971.706776875
   },
-  "reviewed_checkpoints": 1172,
+  "reviewed_checkpoints": 1238,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json"
 }

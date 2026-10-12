@@ -301,7 +301,28 @@
         return vertices.sort((a, b) => angle(a) - angle(b));
     }
 
-    const api = { cellPlaneSection, requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell, boundaryTranslationRanges, GeometryWorkLimitError };
+    // A tangent camera plane has no two-dimensional movement area. Use the
+    // most camera-facing cell-coordinate plane through the same anchor instead.
+    // Ordinary slices and anchors outside the cell keep their original plane.
+    function cellDragPlaneNormal(lattice, point, direction) {
+        const cameraNormal = scale(components(direction), 1 / length(components(direction)));
+        const section = cellPlaneSection(lattice, point, cameraNormal);
+        if (section.length === 0 || section.length >= 3) return cameraNormal;
+        let chosen = cameraNormal, alignment = -1;
+        for (let axis = 0; axis < 3; axis++) {
+            const other = [0, 1, 2].filter(index => index !== axis);
+            const face = cross(lattice[other[0]], lattice[other[1]]);
+            const normal = scale(face, 1 / length(face));
+            const facing = dot(normal, cameraNormal);
+            if (Math.abs(facing) > alignment) {
+                alignment = Math.abs(facing);
+                chosen = facing < 0 ? scale(normal, -1) : normal;
+            }
+        }
+        return chosen;
+    }
+
+    const api = { cellDragPlaneNormal, cellPlaneSection, requireFiniteCell, fractionalToCartesian, cartesianToFractional, periodicFractionalCenter, nearestImageBetween, clipSegmentToCell, boundaryTranslationRanges, GeometryWorkLimitError };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalGeometry = api;
 })(globalThis);

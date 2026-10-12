@@ -1,0 +1,238 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/private/tmp/crystal-oct13.config.cjs",
+      "corner-atom-drag.spec.cjs",
+      "--output",
+      "/private/tmp/crystal-oct13-corner-before2",
+      "--reporter=json"
+    ],
+    "configFile": "/private/tmp/crystal-oct13.config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-oct13-corner-before2",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "corner-atom-drag.spec.cjs",
+      "file": "corner-atom-drag.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a camera plane tangent to a cell corner still permits measured atom movement",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12415,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\nExpected: not \u001b[32m{\"atoms\": [{\"element\": \"Al\", \"id\": \"atom-1\", \"position\": [0, 0, 0], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}, {\"element\": \"Al\", \"id\": \"atom-2\", \"position\": [2, 0, 2], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}, {\"element\": \"Al\", \"id\": \"atom-3\", \"position\": [0, 2, 2], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}], \"counts\": [3], \"elements\": [\"Al\"], \"lattice\": [[4, 0, 0], [0, 4, 0], [0, 0, 4]], \"sd\": false, \"species\": [{\"element\": \"Al\", \"id\": \"species-1\"}]}\u001b[39m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\nExpected: not \u001b[32m{\"atoms\": [{\"element\": \"Al\", \"id\": \"atom-1\", \"position\": [0, 0, 0], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}, {\"element\": \"Al\", \"id\": \"atom-2\", \"position\": [2, 0, 2], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}, {\"element\": \"Al\", \"id\": \"atom-3\", \"position\": [0, 2, 2], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}], \"counts\": [3], \"elements\": [\"Al\"], \"lattice\": [[4, 0, 0], [0, 4, 0], [0, 0, 4]], \"sd\": false, \"species\": [{\"element\": \"Al\", \"id\": \"species-1\"}]}\u001b[39m\n\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs:47:37",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs",
+                      "column": 37,
+                      "line": 47
+                    },
+                    "snippet": "  45 |         const placed = await checkMeasurement(page);\n  46 |         await page.screenshot({path:info.outputPath('placed.png')});\n> 47 |         expect(placed.geometry).not.toEqual(before.geometry);\n     |                                     ^\n  48 |         expect(await page.evaluate(() => currentStructure.atoms[0].position.length())).toBeGreaterThan(.1);\n  49 |         const targetError = await page.evaluate(target => currentStructure.atoms[0].position.distanceTo(new THREE.Vector3(...target)), points.localTarget);\n  50 |         expect(targetError).toBeLessThan(.05);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs",
+                        "column": 37,
+                        "line": 47
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\nExpected: not \u001b[32m{\"atoms\": [{\"element\": \"Al\", \"id\": \"atom-1\", \"position\": [0, 0, 0], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}, {\"element\": \"Al\", \"id\": \"atom-2\", \"position\": [2, 0, 2], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}, {\"element\": \"Al\", \"id\": \"atom-3\", \"position\": [0, 2, 2], \"sd\": [true, true, true], \"speciesId\": \"species-1\"}], \"counts\": [3], \"elements\": [\"Al\"], \"lattice\": [[4, 0, 0], [0, 4, 0], [0, 0, 4]], \"sd\": false, \"species\": [{\"element\": \"Al\", \"id\": \"species-1\"}]}\u001b[39m\n\n\n  45 |         const placed = await checkMeasurement(page);\n  46 |         await page.screenshot({path:info.outputPath('placed.png')});\n> 47 |         expect(placed.geometry).not.toEqual(before.geometry);\n     |                                     ^\n  48 |         expect(await page.evaluate(() => currentStructure.atoms[0].position.length())).toBeGreaterThan(.1);\n  49 |         const targetError = await page.evaluate(target => currentStructure.atoms[0].position.distanceTo(new THREE.Vector3(...target)), points.localTarget);\n  50 |         expect(targetError).toBeLessThan(.05);\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs:47:37"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:41:52.408Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-oct13-corner-before2/corner-atom-drag-a-camera--3c42b-mits-measured-atom-movement-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-oct13-corner-before2/corner-atom-drag-a-camera--3c42b-mits-measured-atom-movement-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-oct13-corner-before2/corner-atom-drag-a-camera--3c42b-mits-measured-atom-movement-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs",
+                    "column": 37,
+                    "line": 47
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f2c0fee18e7a71769107-6d460c0a17df270e927d",
+          "file": "corner-atom-drag.spec.cjs",
+          "line": 6,
+          "column": 5
+        },
+        {
+          "title": "a camera plane tangent to a cell edge still permits measured atom movement",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 13329,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.05\u001b[39m\nReceived:   \u001b[31m0.8000000000000064\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.05\u001b[39m\nReceived:   \u001b[31m0.8000000000000064\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs:50:29",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs",
+                      "column": 29,
+                      "line": 50
+                    },
+                    "snippet": "  48 |         expect(await page.evaluate(() => currentStructure.atoms[0].position.length())).toBeGreaterThan(.1);\n  49 |         const targetError = await page.evaluate(target => currentStructure.atoms[0].position.distanceTo(new THREE.Vector3(...target)), points.localTarget);\n> 50 |         expect(targetError).toBeLessThan(.05);\n     |                             ^\n  51 |         const fractions = await page.evaluate(() => currentStructure.atoms.map(a => CrystalGeometry.cartesianToFractional(a.position,currentStructure.lattice)));\n  52 |         for (const f of fractions) for (const x of f) { expect(x).toBeGreaterThanOrEqual(-1e-8); expect(x).toBeLessThanOrEqual(1+1e-8); }\n  53 |         await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry,before.geometry);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs",
+                        "column": 29,
+                        "line": 50
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.05\u001b[39m\nReceived:   \u001b[31m0.8000000000000064\u001b[39m\n\n  48 |         expect(await page.evaluate(() => currentStructure.atoms[0].position.length())).toBeGreaterThan(.1);\n  49 |         const targetError = await page.evaluate(target => currentStructure.atoms[0].position.distanceTo(new THREE.Vector3(...target)), points.localTarget);\n> 50 |         expect(targetError).toBeLessThan(.05);\n     |                             ^\n  51 |         const fractions = await page.evaluate(() => currentStructure.atoms.map(a => CrystalGeometry.cartesianToFractional(a.position,currentStructure.lattice)));\n  52 |         for (const f of fractions) for (const x of f) { expect(x).toBeGreaterThanOrEqual(-1e-8); expect(x).toBeLessThanOrEqual(1+1e-8); }\n  53 |         await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry,before.geometry);\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs:50:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:42:05.451Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-oct13-corner-before2/corner-atom-drag-a-camera--a7a75-mits-measured-atom-movement-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-oct13-corner-before2/corner-atom-drag-a-camera--a7a75-mits-measured-atom-movement-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-oct13-corner-before2/corner-atom-drag-a-camera--a7a75-mits-measured-atom-movement-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/corner-atom-drag.spec.cjs",
+                    "column": 29,
+                    "line": 50
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f2c0fee18e7a71769107-01799299dda7b6dcc038",
+          "file": "corner-atom-drag.spec.cjs",
+          "line": 6,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T19:41:52.036Z",
+    "duration": 27101.032,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

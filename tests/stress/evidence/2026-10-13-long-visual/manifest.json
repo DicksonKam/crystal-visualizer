@@ -24,8 +24,8 @@
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
   "baseline_phase_status": "Intentionally stopped after last complete chain to apply confirmed angle caption correction; partial next chain retained.",
-  "remaining_campaign_seconds": 7449,
-  "updated_version": 190,
+  "remaining_campaign_seconds": 5520,
+  "updated_version": 191,
   "updated_campaign": {
     "version": 190,
     "fix_commit": "1957f3a",
@@ -34,7 +34,7 @@
     "session": 20332,
     "output": "/private/tmp/crystal-oct13-long-visual-v190",
     "log": "/private/tmp/crystal-oct13-long-visual-v190.log",
-    "status": "running; fresh browser, Retina DPR2",
+    "status": "Intentionally stopped for corner-plane correction; final completed seed14018,3420actions,1250images,1929.496856seconds. Partial following chain retained.",
     "latest_pass": {
       "seed": 14002,
       "actions": 540,
@@ -43,5 +43,14 @@
     }
   },
   "expanded_measured_report": "expanded-measured/result.json",
-  "expanded_measured_visual_review": "120 additional captures reviewed;4 tests passed with24 measured edit cycles."
+  "expanded_measured_visual_review": "120 additional captures reviewed;4 tests passed with24 measured edit cycles.",
+  "latest_campaign": {
+    "version": 191,
+    "seed": 15000,
+    "seconds": 5520,
+    "session": 67202,
+    "output": "/private/tmp/crystal-oct13-long-visual-v191",
+    "log": "/private/tmp/crystal-oct13-long-visual-v191.log",
+    "status": "running"
+  }
 }

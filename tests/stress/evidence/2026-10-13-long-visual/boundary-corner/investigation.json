@@ -1,5 +1,5 @@
 {
-  "status": "Reproduced natively; root fix under design, production unchanged",
+  "status": "Fix applied in version191; native and candidate verified, broader production gesture suite running",
   "version": 190,
   "native_tab": 5,
   "url": "http://127.0.0.1:4173/?version=190&stress=isolated",
@@ -14,5 +14,22 @@
     "candidate actual native/browser drags, measurements and undo/redo",
     "visual guide, release, panel and rotation review",
     "separate Git fix save and fresh campaign remaining duration"
-  ]
+  ],
+  "validation": {
+    "baseline_regressions": {
+      "unexpected": 2,
+      "expected": 0,
+      "meaning": "Both desired movement regressions fail on unchanged190."
+    },
+    "candidate_browser": {
+      "passed": 2
+    },
+    "unit": {
+      "passed": 160
+    },
+    "production_browser_session": 49139,
+    "production_browser_status": "running"
+  },
+  "visual_review": "All six candidate held/placed/redo images reviewed. Native191 original atom1 drag now places at pointer release, reports Moved atom1, updates measurements. Undo restores2.8638 \u00c5, redo2.3410 \u00c5; subsequent sidebarresize/rotation retain frame and captions.",
+  "native_cleanup": "Both agent-created test tabs closed; original unsaved187 tab3 remains unchanged."
 }

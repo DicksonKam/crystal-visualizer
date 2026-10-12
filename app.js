@@ -1565,9 +1565,14 @@ function onMouseDown(event) {
         captureEditPointer(event);
         clickedMesh.getWorldPosition(draggedAtom.startWorldPosition);
         
-        // Create drag plane perpendicular to camera
-        const cameraDirection = new THREE.Vector3();
-        camera.getWorldDirection(cameraDirection);
+        // Capture one usable plane for picking, movement and the visual guide.
+        const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
+        if (hasLattice(currentStructure)) {
+            const localAnchor = draggedAtom.startWorldPosition.clone().sub(structureGroup.position);
+            cameraDirection.fromArray(CrystalGeometry.cellDragPlaneNormal(
+                currentStructure.lattice, localAnchor, cameraDirection
+            ));
+        }
         dragPlane.setFromNormalAndCoplanarPoint(cameraDirection, draggedAtom.startWorldPosition);
         
         // Calculate offset from click point to atom center
@@ -1679,7 +1684,7 @@ let dragPlaneRight = null; // Local X axis on plane
 let dragPlaneUp = null; // Local Y axis on plane
 let dragPolygon2D = []; // Polygon vertices in 2D plane coords
 
-// Create visual guide plane perpendicular to camera, bounded by unit cell
+// Show the captured movement plane, bounded by the unit cell.
 function createDragGuidePlane() {
     if (!currentStructure || !draggedAtom) return;
     
@@ -1868,7 +1873,7 @@ function onMouseMove(event) {
             // Visual feedback - highlight dragged atom
             setAtomGlow(draggedAtom.mesh, 0x00f5d4, 0.3);
             
-            // Show guide plane (camera-facing, bounded by cell)
+            // Show the same bounded plane used for movement.
             createDragGuidePlane();
         }
         

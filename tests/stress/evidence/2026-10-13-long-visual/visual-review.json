@@ -635,6 +635,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16019",
       "finding": "No additional confirmed defect in overview. Initial measured graphene display changes, Al atom edits/cell previews, benzene constrained/canceled drags and trajectory mode/panel changes retain geometry. Most later atoms have no active measurements or disabled bonds, limiting annotation detail."
+    },
+    {
+      "seed": 16020,
+      "version": 192,
+      "checkpoint_count": 65,
+      "contact_sheets": 3,
+      "full_size": [
+        "step141 methane with added oxygen and shaded rear atoms"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16020",
+      "finding": "No additional confirmed defect. Source/display changes, periodic replicas and atom previews retain scene. Full-size added-oxygen view contains dark rear sphere shading; lights/shadows present in renderer and this alone is not evidence of missing geometry or stale copies. Most later measurements absent and bonds disabled, limiting caption detail."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -682,7 +693,8 @@
     14015,
     14016,
     14017,
-    14018
+    14018,
+    16021
   ],
   "status": "campaign active; review continues"
 }

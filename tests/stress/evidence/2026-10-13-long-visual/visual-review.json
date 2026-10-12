@@ -617,6 +617,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16017",
       "finding": "No additional confirmed defect in overview. Measured Si captions update during previews and canceled guides clear; later cell resizing, added atoms, periodic changes and mode/history switches retain scene. Bonds often disabled and some views focus-cropped; detailed bond/caption coverage supplied by focused tests."
+    },
+    {
+      "seed": 16018,
+      "version": 192,
+      "checkpoint_count": 75,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16018",
+      "finding": "No additional confirmed defect in overview. NaCl measured rotation, water atom drag, source changes, benzene cancel/undo, added atoms and panel collapse/reopen retain scene and clear guides. Bond visibility follows display toggles; sparse later measurements and small particles limit fine caption assessment."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -665,7 +674,7 @@
     14016,
     14017,
     14018,
-    16018
+    16019
   ],
   "status": "campaign active; review continues"
 }

@@ -52,5 +52,7 @@
     "output": "/private/tmp/crystal-oct13-long-visual-v191",
     "log": "/private/tmp/crystal-oct13-long-visual-v191.log",
     "status": "running"
-  }
+  },
+  "corner_fix_commit": "b22360b",
+  "corner_production_verification": "160 unit tests and29 production browser regressions passed; native and rendered checks completed."
 }

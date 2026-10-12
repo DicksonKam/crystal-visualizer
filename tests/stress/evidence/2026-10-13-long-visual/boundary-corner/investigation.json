@@ -1,5 +1,5 @@
 {
-  "status": "Fix applied in version191; native and candidate verified, broader production gesture suite running",
+  "status": "Fixed in version191, local commit b22360b; complete targeted production verification passed",
   "version": 190,
   "native_tab": 5,
   "url": "http://127.0.0.1:4173/?version=190&stress=isolated",
@@ -28,7 +28,14 @@
       "passed": 160
     },
     "production_browser_session": 49139,
-    "production_browser_status": "running"
+    "production_browser_status": "completed",
+    "production_browser": {
+      "expected": 29,
+      "unexpected": 0,
+      "flaky": 0,
+      "duration_ms": 492622.323
+    },
+    "production_browser_visual": "56 gesture screenshots reviewed in three sheets; full-size production corner-held and edge-redo inspected. No additional visual regression confirmed."
   },
   "visual_review": "All six candidate held/placed/redo images reviewed. Native191 original atom1 drag now places at pointer release, reports Moved atom1, updates measurements. Undo restores2.8638 \u00c5, redo2.3410 \u00c5; subsequent sidebarresize/rotation retain frame and captions.",
   "native_cleanup": "Both agent-created test tabs closed; original unsaved187 tab3 remains unchanged."

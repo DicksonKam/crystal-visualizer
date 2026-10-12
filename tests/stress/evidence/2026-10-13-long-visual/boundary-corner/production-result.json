@@ -1,0 +1,1238 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/private/tmp/crystal-oct13.config.cjs",
+      "corner-atom-drag.spec.cjs",
+      "drag-plane.spec.cjs",
+      "gesture-edge-visual.spec.cjs",
+      "--output",
+      "/private/tmp/crystal-oct13-corner-final",
+      "--reporter=json"
+    ],
+    "configFile": "/private/tmp/crystal-oct13.config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-oct13-corner-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "corner-atom-drag.spec.cjs",
+      "file": "corner-atom-drag.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a camera plane tangent to a cell corner still permits measured atom movement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12057,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:20.548Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f2c0fee18e7a71769107-6d460c0a17df270e927d",
+          "file": "corner-atom-drag.spec.cjs",
+          "line": 6,
+          "column": 5
+        },
+        {
+          "title": "a camera plane tangent to a cell edge still permits measured atom movement",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6786,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:32.750Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f2c0fee18e7a71769107-01799299dda7b6dcc038",
+          "file": "corner-atom-drag.spec.cjs",
+          "line": 6,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "drag-plane.spec.cjs",
+      "file": "drag-plane.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "boundary guide and movement cover all six cell faces and constrain tangent sections",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1165,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:39.546Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ee062e4d48513b135104-2a93b63ca5d2cf94b67c",
+          "file": "drag-plane.spec.cjs",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "pointer dragging reaches both halves of a boundary face and supports undo/redo",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4412,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:40.717Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ee062e4d48513b135104-3c2820c3956ef345cab0",
+          "file": "drag-plane.spec.cjs",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "boundary atom drag preview rebuilds bonds before pointer release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2683,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:45.136Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ee062e4d48513b135104-a601464d3fb06d13df01",
+          "file": "drag-plane.spec.cjs",
+          "line": 96,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "gesture-edge-visual.spec.cjs",
+      "file": "gesture-edge-visual.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "cubic atom: escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8809,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:47.832Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiYXRvbSIsImludGVycnVwdGlvbiI6ImVzY2FwZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-2360b68b347954a6de1b",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic atom: resize-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8862,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:43:56.647Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiYXRvbSIsImludGVycnVwdGlvbiI6InJlc2l6ZS1lc2NhcGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-926513d64b13051351bb",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic atom: panel-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10771,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:44:05.516Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiYXRvbSIsImludGVycnVwdGlvbiI6InBhbmVsLWVzY2FwZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-0d3a61d1c4c5bd82dfc0",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic atom: blur-event preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8604,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:44:16.295Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiYXRvbSIsImludGVycnVwdGlvbiI6ImJsdXItZXZlbnQiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-72c5d1050512e8fef4cd",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic atom: release-outside preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12414,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:44:24.906Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiYXRvbSIsImludGVycnVwdGlvbiI6InJlbGVhc2Utb3V0c2lkZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-bfe26b953e4c8f4443a3",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic atom: capture-loss-release preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13827,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:44:37.328Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiYXRvbSIsImludGVycnVwdGlvbiI6ImNhcHR1cmUtbG9zcy1yZWxlYXNlIiwiY3ljbGVzIjozLCJyZWFsUG9pbnRlciI6dHJ1ZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-1f770dffd81c4923af3e",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic cell: escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:44:51.162Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiY2VsbCIsImludGVycnVwdGlvbiI6ImVzY2FwZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-33a2b1426df52186b8ef",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic cell: resize-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22097,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:45:13.882Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiY2VsbCIsImludGVycnVwdGlvbiI6InJlc2l6ZS1lc2NhcGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-56a4d52844900fa65381",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic cell: panel-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24149,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:45:35.986Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiY2VsbCIsImludGVycnVwdGlvbiI6InBhbmVsLWVzY2FwZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-626495f8ddbbaf3237d4",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic cell: blur-event preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22910,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:46:00.143Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiY2VsbCIsImludGVycnVwdGlvbiI6ImJsdXItZXZlbnQiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-b94924407b495e3c2dda",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic cell: release-outside preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31319,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:46:23.061Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiY2VsbCIsImludGVycnVwdGlvbiI6InJlbGVhc2Utb3V0c2lkZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-6a1e04eb710ef5e6e668",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "cubic cell: capture-loss-release preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 37658,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:46:54.388Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoiY3ViaWMiLCJraW5kIjoiY2VsbCIsImludGVycnVwdGlvbiI6ImNhcHR1cmUtbG9zcy1yZWxlYXNlIiwiY3ljbGVzIjozLCJyZWFsUG9pbnRlciI6dHJ1ZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-8dac761ae37bc2e28425",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted atom: escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8070,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:47:32.054Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImF0b20iLCJpbnRlcnJ1cHRpb24iOiJlc2NhcGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-95490465239d894c5977",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted atom: resize-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8803,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:47:40.130Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImF0b20iLCJpbnRlcnJ1cHRpb24iOiJyZXNpemUtZXNjYXBlIiwiY3ljbGVzIjozLCJyZWFsUG9pbnRlciI6dHJ1ZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-94a75bbce1398d808704",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted atom: panel-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9999,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:47:48.939Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImF0b20iLCJpbnRlcnJ1cHRpb24iOiJwYW5lbC1lc2NhcGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-22395bf48d25db12167b",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted atom: blur-event preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8731,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:47:58.945Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImF0b20iLCJpbnRlcnJ1cHRpb24iOiJibHVyLWV2ZW50IiwiY3ljbGVzIjozLCJyZWFsUG9pbnRlciI6dHJ1ZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-9479f1e288745b897294",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted atom: release-outside preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9876,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:48:07.682Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImF0b20iLCJpbnRlcnJ1cHRpb24iOiJyZWxlYXNlLW91dHNpZGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-2b07df4cc91d4da3532f",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted atom: capture-loss-release preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13666,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:48:17.564Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImF0b20iLCJpbnRlcnJ1cHRpb24iOiJjYXB0dXJlLWxvc3MtcmVsZWFzZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-1d8b3c8663e4cda43658",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted cell: escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21570,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:48:31.236Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImNlbGwiLCJpbnRlcnJ1cHRpb24iOiJlc2NhcGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-285a5c702bb4783539a1",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted cell: resize-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23083,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:48:52.812Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImNlbGwiLCJpbnRlcnJ1cHRpb24iOiJyZXNpemUtZXNjYXBlIiwiY3ljbGVzIjozLCJyZWFsUG9pbnRlciI6dHJ1ZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-2799a298dd5278eb7389",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted cell: panel-escape preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29559,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:49:15.903Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImNlbGwiLCJpbnRlcnJ1cHRpb24iOiJwYW5lbC1lc2NhcGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-c09ea73fccba152a356d",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted cell: blur-event preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26715,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:49:45.471Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImNlbGwiLCJpbnRlcnJ1cHRpb24iOiJibHVyLWV2ZW50IiwiY3ljbGVzIjozLCJyZWFsUG9pbnRlciI6dHJ1ZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-fe4de1ce04621abbfd18",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted cell: release-outside preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36171,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:50:12.193Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImNlbGwiLCJpbnRlcnJ1cHRpb24iOiJyZWxlYXNlLW91dHNpZGUiLCJjeWNsZXMiOjMsInJlYWxQb2ludGVyIjp0cnVlfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-10aa802b12854e440908",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        },
+        {
+          "title": "tilted cell: capture-loss-release preserves measurement and the next gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44181,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:50:48.373Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "coverage",
+                      "contentType": "application/json",
+                      "body": "eyJjZWxsIjoidGlsdGVkIiwia2luZCI6ImNlbGwiLCJpbnRlcnJ1cHRpb24iOiJjYXB0dXJlLWxvc3MtcmVsZWFzZSIsImN5Y2xlcyI6MywicmVhbFBvaW50ZXIiOnRydWV9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a3ee113eecb961a1ae7b-c11a17be25433db9c453",
+          "file": "gesture-edge-visual.spec.cjs",
+          "line": 38,
+          "column": 2
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T19:43:20.279Z",
+    "duration": 492622.32300000003,
+    "expected": 29,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

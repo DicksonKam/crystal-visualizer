@@ -183,6 +183,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13022",
       "finding": "No confirmed new bug in overview images. Methane measurement and atom-edit samples retain visible markers; trajectory selections sometimes overlap in projection, requiring close-up readability assessment."
+    },
+    {
+      "seed": 14000,
+      "version": 190,
+      "checkpoint_count": 84,
+      "contact_sheets": 4,
+      "full_size": [
+        "initial methane measurement"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14000",
+      "finding": "No new defect confirmed in overview review. Methane labels readable in full-size initial image; focus cropping and tiny atoms after chosen display/scale settings limit later close-up coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -207,7 +218,24 @@
     13041,
     13042,
     13043,
-    13044
+    13044,
+    13045,
+    13046,
+    13047,
+    13048,
+    13049,
+    13050,
+    13051,
+    13052,
+    13053,
+    13054,
+    13055,
+    13056,
+    13057,
+    13058,
+    13059,
+    13060,
+    13061
   ],
   "status": "campaign active; review continues"
 }

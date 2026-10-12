@@ -151,11 +151,25 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13018",
       "finding": "No confirmed new bug in overview review. Cell drag previews, constraint indicators and display rebuilds retain geometry. Focus and narrow viewport cropping remain known framing observations."
+    },
+    {
+      "seed": 13019,
+      "checkpoint_count": 77,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13019",
+      "finding": "No confirmed new bug in overview review. Trajectory/frame changes and atom editing retain geometry; this sequence often has fewer than three selected atoms, so it supplies limited angle-label coverage."
+    },
+    {
+      "seed": 13020,
+      "checkpoint_count": 56,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13020",
+      "finding": "No confirmed new bug in overview review. Some later tiny-atom views limit visual usefulness; separate close-up compound and snap checks supplement coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13019,
-    13020,
     13021,
     13022,
     13023,
@@ -170,7 +184,11 @@
     13032,
     13033,
     13034,
-    13035
+    13035,
+    13036,
+    13037,
+    13038,
+    13039
   ],
   "status": "campaign active; review continues"
 }

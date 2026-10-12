@@ -1,0 +1,7 @@
+{
+  "result": "one test passed; exit code0",
+  "screenshots_reviewed_full_size": 5,
+  "finding": "Automatic snap triggered after a real measured atom edit and an approaching pointer rotation. Geometry, selection and annotations survive snap, panel resize and undo/redo. Screenshot capture-or-transition is not proof of a particular transition phase; final view and recorded controller event establish alignment.",
+  "new_buttons": false,
+  "github_push": false
+}

@@ -709,6 +709,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16027",
       "finding": "No additional confirmed defect in overview. Initial measured Al movement updates captions and clears guide; repeated molecular atom additions, drags/cancel and display/history rebuilds retain geometry. Later many overlapping oxygen atoms reflect deliberate additions/positions; active measurements sparse, limiting caption detail."
+    },
+    {
+      "seed": 16028,
+      "version": 192,
+      "checkpoint_count": 70,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16028",
+      "finding": "No additional confirmed defect in overview. Measured Si scale changes, graphene display/panel rebuilds and Al remeasurement retain scene and annotations. Water trajectory selection and periodic rebuilds preserve captions; known focus cropping and sparse angles limit detailed coverage later."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -756,8 +765,7 @@
     14015,
     14016,
     14017,
-    14018,
-    16028
+    14018
   ],
   "status": "campaign active; review continues"
 }

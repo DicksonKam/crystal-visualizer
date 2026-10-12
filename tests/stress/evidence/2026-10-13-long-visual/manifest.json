@@ -8,16 +8,16 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "First twenty-two random chains overview-reviewed. A video-recorded snap workflow supplements the settled screenshots to check motion artifacts.",
+  "visual_review": "Twenty-two random chains overview-reviewed, 120 focused captures, 176 compound captures and recorded snap motion reviewed. Compound suite and long campaign remain active.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
   "latest_process_event": {
     "event": "pass",
-    "seed": 13044,
-    "actions": 7920,
-    "images": 3000,
-    "elapsedSeconds": 2494.645976375
+    "seed": 13048,
+    "actions": 8640,
+    "images": 3272,
+    "elapsedSeconds": 2717.0444828330005
   },
   "reviewed_checkpoints": 1513,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",

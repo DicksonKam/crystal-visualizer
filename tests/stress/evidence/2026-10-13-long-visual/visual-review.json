@@ -241,11 +241,36 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14001",
       "finding": "No additional defect confirmed in overview review. Periodic copies, drag/cancel previews, mode switches and panel previews retain visible geometry. Tiny trajectory atom sizes and sparse three-atom selections limit detailed caption coverage."
+    },
+    {
+      "seed": 13027,
+      "version": 189,
+      "checkpoint_count": 67,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13027",
+      "finding": "No additional defect confirmed in overview review. Cell drag/cancel, measured modes and periodic display rebuilds retain geometry. Many views are far zoomed, so additional methane/graphene close-up workflows scheduled."
+    },
+    {
+      "seed": 13028,
+      "version": 189,
+      "checkpoint_count": 78,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13028",
+      "finding": "No additional defect confirmed in overview review. Cell drag/cancel, measured modes and periodic display rebuilds retain geometry. Many views are far zoomed, so additional methane/graphene close-up workflows scheduled."
+    },
+    {
+      "seed": 14002,
+      "version": 190,
+      "checkpoint_count": 71,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14002",
+      "finding": "No additional defect confirmed in overview review. Cell drag/cancel, measured modes and periodic display rebuilds retain geometry. Many views are far zoomed, so additional methane/graphene close-up workflows scheduled."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13027,
-    13028,
     13029,
     13030,
     13031,

@@ -2,15 +2,17 @@
   "status": "partial; Retina tests running",
   "passed": [
     "water DPR1",
-    "NaCl DPR1"
+    "NaCl DPR1",
+    "water DPR2"
   ],
   "cycles_per_test": 6,
-  "screenshots_reviewed_overview": 60,
+  "screenshots_reviewed_overview": 90,
   "full_size_review": [
     "water cycle0 rotation",
     "water cycle0 panel held",
     "water cycle3 history and mode",
-    "NaCl cycle4 rotation"
+    "NaCl cycle4 rotation",
+    "water DPR2 cycle5 rotation"
   ],
   "findings": [],
   "raw_output": "/private/tmp/crystal-oct13-visual-results",

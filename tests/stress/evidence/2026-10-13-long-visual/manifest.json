@@ -8,16 +8,16 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "First ten random chains inspected in 34 contact sheets; 60 standard-display focused snapshots also reviewed in four contact sheets. Retina focused tests continue.",
+  "visual_review": "First twelve random chains inspected in 40 contact sheets; 90 focused screenshots reviewed in six contact sheets. Final Retina NaCl pass remains active.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
   "latest_process_event": {
     "event": "pass",
-    "seed": 13025,
-    "actions": 4500,
-    "images": 1716,
-    "elapsedSeconds": 1236.276844416
+    "seed": 13027,
+    "actions": 4860,
+    "images": 1844,
+    "elapsedSeconds": 1384.2391890000001
   },
-  "reviewed_checkpoints": 716
+  "reviewed_checkpoints": 853
 }

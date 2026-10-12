@@ -561,6 +561,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14004",
       "finding": "Retrospective review of preserved phase190 captures: no additional confirmed defect in overview. Measured Si/Al, periodic/display rebuilds, panel changes and atom edits retain scene. Boundary bond stubs are intentional cell-clipped bonds; known focus recentering crops surrounding atoms. This evidence does not independently verify version192."
+    },
+    {
+      "seed": 16012,
+      "version": 192,
+      "checkpoint_count": 72,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16012",
+      "finding": "No additional confirmed defect in overview. Initial benzene measurement persists through atom preview and placement; panel, mode, periodic, history, frame and display changes retain geometry. Later trajectory atoms are tiny and bonds mostly disabled, limiting text and bond assessment; focused measured tests cover close views."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -608,7 +617,8 @@
     14015,
     14016,
     14017,
-    14018
+    14018,
+    16013
   ],
   "status": "campaign active; review continues"
 }

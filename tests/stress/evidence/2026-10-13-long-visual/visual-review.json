@@ -420,6 +420,24 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15011",
       "finding": "No additional confirmed defect in overview. Coordinate/shift/history edits and measured panel changes retain visible geometry; drag/cancel planes clear in later views. Bonds frequently disabled and some structures small, so this review has limited bond/text detail; focused version192 tests cover the new bond-caption fix."
+    },
+    {
+      "seed": 15012,
+      "version": 191,
+      "checkpoint_count": 67,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15012",
+      "finding": "No additional confirmed defect in overview. Measured previews, periodic replicas, display rebuilds and subsequent rotation/panel changes retain scene; guides clear after canceled drags. Some atom-focus framing crops surrounding structure as previously recorded. Caption/bond detail limited when zoomed out or bonds disabled."
+    },
+    {
+      "seed": 15013,
+      "version": 191,
+      "checkpoint_count": 77,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15013",
+      "finding": "No additional confirmed defect in overview. Measured previews, periodic replicas, display rebuilds and subsequent rotation/panel changes retain scene; guides clear after canceled drags. Some atom-focus framing crops surrounding structure as previously recorded. Caption/bond detail limited when zoomed out or bonds disabled."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -468,9 +486,7 @@
     14015,
     14016,
     14017,
-    14018,
-    15012,
-    15013
+    14018
   ],
   "status": "campaign active; review continues"
 }

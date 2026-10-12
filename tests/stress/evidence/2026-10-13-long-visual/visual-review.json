@@ -308,10 +308,27 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15001",
       "finding": "No additional confirmed defect in reviewed images. Full-size benzene angle/distance captions remain readable; NaCl committed drag retains continuous frame. Later tiny trajectory views give limited caption detail."
+    },
+    {
+      "seed": 13030,
+      "version": 189,
+      "checkpoint_count": 70,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13030",
+      "finding": "No additional confirmed defect in overview. Atom and cell previews, reset/history, periodic/display changes retain rendered geometry. Detailed caption coverage is sparse later in these chains."
+    },
+    {
+      "seed": 15002,
+      "version": 191,
+      "checkpoint_count": 54,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15002",
+      "finding": "No additional confirmed defect in overview. Atom and cell previews, reset/history, periodic/display changes retain rendered geometry. Detailed caption coverage is sparse later in these chains."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13030,
     13031,
     13032,
     13033,
@@ -358,7 +375,6 @@
     14016,
     14017,
     14018,
-    15002,
     15003,
     15004
   ],

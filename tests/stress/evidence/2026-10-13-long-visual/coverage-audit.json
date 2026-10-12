@@ -14,8 +14,8 @@
     },
     {
       "requirement": "Automatic snapping after atom edits and corner atom movement",
-      "evidence": "Focused current-version rerun session78584; tests/browser/measurement-auto-snap-edit.spec.cjs and corner-atom-drag.spec.cjs",
-      "status": "pending terminal report and render review"
+      "evidence": "Current version192 focused rerun session78584 terminal0;3 passed,11 full-size renders inspected; current-snap-corner/result.json and review.json",
+      "status": "verified for automatic +a approach after measured edit and camera-facing tangent corner/edge drags"
     },
     {
       "requirement": "Periodic boundaries, mode switches, undo/redo and display rebuilds",

@@ -1,0 +1,9 @@
+{
+  "version": 192,
+  "terminal_exit": 0,
+  "tests_passed": 3,
+  "renders_reviewed": 11,
+  "raw_evidence": "/private/tmp/crystal-oct13-current-snap-corner",
+  "finding": "All11 screenshots inspected at full size. Snap preserves actual atom geometry, pivot, zoom and history; measurements stay attached after wide panel and redo. Camera diagonal corner and tangent edge drags move within cell, clear guide on placement and retain redo. No additional confirmed visual defect.",
+  "limitation": "Screenshots sample transition; earlier recorded snap video supplies temporal evidence, but no sub-frame guarantee."
+}

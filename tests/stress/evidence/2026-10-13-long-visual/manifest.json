@@ -1,0 +1,15 @@
+{
+  "status": "running",
+  "starting_version": 189,
+  "baseline_commit": "172e233",
+  "planned_campaign_seconds": 10800,
+  "initial_seed": 13001,
+  "steps_per_chain": 180,
+  "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
+  "output": "/private/tmp/crystal-oct13-long-visual",
+  "process_log": "/private/tmp/crystal-oct13-long-visual.log",
+  "visual_review": "Pending first completed chains; captures are not yet evidence of visual correctness.",
+  "existing_user_tab": "Preserved",
+  "new_buttons": false,
+  "github_push": false
+}

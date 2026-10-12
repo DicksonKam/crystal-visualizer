@@ -1,0 +1,19 @@
+{
+  "reviewed": [
+    {
+      "seed": 13001,
+      "checkpoint_count": 64,
+      "contact_sheets": 3,
+      "full_size": [
+        "step26 atom preview",
+        "step153 panel preview"
+      ],
+      "finding": "No confirmed new bug in these sampled checkpoints. Some atoms move outside the viewport after Find atom recentering; this is the already recorded framing behavior, not depth clipping. Contact-sheet empty cells are padding, not app frames."
+    }
+  ],
+  "captured_but_unreviewed_seeds": [
+    13002,
+    13003
+  ],
+  "status": "campaign active; review continues"
+}

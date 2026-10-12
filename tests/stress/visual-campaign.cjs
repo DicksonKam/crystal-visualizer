@@ -19,7 +19,7 @@ function denseSource(){const atoms=[];for(let x=0;x<10;x++)for(let y=0;y<10;y++)
 (async()=>{
  await fs.mkdir(directory,{recursive:true});const runId=new Date().toISOString().replace(/[:.]/g,'-');
  const file=path.join(directory,runId+'.jsonl');const emit=async r=>{await fs.appendFile(file,JSON.stringify(r)+'\n');process.stdout.write(JSON.stringify(r)+'\n');};
- const ordinarySources=ordinary ? await Promise.all(['poscar/Al_fcc_cartesian.poscar','poscar/Si_diamond.poscar','poscar/NaCl_rocksalt.poscar','poscar/graphene_sheet.poscar','poscar/Al_slab_selective.poscar','xyz/H2O.xyz','xdatcar/H2_vibration.xdatcar'].map(async file=>({name:path.basename(file),content:await fs.readFile(path.resolve(__dirname,'../../examples',file),'utf8')}))) : null;
+ const ordinarySources=ordinary ? await Promise.all(['poscar/Al_fcc_cartesian.poscar','poscar/Si_diamond.poscar','poscar/NaCl_rocksalt.poscar','poscar/graphene_sheet.poscar','poscar/Al_slab_selective.poscar','xyz/H2O.xyz','xdatcar/H2_vibration.xdatcar','xyz/benzene.xyz','xyz/CH4.xyz','xyz/Si_diamond_extended.xyz','xdatcar/H2O_wobble.xdatcar'].map(async file=>({name:path.basename(file),content:await fs.readFile(path.resolve(__dirname,'../../examples',file),'utf8')}))) : null;
  await emit({event:'start',timestamp:new Date().toISOString(),seconds,initialSeed,steps,persistent,advanced,ordinary,sourceHashes:await sourceHashes()});
  const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const started=performance.now();let seed=initialSeed,actions=0,images=0,sessionContext=null,sessionPage=null;

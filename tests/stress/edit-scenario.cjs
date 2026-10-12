@@ -144,6 +144,9 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
         if (visual && previous.trajectory) choices.push('playback');
         if (advanced && extended) choices.push('roundtrip');
         const ordinaryChoices = ordinarySources ? choices.filter(action => !['invalid', 'invalid_load', 'decline_load', 'supercell', 'export', 'download', 'roundtrip'].includes(action)) : choices;
+        // Spend more of the ordinary campaign on the combinations the user
+        // actually uses, without excluding other editing or display actions.
+        if (ordinarySources) ordinaryChoices.push('rotate','panel','mode','jump','undo','redo');
         const action = ordinaryChoices[integer(ordinaryChoices.length)];
         const record = { step, action, before: previous }; log.push(record);
         let performed = true;
@@ -359,8 +362,12 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                     camera.updateWorldMatrix(true,false); structureGroup.updateWorldMatrix(true,true);
                     const r=renderer.domElement.getBoundingClientRect();
                     for(const [u,v] of [[.8,.2],[.9,.1],[.9,.9],[.1,.9],[.5,.1],[.5,.9],[.1,.1],[.9,.5],[.1,.5]]) {
-                        raycaster.setFromCamera(new THREE.Vector2(u*2-1,1-v*2),camera);
-                        if (!raycaster.intersectObjects(atomMeshes,false).length && !raycaster.intersectObjects(vacuumDragState.handles,false).length) return {x:r.left+r.width*u,y:r.top+r.height*v};
+                        const point={x:r.left+r.width*u,y:r.top+r.height*v};
+                        // Visible displaced markers own their atom's action.
+                        // A camera drag must start on genuinely empty space.
+                        if (!getAtomIntersection({clientX:point.x,clientY:point.y})
+                            && !(currentMode==='edit' && vacuumDragState.active
+                                && checkVacuumHandleIntersection({clientX:point.x,clientY:point.y}))) return point;
                     }
                     return null;
                 });
@@ -375,6 +382,11 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             }
             assert.deepEqual(after.violations, [], `seed ${seed}, step ${step}, ${action}`);
             if (['invalid','invalid_load','decline_load','cancel','export','download','display','periodic','rotate','reset','mode','click','ghost','panel','viewport','zoom','pan','scale','bond_length'].includes(action)) compareGeometry(after.geometry, previous.geometry, `${action} changes document`);
+            if (['rotate','pan','panel','viewport','zoom'].includes(action)) {
+                assert.deepEqual(after.selection,previous.selection,`${action} changes selection`);
+                assert.deepEqual(after.undo,previous.undo,`${action} changes undo history`);
+                assert.deepEqual(after.redo,previous.redo,`${action} changes redo history`);
+            }
             if (action === 'invalid_load' || action === 'decline_load') { assert.deepEqual(after.undo,previous.undo); assert.deepEqual(after.redo,previous.redo); assert.deepEqual(after.selection,previous.selection); assert.equal(after.dirty,previous.dirty); }
             if (action === 'replace') { assert.equal(after.undo.length,0); assert.equal(after.redo.length,0); assert.equal(after.dirty,false); }
             if ((action === 'undo' || action === 'redo') && performed) {

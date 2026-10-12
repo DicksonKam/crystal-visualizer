@@ -1,0 +1,73 @@
+
+Running 4 tests using 1 worker
+
+(node:88457) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: xyz/H2O.xyz at 900px (33.9s)
+  ✓  2 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: xyz/benzene.xyz at 1280px (39.9s)
+  ✘  3 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/NaCl_rocksalt.poscar at 900px (5.3s)
+(node:88498) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/graphene_sheet.poscar at 1280px (10.5s)
+
+
+  1) [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/NaCl_rocksalt.poscar at 900px 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'x')
+        at Lt.sub (https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js:6:29034)
+        at eval (eval at evaluate (:311:30), <anonymous>:4:33)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at Lt.sub (https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js:6:29034)
+        at eval (eval at evaluate (:311:30), <anonymous>:4:33)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at checkMeasurement (/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-edit-helpers.cjs:14:29)
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/rotate-resize-after-edit.spec.cjs:41:35
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-0bcba-Cl-rocksalt-poscar-at-900px-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-0bcba-Cl-rocksalt-poscar-at-900px-chromium/error-context.md
+
+    attachment #7: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-0bcba-Cl-rocksalt-poscar-at-900px-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-0bcba-Cl-rocksalt-poscar-at-900px-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/graphene_sheet.poscar at 1280px 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'x')
+        at Lt.sub (https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js:6:29034)
+        at eval (eval at evaluate (:311:30), <anonymous>:4:33)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at Lt.sub (https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js:6:29034)
+        at eval (eval at evaluate (:311:30), <anonymous>:4:33)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at checkMeasurement (/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-edit-helpers.cjs:14:29)
+        at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/rotate-resize-after-edit.spec.cjs:41:35
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-c677e-hene-sheet-poscar-at-1280px-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-c677e-hene-sheet-poscar-at-1280px-chromium/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-c677e-hene-sheet-poscar-at-1280px-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../private/tmp/crystal-oct13-visual-results/rotate-resize-after-edit-v-c677e-hene-sheet-poscar-at-1280px-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/NaCl_rocksalt.poscar at 900px 
+    [chromium] › tests/browser/rotate-resize-after-edit.spec.cjs:5:34 › visual rotate/resize after edits and measurements: poscar/graphene_sheet.poscar at 1280px 
+  2 passed (1.5m)

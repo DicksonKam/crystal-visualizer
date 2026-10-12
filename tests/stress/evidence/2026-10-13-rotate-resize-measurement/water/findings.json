@@ -1,0 +1,17 @@
+[
+  {
+    "cycle": 2,
+    "view": 0,
+    "type": "rotation changed selection",
+    "selectionBefore": [
+      0,
+      1,
+      2
+    ],
+    "selectionAfter": [
+      0,
+      2
+    ],
+    "mode": "measure"
+  }
+]

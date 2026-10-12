@@ -1,0 +1,94 @@
+{
+  "version": 187,
+  "date": "2026-10-13",
+  "app_modified": false,
+  "cycles": 16,
+  "atom_drags": 16,
+  "camera_rotation_drags": 48,
+  "sidebar_drags": 16,
+  "undo_redo_pairs": 16,
+  "screenshots": 128,
+  "structures": [
+    "water",
+    "benzene",
+    "NaCl",
+    "graphene"
+  ],
+  "selection_methods": [
+    "Find atom by number",
+    "mouse clicks on visible atoms"
+  ],
+  "visual_review": "All 128 sampled frames reviewed in four contact sheets, with suspicious frames and the focused before/after reproduction inspected at full size. Does not cover every animation frame.",
+  "findings": {
+    "water": [
+      {
+        "cycle": 2,
+        "view": 0,
+        "type": "rotation changed selection",
+        "selectionBefore": [
+          0,
+          1,
+          2
+        ],
+        "selectionAfter": [
+          0,
+          2
+        ],
+        "mode": "measure"
+      }
+    ],
+    "salt": [
+      {
+        "cycle": 0,
+        "view": 2,
+        "type": "rotation changed selection",
+        "selectionBefore": [
+          0,
+          1,
+          2
+        ],
+        "selectionAfter": [
+          3
+        ],
+        "mode": "measure"
+      }
+    ],
+    "graphene": [],
+    "benzene": [
+      {
+        "cycle": 0,
+        "view": 1,
+        "type": "rotation changed selection",
+        "selectionBefore": [
+          0,
+          1,
+          2
+        ],
+        "selectionAfter": [
+          7
+        ],
+        "mode": "measure"
+      }
+    ]
+  },
+  "confirmed_bugs": [
+    {
+      "name": "Camera drag ends as measurement selection click",
+      "root": "onClickFallback suppresses edit drags through wasDragging, but does not suppress clicks produced by measure-mode camera rotations.",
+      "focused_regression": "measurement-rotation-click.spec.cjs intentionally marks current behavior as an expected failure; the test runner reports a pass because the known incorrect behavior was reproduced."
+    },
+    {
+      "name": "Duplicate atom index and measurement number",
+      "root": "Ordinary atom labels remain visible when colored selected-point markers are displaced to avoid overlaps."
+    }
+  ],
+  "framing_observation": "Find atom by number recenters the pivot on each selected atom without refitting the whole structure; later rotations can move other atoms outside the viewport. This is distinct from depth-clipping disappearance and not classified as a new confirmed renderer bug.",
+  "not_reproduced_in_sampled_frames": [
+    "depth-plane clipping of atom bodies",
+    "whole viewport blank after sidebar resize"
+  ],
+  "initial_run": "Two molecule chains completed; two crystal chains stopped after rotation changed the measurement selection and the existing three-point helper failed. The continuation records selection changes and restores the measurement so later combinations can be exercised.",
+  "original_user_browser": "Not changed",
+  "product_changes": "None",
+  "push": "None"
+}

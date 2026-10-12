@@ -1,0 +1,16 @@
+{
+  "version": 190,
+  "tests": 4,
+  "unexpected": 0,
+  "flaky": 0,
+  "cycles": 24,
+  "overview_captures_reviewed": 120,
+  "full_size_reviewed": [
+    "Methane DPR1 cycle3 held and placed",
+    "Graphene DPR1 cycle5 history/mode",
+    "Methane DPR2 cycle5 history/mode",
+    "Graphene DPR2 cycle5 rotated"
+  ],
+  "finding": "No additional confirmed interaction regression. All measurements retained through six real mouse moves per case, rotation, held panel resize/collapse, undo/redo, bond refresh and mode switches. Three-digit methane angles retain readable typography. Edge-on graphene has naturally crowded ordinary indices; depth testing retained, no erroneous label-over-nearer-atom conclusion from these images. Vacuum-cell fitting reduces atom size; full-size captions inspected.",
+  "raw_output": "/private/tmp/crystal-oct13-closeup-expanded"
+}

@@ -5,7 +5,7 @@ const path = require('node:path');
 
 // Keep measurements active throughout: random exploration can otherwise spend
 // most of a chain without captions, or at a scale too small to inspect them.
-for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rocksalt.poscar']) {
+for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rocksalt.poscar', 'xyz/CH4.xyz', 'poscar/graphene_sheet.poscar']) {
     test.describe(`${source} DPR ${dpr}`, () => {
         test.use({ deviceScaleFactor: dpr });
         test('measured editing remains coherent through rotation and panel gestures', async ({ page }, info) => {

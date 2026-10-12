@@ -1,0 +1,261 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/private/tmp/crystal-oct13.config.cjs",
+      "ordinary-measured-visual-stress.spec.cjs",
+      "--grep",
+      "CH4|graphene",
+      "--output",
+      "/private/tmp/crystal-oct13-closeup-expanded",
+      "--reporter=json"
+    ],
+    "configFile": "/private/tmp/crystal-oct13.config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-oct13-closeup-expanded",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "ordinary-measured-visual-stress.spec.cjs",
+      "file": "ordinary-measured-visual-stress.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "xyz/CH4.xyz DPR 1",
+          "file": "ordinary-measured-visual-stress.spec.cjs",
+          "line": 9,
+          "column": 10,
+          "specs": [
+            {
+              "title": "measured editing remains coherent through rotation and panel gestures",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 240000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 66615,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T19:19:46.678Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "de4e5c11e3a5ec629b0f-b6a2cffc9b12e8b9e35e",
+              "file": "ordinary-measured-visual-stress.spec.cjs",
+              "line": 11,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "poscar/graphene_sheet.poscar DPR 1",
+          "file": "ordinary-measured-visual-stress.spec.cjs",
+          "line": 9,
+          "column": 10,
+          "specs": [
+            {
+              "title": "measured editing remains coherent through rotation and panel gestures",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 240000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 73401,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T19:20:53.560Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "de4e5c11e3a5ec629b0f-1d66c01e36237e4db4f2",
+              "file": "ordinary-measured-visual-stress.spec.cjs",
+              "line": 11,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "xyz/CH4.xyz DPR 2",
+          "file": "ordinary-measured-visual-stress.spec.cjs",
+          "line": 9,
+          "column": 10,
+          "specs": [
+            {
+              "title": "measured editing remains coherent through rotation and panel gestures",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 240000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 116620,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T19:22:06.973Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "de4e5c11e3a5ec629b0f-641ef30833d7a5bd1df5",
+              "file": "ordinary-measured-visual-stress.spec.cjs",
+              "line": 11,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "poscar/graphene_sheet.poscar DPR 2",
+          "file": "ordinary-measured-visual-stress.spec.cjs",
+          "line": 9,
+          "column": 10,
+          "specs": [
+            {
+              "title": "measured editing remains coherent through rotation and panel gestures",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 240000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 126919,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T19:24:03.603Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "de4e5c11e3a5ec629b0f-8c23a75391d85420a6c7",
+              "file": "ordinary-measured-visual-stress.spec.cjs",
+              "line": 11,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T19:19:46.308Z",
+    "duration": 384452.129,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

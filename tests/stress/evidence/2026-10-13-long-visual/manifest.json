@@ -41,5 +41,7 @@
       "images": 225,
       "elapsedSeconds": 348.054956542
     }
-  }
+  },
+  "expanded_measured_report": "expanded-measured/result.json",
+  "expanded_measured_visual_review": "120 additional captures reviewed;4 tests passed with24 measured edit cycles."
 }

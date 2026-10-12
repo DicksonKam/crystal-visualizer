@@ -1,5 +1,5 @@
 {
-  "status": "running",
+  "status": "complete",
   "starting_version": 189,
   "baseline_commit": "172e233",
   "planned_campaign_seconds": 10800,
@@ -8,7 +8,7 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "78 random chains plus prior focused/compound/native captures reviewed. Three root fixes saved. All8 version192 measured cases passed and240 captures reviewed.",
+  "visual_review": "80 random chains reviewed; all31 completed version192 chains reviewed; focused measured240 and snap/corner11 captures reviewed; limitations retained.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
@@ -19,12 +19,12 @@
     "images": 4194,
     "elapsedSeconds": 3351.23121625
   },
-  "reviewed_checkpoints": 5426,
+  "reviewed_checkpoints": 5567,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
   "baseline_phase_status": "Intentionally stopped after last complete chain to apply confirmed angle caption correction; partial next chain retained.",
-  "remaining_campaign_seconds": 3824,
+  "remaining_campaign_seconds": 0,
   "updated_version": 192,
   "updated_campaign": {
     "version": 190,
@@ -69,14 +69,14 @@
     "session": 18691,
     "output": "/private/tmp/crystal-oct13-long-visual-v192",
     "log": "/private/tmp/crystal-oct13-long-visual-v192.log",
-    "status": "running",
+    "status": "completed; exit0",
     "latest_pass": {
-      "seed": 16028,
-      "actions": 5220,
-      "images": 2054,
-      "elapsedSeconds": 3648.665253875
+      "seed": 16030,
+      "actions": 5580,
+      "images": 2195,
+      "elapsedSeconds": 3862.5719091250003
     },
-    "source_hash_validation": "Current source hashes matched every file recorded at seed16023; verified during live run."
+    "source_hash_validation": "Every recorded source file matched current SHA256 after final seed16030"
   },
   "measured_v192_verification": {
     "session": 81766,
@@ -85,5 +85,6 @@
     "status": "complete:8 passed,0 failed,0 flaky",
     "visual_review": "All240 captures reviewed;48 measured edit cycles across four structures at DPR1/2; selected8 full-size renders inspected."
   },
-  "reviewed_checkpoints_scope": "Random campaign checkpoints only; focused tests recorded separately."
+  "reviewed_checkpoints_scope": "Random campaign checkpoints only; focused tests recorded separately.",
+  "completion_audit": "completion-audit.json"
 }

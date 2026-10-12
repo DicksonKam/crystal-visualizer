@@ -1,5 +1,5 @@
 {
-  "status": "fixed and focused production verification passed; continuing compound stress coverage",
+  "status": "fixed and verified; sustained version192 campaign completed and audited",
   "version": 191,
   "seed": 15009,
   "checkpoint": "step0 atom scale change after initial water triad selection",
@@ -14,5 +14,5 @@
     "unit": "164 unit tests passed, including horizontal/vertical/diagonal/end-on bond cases",
     "ordinary_measured_stress": "8 cases passed,48 measured edit cycles,240 captures reviewed including8 full-size samples; no additional confirmed defect."
   },
-  "remaining": "Version192 sustained random campaign remains live; final campaign audit pending."
+  "remaining": "None for this confirmed defect; campaign completion audit saved."
 }

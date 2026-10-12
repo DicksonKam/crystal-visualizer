@@ -1,0 +1,425 @@
+{
+  "status": "complete",
+  "current_version": 192,
+  "phases": [
+    {
+      "version": 189,
+      "process_log": "/private/tmp/crystal-oct13-long-visual.log",
+      "completed_chains": 61,
+      "last_pass": {
+        "event": "pass",
+        "seed": 13061,
+        "dense": false,
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "deviceScaleFactor": 1,
+        "persistent": true,
+        "resources": {
+          "geometries": 5,
+          "textures": 4,
+          "heap": {
+            "used": 33100000,
+            "total": 56800000
+          }
+        },
+        "steps": 180,
+        "actions": 10980,
+        "images": 4194,
+        "counts": {
+          "replace": 9,
+          "jump": 15,
+          "undo": 11,
+          "clear": 2,
+          "rotate": 9,
+          "shift": 3,
+          "cancel": 2,
+          "batch_fix": 1,
+          "fix": 0,
+          "resize": 1,
+          "panel": 21,
+          "mode": 12,
+          "center": 0,
+          "pan": 9,
+          "click": 5,
+          "redo": 3,
+          "display": 7,
+          "viewport": 6,
+          "zoom": 4,
+          "scale": 7,
+          "delete": 2,
+          "ghost": 0,
+          "reset": 4,
+          "bond_length": 3,
+          "add": 3,
+          "drag": 1
+        },
+        "operations": {
+          "select_atom": 18,
+          "shift_atoms": 3,
+          "vacuum_drag": 1,
+          "clear_selection": 5,
+          "deselect_atom": 1,
+          "add_atom": 3,
+          "delete_atoms": 2
+        },
+        "sourceHashes": {
+          "app.js": "9d2c02bb2b55dea19207bf1037586d8fddfddafdc7b4674a749aa0058a423056",
+          "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+          "camera.js": "0e6c2d6931183ccc344d40bc0cb1803f097158fdd4a051ec8ccc542654e0b021",
+          "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+          "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
+          "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+          "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+          "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+          "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+          "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+          "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+          "index.html": "03320da44c7304d2a9fd3707a3f08e53b67e105fc96be9316864734058c10868",
+          "tests/stress/edit-scenario.cjs": "da2e8306a5beb6a893235884df51009048b4c0080996c2352bb4e241b3d3db0a",
+          "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+          "tests/stress/visual-campaign.cjs": "d5b574bc726c890fef231b25a07c5d944a5024ce8142b774daab1e9eed25ff18"
+        },
+        "elapsedSeconds": 3351.23121625
+      },
+      "elapsed_seconds": 3351.23121625,
+      "terminal_status": "intentionally terminated to apply confirmed fix; partial following chain retained",
+      "complete_event": null,
+      "failures": []
+    },
+    {
+      "version": 190,
+      "process_log": "/private/tmp/crystal-oct13-long-visual-v190.log",
+      "completed_chains": 19,
+      "last_pass": {
+        "event": "pass",
+        "seed": 14018,
+        "dense": false,
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "deviceScaleFactor": 2,
+        "persistent": true,
+        "resources": {
+          "geometries": 2,
+          "textures": 1,
+          "heap": {
+            "used": 21700000,
+            "total": 26000000
+          }
+        },
+        "steps": 180,
+        "actions": 3420,
+        "images": 1250,
+        "counts": {
+          "fix": 0,
+          "undo": 12,
+          "redo": 4,
+          "batch_fix": 1,
+          "coordinates": 0,
+          "jump": 18,
+          "rotate": 16,
+          "shift": 2,
+          "viewport": 5,
+          "center": 0,
+          "zoom": 7,
+          "display": 5,
+          "periodic": 6,
+          "resize": 0,
+          "mode": 8,
+          "bond_length": 9,
+          "click": 7,
+          "ghost": 3,
+          "clear": 2,
+          "replace": 7,
+          "pan": 3,
+          "panel": 7,
+          "playback": 3,
+          "reset": 5,
+          "scale": 4,
+          "drag": 3,
+          "cancel": 1,
+          "add": 1
+        },
+        "operations": {
+          "fix_atoms": 1,
+          "clear_selection": 9,
+          "select_atom": 26,
+          "shift_atoms": 2,
+          "deselect_atom": 1,
+          "move_atom": 2,
+          "add_atom": 1
+        },
+        "sourceHashes": {
+          "app.js": "17113d3a22c7c4969005eebd21c8678e908b514d76d06298fbc3617d6d5d1047",
+          "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+          "camera.js": "0e6c2d6931183ccc344d40bc0cb1803f097158fdd4a051ec8ccc542654e0b021",
+          "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+          "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
+          "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+          "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+          "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+          "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+          "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+          "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+          "index.html": "c1207e8c440a17b2aab9a275f01168ae7e32cac703079c76ab8e72905978207f",
+          "tests/stress/edit-scenario.cjs": "da2e8306a5beb6a893235884df51009048b4c0080996c2352bb4e241b3d3db0a",
+          "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+          "tests/stress/visual-campaign.cjs": "d5b574bc726c890fef231b25a07c5d944a5024ce8142b774daab1e9eed25ff18"
+        },
+        "elapsedSeconds": 1929.4968563749999
+      },
+      "elapsed_seconds": 1929.4968563749999,
+      "terminal_status": "intentionally terminated to apply confirmed fix; partial following chain retained",
+      "complete_event": null,
+      "failures": []
+    },
+    {
+      "version": 191,
+      "process_log": "/private/tmp/crystal-oct13-long-visual-v191.log",
+      "completed_chains": 14,
+      "last_pass": {
+        "event": "pass",
+        "seed": 15013,
+        "dense": false,
+        "viewport": {
+          "width": 900,
+          "height": 760
+        },
+        "deviceScaleFactor": 2,
+        "persistent": true,
+        "resources": {
+          "geometries": 17,
+          "textures": 12,
+          "heap": {
+            "used": 15200000,
+            "total": 19300000
+          }
+        },
+        "steps": 180,
+        "actions": 2520,
+        "images": 957,
+        "counts": {
+          "fix": 0,
+          "bond_length": 9,
+          "undo": 8,
+          "rotate": 12,
+          "jump": 13,
+          "ghost": 1,
+          "clear": 5,
+          "redo": 1,
+          "display": 4,
+          "batch_fix": 4,
+          "click": 6,
+          "zoom": 8,
+          "panel": 16,
+          "mode": 11,
+          "viewport": 5,
+          "drag": 5,
+          "cancel": 4,
+          "replace": 6,
+          "resize": 1,
+          "playback": 1,
+          "scale": 6,
+          "center": 2,
+          "delete": 2,
+          "coordinates": 1,
+          "periodic": 4,
+          "shift": 2,
+          "add": 2,
+          "pan": 2,
+          "reset": 6
+        },
+        "operations": {
+          "select_atom": 19,
+          "clear_selection": 10,
+          "move_atom": 5,
+          "deselect_atom": 1,
+          "delete_atoms": 2,
+          "shift_atoms": 4,
+          "add_atom": 2,
+          "vacuum_drag": 1,
+          "fix_atoms": 3
+        },
+        "sourceHashes": {
+          "app.js": "1650249cd8061ea7ec8939b3c276a02671d39a01fbc3aa5b8ddaea717e762f1e",
+          "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+          "camera.js": "0e6c2d6931183ccc344d40bc0cb1803f097158fdd4a051ec8ccc542654e0b021",
+          "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+          "geometry.js": "804f47925be9f02e29f91bafae07d921273c99151052dde865bba9c753a7d43d",
+          "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+          "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+          "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+          "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+          "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+          "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+          "index.html": "cdbda3705c725556d736f5705af2829e94d2920f8aaf0661e1d63ac53c7d4a5f",
+          "tests/stress/edit-scenario.cjs": "da2e8306a5beb6a893235884df51009048b4c0080996c2352bb4e241b3d3db0a",
+          "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+          "tests/stress/visual-campaign.cjs": "d5b574bc726c890fef231b25a07c5d944a5024ce8142b774daab1e9eed25ff18"
+        },
+        "elapsedSeconds": 1696.5096196250001
+      },
+      "elapsed_seconds": 1696.5096196250001,
+      "terminal_status": "intentionally terminated to apply confirmed fix; partial following chain retained",
+      "complete_event": null,
+      "failures": []
+    },
+    {
+      "version": 192,
+      "process_log": "/private/tmp/crystal-oct13-long-visual-v192.log",
+      "completed_chains": 31,
+      "last_pass": {
+        "event": "pass",
+        "seed": 16030,
+        "dense": false,
+        "viewport": {
+          "width": 900,
+          "height": 760
+        },
+        "deviceScaleFactor": 2,
+        "persistent": true,
+        "resources": {
+          "geometries": 2,
+          "textures": 1,
+          "heap": {
+            "used": 20500000,
+            "total": 23100000
+          }
+        },
+        "steps": 180,
+        "actions": 5580,
+        "images": 2195,
+        "counts": {
+          "redo": 2,
+          "delete": 0,
+          "center": 0,
+          "zoom": 5,
+          "rotate": 14,
+          "replace": 8,
+          "click": 10,
+          "mode": 11,
+          "scale": 3,
+          "panel": 14,
+          "bond_length": 2,
+          "jump": 6,
+          "reset": 10,
+          "display": 5,
+          "add": 1,
+          "cancel": 2,
+          "fix": 1,
+          "resize": 0,
+          "ghost": 1,
+          "undo": 11,
+          "pan": 5,
+          "batch_fix": 2,
+          "drag": 2,
+          "periodic": 5,
+          "clear": 2,
+          "viewport": 5,
+          "coordinates": 0,
+          "frame": 2
+        },
+        "operations": {
+          "select_atom": 16,
+          "clear_selection": 6,
+          "add_atom": 1,
+          "move_atom": 1,
+          "fix_atoms": 2,
+          "deselect_atom": 1
+        },
+        "sourceHashes": {
+          "app.js": "cfbba58963f9f4f3cbab0810f268d81697e3550637aef03bee31dd716cbe7c0d",
+          "annotations.js": "0b7fa10acce6500671bdc689778a7952805806fb2902d497b7164529455d3e9a",
+          "camera.js": "0e6c2d6931183ccc344d40bc0cb1803f097158fdd4a051ec8ccc542654e0b021",
+          "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+          "geometry.js": "804f47925be9f02e29f91bafae07d921273c99151052dde865bba9c753a7d43d",
+          "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+          "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+          "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+          "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+          "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+          "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+          "index.html": "4c297c965adef5bef36e0e790fb7c46b39479a1e9c40784289e04c4049eaceda",
+          "tests/stress/edit-scenario.cjs": "da2e8306a5beb6a893235884df51009048b4c0080996c2352bb4e241b3d3db0a",
+          "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+          "tests/stress/visual-campaign.cjs": "d5b574bc726c890fef231b25a07c5d944a5024ce8142b774daab1e9eed25ff18"
+        },
+        "elapsedSeconds": 3862.5719091250003
+      },
+      "elapsed_seconds": 3862.57323675,
+      "terminal_status": "exit0; completed planned phase",
+      "complete_event": {
+        "event": "complete",
+        "nextSeed": 16031,
+        "actions": 5580,
+        "images": 2195,
+        "elapsedSeconds": 3862.57323675
+      },
+      "failures": []
+    }
+  ],
+  "total_campaign_seconds": 10839.810929,
+  "total_completed_actions": 22500,
+  "total_captured_checkpoints": 8596,
+  "reviewed_random_chains": 80,
+  "reviewed_random_checkpoints": 5567,
+  "source_hash_matches": {
+    "app.js": true,
+    "annotations.js": true,
+    "camera.js": true,
+    "structure.js": true,
+    "geometry.js": true,
+    "formats.js": true,
+    "document.js": true,
+    "history.js": true,
+    "measurement.js": true,
+    "layout.js": true,
+    "styles.css": true,
+    "index.html": true,
+    "tests/stress/edit-scenario.cjs": true,
+    "tests/stress/visual-observer.cjs": true,
+    "tests/stress/visual-campaign.cjs": true
+  },
+  "latest_phase_terminal_exit": 0,
+  "focused_current_version": {
+    "ordinary_measured": {
+      "passed": 8,
+      "cycles": 48,
+      "captures_reviewed": 240
+    },
+    "snap_corner": {
+      "passed": 3,
+      "captures_reviewed": 11
+    },
+    "annotation_regressions": {
+      "passed": 10,
+      "captures_reviewed": 20
+    },
+    "unit": {
+      "passed": 164,
+      "failed": 0
+    }
+  },
+  "fix_commits": [
+    "1957f3a",
+    "b22360b",
+    "d9ad59f"
+  ],
+  "original_tab_verification": {
+    "id": "3",
+    "url": "http://127.0.0.1:4173/?version=187",
+    "title": "\u2022 Crystal Visualizer \u2014 unsaved edits",
+    "read_only_inventory": true
+  },
+  "no_new_buttons": "git diff172e233 index.html changes only script version query parameters",
+  "github_push": false,
+  "remaining_confirmed_defects": [],
+  "limitations": [
+    "A finite sampled visual campaign cannot prove absence of every possible bug.",
+    "Unreviewed random seeds explicitly listed in visual-review.json.",
+    "Some random captures are small or have sparse captions; focused measured workflows provide stronger close-view coverage."
+  ]
+}

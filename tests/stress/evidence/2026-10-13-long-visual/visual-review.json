@@ -608,6 +608,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16016",
       "finding": "No additional confirmed defect in overview. Measurement selections and captions persist across panel, history and trajectory display changes; atom/cell previews and later replacement scenes retain visible geometry. Large portions use tiny trajectory atoms or bonds disabled, so close detailed visual assessment remains limited; focused measured and snap tests supplement."
+    },
+    {
+      "seed": 16017,
+      "version": 192,
+      "checkpoint_count": 72,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16017",
+      "finding": "No additional confirmed defect in overview. Measured Si captions update during previews and canceled guides clear; later cell resizing, added atoms, periodic changes and mode/history switches retain scene. Bonds often disabled and some views focus-cropped; detailed bond/caption coverage supplied by focused tests."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -656,7 +665,7 @@
     14016,
     14017,
     14018,
-    16017
+    16018
   ],
   "status": "campaign active; review continues"
 }

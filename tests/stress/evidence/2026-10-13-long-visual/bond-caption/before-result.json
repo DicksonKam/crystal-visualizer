@@ -1,0 +1,179 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/private/tmp/crystal-oct13.config.cjs",
+      "measurement-bond-clearance.spec.cjs",
+      "--output",
+      "/private/tmp/crystal-oct13-bond-before",
+      "--reporter=json"
+    ],
+    "configFile": "/private/tmp/crystal-oct13.config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-oct13-bond-before",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-bond-clearance.spec.cjs",
+      "file": "measurement-bond-clearance.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "water measurement captions clear bright bonds across close views and sidebar changes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12942,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 7\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bond\": 0,\u001b[39m\n\u001b[31m+     \"label\": 0,\u001b[39m\n\u001b[31m+     \"view\": 2,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 7\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bond\": 0,\u001b[39m\n\u001b[31m+     \"label\": 0,\u001b[39m\n\u001b[31m+     \"view\": 2,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-bond-clearance.spec.cjs:59:22",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-bond-clearance.spec.cjs",
+                      "column": 22,
+                      "line": 59
+                    },
+                    "snippet": "  57 |         data.labels.forEach((label, li) => data.bonds.forEach((bond, bi) => { if (crosses(label, bond)) failures.push({ view: index, label: li, bond: bi }); }));\n  58 |     }\n> 59 |     expect(failures).toEqual([]);\n     |                      ^\n  60 | });\n  61 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-bond-clearance.spec.cjs",
+                        "column": 22,
+                        "line": 59
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 7\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   Object {\u001b[39m\n\u001b[31m+     \"bond\": 0,\u001b[39m\n\u001b[31m+     \"label\": 0,\u001b[39m\n\u001b[31m+     \"view\": 2,\u001b[39m\n\u001b[31m+   },\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  57 |         data.labels.forEach((label, li) => data.bonds.forEach((bond, bi) => { if (crosses(label, bond)) failures.push({ view: index, label: li, bond: bi }); }));\n  58 |     }\n> 59 |     expect(failures).toEqual([]);\n     |                      ^\n  60 | });\n  61 |\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-bond-clearance.spec.cjs:59:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:14:39.078Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "projection-0",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjc1NS43NTA4NjA3ODQ2Mjg3LCJ5Ijo0OTkuNDA1MDUzODEyOTM3MDcsIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH0seyJ4Ijo3NjcuNjIyODEzODIyNDY4NSwieSI6NDMyLjY0NDE5MTQxODg4MzksIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH0seyJ4Ijo3NzAuNjk5NzIyMjAxOTQ2MiwieSI6NDA4LjgyMTMwNTEyOTU1OTEsIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH1dLCJib25kcyI6W3siYSI6eyJ4Ijo3ODguMjQ1NjI3NjQ0OTM3MSwieSI6NDY5Ljc4ODM4MjgzNzc2NzY0fSwiYiI6eyJ4Ijo3MjMuMjU2MDkzOTI0MzIwMiwieSI6NDY1LjAyMTcyNDc4ODEwNjQ0fSwicmFkaXVzIjoxLjY5NjMyMDAwMDAwMDAwMDN9LHsiYSI6eyJ4Ijo3MTQuOTk5OTk5OTk5OTk5OSwieSI6NDI3LjV9LCJiIjp7IngiOjcyMy4yNTYwOTM5MjQzMjAyLCJ5Ijo0NjUuMDIxNzI0Nzg4MTA2NDR9LCJyYWRpdXMiOjEuNjk2MzIwMDAwMDAwMDAwM31dfQ=="
+                    },
+                    {
+                      "name": "projection-1",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjE1NS4yMTE3NzczNDI2NTczLCJ5Ijo0NzcuNTAwMDAwMDAwMDAwMDYsIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH0seyJ4IjoxNTAuMTQxMTg0ODk1MTA0ODksInkiOjQxMy41LCJ3aWR0aCI6NzIsImhlaWdodCI6MTh9LHsieCI6MTU2LjY2MTkwNDg0Nzg4NTMsInkiOjUwMS41LCJ3aWR0aCI6NzIsImhlaWdodCI6MTh9XSwiYm9uZHMiOlt7ImEiOnsieCI6MTYwLjI4MjM2OTc5MDIwOTgsInkiOjQ1My41fSwiYiI6eyJ4IjoxNTAuMTQxMTg0ODk1MTA0ODksInkiOjQ1My41fSwicmFkaXVzIjowLjMzMjE0NjU3MzQyNjU3MzR9LHsiYSI6eyJ4IjoxNDAsInkiOjQ1My41fSwiYiI6eyJ4IjoxNTAuMTQxMTg0ODk1MTA0ODksInkiOjQ1My41fSwicmFkaXVzIjowLjMzMjE0NjU3MzQyNjU3MzR9XX0="
+                    },
+                    {
+                      "name": "projection-2",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjkzNS43NzgwODY2NTk0NDYsInkiOjQ3OS45MzUxNjI1MzgzNjEzLCJ3aWR0aCI6MTEzLjIyMzc4NDk2LCJoZWlnaHQiOjI4LjMwNTk0NjI0fSx7IngiOjkxMy40MTMzNDkwMjIwNTUxLCJ5Ijo0NDcuMjgzNDI2MTA0MDg4MSwid2lkdGgiOjExMy4yMjM3ODQ5NiwiaGVpZ2h0IjoyOC4zMDU5NDYyNH0seyJ4IjoxMDA4Ljc2NzMyMTE5MTA4ODEsInkiOjUxNi41NDAxMjE4Mjk4MjYzLCJ3aWR0aCI6MTIzLjUxNjg1NjMxOTk5OTk5LCJoZWlnaHQiOjMwLjg3OTIxNDA3OTk5OTk5N31dLCJib25kcyI6W3siYSI6eyJ4IjoxMTExLjgyNjY5ODA0NDExMDMsInkiOjQ4My4wNjY4NTIyMDgxNzYzM30sImIiOnsieCI6NzU5LjcyOTQ3NTI3NDc4MTcsInkiOjQ3Ni44MDM0NzI4Njg1NDYzNX0sInJhZGl1cyI6OS4xOTAyNDIyODU3MTQyODZ9LHsiYSI6eyJ4Ijo3MTQuOTk5OTk5OTk5OTk5OSwieSI6NDI3LjQ5OTk5OTk5OTk5OTgzfSwiYiI6eyJ4Ijo3NTkuNzI5NDc1Mjc0NzgxNywieSI6NDc2LjgwMzQ3Mjg2ODU0NjM1fSwicmFkaXVzIjo5LjE5MDI0MjI4NTcxNDI4Nn1dfQ=="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-oct13-bond-before/measurement-bond-clearance-aa123-e-views-and-sidebar-changes-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-oct13-bond-before/measurement-bond-clearance-aa123-e-views-and-sidebar-changes-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-oct13-bond-before/measurement-bond-clearance-aa123-e-views-and-sidebar-changes-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-bond-clearance.spec.cjs",
+                    "column": 22,
+                    "line": 59
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "707929ed747484d03e3f-6034b4b925cb1facdfd5",
+          "file": "measurement-bond-clearance.spec.cjs",
+          "line": 22,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T20:14:38.392Z",
+    "duration": 14145.389000000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

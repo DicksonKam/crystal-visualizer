@@ -1,9 +1,17 @@
 {
-  "status": "reproduced; diagnosis in progress",
+  "status": "fixed and focused production verification passed; continuing compound stress coverage",
   "version": 191,
   "seed": 15009,
   "checkpoint": "step0 atom scale change after initial water triad selection",
   "finding": "The 0.958 Angstrom distance caption is laid directly across a bright bond cylinder. It remains numerically correct but loses contrast. Current placement collects atom body and selected-marker rectangles; bond obstacles are not included.",
   "raw_source": "/private/tmp/crystal-oct13-long-visual-v191/seed-15009/seed-15009-step-0-scale-after.png",
-  "fix_applied": false
+  "fix_applied": true,
+  "updated_version": 192,
+  "root_fix": "Visible physical and ghost bonds join caption obstacles as projected segments with thickness. Candidate scoring clips the segment against the expanded caption; bounding boxes only cull far obstacles, preserving diagonal free space. Measurements and markers remain unchanged.",
+  "verification": {
+    "before_browser": "fails for caption0/bond0 in view2",
+    "after_browser": "10 production annotation regressions passed;20 rendered captures reviewed in overview;3 new bond views inspected full size",
+    "unit": "164 unit tests passed, including horizontal/vertical/diagonal/end-on bond cases"
+  },
+  "remaining": "Continue ordinary measured edit/mode/history/rotation stress on version192."
 }

@@ -1,6 +1,28 @@
 // Screen-space placement of a small set of measurement labels. Physical
 // measurement anchors remain separate from their presentation positions.
 (function (root) {
+    // Clip a bond centerline against the caption expanded by its stroke radius.
+    // Its bounding box only culls candidates; a diagonal bond does not reserve
+    // the large empty corners of that box.
+    function segmentOverlap(label, obstacle, gap) {
+        const { a, b, radius } = obstacle.segment;
+        let low = 0, high = 1;
+        for (const axis of ['x', 'y']) {
+            const half = label[axis === 'x' ? 'width' : 'height'] / 2 + radius + gap;
+            const start = a[axis], delta = b[axis] - start;
+            const min = label[axis] - half, max = label[axis] + half;
+            if (Math.abs(delta) < 1e-9) {
+                if (start < min || start > max) return 0;
+            } else {
+                const first = (min - start) / delta, second = (max - start) / delta;
+                low = Math.max(low, Math.min(first, second));
+                high = Math.min(high, Math.max(first, second));
+                if (low > high) return 0;
+            }
+        }
+        return Math.max(1e-6, (high - low) * Math.hypot(b.x - a.x, b.y - a.y)) * (2 * radius + gap);
+    }
+
     function placeLabels(labels, obstacles, viewport) {
         const occupied = [...obstacles];
         const gap = 4, step = 8, rings = 12;
@@ -21,7 +43,7 @@
             let best, bestArea = Infinity, bestDistance = Infinity;
             const consider = (x, y, rectangles) => {
                 const candidate = { ...label, x: clampX(x), y: clampY(y) };
-                const area = rectangles.reduce((sum, rectangle) => sum + overlap(candidate, rectangle), 0);
+                const area = rectangles.reduce((sum, rectangle) => sum + (rectangle.segment ? segmentOverlap(candidate, rectangle, gap) : overlap(candidate, rectangle)), 0);
                 const distance = (candidate.x - label.x) ** 2 + (candidate.y - label.y) ** 2;
                 if (area < bestArea || area === bestArea && distance < bestDistance) {
                     best = candidate; bestArea = area; bestDistance = distance;

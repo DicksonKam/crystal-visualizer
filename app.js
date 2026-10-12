@@ -3821,7 +3821,24 @@ function positionMeasurementLabels() {
         placeMeasurementAnnotation(item.sprite, item.rect, target, width, height, false, item.sprite.userData.annotationColor);
         occupied.push(target);
     }
-    const obstacles = [...selectionRings.map(screenRect).filter(Boolean), ...bodies.map(body => body.rect)];
+    const bonds = [];
+    if (visible.length) for (const mesh of structureGroup.children) {
+        if (!mesh.visible || !(mesh.userData.isBond || mesh.userData.isGhostBond)) continue;
+        mesh.updateWorldMatrix(true, false);
+        const center = mesh.getWorldPosition(new THREE.Vector3());
+        const unit = getAnnotationWorldPerPixel(center, height);
+        const radius = mesh.getWorldScale(new THREE.Vector3()).x / unit;
+        const first = mesh.localToWorld(new THREE.Vector3(0, -.5, 0)).project(camera);
+        const second = mesh.localToWorld(new THREE.Vector3(0, .5, 0)).project(camera);
+        if (!(unit > 0) || !(radius > 0) || ![first.x, first.y, first.z, second.x, second.y, second.z, radius].every(Number.isFinite)
+            || first.z < -1 && second.z < -1 || first.z > 1 && second.z > 1) continue;
+        const a = { x: (first.x + 1) * width / 2, y: (1 - first.y) * height / 2 };
+        const b = { x: (second.x + 1) * width / 2, y: (1 - second.y) * height / 2 };
+        bonds.push({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2,
+            width: Math.abs(b.x - a.x) + 2 * radius, height: Math.abs(b.y - a.y) + 2 * radius,
+            segment: { a, b, radius } });
+    }
+    const obstacles = [...selectionRings.map(screenRect).filter(Boolean), ...bodies.map(body => body.rect), ...bonds];
     const placed = CrystalAnnotations.placeLabels(visible.map(item => item.rect), obstacles, { width, height });
     labels.forEach(sprite => { if (sprite.userData.annotationLeader) sprite.userData.annotationLeader.visible = false; });
     visible.forEach(({ sprite, rect }, i) => placeMeasurementAnnotation(sprite, rect, placed[i], width, height, true));

@@ -1,0 +1,544 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/private/tmp/crystal-oct13.config.cjs",
+      "measurement-bond-clearance.spec.cjs",
+      "measurement-annotation-placement.spec.cjs",
+      "measurement-annotation-size.spec.cjs",
+      "measurement-angle-typography.spec.cjs",
+      "--output",
+      "/private/tmp/crystal-oct13-bond-final",
+      "--reporter=json"
+    ],
+    "configFile": "/private/tmp/crystal-oct13.config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-oct13-bond-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-angle-typography.spec.cjs",
+      "file": "measurement-angle-typography.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "ordinary 90 degree captions retain comparable text size",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8057,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:17:35.253Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rendered-text-sizes",
+                      "contentType": "application/json",
+                      "body": "W3siZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjguNDM3NSwiY2FudmFzIjpbMTI4LDMyXX0seyJmb250IjoiYm9sZCAyNHB4IFwiSmV0QnJhaW5zIE1vbm9cIiwgbW9ub3NwYWNlIiwiZm9udFBpeGVscyI6MjQsImlua0NTUyI6OC40Mzc1LCJjYW52YXMiOlsxMjgsMzJdfSx7ImZvbnQiOiJib2xkIDI0cHggXCJKZXRCcmFpbnMgTW9ub1wiLCBtb25vc3BhY2UiLCJmb250UGl4ZWxzIjoyNCwiaW5rQ1NTIjo4LjQzNzUsImNhbnZhcyI6WzEyOCwzMl19XQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc838db5866ac0d684e1-a2fff34d6cd1c5dc4eed",
+          "file": "measurement-angle-typography.spec.cjs",
+          "line": 3,
+          "column": 37
+        },
+        {
+          "title": "ordinary 109.5 degree captions retain comparable text size",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2599,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:17:43.531Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rendered-text-sizes",
+                      "contentType": "application/json",
+                      "body": "W3siZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjguNDM3NSwiY2FudmFzIjpbMTI4LDMyXX0seyJmb250IjoiYm9sZCAyNHB4IFwiSmV0QnJhaW5zIE1vbm9cIiwgbW9ub3NwYWNlIiwiZm9udFBpeGVscyI6MjQsImlua0NTUyI6OC40Mzc1LCJjYW52YXMiOlsxMjgsMzJdfSx7ImZvbnQiOiJib2xkIDI0cHggXCJKZXRCcmFpbnMgTW9ub1wiLCBtb25vc3BhY2UiLCJmb250UGl4ZWxzIjoyNCwiaW5rQ1NTIjo4LjQzNzUsImNhbnZhcyI6WzEyOCwzMl19XQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc838db5866ac0d684e1-cc557c33fba6b1838686",
+          "file": "measurement-angle-typography.spec.cjs",
+          "line": 3,
+          "column": 37
+        },
+        {
+          "title": "ordinary 175 degree captions retain comparable text size",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1706,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:17:46.137Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rendered-text-sizes",
+                      "contentType": "application/json",
+                      "body": "W3siZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjguNDM3NSwiY2FudmFzIjpbMTI4LDMyXX0seyJmb250IjoiYm9sZCAyNHB4IFwiSmV0QnJhaW5zIE1vbm9cIiwgbW9ub3NwYWNlIiwiZm9udFBpeGVscyI6MjQsImlua0NTUyI6OC40Mzc1LCJjYW52YXMiOlsxMjgsMzJdfSx7ImZvbnQiOiJib2xkIDI0cHggXCJKZXRCcmFpbnMgTW9ub1wiLCBtb25vc3BhY2UiLCJmb250UGl4ZWxzIjoyNCwiaW5rQ1NTIjo4LjQzNzUsImNhbnZhcyI6WzEyOCwzMl19XQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cc838db5866ac0d684e1-371822ced9b9a9b3c39e",
+          "file": "measurement-angle-typography.spec.cjs",
+          "line": 3,
+          "column": 37
+        }
+      ]
+    },
+    {
+      "title": "measurement-annotation-placement.spec.cjs",
+      "file": "measurement-annotation-placement.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "water measurement labels remain distinct in edit mode, order 1-2-3",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3681,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:17:47.855Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "annotation-rectangles",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjE4OC41NDcwNTYwNTAwODczNSwieSI6Mzc1LjgxOTEwNTU3MzkyOSwid2lkdGgiOjcyLCJoZWlnaHQiOjE4fSx7IngiOjE3Mi41ODQxMjE3Nzk3ODE0LCJ5IjozNTIuOTU2Njg3NDcxNDk4Mywid2lkdGgiOjcxLjk5OTk5OTk5OTk5OTk3LCJoZWlnaHQiOjE4LjAwMDAwMDAwMDAwMDAwN30seyJ4IjoyMDkuMzgzMTYyMzE4NTM5NDYsInkiOjQzNS41Njg3Mjg4ODc0NDUxNiwid2lkdGgiOjcyLCJoZWlnaHQiOjE3Ljk5OTk5OTk5OTk5OTk4Nn1dLCJtYXJrZXJzIjpbeyJ4IjoxMTcuODY1MTg4NTY5MDY3NTYsInkiOjM5NS44OTg0Mjc3NjYzMTk0Niwid2lkdGgiOjMxLjk5OTk5OTk5OTk5OTk3LCJoZWlnaHQiOjMyfSx7IngiOjI0My4yMjg5MjM1MzExMDcxLCJ5Ijo0MDMuNzM5NzgzMzgxNTM4NSwid2lkdGgiOjE4LjMyNDE2OTk1MTg1Njg3NCwiaGVpZ2h0IjoxOC4zMjQxNjk5NTE4NTY5MTN9LHsieCI6MTAxLjkzOTMyMDAyODQ1NTcxLCJ5IjozMzQuMTczNTkxNTYxNDU4LCJ3aWR0aCI6MTguMzI0MTY5OTUxODU2OTM4LCJoZWlnaHQiOjE4LjMyNDE2OTk1MTg1NjkyM31dLCJhbmNob3JzIjpbWzAuMzc4NiwwLC0wLjA1NTk5OTk5OTk5OTk5OTk5NF0sWzAsMCwtMC4zNDkyNV1dLCJtaWRwb2ludHMiOltbMC4zNzg2LDAsLTAuMDU1OTk5OTk5OTk5OTk5OTk0XSxbMCwwLC0wLjM0OTI1XV0sImxlYWRlcnMiOjN9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f6768aee0bead19e2d7b-b2c74a781fd129db1a2b",
+          "file": "measurement-annotation-placement.spec.cjs",
+          "line": 3,
+          "column": 45
+        },
+        {
+          "title": "water measurement labels remain distinct in edit mode, order 2-1-3",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5351,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:17:51.548Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "annotation-rectangles",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjE4OC41NDcwNTYwNTAwODczNSwieSI6Mzc1LjgxOTEwNTU3MzkyOSwid2lkdGgiOjcyLCJoZWlnaHQiOjE4fSx7IngiOjE1Ny45MDIyNTQyOTg3NjE2OCwieSI6MzQ5LjAzNjAwOTY2Mzg4ODcsIndpZHRoIjo3MiwiaGVpZ2h0IjoxOC4wMDAwMDAwMDAwMDAwMTh9LHsieCI6MTc0LjYxMzkwMDMxNTA0NTM2LCJ5IjozMTkuOTU3MjkzNjA2NDQ0Mywid2lkdGgiOjcxLjk5OTk5OTk5OTk5OTk3LCJoZWlnaHQiOjE3Ljk5OTk5OTk5OTk5OTk4Nn1dLCJtYXJrZXJzIjpbeyJ4IjoyNDMuMjI4OTIzNTMxMTA3MSwieSI6NDAzLjczOTc4MzM4MTUzODUsIndpZHRoIjoxOC4zMjQxNjk5NTE4NTY4NzQsImhlaWdodCI6MTguMzI0MTY5OTUxODU2OTEzfSx7IngiOjExNy44NjUxODg1NjkwNjc1NiwieSI6Mzk1Ljg5ODQyNzc2NjMxOTQ2LCJ3aWR0aCI6MzEuOTk5OTk5OTk5OTk5OTcsImhlaWdodCI6MzJ9LHsieCI6MTAxLjkzOTMyMDAyODQ1NTcxLCJ5IjozMzQuMTczNTkxNTYxNDU4LCJ3aWR0aCI6MTguMzI0MTY5OTUxODU2OTM4LCJoZWlnaHQiOjE4LjMyNDE2OTk1MTg1NjkyM31dLCJhbmNob3JzIjpbWzAuMzc4NiwwLC0wLjA1NTk5OTk5OTk5OTk5OTk5NF0sWy0wLjM3ODYsMCwtMC4wNTU5OTk5OTk5OTk5OTk5OTRdXSwibWlkcG9pbnRzIjpbWzAuMzc4NiwwLC0wLjA1NTk5OTk5OTk5OTk5OTk5NF0sWy0wLjM3ODYsMCwtMC4wNTU5OTk5OTk5OTk5OTk5OTRdXSwibGVhZGVycyI6M30="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f6768aee0bead19e2d7b-10252e83cbc71286f170",
+          "file": "measurement-annotation-placement.spec.cjs",
+          "line": 3,
+          "column": 45
+        }
+      ]
+    },
+    {
+      "title": "measurement-annotation-size.spec.cjs",
+      "file": "measurement-annotation-size.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "annotation CSS sizing at device scale 1",
+          "file": "measurement-annotation-size.spec.cjs",
+          "line": 22,
+          "column": 46,
+          "specs": [
+            {
+              "title": "small atom annotations survive sidebar resizing and zoom at 900px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4066,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T20:17:56.923Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "annotation-css-pixels",
+                          "contentType": "application/json",
+                          "body": "eyJsYWJlbHMiOlsxNy45OTk5OTk5OTk5OTk5OTYsMTguMDAwMDAwMDAwMDAwMDA3LDE3Ljk5OTk5OTk5OTk5OTk5Nl0sIm1hcmtlcnMiOlsxNC4wMDAwMDAwMDAwMDAwMDcsMTQuMDAwMDAwMDAwMDAwMDA1LDE0LjAwMDAwMDAwMDAwMDAwNV19"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "94f4adcd340e3e0c876d-80b2a89099acb8b2c054",
+              "file": "measurement-annotation-size.spec.cjs",
+              "line": 24,
+              "column": 38
+            },
+            {
+              "title": "small atom annotations survive sidebar resizing and zoom at 1440px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5331,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T20:18:01.001Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "annotation-css-pixels",
+                          "contentType": "application/json",
+                          "body": "eyJsYWJlbHMiOlsxNy45OTk5OTk5OTk5OTk5OTYsMTguMDAwMDAwMDAwMDAwMDA0LDE3Ljk5OTk5OTk5OTk5OTk5XSwibWFya2VycyI6WzE0LjAwMDAwMDAwMDAwMDAwNywxNC4wMDAwMDAwMDAwMDAwMDQsMTQuMDAwMDAwMDAwMDAwMDA0XX0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "94f4adcd340e3e0c876d-f5ce642e643e4eb1c5ca",
+              "file": "measurement-annotation-size.spec.cjs",
+              "line": 24,
+              "column": 38
+            }
+          ]
+        },
+        {
+          "title": "annotation CSS sizing at device scale 2",
+          "file": "measurement-annotation-size.spec.cjs",
+          "line": 22,
+          "column": 46,
+          "specs": [
+            {
+              "title": "small atom annotations survive sidebar resizing and zoom at 900px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7565,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T20:18:06.338Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "annotation-css-pixels",
+                          "contentType": "application/json",
+                          "body": "eyJsYWJlbHMiOlsxNy45OTk5OTk5OTk5OTk5OTYsMTgsMTcuOTk5OTk5OTk5OTk5OTk2XSwibWFya2VycyI6WzE0LjAwMDAwMDAwMDAwMDAwNywxNC4wMDAwMDAwMDAwMDAwMDUsMTQuMDAwMDAwMDAwMDAwMDA1XX0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "94f4adcd340e3e0c876d-12276413c288999b76bf",
+              "file": "measurement-annotation-size.spec.cjs",
+              "line": 24,
+              "column": 38
+            },
+            {
+              "title": "small atom annotations survive sidebar resizing and zoom at 1440px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11525,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T20:18:13.912Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "annotation-css-pixels",
+                          "contentType": "application/json",
+                          "body": "eyJsYWJlbHMiOlsxNy45OTk5OTk5OTk5OTk5OSwxOC4wMDAwMDAwMDAwMDAwMDQsMTcuOTk5OTk5OTk5OTk5OTldLCJtYXJrZXJzIjpbMTQuMDAwMDAwMDAwMDAwMDA3LDE0LjAwMDAwMDAwMDAwMDAwNCwxNC4wMDAwMDAwMDAwMDAwMDRdfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "94f4adcd340e3e0c876d-65e390037487ef5efb6b",
+              "file": "measurement-annotation-size.spec.cjs",
+              "line": 24,
+              "column": 38
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "measurement-bond-clearance.spec.cjs",
+      "file": "measurement-bond-clearance.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "water measurement captions clear bright bonds across close views and sidebar changes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3876,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T20:18:25.450Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "projection-0",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjc1NS43NTA4NjA3ODQ2Mjg3LCJ5Ijo0OTkuNDA1MDUzODEyOTM3MDcsIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH0seyJ4Ijo3NjcuNjIyODEzODIyNDY4NSwieSI6NDMyLjY0NDE5MTQxODg4MzksIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH0seyJ4Ijo3NzAuNjk5NzIyMjAxOTQ2NCwieSI6NDA4LjgyMTMwNTEyOTU1OTE2LCJ3aWR0aCI6NzIsImhlaWdodCI6MTh9XSwiYm9uZHMiOlt7ImEiOnsieCI6Nzg4LjI0NTYyNzY0NDkzNzEsInkiOjQ2OS43ODgzODI4Mzc3Njc2NH0sImIiOnsieCI6NzIzLjI1NjA5MzkyNDMyMDIsInkiOjQ2NS4wMjE3MjQ3ODgxMDY0NH0sInJhZGl1cyI6MS42OTYzMjAwMDAwMDAwMDAzfSx7ImEiOnsieCI6NzE0Ljk5OTk5OTk5OTk5OTksInkiOjQyNy41fSwiYiI6eyJ4Ijo3MjMuMjU2MDkzOTI0MzIwMiwieSI6NDY1LjAyMTcyNDc4ODEwNjQ0fSwicmFkaXVzIjoxLjY5NjMyMDAwMDAwMDAwMDN9XX0="
+                    },
+                    {
+                      "name": "projection-1",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjE1NS4yMTE3NzczNDI2NTczLCJ5Ijo0NzcuNTAwMDAwMDAwMDAwMDYsIndpZHRoIjo3MiwiaGVpZ2h0IjoxOH0seyJ4IjoxNTAuMTQxMTg0ODk1MTA0ODksInkiOjQxMy41LCJ3aWR0aCI6NzIsImhlaWdodCI6MTh9LHsieCI6MTU2LjY2MTkwNDg0Nzg4NTMsInkiOjUwMS41LCJ3aWR0aCI6NzIsImhlaWdodCI6MTh9XSwiYm9uZHMiOlt7ImEiOnsieCI6MTYwLjI4MjM2OTc5MDIwOTgsInkiOjQ1My41fSwiYiI6eyJ4IjoxNTAuMTQxMTg0ODk1MTA0ODksInkiOjQ1My41fSwicmFkaXVzIjowLjMzMjE0NjU3MzQyNjU3MzR9LHsiYSI6eyJ4IjoxNDAsInkiOjQ1My41fSwiYiI6eyJ4IjoxNTAuMTQxMTg0ODk1MTA0ODksInkiOjQ1My41fSwicmFkaXVzIjowLjMzMjE0NjU3MzQyNjU3MzR9XX0="
+                    },
+                    {
+                      "name": "projection-2",
+                      "contentType": "application/json",
+                      "body": "eyJsYWJlbHMiOlt7IngiOjkzNS43NzgwODY2NTk0NDY0LCJ5Ijo0NDcuOTM1MTYyNTM4MzYxMywid2lkdGgiOjExMy4yMjM3ODQ5NiwiaGVpZ2h0IjoyOC4zMDU5NDYyNH0seyJ4Ijo5MTMuNDEzMzQ5MDIyMDU1NSwieSI6NDE1LjI4MzQyNjEwNDA4ODE2LCJ3aWR0aCI6MTEzLjIyMzc4NDk2LCJoZWlnaHQiOjI4LjMwNTk0NjI0fSx7IngiOjEwMDguNzY3MzIxMTkxMDg4MSwieSI6NTE2LjU0MDEyMTgyOTgyNjMsIndpZHRoIjoxMjMuNTE2ODU2MzE5OTk5OTksImhlaWdodCI6MzAuODc5MjE0MDc5OTk5OTk3fV0sImJvbmRzIjpbeyJhIjp7IngiOjExMTEuODI2Njk4MDQ0MTEwMywieSI6NDgzLjA2Njg1MjIwODE3NjMzfSwiYiI6eyJ4Ijo3NTkuNzI5NDc1Mjc0NzgxNywieSI6NDc2LjgwMzQ3Mjg2ODU0NjM1fSwicmFkaXVzIjo5LjE5MDI0MjI4NTcxNDI4Nn0seyJhIjp7IngiOjcxNC45OTk5OTk5OTk5OTk5LCJ5Ijo0MjcuNDk5OTk5OTk5OTk5ODN9LCJiIjp7IngiOjc1OS43Mjk0NzUyNzQ3ODE3LCJ5Ijo0NzYuODAzNDcyODY4NTQ2MzV9LCJyYWRpdXMiOjkuMTkwMjQyMjg1NzE0Mjg2fV19"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "707929ed747484d03e3f-6034b4b925cb1facdfd5",
+          "file": "measurement-bond-clearance.spec.cjs",
+          "line": 22,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T20:17:34.953Z",
+    "duration": 54459.187999999995,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

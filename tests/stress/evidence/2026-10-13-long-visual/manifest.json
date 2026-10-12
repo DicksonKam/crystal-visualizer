@@ -8,7 +8,7 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "43 random chains,240 focused measured captures,496 compound captures,56 production interruption captures and14 first-frame captures reviewed, plus native before/after tests. Two confirmed root fixes saved.",
+  "visual_review": "44 random chains and prior focused/compound/native captures reviewed. Third root fix: measurement caption overlapping bright bond;164 unit and10 production annotation checks passed with20 additional captures reviewed.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
@@ -19,13 +19,13 @@
     "images": 4194,
     "elapsedSeconds": 3351.23121625
   },
-  "reviewed_checkpoints": 2848,
+  "reviewed_checkpoints": 2930,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
   "baseline_phase_status": "Intentionally stopped after last complete chain to apply confirmed angle caption correction; partial next chain retained.",
-  "remaining_campaign_seconds": 5520,
-  "updated_version": 191,
+  "remaining_campaign_seconds": 3824,
+  "updated_version": 192,
   "updated_campaign": {
     "version": 190,
     "fix_commit": "1957f3a",
@@ -51,12 +51,12 @@
     "session": 67202,
     "output": "/private/tmp/crystal-oct13-long-visual-v191",
     "log": "/private/tmp/crystal-oct13-long-visual-v191.log",
-    "status": "running",
+    "status": "Intentionally stopped to apply confirmed bond-caption readability fix; final completed seed15013,2520actions,957images,1696.509620seconds. Partial following chain retained.",
     "latest_pass": {
-      "seed": 15010,
-      "actions": 1980,
-      "images": 743,
-      "elapsedSeconds": 1232.739102167
+      "seed": 15013,
+      "actions": 2520,
+      "images": 957,
+      "elapsedSeconds": 1696.509619625
     }
   },
   "corner_fix_commit": "b22360b",

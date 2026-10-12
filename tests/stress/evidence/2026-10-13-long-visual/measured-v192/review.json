@@ -45,6 +45,17 @@
         "2-panel-held.png"
       ],
       "finding": "No additional confirmed defect in reviewed captures. Water captions remain clear of bonds through six measured moves and rotations; graphene captions remain distinct in edge-on panel collapse view. Atom/measurement markers crowd in projection but visible captions retain contrast. Guides clear in history/mode captures."
+    },
+    {
+      "source": "water higher-resolution display",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-bd198-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "3-history-and-mode.png"
+      ],
+      "finding": "No additional confirmed visual defect. Measured water captions stay clear of bond cylinders throughout six moves, rotations, history and panel changes. Full-size history/mode view retains contrast and correct atom attachment."
     }
   ],
   "report": "/private/tmp/crystal-oct13-measured-v192.json"

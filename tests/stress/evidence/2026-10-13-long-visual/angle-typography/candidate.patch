@@ -1,0 +1,29 @@
+--- app.js
++++ app.js
+@@ -3923,7 +3923,7 @@
+ // Create floating angle label (clean text, always faces camera)
+ function createFloatingAngleLabel(position, angleDeg) {
+     const canvas = document.createElement('canvas');
+-    canvas.width = 80;
++    canvas.width = 128;
+     canvas.height = 32;
+     const ctx = canvas.getContext('2d');
+     
+@@ -3941,7 +3941,7 @@
+     
+     // White text
+     ctx.fillStyle = '#ffffff';
+-    ctx.fillText(labelText, 40, 16);
++    ctx.fillText(labelText, canvas.width / 2, 16);
+     
+     const texture = new THREE.CanvasTexture(canvas);
+     const spriteMaterial = new THREE.SpriteMaterial({ 
+@@ -3956,7 +3956,7 @@
+     
+     // Size proportional to selection labels
+     const labelSize = getFloatingLabelSize();
+-    sprite.scale.set(labelSize * 1.5, labelSize * 0.6, 1);
++    sprite.scale.set(labelSize * 0.6 * canvas.width / canvas.height, labelSize * 0.6, 1);
+     sprite.renderOrder = 998;
+     sprite.userData.isMeasurementLabel = true;
+     sprite.userData.isMeasurementVisual = true;

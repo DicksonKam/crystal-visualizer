@@ -1,5 +1,5 @@
 {
-  "status": "suite active",
+  "status": "12 compound workflow tests passed; remaining visual samples still need review",
   "reviewed_full_size": [
     "Al 900px cycle0 atom preview",
     "Al 900px cycle0 cell preview",
@@ -7,12 +7,28 @@
     "Al 900px cycle3 atom committed",
     "Si 900px cycle3 cell committed",
     "Si 900px measurement restored through deletion",
-    "NaCl 900px cycle3 cell committed"
+    "NaCl 900px cycle3 cell committed",
+    "graphene 900px cycle3 cell committed",
+    "graphene 900px final"
   ],
   "finding": "No confirmed defect in first 44 workflow captures. Post-edit periodic bonds end at cell boundaries; this is not proof of stale ghost bonds. Measurement markers and captions remain visible in full-size cycle3 placement. Entire suite result still pending.",
   "raw_output": "/private/tmp/crystal-oct13-compound-results",
   "report": "/private/tmp/crystal-oct13-compound.json",
   "process_session": 52110,
-  "reviewed_overview": 176,
-  "additional_overview": "Al at two widths, Si 900px and NaCl 900px: 176 captures reviewed; no new confirmed defect. Entire suite still running."
+  "reviewed_overview": 220,
+  "additional_overview": "Al at two widths, Si 900px and NaCl 900px: 176 captures reviewed; no new confirmed defect. Entire suite still running.",
+  "candidate_findings": [
+    {
+      "issue": "Three-digit angle caption appears smaller than distance captions",
+      "evidence": "graphene-900/3-cell-committed.png",
+      "code": "app.js createFloatingAngleLabel uses an 80px texture and fits 24px text into it; distance uses128px. Check whether ordinary 100\u2013180 degree captions lose intended readability due to font fitting.",
+      "status": "investigate before modification"
+    }
+  ],
+  "result": {
+    "exit_code": 0,
+    "expected": 12,
+    "unexpected": 0,
+    "duration_ms": 1403054.8
+  }
 }

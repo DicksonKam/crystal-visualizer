@@ -1,0 +1,327 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/23.9.0/bin/node",
+      "/Users/dicksonkam/Projects/crystal-visualizer/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/private/tmp/crystal-oct13.config.cjs",
+      "measurement-angle-typography.spec.cjs",
+      "--output",
+      "/private/tmp/crystal-oct13-angle-before",
+      "--reporter=json"
+    ],
+    "configFile": "/private/tmp/crystal-oct13.config.cjs",
+    "rootDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/crystal-oct13-angle-before",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node tests/browser/server.cjs",
+      "url": "http://127.0.0.1:4173",
+      "reuseExistingServer": true,
+      "timeout": 10000,
+      "cwd": "/Users/dicksonkam/Projects/crystal-visualizer"
+    }
+  },
+  "suites": [
+    {
+      "title": "measurement-angle-typography.spec.cjs",
+      "file": "measurement-angle-typography.spec.cjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "ordinary 90 degree captions retain comparable text size",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7662,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m22\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m22\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs:30:33",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                      "column": 33,
+                      "line": 30
+                    },
+                    "snippet": "  28 |     await info.attach('rendered-text-sizes',{body:JSON.stringify(sizes),contentType:'application/json'});\n  29 |     expect(sizes).toHaveLength(3);\n> 30 |     expect(sizes[2].fontPixels).toBeGreaterThanOrEqual(sizes[0].fontPixels-1);\n     |                                 ^\n  31 |     expect(sizes[2].inkCSS).toBeGreaterThanOrEqual(sizes[0].inkCSS-1.5);\n  32 | });\n  33 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                        "column": 33,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m22\u001b[39m\n\n  28 |     await info.attach('rendered-text-sizes',{body:JSON.stringify(sizes),contentType:'application/json'});\n  29 |     expect(sizes).toHaveLength(3);\n> 30 |     expect(sizes[2].fontPixels).toBeGreaterThanOrEqual(sizes[0].fontPixels-1);\n     |                                 ^\n  31 |     expect(sizes[2].inkCSS).toBeGreaterThanOrEqual(sizes[0].inkCSS-1.5);\n  32 | });\n  33 |\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs:30:33"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:02:01.153Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rendered-text-sizes",
+                      "contentType": "application/json",
+                      "body": "W3siZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjExLjgxMjUsImNhbnZhcyI6WzEyOCwzMl19LHsiZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjExLjgxMjUsImNhbnZhcyI6WzEyOCwzMl19LHsiZm9udCI6ImJvbGQgMjJweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjIyLCJpbmtDU1MiOjguNDM3NSwiY2FudmFzIjpbODAsMzJdfV0="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-4b54d-retain-comparable-text-size-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-4b54d-retain-comparable-text-size-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-4b54d-retain-comparable-text-size-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                    "column": 33,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc838db5866ac0d684e1-a2fff34d6cd1c5dc4eed",
+          "file": "measurement-angle-typography.spec.cjs",
+          "line": 3,
+          "column": 37
+        },
+        {
+          "title": "ordinary 109.5 degree captions retain comparable text size",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7613,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m18\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m18\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs:30:33",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                      "column": 33,
+                      "line": 30
+                    },
+                    "snippet": "  28 |     await info.attach('rendered-text-sizes',{body:JSON.stringify(sizes),contentType:'application/json'});\n  29 |     expect(sizes).toHaveLength(3);\n> 30 |     expect(sizes[2].fontPixels).toBeGreaterThanOrEqual(sizes[0].fontPixels-1);\n     |                                 ^\n  31 |     expect(sizes[2].inkCSS).toBeGreaterThanOrEqual(sizes[0].inkCSS-1.5);\n  32 | });\n  33 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                        "column": 33,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m18\u001b[39m\n\n  28 |     await info.attach('rendered-text-sizes',{body:JSON.stringify(sizes),contentType:'application/json'});\n  29 |     expect(sizes).toHaveLength(3);\n> 30 |     expect(sizes[2].fontPixels).toBeGreaterThanOrEqual(sizes[0].fontPixels-1);\n     |                                 ^\n  31 |     expect(sizes[2].inkCSS).toBeGreaterThanOrEqual(sizes[0].inkCSS-1.5);\n  32 | });\n  33 |\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs:30:33"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:02:09.610Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rendered-text-sizes",
+                      "contentType": "application/json",
+                      "body": "W3siZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjExLjgxMjUsImNhbnZhcyI6WzEyOCwzMl19LHsiZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjExLjgxMjUsImNhbnZhcyI6WzEyOCwzMl19LHsiZm9udCI6ImJvbGQgMThweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjE4LCJpbmtDU1MiOjYuNzUsImNhbnZhcyI6WzgwLDMyXX1d"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-a4567-retain-comparable-text-size-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-a4567-retain-comparable-text-size-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-a4567-retain-comparable-text-size-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                    "column": 33,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc838db5866ac0d684e1-cc557c33fba6b1838686",
+          "file": "measurement-angle-typography.spec.cjs",
+          "line": 3,
+          "column": 37
+        },
+        {
+          "title": "ordinary 175 degree captions retain comparable text size",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7113,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m18\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m18\u001b[39m\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs:30:33",
+                    "location": {
+                      "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                      "column": 33,
+                      "line": 30
+                    },
+                    "snippet": "  28 |     await info.attach('rendered-text-sizes',{body:JSON.stringify(sizes),contentType:'application/json'});\n  29 |     expect(sizes).toHaveLength(3);\n> 30 |     expect(sizes[2].fontPixels).toBeGreaterThanOrEqual(sizes[0].fontPixels-1);\n     |                                 ^\n  31 |     expect(sizes[2].inkCSS).toBeGreaterThanOrEqual(sizes[0].inkCSS-1.5);\n  32 | });\n  33 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                        "column": 33,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m23\u001b[39m\nReceived:    \u001b[31m18\u001b[39m\n\n  28 |     await info.attach('rendered-text-sizes',{body:JSON.stringify(sizes),contentType:'application/json'});\n  29 |     expect(sizes).toHaveLength(3);\n> 30 |     expect(sizes[2].fontPixels).toBeGreaterThanOrEqual(sizes[0].fontPixels-1);\n     |                                 ^\n  31 |     expect(sizes[2].inkCSS).toBeGreaterThanOrEqual(sizes[0].inkCSS-1.5);\n  32 | });\n  33 |\n    at /Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs:30:33"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T19:02:17.734Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "rendered-text-sizes",
+                      "contentType": "application/json",
+                      "body": "W3siZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjExLjgxMjUsImNhbnZhcyI6WzEyOCwzMl19LHsiZm9udCI6ImJvbGQgMjRweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjI0LCJpbmtDU1MiOjExLjgxMjUsImNhbnZhcyI6WzEyOCwzMl19LHsiZm9udCI6ImJvbGQgMThweCBcIkpldEJyYWlucyBNb25vXCIsIG1vbm9zcGFjZSIsImZvbnRQaXhlbHMiOjE4LCJpbmtDU1MiOjYuNzUsImNhbnZhcyI6WzgwLDMyXX1d"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-b88ff-retain-comparable-text-size-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-b88ff-retain-comparable-text-size-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/private/tmp/crystal-oct13-angle-before/measurement-angle-typograp-b88ff-retain-comparable-text-size-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/dicksonkam/Projects/crystal-visualizer/tests/browser/measurement-angle-typography.spec.cjs",
+                    "column": 33,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "cc838db5866ac0d684e1-371822ced9b9a9b3c39e",
+          "file": "measurement-angle-typography.spec.cjs",
+          "line": 3,
+          "column": 37
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T19:02:00.779Z",
+    "duration": 24313.004,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

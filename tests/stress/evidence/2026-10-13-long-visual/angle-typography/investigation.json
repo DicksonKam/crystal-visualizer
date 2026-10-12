@@ -1,0 +1,15 @@
+{
+  "status": "Fixed in version 190; production validation passed",
+  "root_cause": "80px angle texture with16px padding fits 109.5 and175 captions at18px instead of intended24px. Distance texture uses128px and retains24px.",
+  "proposed_fix": "128px angle texture, centered text and matching sprite aspect ratio.",
+  "validation_correction": "Initial full ink bounding-box comparison included \u00c5 accent; compare numeric glyphs to avoid different unit symbol shapes biasing results.",
+  "candidate_session": 67070,
+  "next_step": "Continue remaining campaign on fresh version190 browser.",
+  "validation": {
+    "expected": 10,
+    "unexpected": 0,
+    "flaky": 0,
+    "report": "fixed-result.json"
+  },
+  "visual_review": "Reviewed full-size 175-degree caption, water edit annotations, and unselected atom occlusion render. Captions readable; placement retained."
+}

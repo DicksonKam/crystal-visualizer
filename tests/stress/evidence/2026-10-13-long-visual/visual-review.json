@@ -691,6 +691,15 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16025",
       "finding": "No additional confirmed defect in overview. Measured Si previews update captions and clear guides on placement/cancel; molecular/NaCl edits, periodic copies and panel changes retain geometry and selected atom markers. Later projected replica overlap follows deliberate edits/settings; sparse later measurements limit annotation assessment."
+    },
+    {
+      "seed": 16026,
+      "version": 192,
+      "checkpoint_count": 71,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16026",
+      "finding": "No additional confirmed defect in overview. Trajectory measured playback, Al atom edits/additions, canceled previews and graphene remeasurement retain geometry and markers across panel changes. Later graphite captions stay distinct from atom indices; bonds mostly disabled, so bond detail remains limited."
     }
   ],
   "captured_but_unreviewed_seeds": [

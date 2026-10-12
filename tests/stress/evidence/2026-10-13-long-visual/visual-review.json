@@ -349,6 +349,28 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15004",
       "finding": "No additional confirmed visual defect. Drag guide sections remain bounded; canceled previews clear their guides in subsequent captures. Panel resizing and periodic replicas remain consistent. Some later views are small or panned and give limited caption coverage."
+    },
+    {
+      "seed": 15005,
+      "version": 191,
+      "checkpoint_count": 78,
+      "contact_sheets": 4,
+      "full_size": [
+        "step0 preserved silicon angle/distance drag preview"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15005",
+      "finding": "No additional confirmed defect. Bounded drag sections clear after placement/cancellation, measurements remain connected in reviewed samples, and collapse/reopen retain scene. Later trajectory views have small atoms and limited caption detail."
+    },
+    {
+      "seed": 15006,
+      "version": 191,
+      "checkpoint_count": 72,
+      "contact_sheets": 3,
+      "full_size": [
+        "step6 NaCl drag preview"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15006",
+      "finding": "No additional confirmed defect. Bounded drag sections clear after placement/cancellation, measurements remain connected in reviewed samples, and collapse/reopen retain scene. Later trajectory views have small atoms and limited caption detail."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -397,7 +419,10 @@
     14015,
     14016,
     14017,
-    14018
+    14018,
+    15007,
+    15008,
+    15009
   ],
   "status": "campaign active; review continues"
 }

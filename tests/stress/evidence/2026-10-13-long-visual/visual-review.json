@@ -101,10 +101,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13012",
       "finding": "No confirmed new bug in these overview views. Focus/zoom can crop other atoms; periodic-image expansion makes trajectory atoms small. Close-up focused tests supply separate measurement readability coverage."
+    },
+    {
+      "seed": 13013,
+      "checkpoint_count": 63,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13013",
+      "finding": "No confirmed new bug in overview review. Boundary drag planes, retained periodic copies and sidebar changes remain visually coherent in sampled views."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13013,
     13014,
     13015,
     13016,
@@ -118,7 +125,8 @@
     13024,
     13025,
     13026,
-    13027
+    13027,
+    13028
   ],
   "status": "campaign active; review continues"
 }

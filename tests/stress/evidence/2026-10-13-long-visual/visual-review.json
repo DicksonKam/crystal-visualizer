@@ -646,6 +646,15 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16020",
       "finding": "No additional confirmed defect. Source/display changes, periodic replicas and atom previews retain scene. Full-size added-oxygen view contains dark rear sphere shading; lights/shadows present in renderer and this alone is not evidence of missing geometry or stale copies. Most later measurements absent and bonds disabled, limiting caption detail."
+    },
+    {
+      "seed": 16021,
+      "version": 192,
+      "checkpoint_count": 69,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16021",
+      "finding": "No additional confirmed defect in overview. Measured water, canceled previews, shifts, trajectory frame/ghost selection, periodic graphene and selective-dynamics indicators retain geometry and markers across panel changes. Known focus cropping visible; sparse later captions and disabled bonds limit fine annotation assessment."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -694,7 +703,7 @@
     14016,
     14017,
     14018,
-    16021
+    16022
   ],
   "status": "campaign active; review continues"
 }

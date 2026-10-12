@@ -167,10 +167,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13020",
       "finding": "No confirmed new bug in overview review. Some later tiny-atom views limit visual usefulness; separate close-up compound and snap checks supplement coverage."
+    },
+    {
+      "seed": 13021,
+      "checkpoint_count": 71,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13021",
+      "finding": "No confirmed new bug in overview review. Atom placements and molecular playback retain geometry in sampled frames. Sparse active measurements limit angle coverage; compound workflows supplement this."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13021,
     13022,
     13023,
     13024,
@@ -188,7 +195,10 @@
     13036,
     13037,
     13038,
-    13039
+    13039,
+    13040,
+    13041,
+    13042
   ],
   "status": "campaign active; review continues"
 }

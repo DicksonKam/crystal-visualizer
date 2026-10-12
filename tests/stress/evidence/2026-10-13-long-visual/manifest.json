@@ -8,18 +8,18 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "First twenty random chains overview-reviewed, 120 focused captures, 88 compound captures and five snap-after-edit captures reviewed. Long and compound suites remain active.",
+  "visual_review": "First twenty-one random chains overview-reviewed, 120 focused captures, 132 compound captures and five snap-after-edit captures reviewed. Long and compound suites remain active.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
   "latest_process_event": {
     "event": "pass",
-    "seed": 13039,
-    "actions": 7020,
-    "images": 2674,
-    "elapsedSeconds": 2261.9319840830003
+    "seed": 13042,
+    "actions": 7560,
+    "images": 2880,
+    "elapsedSeconds": 2409.836277375
   },
-  "reviewed_checkpoints": 1371,
+  "reviewed_checkpoints": 1442,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json"
 }

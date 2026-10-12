@@ -127,11 +127,25 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13015",
       "finding": "No confirmed new bug. Full-size crowded periodic-copy view separates numbered selected markers and retains a legible distance caption. Tiny trajectory atoms follow cell/image framing settings."
+    },
+    {
+      "seed": 13016,
+      "checkpoint_count": 66,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13016",
+      "finding": "No confirmed new bug in overview review. Atom/cancel previews, labels, measurements, periodic copies and panel changes retain visible geometry; detailed caption assessment still requires full-size images."
+    },
+    {
+      "seed": 13017,
+      "checkpoint_count": 79,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13017",
+      "finding": "No confirmed new bug in overview review. Atom/cancel previews, labels, measurements, periodic copies and panel changes retain visible geometry; detailed caption assessment still requires full-size images."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13016,
-    13017,
     13018,
     13019,
     13020,
@@ -145,7 +159,9 @@
     13028,
     13029,
     13030,
-    13031
+    13031,
+    13032,
+    13033
   ],
   "status": "campaign active; review continues"
 }

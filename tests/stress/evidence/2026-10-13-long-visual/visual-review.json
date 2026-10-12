@@ -371,6 +371,26 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15006",
       "finding": "No additional confirmed defect. Bounded drag sections clear after placement/cancellation, measurements remain connected in reviewed samples, and collapse/reopen retain scene. Later trajectory views have small atoms and limited caption detail."
+    },
+    {
+      "seed": 15007,
+      "version": 191,
+      "checkpoint_count": 77,
+      "contact_sheets": 4,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15007",
+      "finding": "No additional confirmed defect in reviewed images. Edit/mode/history changes retain intended selection, canceled drag planes clear, and measured Al pair retains readable caption after panel resizing, reset and rotation. Some Find atom focus crops surrounding atoms as previously recorded; overview alone cannot prove all bond occlusion details."
+    },
+    {
+      "seed": 15008,
+      "version": 191,
+      "checkpoint_count": 61,
+      "contact_sheets": 3,
+      "full_size": [
+        "step155 reset measured Al pair"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15008",
+      "finding": "No additional confirmed defect in reviewed images. Edit/mode/history changes retain intended selection, canceled drag planes clear, and measured Al pair retains readable caption after panel resizing, reset and rotation. Some Find atom focus crops surrounding atoms as previously recorded; overview alone cannot prove all bond occlusion details."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -420,9 +440,8 @@
     14016,
     14017,
     14018,
-    15007,
-    15008,
-    15009
+    15009,
+    15010
   ],
   "status": "campaign active; review continues"
 }

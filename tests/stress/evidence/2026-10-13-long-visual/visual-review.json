@@ -570,6 +570,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16012",
       "finding": "No additional confirmed defect in overview. Initial benzene measurement persists through atom preview and placement; panel, mode, periodic, history, frame and display changes retain geometry. Later trajectory atoms are tiny and bonds mostly disabled, limiting text and bond assessment; focused measured tests cover close views."
+    },
+    {
+      "seed": 16013,
+      "version": 192,
+      "checkpoint_count": 65,
+      "contact_sheets": 3,
+      "full_size": [
+        "initial methane measurement beside thick bonds"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16013",
+      "finding": "No additional confirmed defect. Full-size measured methane captions remain readable beside thick bonds and overlapping projected atoms. Cancel/placement and panel sequences retain markers; later cell previews, coordinates/history and display changes clear guides and retain geometry. Cropping follows retained focus/zoom, already recorded; later sparse measurements limit detail."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -617,8 +628,7 @@
     14015,
     14016,
     14017,
-    14018,
-    16013
+    14018
   ],
   "status": "campaign active; review continues"
 }

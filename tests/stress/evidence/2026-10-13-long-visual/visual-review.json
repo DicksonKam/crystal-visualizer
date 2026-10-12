@@ -194,13 +194,56 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14000",
       "finding": "No new defect confirmed in overview review. Methane labels readable in full-size initial image; focus cropping and tiny atoms after chosen display/scale settings limit later close-up coverage."
+    },
+    {
+      "seed": 13023,
+      "version": 189,
+      "checkpoint_count": 63,
+      "contact_sheets": 3,
+      "full_size": [
+        "step21 collapsed panel measurements"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13023",
+      "finding": "No additional defect confirmed in overview review. Periodic copies, drag/cancel previews, mode switches and panel previews retain visible geometry. Tiny trajectory atom sizes and sparse three-atom selections limit detailed caption coverage."
+    },
+    {
+      "seed": 13024,
+      "version": 189,
+      "checkpoint_count": 68,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13024",
+      "finding": "No additional defect confirmed in overview review. Periodic copies, drag/cancel previews, mode switches and panel previews retain visible geometry. Tiny trajectory atom sizes and sparse three-atom selections limit detailed caption coverage."
+    },
+    {
+      "seed": 13025,
+      "version": 189,
+      "checkpoint_count": 72,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13025",
+      "finding": "No additional defect confirmed in overview review. Periodic copies, drag/cancel previews, mode switches and panel previews retain visible geometry. Tiny trajectory atom sizes and sparse three-atom selections limit detailed caption coverage."
+    },
+    {
+      "seed": 13026,
+      "version": 189,
+      "checkpoint_count": 61,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13026",
+      "finding": "No additional defect confirmed in overview review. Periodic copies, drag/cancel previews, mode switches and panel previews retain visible geometry. Tiny trajectory atom sizes and sparse three-atom selections limit detailed caption coverage."
+    },
+    {
+      "seed": 14001,
+      "version": 190,
+      "checkpoint_count": 70,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14001",
+      "finding": "No additional defect confirmed in overview review. Periodic copies, drag/cancel previews, mode switches and panel previews retain visible geometry. Tiny trajectory atom sizes and sparse three-atom selections limit detailed caption coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13023,
-    13024,
-    13025,
-    13026,
     13027,
     13028,
     13029,

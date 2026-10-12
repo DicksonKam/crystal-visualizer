@@ -8,7 +8,7 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "23 random chains (including first updated Retina chain),120 focused and496 compound captures reviewed; angle caption defect fixed and verified.",
+  "visual_review": "28 random chains,120 focused and496 compound captures visually reviewed. One confirmed typography correction saved; no additional confirmed defect in newly reviewed sequences.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
@@ -19,7 +19,7 @@
     "images": 4194,
     "elapsedSeconds": 3351.23121625
   },
-  "reviewed_checkpoints": 1597,
+  "reviewed_checkpoints": 1931,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
@@ -34,6 +34,12 @@
     "session": 20332,
     "output": "/private/tmp/crystal-oct13-long-visual-v190",
     "log": "/private/tmp/crystal-oct13-long-visual-v190.log",
-    "status": "running; fresh browser, Retina DPR2"
+    "status": "running; fresh browser, Retina DPR2",
+    "latest_pass": {
+      "seed": 14002,
+      "actions": 540,
+      "images": 225,
+      "elapsedSeconds": 348.054956542
+    }
   }
 }

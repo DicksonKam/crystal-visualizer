@@ -581,6 +581,15 @@
       ],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16013",
       "finding": "No additional confirmed defect. Full-size measured methane captions remain readable beside thick bonds and overlapping projected atoms. Cancel/placement and panel sequences retain markers; later cell previews, coordinates/history and display changes clear guides and retain geometry. Cropping follows retained focus/zoom, already recorded; later sparse measurements limit detail."
+    },
+    {
+      "seed": 16014,
+      "version": 192,
+      "checkpoint_count": 72,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16014",
+      "finding": "No additional confirmed defect in overview. Si measurement and panel changes retain scene; methane bonds follow canceled previews and undo/reset without visible stale cylinders. Some trajectory atoms tiny and active measurements sparse later, limiting detailed annotation coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [

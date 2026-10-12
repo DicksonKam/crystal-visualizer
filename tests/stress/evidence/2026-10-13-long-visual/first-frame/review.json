@@ -1,0 +1,10 @@
+{
+  "version": 191,
+  "visual_tests_passed": 2,
+  "edit_cycles": 32,
+  "captures_reviewed": 14,
+  "mouse_tests_passed": 4,
+  "initial_failure": "All four synthetic pointerdowns omitted isPrimary, which defaults to false; production intentionally ignores secondary pointers. Corrected event to match a primary mouse. All four complete atom-to-frame workflows then passed, including skewed cells and both camera directions.",
+  "finding": "Preview guides clear at placement/history restoration; first frame gesture accepted after atom movement. Both panel widths finish with continuous frame and rotate successfully. Overview captures reviewed; tiny model limits bond-detail assessment.",
+  "app_changes": false
+}

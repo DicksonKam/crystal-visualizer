@@ -45,7 +45,7 @@ for (const [name, lattice] of Object.entries(cells)) for (const sign of [-1, 1])
         // Leave a stale handle highlight before pointer-down at the atom. This
         // mimics a view/target change without an intervening pointermove.
         await page.evaluate(({ atom }) => {
-            renderer.domElement.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, button: 0, buttons: 1, clientX: atom.x, clientY: atom.y }));
+            renderer.domElement.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, isPrimary: true, pointerType: 'mouse', button: 0, buttons: 1, clientX: atom.x, clientY: atom.y }));
         }, points);
         expect(await page.evaluate(() => ({ atom: draggedAtom?.index, cell: vacuumDragState.isDragging, hover: Boolean(vacuumDragState.hoveredEdge) })))
             .toEqual({ atom: 0, cell: false, hover: false });

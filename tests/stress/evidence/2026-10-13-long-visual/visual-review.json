@@ -326,6 +326,29 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15002",
       "finding": "No additional confirmed defect in overview. Atom and cell previews, reset/history, periodic/display changes retain rendered geometry. Detailed caption coverage is sparse later in these chains."
+    },
+    {
+      "seed": 15003,
+      "version": 191,
+      "checkpoint_count": 66,
+      "contact_sheets": 3,
+      "full_size": [
+        "step120 cancel atom preview"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15003",
+      "finding": "No additional confirmed visual defect. Drag guide sections remain bounded; canceled previews clear their guides in subsequent captures. Panel resizing and periodic replicas remain consistent. Some later views are small or panned and give limited caption coverage."
+    },
+    {
+      "seed": 15004,
+      "version": 191,
+      "checkpoint_count": 72,
+      "contact_sheets": 3,
+      "full_size": [
+        "step54 NaCl atom preview",
+        "step168 methane measurement after size change"
+      ],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v191/seed-15004",
+      "finding": "No additional confirmed visual defect. Drag guide sections remain bounded; canceled previews clear their guides in subsequent captures. Panel resizing and periodic replicas remain consistent. Some later views are small or panned and give limited caption coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -374,9 +397,7 @@
     14015,
     14016,
     14017,
-    14018,
-    15003,
-    15004
+    14018
   ],
   "status": "campaign active; review continues"
 }

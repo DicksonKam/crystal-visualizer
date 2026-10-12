@@ -19,7 +19,7 @@
     "images": 4194,
     "elapsedSeconds": 3351.23121625
   },
-  "reviewed_checkpoints": 3518,
+  "reviewed_checkpoints": 3548,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
@@ -82,6 +82,6 @@
     "output": "/private/tmp/crystal-oct13-measured-v192",
     "report": "/private/tmp/crystal-oct13-measured-v192.json",
     "status": "running",
-    "visual_review": "150 captures reviewed across five ordinary measured sequences; final8-case report still pending."
+    "visual_review": "180 captures reviewed across six ordinary measured sequences; final8-case report still pending."
   }
 }

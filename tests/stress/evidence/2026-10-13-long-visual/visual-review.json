@@ -590,6 +590,24 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16014",
       "finding": "No additional confirmed defect in overview. Si measurement and panel changes retain scene; methane bonds follow canceled previews and undo/reset without visible stale cylinders. Some trajectory atoms tiny and active measurements sparse later, limiting detailed annotation coverage."
+    },
+    {
+      "seed": 16015,
+      "version": 192,
+      "checkpoint_count": 70,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16015",
+      "finding": "No additional confirmed defect in overview. Measurement selections and captions persist across panel, history and trajectory display changes; atom/cell previews and later replacement scenes retain visible geometry. Large portions use tiny trajectory atoms or bonds disabled, so close detailed visual assessment remains limited; focused measured and snap tests supplement."
+    },
+    {
+      "seed": 16016,
+      "version": 192,
+      "checkpoint_count": 67,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v192/seed-16016",
+      "finding": "No additional confirmed defect in overview. Measurement selections and captions persist across panel, history and trajectory display changes; atom/cell previews and later replacement scenes retain visible geometry. Large portions use tiny trajectory atoms or bonds disabled, so close detailed visual assessment remains limited; focused measured and snap tests supplement."
     }
   ],
   "captured_but_unreviewed_seeds": [
@@ -637,7 +655,8 @@
     14015,
     14016,
     14017,
-    14018
+    14018,
+    16017
   ],
   "status": "campaign active; review continues"
 }

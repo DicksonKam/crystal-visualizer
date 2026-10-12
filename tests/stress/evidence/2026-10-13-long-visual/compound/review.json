@@ -1,0 +1,12 @@
+{
+  "status": "suite active",
+  "reviewed_full_size": [
+    "Al 900px cycle0 atom preview",
+    "Al 900px cycle0 cell preview",
+    "Al 900px cycle0 cell committed"
+  ],
+  "finding": "Initial frame drag after atom movement expands the cell while retaining atom positions and measurements. Temporary dimming of sidebar element icon follows its existing CSS fade-in animation during DOM rebuild, not a changed element color. Entire compound suite not yet verified.",
+  "raw_output": "/private/tmp/crystal-oct13-compound-results",
+  "report": "/private/tmp/crystal-oct13-compound.json",
+  "process_session": 52110
+}

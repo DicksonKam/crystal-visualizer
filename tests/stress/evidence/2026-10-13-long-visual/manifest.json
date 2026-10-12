@@ -8,16 +8,18 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "First thirteen random chains inspected in 43 contact sheets; all 120 focused screenshots reviewed in eight contact sheets, with representative full-size inspections. Long random campaign remains active.",
+  "visual_review": "First fifteen random chains overview-reviewed with selected full-size inspections; all 120 focused captures reviewed. Compound suite active; first atom and frame preview/placement checked at full size.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
   "latest_process_event": {
     "event": "pass",
-    "seed": 13028,
-    "actions": 5040,
-    "images": 1922,
-    "elapsedSeconds": 1516.630609916
+    "seed": 13031,
+    "actions": 5580,
+    "images": 2125,
+    "elapsedSeconds": 1673.479060083
   },
-  "reviewed_checkpoints": 916
+  "reviewed_checkpoints": 1027,
+  "compound_output": "/private/tmp/crystal-oct13-compound-results",
+  "compound_report": "/private/tmp/crystal-oct13-compound.json"
 }

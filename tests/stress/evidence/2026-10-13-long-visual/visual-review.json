@@ -175,10 +175,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13021",
       "finding": "No confirmed new bug in overview review. Atom placements and molecular playback retain geometry in sampled frames. Sparse active measurements limit angle coverage; compound workflows supplement this."
+    },
+    {
+      "seed": 13022,
+      "checkpoint_count": 71,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13022",
+      "finding": "No confirmed new bug in overview images. Methane measurement and atom-edit samples retain visible markers; trajectory selections sometimes overlap in projection, requiring close-up readability assessment."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13022,
     13023,
     13024,
     13025,
@@ -198,7 +205,9 @@
     13039,
     13040,
     13041,
-    13042
+    13042,
+    13043,
+    13044
   ],
   "status": "campaign active; review continues"
 }

@@ -1,0 +1,9 @@
+{
+  "test_result": "1 passed; exit0",
+  "video_frames_reviewed": 64,
+  "sampling_fps": 5,
+  "sampling_limit": "Overview sampling cannot rule out artifacts shorter than 200ms. Targeted full-rate transition inspection remains useful.",
+  "finding": "No transient marker or frame loss visible in reviewed samples of the edit, seeded approach, automatic snap, sidebar expansion and history restoration. Initial gray recorder padding precedes stable viewport sizing and does not show an app canvas failure.",
+  "raw_frames": "/private/tmp/crystal-oct13-snap-video-frames",
+  "source_test": "tests/browser/measurement-auto-snap-edit.spec.cjs"
+}

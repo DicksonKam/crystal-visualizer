@@ -77,10 +77,17 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13009",
       "finding": "No new bug confirmed in overview images. Several sections use very small atoms or no active measurements; a supplementary close-up measured workflow has therefore been started to improve scope coverage."
+    },
+    {
+      "seed": 13010,
+      "checkpoint_count": 67,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13010",
+      "finding": "No confirmed new bug in overview review. Trajectory atom scale shrinks after periodic-image expansion; focused close-up tests supplement this coverage."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13010,
     13011,
     13012,
     13013,
@@ -93,7 +100,9 @@
     13020,
     13021,
     13022,
-    13023
+    13023,
+    13024,
+    13025
   ],
   "status": "campaign active; review continues"
 }

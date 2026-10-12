@@ -1,0 +1,41 @@
+{
+  "status": "in progress; completion unproven",
+  "current_version": 192,
+  "requirements": [
+    {
+      "requirement": "Sustained several-hour real-user visual campaign",
+      "evidence": "Four sequential ordinary persistent browser phases; live current phase session18691",
+      "status": "incomplete until planned duration finishes and terminal result inspected"
+    },
+    {
+      "requirement": "Editing with distance and angle measurements, real camera rotation and sidebar resizing/collapse",
+      "evidence": "tests/browser/ordinary-measured-visual-stress.spec.cjs inspected; 8 current-version cases passed,48 cycles,240 captures reviewed,8 full-size renders",
+      "status": "verified within listed small structures and DPR1/2"
+    },
+    {
+      "requirement": "Automatic snapping after atom edits and corner atom movement",
+      "evidence": "Focused current-version rerun session78584; tests/browser/measurement-auto-snap-edit.spec.cjs and corner-atom-drag.spec.cjs",
+      "status": "pending terminal report and render review"
+    },
+    {
+      "requirement": "Periodic boundaries, mode switches, undo/redo and display rebuilds",
+      "evidence": "tests/stress/visual-campaign.cjs inspected: 11 ordinary sources, persistent browser page,180 mixed actions per chain; visual-review.json names reviewed captures and limitations",
+      "status": "ongoing campaign; focused history/mode tests verified"
+    },
+    {
+      "requirement": "Root fixes, regression and actual visuals",
+      "evidence": "1957f3a angle typography,b22360b corner plane,d9ad59f bond-caption avoidance; recorded old-version failures and current production reports",
+      "status": "three fixes locally committed; no additional defect confirmed in latest review"
+    },
+    {
+      "requirement": "Git-save each fix, no new buttons, no GitHub push, preserve original unsaved tab",
+      "evidence": "Three separate fix commits; original IAB tab untouched and test-only native tabs closed; current git status only unrelated .DS_Store",
+      "status": "preserved during campaign; recheck final state"
+    }
+  ],
+  "limitations": [
+    "Visual review is sampled, not every captured screenshot; unreviewed seed list retained.",
+    "Contact-sheet views with small particles or sparse captions are weaker evidence; dedicated close measured workflows supplement.",
+    "A finite campaign does not prove absence of every possible bug."
+  ]
+}

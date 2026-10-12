@@ -15,12 +15,47 @@
       "checkpoint_count": 67,
       "contact_sheets": 3,
       "finding": "No confirmed new bug seen in overview images. Clear/cancel/periodic rebuild samples retained visible atoms; detailed text readability is not fully verified from thumbnails."
+    },
+    {
+      "seed": 13003,
+      "checkpoint_count": 83,
+      "contact_sheets": 4,
+      "full_size": [
+        "step33 display after",
+        "step70 atom preview"
+      ],
+      "finding": "No confirmed new bug in the reviewed views. Dense graphene bonding followed the retained distance-cutoff setting; boundary bond stubs alone are not evidence of ghost bonds."
+    },
+    {
+      "seed": 13004,
+      "checkpoint_count": 62,
+      "contact_sheets": 3,
+      "full_size": [
+        "step24 mode after"
+      ],
+      "finding": "No confirmed new bug. Measured atom markers stayed distinct from ordinary indices in the full-size mode-switch view; panel collapse and drag/cancel previews retained visible geometry."
+    },
+    {
+      "seed": 13005,
+      "checkpoint_count": 86,
+      "contact_sheets": 4,
+      "full_size": [
+        "step140 panel after"
+      ],
+      "finding": "No confirmed new bug. Full-size narrow-panel measurement view retained distinct distance and angle captions and displaced numbered markers. Viewport cropping after focus/zoom remains the previously recorded framing observation."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13003,
-    13004,
-    13005
+    13006,
+    13007,
+    13008,
+    13009,
+    13010,
+    13011,
+    13012,
+    13013,
+    13014,
+    13015
   ],
   "status": "campaign active; review continues"
 }

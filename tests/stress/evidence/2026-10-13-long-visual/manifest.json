@@ -8,16 +8,16 @@
   "focus": "Ordinary editing plus measurements, rotation, panel resizing, undo/redo, boundaries and display rebuilds",
   "output": "/private/tmp/crystal-oct13-long-visual",
   "process_log": "/private/tmp/crystal-oct13-long-visual.log",
-  "visual_review": "First two completed chains inspected in six contact sheets; two seed-13001 frames also checked at full size. Other captures remain to be reviewed.",
+  "visual_review": "First five chains inspected in 17 contact sheets; seven representative frames also checked at full size. Other captures remain to be reviewed.",
   "existing_user_tab": "Preserved",
   "new_buttons": false,
   "github_push": false,
   "latest_process_event": {
     "event": "pass",
-    "seed": 13009,
-    "actions": 1620,
-    "images": 649,
-    "elapsedSeconds": 412.613583791
+    "seed": 13015,
+    "actions": 2700,
+    "images": 1027,
+    "elapsedSeconds": 707.372884625
   },
-  "reviewed_checkpoints": 131
+  "reviewed_checkpoints": 362
 }

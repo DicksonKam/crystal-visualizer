@@ -1,0 +1,4777 @@
+{
+  "seed": 13005,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "persistent": true,
+  "dense": false,
+  "sourceHashes": {
+    "app.js": "9d2c02bb2b55dea19207bf1037586d8fddfddafdc7b4674a749aa0058a423056",
+    "annotations.js": "a6a5b6a61e3fb598a9b698b0c9e3123ef4cdfde717fa1a19f73de9cd62267dce",
+    "camera.js": "0e6c2d6931183ccc344d40bc0cb1803f097158fdd4a051ec8ccc542654e0b021",
+    "structure.js": "a75ff5e6062e9093f720d01726bb924b8da001246b9da446c2eb725403a0444e",
+    "geometry.js": "4035afc570fb06c4188ab65f13e227dec8a3bcfb20d57dbe2d1eef09d902eca1",
+    "formats.js": "fffaa362c7444d87409785c71b186dea0973ce80d2364cfde48a87869e275ae1",
+    "document.js": "aa0f5d0f288a416b4b1da11032164023d2ea79dba99c8da04e2fda3df3028e17",
+    "history.js": "6b0a9a39ff4d6d1eeb630c98c7bcac3f21ee7601c96807a290b852f3b3a829aa",
+    "measurement.js": "cc176973b64890d2973dcc31606b7412d1dffd3a5f54c46f2acd415768794b62",
+    "layout.js": "2d0955d039be6e58b765ba9aeb743d79649924bd3f7cbdb9f766768c2abcdb7a",
+    "styles.css": "fc2010f5095b09ff0c7d06a3d00e158bce9046b3fdb69fb6f2adf2bd1e94e38a",
+    "index.html": "03320da44c7304d2a9fd3707a3f08e53b67e105fc96be9316864734058c10868",
+    "tests/stress/edit-scenario.cjs": "da2e8306a5beb6a893235884df51009048b4c0080996c2352bb4e241b3d3db0a",
+    "tests/stress/visual-observer.cjs": "84bdd23eb4d2e8516a5e89f38b3de9a8ca751cfae17d27e1d5a3f6dd5db31f2a",
+    "tests/stress/visual-campaign.cjs": "d5b574bc726c890fef231b25a07c5d944a5024ce8142b774daab1e9eed25ff18"
+  },
+  "sequence": [
+    {
+      "step": 0,
+      "action": "undo",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-0-undo-after.png",
+        "metrics": {
+          "content": 25261,
+          "cyan": 599,
+          "transparent": 0,
+          "checksum": 143219687,
+          "nonBackground": 27207,
+          "maxAtomRadiusPixels": 21.45672816474713,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "337e561a44cf1670b18b03fcab9e65865065913382879f14a28d3c7136e9964a",
+      "afterHash": "f9b76572df21dfe42764d2f4d2d0b1b6b0f6ce1199142ab6338e7a9d3e490b52"
+    },
+    {
+      "step": 1,
+      "action": "resize",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f9b76572df21dfe42764d2f4d2d0b1b6b0f6ce1199142ab6338e7a9d3e490b52",
+      "afterHash": "f9b76572df21dfe42764d2f4d2d0b1b6b0f6ce1199142ab6338e7a9d3e490b52"
+    },
+    {
+      "step": 2,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f9b76572df21dfe42764d2f4d2d0b1b6b0f6ce1199142ab6338e7a9d3e490b52",
+      "afterHash": "fd14d5eca05ed0ae751f2f0ce5a8a76d807fc02a5658cb0df9a2dd754fec0a8d"
+    },
+    {
+      "step": 3,
+      "action": "cancel",
+      "index": 3,
+      "pointer": {
+        "x": 932.4999999795376,
+        "y": 341.55288137105634,
+        "displayedIndex": 3
+      },
+      "delta": [
+        15,
+        -18
+      ],
+      "preview": {
+        "filename": "seed-13005-step-3-cancel-atom-preview.png",
+        "metrics": {
+          "content": 342338,
+          "cyan": 320094,
+          "transparent": 0,
+          "checksum": 309382890,
+          "nonBackground": 344896,
+          "maxAtomRadiusPixels": 21.45672816474713,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "fd14d5eca05ed0ae751f2f0ce5a8a76d807fc02a5658cb0df9a2dd754fec0a8d",
+      "afterHash": "fd14d5eca05ed0ae751f2f0ce5a8a76d807fc02a5658cb0df9a2dd754fec0a8d"
+    },
+    {
+      "step": 4,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "fd14d5eca05ed0ae751f2f0ce5a8a76d807fc02a5658cb0df9a2dd754fec0a8d",
+      "afterHash": "f9b76572df21dfe42764d2f4d2d0b1b6b0f6ce1199142ab6338e7a9d3e490b52"
+    },
+    {
+      "step": 5,
+      "action": "periodic",
+      "axis": "a",
+      "increase": true,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f9b76572df21dfe42764d2f4d2d0b1b6b0f6ce1199142ab6338e7a9d3e490b52",
+      "afterHash": "b9ef49d329bb4a617908d70b1b8c4ea9ce1fef8541428e55b1f2c96ef1359f60"
+    },
+    {
+      "step": 6,
+      "action": "rotate",
+      "delta": [
+        -11,
+        -14
+      ],
+      "pointer": {
+        "x": 1237,
+        "y": 212
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b9ef49d329bb4a617908d70b1b8c4ea9ce1fef8541428e55b1f2c96ef1359f60",
+      "afterHash": "b9ef49d329bb4a617908d70b1b8c4ea9ce1fef8541428e55b1f2c96ef1359f60"
+    },
+    {
+      "step": 7,
+      "action": "bond_length",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b9ef49d329bb4a617908d70b1b8c4ea9ce1fef8541428e55b1f2c96ef1359f60",
+      "afterHash": "b9ef49d329bb4a617908d70b1b8c4ea9ce1fef8541428e55b1f2c96ef1359f60"
+    },
+    {
+      "step": 8,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b9ef49d329bb4a617908d70b1b8c4ea9ce1fef8541428e55b1f2c96ef1359f60",
+      "afterHash": "70549812de895c48c6737ff516a181f00c353fa3a207e1dbb4a25c832c1ccb35"
+    },
+    {
+      "step": 9,
+      "action": "rotate",
+      "delta": [
+        10,
+        15
+      ],
+      "pointer": {
+        "x": 1237,
+        "y": 212
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "70549812de895c48c6737ff516a181f00c353fa3a207e1dbb4a25c832c1ccb35",
+      "afterHash": "70549812de895c48c6737ff516a181f00c353fa3a207e1dbb4a25c832c1ccb35"
+    },
+    {
+      "step": 10,
+      "action": "jump",
+      "number": 9,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "70549812de895c48c6737ff516a181f00c353fa3a207e1dbb4a25c832c1ccb35",
+      "afterHash": "e6bc5c9baf75ee9cd60ed4b5fcca6f18b6b4f9dd06fc979af3e23498e6df3f64"
+    },
+    {
+      "step": 11,
+      "action": "display",
+      "selector": "#showFixedIndicators",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-11-display-after.png",
+        "metrics": {
+          "content": 29530,
+          "cyan": 472,
+          "transparent": 0,
+          "checksum": 143620755,
+          "nonBackground": 32090,
+          "maxAtomRadiusPixels": 16.417760390624608,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "e6bc5c9baf75ee9cd60ed4b5fcca6f18b6b4f9dd06fc979af3e23498e6df3f64",
+      "afterHash": "e6bc5c9baf75ee9cd60ed4b5fcca6f18b6b4f9dd06fc979af3e23498e6df3f64"
+    },
+    {
+      "step": 12,
+      "action": "ghost",
+      "index": 17,
+      "pointer": {
+        "x": 1296.617672447293,
+        "y": 656.707760868286,
+        "displayedIndex": "ghost_7_100"
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-12-ghost-after.png",
+        "metrics": {
+          "content": 30410,
+          "cyan": 465,
+          "transparent": 0,
+          "checksum": 144938013,
+          "nonBackground": 33223,
+          "maxAtomRadiusPixels": 16.417760390624608,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "e6bc5c9baf75ee9cd60ed4b5fcca6f18b6b4f9dd06fc979af3e23498e6df3f64",
+      "afterHash": "851a58da50aa05bfec6fdaeb59b05cd15094eeff6ffd4e7d3293de6d31d57617"
+    },
+    {
+      "step": 13,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-13-reset-after.png",
+        "metrics": {
+          "content": 30404,
+          "cyan": 462,
+          "transparent": 0,
+          "checksum": 144927701,
+          "nonBackground": 33256,
+          "maxAtomRadiusPixels": 16.417760390624526,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "851a58da50aa05bfec6fdaeb59b05cd15094eeff6ffd4e7d3293de6d31d57617",
+      "afterHash": "851a58da50aa05bfec6fdaeb59b05cd15094eeff6ffd4e7d3293de6d31d57617"
+    },
+    {
+      "step": 14,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-14-reset-after.png",
+        "metrics": {
+          "content": 30404,
+          "cyan": 462,
+          "transparent": 0,
+          "checksum": 144927701,
+          "nonBackground": 33256,
+          "maxAtomRadiusPixels": 16.417760390624526,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "851a58da50aa05bfec6fdaeb59b05cd15094eeff6ffd4e7d3293de6d31d57617",
+      "afterHash": "851a58da50aa05bfec6fdaeb59b05cd15094eeff6ffd4e7d3293de6d31d57617"
+    },
+    {
+      "step": 15,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "851a58da50aa05bfec6fdaeb59b05cd15094eeff6ffd4e7d3293de6d31d57617",
+      "afterHash": "3720d356851f2d83604d5c0967138361115643c1143c3bd7a3d28a4c0ed0ebe5"
+    },
+    {
+      "step": 16,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-16-panel-panel-preview.png",
+        "metrics": {
+          "content": 29525,
+          "cyan": 465,
+          "transparent": 0,
+          "checksum": 163323554,
+          "nonBackground": 32138,
+          "maxAtomRadiusPixels": 16.41776039062455,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-16-panel-after.png",
+        "metrics": {
+          "content": 29525,
+          "cyan": 465,
+          "transparent": 0,
+          "checksum": 163323554,
+          "nonBackground": 32138,
+          "maxAtomRadiusPixels": 16.41776039062455,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 18,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "3720d356851f2d83604d5c0967138361115643c1143c3bd7a3d28a4c0ed0ebe5",
+      "afterHash": "3720d356851f2d83604d5c0967138361115643c1143c3bd7a3d28a4c0ed0ebe5"
+    },
+    {
+      "step": 17,
+      "action": "replace",
+      "file": "H2O.xyz",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-17-replace-after.png",
+        "metrics": {
+          "content": 60735,
+          "cyan": 2,
+          "transparent": 0,
+          "checksum": 176836601,
+          "nonBackground": 61047,
+          "maxAtomRadiusPixels": 116.03499593244771,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "3720d356851f2d83604d5c0967138361115643c1143c3bd7a3d28a4c0ed0ebe5",
+      "afterHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263"
+    },
+    {
+      "step": 18,
+      "action": "center",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263",
+      "afterHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263"
+    },
+    {
+      "step": 19,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-19-panel-panel-preview.png",
+        "metrics": {
+          "content": 60735,
+          "cyan": 2,
+          "transparent": 0,
+          "checksum": 176836601,
+          "nonBackground": 61047,
+          "maxAtomRadiusPixels": 116.03499593244771,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-19-panel-after.png",
+        "metrics": {
+          "content": 60735,
+          "cyan": 2,
+          "transparent": 0,
+          "checksum": 176836601,
+          "nonBackground": 61047,
+          "maxAtomRadiusPixels": 116.03499593244771,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263",
+      "afterHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263"
+    },
+    {
+      "step": 20,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-20-reset-after.png",
+        "metrics": {
+          "content": 60735,
+          "cyan": 2,
+          "transparent": 0,
+          "checksum": 176836601,
+          "nonBackground": 61047,
+          "maxAtomRadiusPixels": 116.03499593244771,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263",
+      "afterHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263"
+    },
+    {
+      "step": 21,
+      "action": "batch_fix",
+      "selector": "#unfixAllBtn",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263",
+      "afterHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263"
+    },
+    {
+      "step": 22,
+      "action": "jump",
+      "number": 1,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "42275a3dde40bd3b103f7d9d9c9e1a0dc97ff6726534ef3d49e02d1a8be04263",
+      "afterHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01"
+    },
+    {
+      "step": 23,
+      "action": "panel",
+      "width": 420,
+      "preview": {
+        "filename": "seed-13005-step-23-panel-panel-preview.png",
+        "metrics": {
+          "content": 55647,
+          "cyan": 400,
+          "transparent": 0,
+          "checksum": 189140877,
+          "nonBackground": 55805,
+          "maxAtomRadiusPixels": 110.93841383818035,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-23-panel-after.png",
+        "metrics": {
+          "content": 55647,
+          "cyan": 400,
+          "transparent": 0,
+          "checksum": 189140877,
+          "nonBackground": 55805,
+          "maxAtomRadiusPixels": 110.93841383818035,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01",
+      "afterHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01"
+    },
+    {
+      "step": 24,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-24-reset-after.png",
+        "metrics": {
+          "content": 55676,
+          "cyan": 397,
+          "transparent": 0,
+          "checksum": 189169772,
+          "nonBackground": 55824,
+          "maxAtomRadiusPixels": 110.93841383818032,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01",
+      "afterHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01"
+    },
+    {
+      "step": 25,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 26,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "a5b5da86653d0382c9078d6f74e09601e1ae28ffe7acd7b76e1dfb6ade6382f1"
+    },
+    {
+      "step": 27,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "a5b5da86653d0382c9078d6f74e09601e1ae28ffe7acd7b76e1dfb6ade6382f1",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 28,
+      "action": "viewport",
+      "viewport": {
+        "width": 900,
+        "height": 760
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-28-viewport-after.png",
+        "metrics": {
+          "content": 12134,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 52430480,
+          "nonBackground": 12337,
+          "maxAtomRadiusPixels": 51.91699169767059,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 29,
+      "action": "panel",
+      "width": 420,
+      "preview": {
+        "filename": "seed-13005-step-29-panel-panel-preview.png",
+        "metrics": {
+          "content": 12134,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 52430480,
+          "nonBackground": 12337,
+          "maxAtomRadiusPixels": 51.91699169767058,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-29-panel-after.png",
+        "metrics": {
+          "content": 12134,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 52430480,
+          "nonBackground": 12337,
+          "maxAtomRadiusPixels": 51.91699169767058,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 30,
+      "action": "redo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01"
+    },
+    {
+      "step": 31,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "a22497681b0e91d68269d32e953553aea60410b4c384664be857e5dc685f3a01",
+      "afterHash": "e8cdcbd26c02d309440310b93d1fae13aa120f495f9e4ec5c737cfa9514883ed"
+    },
+    {
+      "step": 32,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "e8cdcbd26c02d309440310b93d1fae13aa120f495f9e4ec5c737cfa9514883ed",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 33,
+      "action": "viewport",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-33-viewport-after.png",
+        "metrics": {
+          "content": 39427,
+          "cyan": 1,
+          "transparent": 0,
+          "checksum": 110936281,
+          "nonBackground": 39680,
+          "maxAtomRadiusPixels": 93.45058505580707,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 34,
+      "action": "rotate",
+      "delta": [
+        13,
+        -12
+      ],
+      "pointer": {
+        "x": 1109,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 35,
+      "action": "viewport",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-35-viewport-after.png",
+        "metrics": {
+          "content": 55553,
+          "cyan": 6,
+          "transparent": 0,
+          "checksum": 152395440,
+          "nonBackground": 55828,
+          "maxAtomRadiusPixels": 110.93841383818035,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "settling",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 36,
+      "action": "clear",
+      "performed": false,
+      "visual": {
+        "filename": "seed-13005-step-36-clear-after.png",
+        "metrics": {
+          "content": 55553,
+          "cyan": 6,
+          "transparent": 0,
+          "checksum": 152395440,
+          "nonBackground": 55828,
+          "maxAtomRadiusPixels": 110.93841383818035,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 37,
+      "action": "display",
+      "selector": "#toggleAxes",
+      "performed": false,
+      "visual": {
+        "filename": "seed-13005-step-37-display-after.png",
+        "metrics": {
+          "content": 55553,
+          "cyan": 6,
+          "transparent": 0,
+          "checksum": 152395440,
+          "nonBackground": 55828,
+          "maxAtomRadiusPixels": 110.93841383818035,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a"
+    },
+    {
+      "step": 38,
+      "action": "jump",
+      "number": 2,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "9cdacf47aa5cb2afaa6200edca03e5a71fe6b08f50b3fa60fcabdebed6e12e1a",
+      "afterHash": "0b273f8c56079124a4c331dd80b05d293fdf1206aaca35ba663febe54aab900a"
+    },
+    {
+      "step": 39,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "0b273f8c56079124a4c331dd80b05d293fdf1206aaca35ba663febe54aab900a",
+      "afterHash": "1c29c2c70c829b3ae2f617f1a2b18d607842cf73ea8ecd460aa47dc6da2fa83e"
+    },
+    {
+      "step": 40,
+      "action": "jump",
+      "number": 1,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "1c29c2c70c829b3ae2f617f1a2b18d607842cf73ea8ecd460aa47dc6da2fa83e",
+      "afterHash": "2d434c1306dbf844c4c15a309161514e8afa38af8c59317269dad20a7455b23e"
+    },
+    {
+      "step": 41,
+      "action": "center",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "2d434c1306dbf844c4c15a309161514e8afa38af8c59317269dad20a7455b23e",
+      "afterHash": "2d434c1306dbf844c4c15a309161514e8afa38af8c59317269dad20a7455b23e"
+    },
+    {
+      "step": 42,
+      "action": "click",
+      "index": 1,
+      "pointer": {
+        "x": 1378.3392287703418,
+        "y": 464.2111636510225,
+        "displayedIndex": 1
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "2d434c1306dbf844c4c15a309161514e8afa38af8c59317269dad20a7455b23e",
+      "afterHash": "c990c9f6f94781c3cdf63128ee76b524dd2c3bce8d13f437413057bf8eb19d95"
+    },
+    {
+      "step": 43,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "c990c9f6f94781c3cdf63128ee76b524dd2c3bce8d13f437413057bf8eb19d95",
+      "afterHash": "e50724e823173b3e1f9de5297b63053293d518af374618685a6991ed434854de"
+    },
+    {
+      "step": 44,
+      "action": "jump",
+      "number": 1,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "e50724e823173b3e1f9de5297b63053293d518af374618685a6991ed434854de",
+      "afterHash": "cac851d7b808cc143ea11100875e8a80817842ec6feebe3821609aab4c6e5454"
+    },
+    {
+      "step": 45,
+      "action": "clear",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "cac851d7b808cc143ea11100875e8a80817842ec6feebe3821609aab4c6e5454",
+      "afterHash": "248e43f2460b4e66f73bf576d3384d3570815d5d1c3230fe43498b979fede69e"
+    },
+    {
+      "step": 46,
+      "action": "zoom",
+      "delta": -120,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "248e43f2460b4e66f73bf576d3384d3570815d5d1c3230fe43498b979fede69e",
+      "afterHash": "248e43f2460b4e66f73bf576d3384d3570815d5d1c3230fe43498b979fede69e"
+    },
+    {
+      "step": 47,
+      "action": "rotate",
+      "delta": [
+        -4,
+        -3
+      ],
+      "pointer": {
+        "x": 1237,
+        "y": 212
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "248e43f2460b4e66f73bf576d3384d3570815d5d1c3230fe43498b979fede69e",
+      "afterHash": "248e43f2460b4e66f73bf576d3384d3570815d5d1c3230fe43498b979fede69e"
+    },
+    {
+      "step": 48,
+      "action": "add",
+      "element": "H",
+      "values": [
+        "0.99462",
+        "0.92122",
+        "0.76606"
+      ],
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-48-add-after.png",
+        "metrics": {
+          "content": 68636,
+          "cyan": 2,
+          "transparent": 0,
+          "checksum": 173125470,
+          "nonBackground": 68978,
+          "maxAtomRadiusPixels": 115.08134215578872,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "248e43f2460b4e66f73bf576d3384d3570815d5d1c3230fe43498b979fede69e",
+      "afterHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e"
+    },
+    {
+      "step": 49,
+      "action": "batch_fix",
+      "selector": "#unfixAllBtn",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e",
+      "afterHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e"
+    },
+    {
+      "step": 50,
+      "action": "coordinates",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e",
+      "afterHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e"
+    },
+    {
+      "step": 51,
+      "action": "delete",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e",
+      "afterHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e"
+    },
+    {
+      "step": 52,
+      "action": "cancel",
+      "index": 2,
+      "pointer": {
+        "x": 859.1456490209099,
+        "y": 241.92202385240847,
+        "displayedIndex": 2
+      },
+      "delta": [
+        -6,
+        -16
+      ],
+      "preview": {
+        "filename": "seed-13005-step-52-cancel-atom-preview.png",
+        "metrics": {
+          "content": 68671,
+          "cyan": 1030,
+          "transparent": 0,
+          "checksum": 176618928,
+          "nonBackground": 68978,
+          "maxAtomRadiusPixels": 115.08134215578872,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e",
+      "afterHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e"
+    },
+    {
+      "step": 53,
+      "action": "click",
+      "index": 0,
+      "pointer": {
+        "x": 932.4999999999998,
+        "y": 438.50000000000006,
+        "displayedIndex": 0
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f0a87d33f15ae9bdd70b91f50e0fb1c9b525d225595c22d101bb12ee59929b7e",
+      "afterHash": "eb343105c45652a644393c3abbcfd64e45037711dd06e360564ff9a52e6f2982"
+    },
+    {
+      "step": 54,
+      "action": "display",
+      "selector": "#showFixedIndicators",
+      "performed": false,
+      "visual": {
+        "filename": "seed-13005-step-54-display-after.png",
+        "metrics": {
+          "content": 68756,
+          "cyan": 403,
+          "transparent": 0,
+          "checksum": 211966226,
+          "nonBackground": 68978,
+          "maxAtomRadiusPixels": 115.08134215578872,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 1015,
+          "height": 755,
+          "canvasCSS": [
+            1015,
+            755
+          ],
+          "viewportCSS": [
+            1015,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "eb343105c45652a644393c3abbcfd64e45037711dd06e360564ff9a52e6f2982",
+      "afterHash": "eb343105c45652a644393c3abbcfd64e45037711dd06e360564ff9a52e6f2982"
+    },
+    {
+      "step": 55,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "eb343105c45652a644393c3abbcfd64e45037711dd06e360564ff9a52e6f2982",
+      "afterHash": "eb343105c45652a644393c3abbcfd64e45037711dd06e360564ff9a52e6f2982"
+    },
+    {
+      "step": 56,
+      "action": "click",
+      "index": 0,
+      "pointer": {
+        "x": 932.4999999999998,
+        "y": 438.50000000000006,
+        "displayedIndex": 0
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "eb343105c45652a644393c3abbcfd64e45037711dd06e360564ff9a52e6f2982",
+      "afterHash": "d979936de4497d2d9ad2ff52b41291eee9412ced61440eda981431ddef5bda3f"
+    },
+    {
+      "step": 57,
+      "action": "add",
+      "element": "H",
+      "values": [
+        "0.83436",
+        "0.54519",
+        "0.50602"
+      ],
+      "performed": true,
+      "visual": null,
+      "beforeHash": "d979936de4497d2d9ad2ff52b41291eee9412ced61440eda981431ddef5bda3f",
+      "afterHash": "d903032a36d428b2e6e1b3650a2832ba7f03926acd9b3fc961612792942cb16b"
+    },
+    {
+      "step": 58,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-58-panel-panel-preview.png",
+        "metrics": {
+          "content": 78062,
+          "cyan": 19,
+          "transparent": 0,
+          "checksum": 204651447,
+          "nonBackground": 78519,
+          "maxAtomRadiusPixels": 115.0813421557887,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-58-panel-after.png",
+        "metrics": {
+          "content": 78062,
+          "cyan": 19,
+          "transparent": 0,
+          "checksum": 204651447,
+          "nonBackground": 78519,
+          "maxAtomRadiusPixels": 115.0813421557887,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "d903032a36d428b2e6e1b3650a2832ba7f03926acd9b3fc961612792942cb16b",
+      "afterHash": "d903032a36d428b2e6e1b3650a2832ba7f03926acd9b3fc961612792942cb16b"
+    },
+    {
+      "step": 59,
+      "action": "scale",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "d903032a36d428b2e6e1b3650a2832ba7f03926acd9b3fc961612792942cb16b",
+      "afterHash": "d903032a36d428b2e6e1b3650a2832ba7f03926acd9b3fc961612792942cb16b"
+    },
+    {
+      "step": 60,
+      "action": "shift",
+      "values": [
+        "0.064297",
+        "-0.140200",
+        "0.069995"
+      ],
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-60-shift-after.png",
+        "metrics": {
+          "content": 61719,
+          "cyan": 17,
+          "transparent": 0,
+          "checksum": 189760097,
+          "nonBackground": 62141,
+          "maxAtomRadiusPixels": 102.29452636070106,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "d903032a36d428b2e6e1b3650a2832ba7f03926acd9b3fc961612792942cb16b",
+      "afterHash": "3af525ee5d7e6213a5b11a50b712718b2451e1e03731ee9dfa98b7764caa10f1"
+    },
+    {
+      "step": 61,
+      "action": "display",
+      "selector": "#toggleCell",
+      "performed": false,
+      "visual": {
+        "filename": "seed-13005-step-61-display-after.png",
+        "metrics": {
+          "content": 61719,
+          "cyan": 17,
+          "transparent": 0,
+          "checksum": 189760097,
+          "nonBackground": 62141,
+          "maxAtomRadiusPixels": 102.29452636070106,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1195,
+          "height": 755,
+          "canvasCSS": [
+            1195,
+            755
+          ],
+          "viewportCSS": [
+            1195,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "3af525ee5d7e6213a5b11a50b712718b2451e1e03731ee9dfa98b7764caa10f1",
+      "afterHash": "3af525ee5d7e6213a5b11a50b712718b2451e1e03731ee9dfa98b7764caa10f1"
+    },
+    {
+      "step": 62,
+      "action": "panel",
+      "width": 0,
+      "preview": {
+        "filename": "seed-13005-step-62-panel-panel-preview.png",
+        "metrics": {
+          "content": 61724,
+          "cyan": 22,
+          "transparent": 0,
+          "checksum": 215489030,
+          "nonBackground": 62128,
+          "maxAtomRadiusPixels": 102.29452636070107,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-62-panel-after.png",
+        "metrics": {
+          "content": 61724,
+          "cyan": 22,
+          "transparent": 0,
+          "checksum": 215489030,
+          "nonBackground": 62128,
+          "maxAtomRadiusPixels": 102.29452636070107,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "3af525ee5d7e6213a5b11a50b712718b2451e1e03731ee9dfa98b7764caa10f1",
+      "afterHash": "3af525ee5d7e6213a5b11a50b712718b2451e1e03731ee9dfa98b7764caa10f1"
+    },
+    {
+      "step": 63,
+      "action": "drag",
+      "index": 1,
+      "pointer": {
+        "x": 1185.0869689048964,
+        "y": 545.6734449441523,
+        "displayedIndex": 1
+      },
+      "delta": [
+        4,
+        -17
+      ],
+      "preview": {
+        "filename": "seed-13005-step-63-drag-atom-preview.png",
+        "metrics": {
+          "content": 61750,
+          "cyan": 838,
+          "transparent": 0,
+          "checksum": 218246681,
+          "nonBackground": 62128,
+          "maxAtomRadiusPixels": 102.29452636070107,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "3af525ee5d7e6213a5b11a50b712718b2451e1e03731ee9dfa98b7764caa10f1",
+      "afterHash": "7e99f6e0459d766cbbb6a8580e160ae3655a1969802809295ec79ce5b3247f62"
+    },
+    {
+      "step": 64,
+      "action": "cancel",
+      "index": 4,
+      "pointer": {
+        "x": 894.2162792073846,
+        "y": 459.92420139077393,
+        "displayedIndex": 4
+      },
+      "delta": [
+        0,
+        17
+      ],
+      "preview": {
+        "filename": "seed-13005-step-64-cancel-atom-preview.png",
+        "metrics": {
+          "content": 61767,
+          "cyan": 3292,
+          "transparent": 0,
+          "checksum": 220045232,
+          "nonBackground": 62128,
+          "maxAtomRadiusPixels": 102.29452636070107,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "7e99f6e0459d766cbbb6a8580e160ae3655a1969802809295ec79ce5b3247f62",
+      "afterHash": "7e99f6e0459d766cbbb6a8580e160ae3655a1969802809295ec79ce5b3247f62"
+    },
+    {
+      "step": 65,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-65-reset-after.png",
+        "metrics": {
+          "content": 22231,
+          "cyan": 4,
+          "transparent": 0,
+          "checksum": 178095799,
+          "nonBackground": 22573,
+          "maxAtomRadiusPixels": 61.46883158241113,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "7e99f6e0459d766cbbb6a8580e160ae3655a1969802809295ec79ce5b3247f62",
+      "afterHash": "7e99f6e0459d766cbbb6a8580e160ae3655a1969802809295ec79ce5b3247f62"
+    },
+    {
+      "step": 66,
+      "action": "click",
+      "index": 0,
+      "pointer": {
+        "x": 705.3115405034929,
+        "y": 526.6332668217619,
+        "displayedIndex": 0
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "7e99f6e0459d766cbbb6a8580e160ae3655a1969802809295ec79ce5b3247f62",
+      "afterHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0"
+    },
+    {
+      "step": 67,
+      "action": "rotate",
+      "delta": [
+        -15,
+        12
+      ],
+      "pointer": {
+        "x": 1154,
+        "y": 212
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0",
+      "afterHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0"
+    },
+    {
+      "step": 68,
+      "action": "shift",
+      "panelReopened": true,
+      "performed": false,
+      "visual": null,
+      "beforeHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0",
+      "afterHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0"
+    },
+    {
+      "step": 69,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0",
+      "afterHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0"
+    },
+    {
+      "step": 70,
+      "action": "replace",
+      "file": "Al_fcc_cartesian.poscar",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-70-replace-after.png",
+        "metrics": {
+          "content": 41842,
+          "cyan": 139,
+          "transparent": 0,
+          "checksum": 189143038,
+          "nonBackground": 42437,
+          "maxAtomRadiusPixels": 57.960747352781524,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 219,
+            "content": 219
+          },
+          "width": 1210,
+          "height": 755,
+          "canvasCSS": [
+            1210,
+            755
+          ],
+          "viewportCSS": [
+            1210,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fc15ed23bf719e89ca0658db90c634c0119471bd1f33feae7953f4af8d89ddf0",
+      "afterHash": "fbdcdf0240b73cc310300b2ff611bee9c508041ee7b63f3f968123b69d90ca28"
+    },
+    {
+      "dialog": "Discard unsaved structure edits and open another file?",
+      "response": "accept",
+      "beforeHash": null,
+      "afterHash": null
+    },
+    {
+      "step": 71,
+      "action": "panel",
+      "width": 0,
+      "preview": {
+        "filename": "seed-13005-step-71-panel-panel-preview.png",
+        "metrics": {
+          "content": 41842,
+          "cyan": 139,
+          "transparent": 0,
+          "checksum": 213227538,
+          "nonBackground": 42437,
+          "maxAtomRadiusPixels": 57.96074735278154,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-71-panel-after.png",
+        "metrics": {
+          "content": 41842,
+          "cyan": 139,
+          "transparent": 0,
+          "checksum": 213227538,
+          "nonBackground": 42437,
+          "maxAtomRadiusPixels": 57.96074735278154,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fbdcdf0240b73cc310300b2ff611bee9c508041ee7b63f3f968123b69d90ca28",
+      "afterHash": "fbdcdf0240b73cc310300b2ff611bee9c508041ee7b63f3f968123b69d90ca28"
+    },
+    {
+      "step": 72,
+      "action": "cancel",
+      "index": 2,
+      "pointer": {
+        "x": 725.0000000000001,
+        "y": 675.9538332748322,
+        "displayedIndex": 2
+      },
+      "delta": [
+        -17,
+        12
+      ],
+      "preview": {
+        "filename": "seed-13005-step-72-cancel-atom-preview.png",
+        "metrics": {
+          "content": 350127,
+          "cyan": 314242,
+          "transparent": 0,
+          "checksum": 383267429,
+          "nonBackground": 350887,
+          "maxAtomRadiusPixels": 57.96074735278154,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-72-cancel-after.png",
+        "metrics": {
+          "content": 41842,
+          "cyan": 139,
+          "transparent": 0,
+          "checksum": 213227538,
+          "nonBackground": 42437,
+          "maxAtomRadiusPixels": 57.96074735278154,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fbdcdf0240b73cc310300b2ff611bee9c508041ee7b63f3f968123b69d90ca28",
+      "afterHash": "fbdcdf0240b73cc310300b2ff611bee9c508041ee7b63f3f968123b69d90ca28"
+    },
+    {
+      "step": 73,
+      "action": "drag",
+      "index": 2,
+      "pointer": {
+        "x": 725.0000000000001,
+        "y": 675.9538332748322,
+        "displayedIndex": 2
+      },
+      "delta": [
+        18,
+        9
+      ],
+      "preview": {
+        "filename": "seed-13005-step-73-drag-atom-preview.png",
+        "metrics": {
+          "content": 350127,
+          "cyan": 314241,
+          "transparent": 0,
+          "checksum": 383267365,
+          "nonBackground": 350887,
+          "maxAtomRadiusPixels": 57.96074735278154,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 96
+          },
+          "width": 1430,
+          "height": 755,
+          "canvasCSS": [
+            1430,
+            755
+          ],
+          "viewportCSS": [
+            1430,
+            755
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "fbdcdf0240b73cc310300b2ff611bee9c508041ee7b63f3f968123b69d90ca28",
+      "afterHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c"
+    },
+    {
+      "step": 74,
+      "action": "scale",
+      "panelReopened": true,
+      "key": "ArrowRight",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c",
+      "afterHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c"
+    },
+    {
+      "step": 75,
+      "action": "bond_length",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c",
+      "afterHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c"
+    },
+    {
+      "step": 76,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c",
+      "afterHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c"
+    },
+    {
+      "step": 77,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "758df0b4f9e331ceff634f34c39d66c5972c4b5959ca59b78c07edb0e36f248c",
+      "afterHash": "81e237c0e0d374986a90c36c399660817f640bd76ce87f234dbd1cf4d14aad67"
+    },
+    {
+      "step": 78,
+      "action": "periodic",
+      "axis": "a",
+      "increase": true,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "81e237c0e0d374986a90c36c399660817f640bd76ce87f234dbd1cf4d14aad67",
+      "afterHash": "aa6c4c3ad35d0a940f39d5abd77ef038071cab80a04e3e5e0f55c2dcd92c9996"
+    },
+    {
+      "step": 79,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "aa6c4c3ad35d0a940f39d5abd77ef038071cab80a04e3e5e0f55c2dcd92c9996",
+      "afterHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590"
+    },
+    {
+      "step": 80,
+      "action": "coordinates",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590",
+      "afterHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590"
+    },
+    {
+      "step": 81,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590",
+      "afterHash": "aa6c4c3ad35d0a940f39d5abd77ef038071cab80a04e3e5e0f55c2dcd92c9996"
+    },
+    {
+      "step": 82,
+      "action": "viewport",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-82-viewport-after.png",
+        "metrics": {
+          "content": 42929,
+          "cyan": 157,
+          "transparent": 0,
+          "checksum": 150783709,
+          "nonBackground": 43762,
+          "maxAtomRadiusPixels": 41.50882610940437,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 219,
+            "content": 219
+          },
+          "width": 1050,
+          "height": 655,
+          "canvasCSS": [
+            1050,
+            655
+          ],
+          "viewportCSS": [
+            1050,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "aa6c4c3ad35d0a940f39d5abd77ef038071cab80a04e3e5e0f55c2dcd92c9996",
+      "afterHash": "aa6c4c3ad35d0a940f39d5abd77ef038071cab80a04e3e5e0f55c2dcd92c9996"
+    },
+    {
+      "step": 83,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "aa6c4c3ad35d0a940f39d5abd77ef038071cab80a04e3e5e0f55c2dcd92c9996",
+      "afterHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590"
+    },
+    {
+      "step": 84,
+      "action": "panel",
+      "width": 420,
+      "preview": {
+        "filename": "seed-13005-step-84-panel-panel-preview.png",
+        "metrics": {
+          "content": 42917,
+          "cyan": 158,
+          "transparent": 0,
+          "checksum": 132273152,
+          "nonBackground": 43735,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-84-panel-after.png",
+        "metrics": {
+          "content": 42917,
+          "cyan": 158,
+          "transparent": 0,
+          "checksum": 132273152,
+          "nonBackground": 43735,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590",
+      "afterHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590"
+    },
+    {
+      "step": 85,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590",
+      "afterHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590"
+    },
+    {
+      "step": 86,
+      "action": "drag",
+      "index": 2,
+      "pointer": {
+        "x": 724.6472876051073,
+        "y": 471.0666138438124,
+        "displayedIndex": 2
+      },
+      "delta": [
+        3,
+        -10
+      ],
+      "preview": {
+        "filename": "seed-13005-step-86-drag-atom-preview.png",
+        "metrics": {
+          "content": 160272,
+          "cyan": 122007,
+          "transparent": 0,
+          "checksum": 199798118,
+          "nonBackground": 161040,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f7b4fcf1ef5013b4a893a17712dfb965e4f98300e52a773978ac1814b4ccd590",
+      "afterHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944"
+    },
+    {
+      "step": 87,
+      "action": "bond_length",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944",
+      "afterHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944"
+    },
+    {
+      "step": 88,
+      "action": "display",
+      "selector": "#showLabels",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-88-display-after.png",
+        "metrics": {
+          "content": 43086,
+          "cyan": 159,
+          "transparent": 0,
+          "checksum": 132636471,
+          "nonBackground": 43735,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944",
+      "afterHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944"
+    },
+    {
+      "step": 89,
+      "action": "rotate",
+      "delta": [
+        14,
+        -8
+      ],
+      "pointer": {
+        "x": 1109,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944",
+      "afterHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944"
+    },
+    {
+      "step": 90,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944",
+      "afterHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944"
+    },
+    {
+      "step": 91,
+      "action": "drag",
+      "index": 3,
+      "pointer": {
+        "x": 572.3206918305672,
+        "y": 238.4574597564683,
+        "displayedIndex": 3
+      },
+      "delta": [
+        -16,
+        -6
+      ],
+      "preview": {
+        "filename": "seed-13005-step-91-drag-atom-preview.png",
+        "metrics": {
+          "content": 146761,
+          "cyan": 107639,
+          "transparent": 0,
+          "checksum": 192119131,
+          "nonBackground": 147611,
+          "maxAtomRadiusPixels": 41.50882610940433,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "50d4ed40ae104fac69750f6993a1f8aac6331f4bd9e580aa5cbc374f6f7dc944",
+      "afterHash": "58a6c2b5af7a2cdc8b45a9440f50421da1e41521cc49e4ad4d8ae6703a9aa925"
+    },
+    {
+      "step": 92,
+      "action": "rotate",
+      "delta": [
+        3,
+        -13
+      ],
+      "pointer": {
+        "x": 1109,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "58a6c2b5af7a2cdc8b45a9440f50421da1e41521cc49e4ad4d8ae6703a9aa925",
+      "afterHash": "58a6c2b5af7a2cdc8b45a9440f50421da1e41521cc49e4ad4d8ae6703a9aa925"
+    },
+    {
+      "step": 93,
+      "action": "clear",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "58a6c2b5af7a2cdc8b45a9440f50421da1e41521cc49e4ad4d8ae6703a9aa925",
+      "afterHash": "58a6c2b5af7a2cdc8b45a9440f50421da1e41521cc49e4ad4d8ae6703a9aa925"
+    },
+    {
+      "step": 94,
+      "action": "click",
+      "index": 1,
+      "pointer": {
+        "x": 843.4567872026765,
+        "y": 243.87028980831,
+        "displayedIndex": 1
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "58a6c2b5af7a2cdc8b45a9440f50421da1e41521cc49e4ad4d8ae6703a9aa925",
+      "afterHash": "072891ef9fb32adbcf2cc96dae00ea8c1284819f478dd6f83c905789cc3fee2e"
+    },
+    {
+      "step": 95,
+      "action": "panel",
+      "width": 420,
+      "preview": {
+        "filename": "seed-13005-step-95-panel-panel-preview.png",
+        "metrics": {
+          "content": 43198,
+          "cyan": 532,
+          "transparent": 0,
+          "checksum": 135888507,
+          "nonBackground": 43780,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-95-panel-after.png",
+        "metrics": {
+          "content": 43198,
+          "cyan": 532,
+          "transparent": 0,
+          "checksum": 135888507,
+          "nonBackground": 43780,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "072891ef9fb32adbcf2cc96dae00ea8c1284819f478dd6f83c905789cc3fee2e",
+      "afterHash": "072891ef9fb32adbcf2cc96dae00ea8c1284819f478dd6f83c905789cc3fee2e"
+    },
+    {
+      "step": 96,
+      "action": "mode",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-96-mode-after.png",
+        "metrics": {
+          "content": 43161,
+          "cyan": 163,
+          "transparent": 0,
+          "checksum": 131254917,
+          "nonBackground": 43780,
+          "maxAtomRadiusPixels": 41.50882610940438,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "072891ef9fb32adbcf2cc96dae00ea8c1284819f478dd6f83c905789cc3fee2e",
+      "afterHash": "43de44d14dbe22f4d032a01a0ff05aae3a3dcb91b7aace2f08ba7fbc507915aa"
+    },
+    {
+      "step": 97,
+      "action": "viewport",
+      "viewport": {
+        "width": 900,
+        "height": 760
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-97-viewport-after.png",
+        "metrics": {
+          "content": 13366,
+          "cyan": 58,
+          "transparent": 0,
+          "checksum": 58912796,
+          "nonBackground": 13712,
+          "maxAtomRadiusPixels": 23.060458949669087,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 4,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "43de44d14dbe22f4d032a01a0ff05aae3a3dcb91b7aace2f08ba7fbc507915aa",
+      "afterHash": "43de44d14dbe22f4d032a01a0ff05aae3a3dcb91b7aace2f08ba7fbc507915aa"
+    },
+    {
+      "step": 98,
+      "action": "jump",
+      "number": 2,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "43de44d14dbe22f4d032a01a0ff05aae3a3dcb91b7aace2f08ba7fbc507915aa",
+      "afterHash": "50bd292d00e33aad80b8cf53b3ab7a2eee796c4accd5a22f41c863b56c0ccd62"
+    },
+    {
+      "step": 99,
+      "action": "replace",
+      "file": "CH4.xyz",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-99-replace-after.png",
+        "metrics": {
+          "content": 13709,
+          "cyan": 41,
+          "transparent": 0,
+          "checksum": 63699632,
+          "nonBackground": 13872,
+          "maxAtomRadiusPixels": 53.926269236720195,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "50bd292d00e33aad80b8cf53b3ab7a2eee796c4accd5a22f41c863b56c0ccd62",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "dialog": "Discard unsaved structure edits and open another file?",
+      "response": "accept",
+      "beforeHash": null,
+      "afterHash": null
+    },
+    {
+      "step": 100,
+      "action": "rotate",
+      "delta": [
+        -10,
+        13
+      ],
+      "pointer": {
+        "x": 805,
+        "y": 223.78125
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 101,
+      "action": "viewport",
+      "viewport": {
+        "width": 900,
+        "height": 760
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-101-viewport-after.png",
+        "metrics": {
+          "content": 13699,
+          "cyan": 95,
+          "transparent": 0,
+          "checksum": 64540812,
+          "nonBackground": 13860,
+          "maxAtomRadiusPixels": 53.92626923672021,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "settling",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 102,
+      "action": "undo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 103,
+      "action": "replace",
+      "file": "NaCl_rocksalt.poscar",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-103-replace-after.png",
+        "metrics": {
+          "content": 31503,
+          "cyan": 457,
+          "transparent": 0,
+          "checksum": 83599952,
+          "nonBackground": 31679,
+          "maxAtomRadiusPixels": 43.46945468638407,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 475,
+          "height": 630,
+          "canvasCSS": [
+            475,
+            630
+          ],
+          "viewportCSS": [
+            475,
+            630
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178"
+    },
+    {
+      "step": 104,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178",
+      "afterHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178"
+    },
+    {
+      "step": 105,
+      "action": "panel",
+      "width": 0,
+      "preview": {
+        "filename": "seed-13005-step-105-panel-panel-preview.png",
+        "metrics": {
+          "content": 37963,
+          "cyan": 507,
+          "transparent": 0,
+          "checksum": 123090932,
+          "nonBackground": 38215,
+          "maxAtomRadiusPixels": 47.747196761600755,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 890,
+          "height": 578,
+          "canvasCSS": [
+            890,
+            578
+          ],
+          "viewportCSS": [
+            890,
+            578
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-105-panel-after.png",
+        "metrics": {
+          "content": 37963,
+          "cyan": 507,
+          "transparent": 0,
+          "checksum": 123090932,
+          "nonBackground": 38215,
+          "maxAtomRadiusPixels": 47.747196761600755,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 890,
+          "height": 578,
+          "canvasCSS": [
+            890,
+            578
+          ],
+          "viewportCSS": [
+            890,
+            578
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178",
+      "afterHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178"
+    },
+    {
+      "step": 106,
+      "action": "undo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178",
+      "afterHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178"
+    },
+    {
+      "step": 107,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178",
+      "afterHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178"
+    },
+    {
+      "step": 108,
+      "action": "replace",
+      "file": "CH4.xyz",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-108-replace-after.png",
+        "metrics": {
+          "content": 16549,
+          "cyan": 52,
+          "transparent": 0,
+          "checksum": 99084573,
+          "nonBackground": 16700,
+          "maxAtomRadiusPixels": 59.233045513019725,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 890,
+          "height": 578,
+          "canvasCSS": [
+            890,
+            578
+          ],
+          "viewportCSS": [
+            890,
+            578
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 109,
+      "action": "batch_fix",
+      "panelReopened": true,
+      "selector": "#unfixAllBtn",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 110,
+      "action": "viewport",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-110-viewport-after.png",
+        "metrics": {
+          "content": 21223,
+          "cyan": 69,
+          "transparent": 0,
+          "checksum": 131170212,
+          "nonBackground": 21407,
+          "maxAtomRadiusPixels": 67.12395296025592,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 219,
+            "content": 219
+          },
+          "width": 1050,
+          "height": 655,
+          "canvasCSS": [
+            1050,
+            655
+          ],
+          "viewportCSS": [
+            1050,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 5,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 111,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1"
+    },
+    {
+      "step": 112,
+      "action": "replace",
+      "file": "NaCl_rocksalt.poscar",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-112-replace-after.png",
+        "metrics": {
+          "content": 48671,
+          "cyan": 615,
+          "transparent": 0,
+          "checksum": 161955888,
+          "nonBackground": 48945,
+          "maxAtomRadiusPixels": 54.10798248935725,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 219,
+            "content": 219
+          },
+          "width": 1050,
+          "height": 655,
+          "canvasCSS": [
+            1050,
+            655
+          ],
+          "viewportCSS": [
+            1050,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "fed3ca190a717ae0d001e16d466fee68baf7033754c4fd9cb2cc137716b455c1",
+      "afterHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178"
+    },
+    {
+      "step": 113,
+      "action": "click",
+      "index": 7,
+      "pointer": {
+        "x": 754.9999999999999,
+        "y": 366.27647836770996,
+        "displayedIndex": 7
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "ffb1e95707a3e57790a7675ca3114fc0da9d669b45ba8db0cf34b337c2d59178",
+      "afterHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04"
+    },
+    {
+      "step": 114,
+      "action": "zoom",
+      "delta": -120,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04",
+      "afterHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04"
+    },
+    {
+      "step": 115,
+      "action": "batch_fix",
+      "selector": "#unfixAllBtn",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04",
+      "afterHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04"
+    },
+    {
+      "step": 116,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-116-panel-panel-preview.png",
+        "metrics": {
+          "content": 52342,
+          "cyan": 4105,
+          "transparent": 0,
+          "checksum": 168564125,
+          "nonBackground": 52624,
+          "maxAtomRadiusPixels": 56.128612540827014,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-116-panel-after.png",
+        "metrics": {
+          "content": 52342,
+          "cyan": 4105,
+          "transparent": 0,
+          "checksum": 168564125,
+          "nonBackground": 52624,
+          "maxAtomRadiusPixels": 56.128612540827014,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04",
+      "afterHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04"
+    },
+    {
+      "step": 117,
+      "action": "jump",
+      "number": 3,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "d7c642f580591b99c4af4576918331e2db173f005c7e055056ea259f6d0bbe04",
+      "afterHash": "5ae2b34e4ca0ecbc2c041b8d51dda4dabdf444b336fe53d85558c173966577f9"
+    },
+    {
+      "step": 118,
+      "action": "click",
+      "index": 1,
+      "performed": false,
+      "visual": null,
+      "beforeHash": "5ae2b34e4ca0ecbc2c041b8d51dda4dabdf444b336fe53d85558c173966577f9",
+      "afterHash": "5ae2b34e4ca0ecbc2c041b8d51dda4dabdf444b336fe53d85558c173966577f9"
+    },
+    {
+      "step": 119,
+      "action": "clear",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "5ae2b34e4ca0ecbc2c041b8d51dda4dabdf444b336fe53d85558c173966577f9",
+      "afterHash": "3bc0b5ed6a8fe87d5872444ccc6b90a6e6c62824feef7d4af4eadc14ebd9752a"
+    },
+    {
+      "step": 120,
+      "action": "bond_length",
+      "key": "ArrowRight",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-120-bond_length-after.png",
+        "metrics": {
+          "content": 39738,
+          "cyan": 472,
+          "transparent": 0,
+          "checksum": 146433171,
+          "nonBackground": 39967,
+          "maxAtomRadiusPixels": 56.128612540827014,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "3bc0b5ed6a8fe87d5872444ccc6b90a6e6c62824feef7d4af4eadc14ebd9752a",
+      "afterHash": "3bc0b5ed6a8fe87d5872444ccc6b90a6e6c62824feef7d4af4eadc14ebd9752a"
+    },
+    {
+      "step": 121,
+      "action": "jump",
+      "number": 7,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "3bc0b5ed6a8fe87d5872444ccc6b90a6e6c62824feef7d4af4eadc14ebd9752a",
+      "afterHash": "f68c93c4d3d050efb4fd341029a1bca7fbc51a432b859f2b1da41cf82a6485d9"
+    },
+    {
+      "step": 122,
+      "action": "batch_fix",
+      "selector": "#unfixAllBtn",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "f68c93c4d3d050efb4fd341029a1bca7fbc51a432b859f2b1da41cf82a6485d9",
+      "afterHash": "f68c93c4d3d050efb4fd341029a1bca7fbc51a432b859f2b1da41cf82a6485d9"
+    },
+    {
+      "step": 123,
+      "action": "viewport",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-123-viewport-after.png",
+        "metrics": {
+          "content": 50810,
+          "cyan": 4066,
+          "transparent": 0,
+          "checksum": 167333072,
+          "nonBackground": 51048,
+          "maxAtomRadiusPixels": 56.12861254082704,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "f68c93c4d3d050efb4fd341029a1bca7fbc51a432b859f2b1da41cf82a6485d9",
+      "afterHash": "f68c93c4d3d050efb4fd341029a1bca7fbc51a432b859f2b1da41cf82a6485d9"
+    },
+    {
+      "step": 124,
+      "action": "jump",
+      "number": 1,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f68c93c4d3d050efb4fd341029a1bca7fbc51a432b859f2b1da41cf82a6485d9",
+      "afterHash": "f247b43bcfc3af365e5c7936fd11ef3e5dde9873db48a733b7ac164f9148b65a"
+    },
+    {
+      "step": 125,
+      "action": "clear",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f247b43bcfc3af365e5c7936fd11ef3e5dde9873db48a733b7ac164f9148b65a",
+      "afterHash": "06be73d273727bb05551bef54be925bba09820c5a1c908fd69a75ebbdf51d13b"
+    },
+    {
+      "step": 126,
+      "action": "replace",
+      "file": "H2O_wobble.xdatcar",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-126-replace-after.png",
+        "metrics": {
+          "content": 38222,
+          "cyan": 3,
+          "transparent": 0,
+          "checksum": 118778404,
+          "nonBackground": 38371,
+          "maxAtomRadiusPixels": 91.90586432795196,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 598,
+          "canvasCSS": [
+            1035,
+            598
+          ],
+          "viewportCSS": [
+            1035,
+            598
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 3,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "06be73d273727bb05551bef54be925bba09820c5a1c908fd69a75ebbdf51d13b",
+      "afterHash": "7b3c89d1955c5a15655be1f1600bfc30ba2c77494e9d7e0a8258f5975e7bbf09"
+    },
+    {
+      "step": 127,
+      "action": "scale",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "7b3c89d1955c5a15655be1f1600bfc30ba2c77494e9d7e0a8258f5975e7bbf09",
+      "afterHash": "7b3c89d1955c5a15655be1f1600bfc30ba2c77494e9d7e0a8258f5975e7bbf09"
+    },
+    {
+      "step": 128,
+      "action": "replace",
+      "file": "Si_diamond.poscar",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-128-replace-after.png",
+        "metrics": {
+          "content": 13029,
+          "cyan": 0,
+          "transparent": 0,
+          "checksum": 115358339,
+          "nonBackground": 13185,
+          "maxAtomRadiusPixels": 26.99426426545507,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "7b3c89d1955c5a15655be1f1600bfc30ba2c77494e9d7e0a8258f5975e7bbf09",
+      "afterHash": "b6b2300e0fb58786433d6b979aea0d5209009ab71f7ae1c769192dabdb390ab9"
+    },
+    {
+      "step": 129,
+      "action": "bond_length",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b6b2300e0fb58786433d6b979aea0d5209009ab71f7ae1c769192dabdb390ab9",
+      "afterHash": "b6b2300e0fb58786433d6b979aea0d5209009ab71f7ae1c769192dabdb390ab9"
+    },
+    {
+      "step": 130,
+      "action": "panel",
+      "width": 0,
+      "preview": {
+        "filename": "seed-13005-step-130-panel-panel-preview.png",
+        "metrics": {
+          "content": 13044,
+          "cyan": 1,
+          "transparent": 0,
+          "checksum": 137671177,
+          "nonBackground": 13154,
+          "maxAtomRadiusPixels": 26.994264265455055,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-130-panel-after.png",
+        "metrics": {
+          "content": 13044,
+          "cyan": 1,
+          "transparent": 0,
+          "checksum": 137671177,
+          "nonBackground": 13154,
+          "maxAtomRadiusPixels": 26.994264265455055,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "b6b2300e0fb58786433d6b979aea0d5209009ab71f7ae1c769192dabdb390ab9",
+      "afterHash": "b6b2300e0fb58786433d6b979aea0d5209009ab71f7ae1c769192dabdb390ab9"
+    },
+    {
+      "step": 131,
+      "action": "jump",
+      "panelReopened": true,
+      "number": 8,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b6b2300e0fb58786433d6b979aea0d5209009ab71f7ae1c769192dabdb390ab9",
+      "afterHash": "2d8f0669cd6accb223ef412bd3c3dde388cf4c28895ff411a618414f8071bedb"
+    },
+    {
+      "step": 132,
+      "action": "redo",
+      "performed": false,
+      "visual": {
+        "filename": "seed-13005-step-132-redo-after.png",
+        "metrics": {
+          "content": 13036,
+          "cyan": 399,
+          "transparent": 0,
+          "checksum": 118451437,
+          "nonBackground": 13154,
+          "maxAtomRadiusPixels": 26.99426426545509,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 219,
+            "content": 219
+          },
+          "width": 1050,
+          "height": 655,
+          "canvasCSS": [
+            1050,
+            655
+          ],
+          "viewportCSS": [
+            1050,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "2d8f0669cd6accb223ef412bd3c3dde388cf4c28895ff411a618414f8071bedb",
+      "afterHash": "2d8f0669cd6accb223ef412bd3c3dde388cf4c28895ff411a618414f8071bedb"
+    },
+    {
+      "step": 133,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "2d8f0669cd6accb223ef412bd3c3dde388cf4c28895ff411a618414f8071bedb",
+      "afterHash": "7596cc38607c8a0ad58230b15297d444aa99800b2b4b9b4f7cd936f9d44d5687"
+    },
+    {
+      "step": 134,
+      "action": "jump",
+      "number": 1,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "7596cc38607c8a0ad58230b15297d444aa99800b2b4b9b4f7cd936f9d44d5687",
+      "afterHash": "beb23028fbceedd10b91b2aaf3829a73a4f00ebdd0dc54ae3b00927d3ac03a3d"
+    },
+    {
+      "step": 135,
+      "action": "click",
+      "index": 7,
+      "pointer": {
+        "x": 609.073780011819,
+        "y": 262.764068060737,
+        "displayedIndex": 7
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "beb23028fbceedd10b91b2aaf3829a73a4f00ebdd0dc54ae3b00927d3ac03a3d",
+      "afterHash": "ddd8f390a4f99c10b4560859c66e8e20e1a1868f3bbc5173dce78ff5ec67f68e"
+    },
+    {
+      "step": 136,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-136-panel-panel-preview.png",
+        "metrics": {
+          "content": 13487,
+          "cyan": 526,
+          "transparent": 0,
+          "checksum": 118759239,
+          "nonBackground": 13892,
+          "maxAtomRadiusPixels": 26.99426426545504,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-136-panel-after.png",
+        "metrics": {
+          "content": 13487,
+          "cyan": 526,
+          "transparent": 0,
+          "checksum": 118759239,
+          "nonBackground": 13892,
+          "maxAtomRadiusPixels": 26.99426426545504,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "ddd8f390a4f99c10b4560859c66e8e20e1a1868f3bbc5173dce78ff5ec67f68e",
+      "afterHash": "ddd8f390a4f99c10b4560859c66e8e20e1a1868f3bbc5173dce78ff5ec67f68e"
+    },
+    {
+      "step": 137,
+      "action": "jump",
+      "number": 5,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "ddd8f390a4f99c10b4560859c66e8e20e1a1868f3bbc5173dce78ff5ec67f68e",
+      "afterHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf"
+    },
+    {
+      "step": 138,
+      "action": "scale",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf",
+      "afterHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf"
+    },
+    {
+      "step": 139,
+      "action": "ghost",
+      "index": 2,
+      "performed": false,
+      "visual": null,
+      "beforeHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf",
+      "afterHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf"
+    },
+    {
+      "step": 140,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-140-panel-panel-preview.png",
+        "metrics": {
+          "content": 12250,
+          "cyan": 531,
+          "transparent": 0,
+          "checksum": 117910858,
+          "nonBackground": 12939,
+          "maxAtomRadiusPixels": 23.61998123227317,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-140-panel-after.png",
+        "metrics": {
+          "content": 12250,
+          "cyan": 531,
+          "transparent": 0,
+          "checksum": 117910858,
+          "nonBackground": 12939,
+          "maxAtomRadiusPixels": 23.61998123227317,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf",
+      "afterHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf"
+    },
+    {
+      "step": 141,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf",
+      "afterHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf"
+    },
+    {
+      "step": 142,
+      "action": "panel",
+      "width": 0,
+      "preview": {
+        "filename": "seed-13005-step-142-panel-panel-preview.png",
+        "metrics": {
+          "content": 12279,
+          "cyan": 537,
+          "transparent": 0,
+          "checksum": 140277101,
+          "nonBackground": 12977,
+          "maxAtomRadiusPixels": 23.61998123227318,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-142-panel-after.png",
+        "metrics": {
+          "content": 12279,
+          "cyan": 537,
+          "transparent": 0,
+          "checksum": 140277101,
+          "nonBackground": 12977,
+          "maxAtomRadiusPixels": 23.61998123227318,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf",
+      "afterHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf"
+    },
+    {
+      "step": 143,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "97a971828dc08900064467c3d244cf368a019360217466409be082d0a74304cf",
+      "afterHash": "2bd6c0c8ba6b3ddb092f1438b99b643186803262be6ff7c030f20efbb1f568bf"
+    },
+    {
+      "step": 144,
+      "action": "mode",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-144-mode-after.png",
+        "metrics": {
+          "content": 10793,
+          "cyan": 536,
+          "transparent": 0,
+          "checksum": 136908310,
+          "nonBackground": 11120,
+          "maxAtomRadiusPixels": 23.61998123227318,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 120
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "2bd6c0c8ba6b3ddb092f1438b99b643186803262be6ff7c030f20efbb1f568bf",
+      "afterHash": "562c5420400d7272f9b7e06982d4f38efcd7eb7fabfb724214dc3fad20cb065f"
+    },
+    {
+      "step": 145,
+      "action": "jump",
+      "panelReopened": true,
+      "number": 2,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "562c5420400d7272f9b7e06982d4f38efcd7eb7fabfb724214dc3fad20cb065f",
+      "afterHash": "242f9cb0f565f7156415cf33cc766fd661c258eb8ef5822792b7f52de7a3347c"
+    },
+    {
+      "step": 146,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "242f9cb0f565f7156415cf33cc766fd661c258eb8ef5822792b7f52de7a3347c",
+      "afterHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad"
+    },
+    {
+      "step": 147,
+      "action": "resize",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad",
+      "afterHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad"
+    },
+    {
+      "step": 148,
+      "action": "rotate",
+      "delta": [
+        11,
+        -10
+      ],
+      "pointer": {
+        "x": 1070,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad",
+      "afterHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad"
+    },
+    {
+      "step": 149,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad",
+      "afterHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad"
+    },
+    {
+      "step": 150,
+      "action": "ghost",
+      "index": 5,
+      "performed": false,
+      "visual": null,
+      "beforeHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad",
+      "afterHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad"
+    },
+    {
+      "step": 151,
+      "action": "ghost",
+      "index": 4,
+      "performed": false,
+      "visual": null,
+      "beforeHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad",
+      "afterHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad"
+    },
+    {
+      "step": 152,
+      "action": "undo",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "83cbd1145d2334dc7457002ae2533f0d43d973bc5f21b5ea9a28c234572a7fad",
+      "afterHash": "f3e5cb9dcbb2f30aae9df9077baf743c04f3d2185d280d2980f2bd102e3f179b"
+    },
+    {
+      "step": 153,
+      "action": "panel",
+      "width": 420,
+      "preview": {
+        "filename": "seed-13005-step-153-panel-panel-preview.png",
+        "metrics": {
+          "content": 11718,
+          "cyan": 402,
+          "transparent": 0,
+          "checksum": 97892072,
+          "nonBackground": 11863,
+          "maxAtomRadiusPixels": 23.61998123227317,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-153-panel-after.png",
+        "metrics": {
+          "content": 11718,
+          "cyan": 402,
+          "transparent": 0,
+          "checksum": 97892072,
+          "nonBackground": 11863,
+          "maxAtomRadiusPixels": 23.61998123227317,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "f3e5cb9dcbb2f30aae9df9077baf743c04f3d2185d280d2980f2bd102e3f179b",
+      "afterHash": "f3e5cb9dcbb2f30aae9df9077baf743c04f3d2185d280d2980f2bd102e3f179b"
+    },
+    {
+      "step": 154,
+      "action": "drag",
+      "index": 3,
+      "pointer": {
+        "x": 560.9037421516089,
+        "y": 388.2671065994588,
+        "displayedIndex": 3
+      },
+      "delta": [
+        -15,
+        20
+      ],
+      "preview": {
+        "filename": "seed-13005-step-154-drag-atom-preview.png",
+        "metrics": {
+          "content": 147048,
+          "cyan": 135750,
+          "transparent": 0,
+          "checksum": 170453070,
+          "nonBackground": 147813,
+          "maxAtomRadiusPixels": 23.619981232273215,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "f3e5cb9dcbb2f30aae9df9077baf743c04f3d2185d280d2980f2bd102e3f179b",
+      "afterHash": "8ad65c7f20b92703d767d08811ba0c87785f76d542f6594102c64df25551dfa0"
+    },
+    {
+      "step": 155,
+      "action": "center",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "8ad65c7f20b92703d767d08811ba0c87785f76d542f6594102c64df25551dfa0",
+      "afterHash": "8ad65c7f20b92703d767d08811ba0c87785f76d542f6594102c64df25551dfa0"
+    },
+    {
+      "step": 156,
+      "action": "jump",
+      "number": 8,
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-156-jump-after.png",
+        "metrics": {
+          "content": 12326,
+          "cyan": 404,
+          "transparent": 0,
+          "checksum": 99019302,
+          "nonBackground": 12475,
+          "maxAtomRadiusPixels": 23.61998123227319,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "8ad65c7f20b92703d767d08811ba0c87785f76d542f6594102c64df25551dfa0",
+      "afterHash": "b07ec24964d29efbe6d3dc94c1260325e59cedabccfac2a68d1be53ef9543a5c"
+    },
+    {
+      "step": 157,
+      "action": "clear",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b07ec24964d29efbe6d3dc94c1260325e59cedabccfac2a68d1be53ef9543a5c",
+      "afterHash": "6f9113b478c4fa1d52704a61ee88ac0dfd6c22a5aa5f55158c41967d3ac3a3e6"
+    },
+    {
+      "step": 158,
+      "action": "reset",
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-158-reset-after.png",
+        "metrics": {
+          "content": 11675,
+          "cyan": 6,
+          "transparent": 0,
+          "checksum": 96840274,
+          "nonBackground": 11811,
+          "maxAtomRadiusPixels": 24.066737642685823,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "6f9113b478c4fa1d52704a61ee88ac0dfd6c22a5aa5f55158c41967d3ac3a3e6",
+      "afterHash": "6f9113b478c4fa1d52704a61ee88ac0dfd6c22a5aa5f55158c41967d3ac3a3e6"
+    },
+    {
+      "step": 159,
+      "action": "shift",
+      "values": [
+        "-0.141184",
+        "0.079151",
+        "-0.083092"
+      ],
+      "performed": true,
+      "visual": null,
+      "beforeHash": "6f9113b478c4fa1d52704a61ee88ac0dfd6c22a5aa5f55158c41967d3ac3a3e6",
+      "afterHash": "82f0416c230a3927e9132714e712fc5959e9350367119dd91bf1fd10d15ae497"
+    },
+    {
+      "step": 160,
+      "action": "rotate",
+      "delta": [
+        5,
+        -11
+      ],
+      "pointer": {
+        "x": 1109,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "82f0416c230a3927e9132714e712fc5959e9350367119dd91bf1fd10d15ae497",
+      "afterHash": "82f0416c230a3927e9132714e712fc5959e9350367119dd91bf1fd10d15ae497"
+    },
+    {
+      "step": 161,
+      "action": "mode",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "82f0416c230a3927e9132714e712fc5959e9350367119dd91bf1fd10d15ae497",
+      "afterHash": "d27248b71f1ab45032f597358e509ad9463a1baab433a38b5cc84a78cb18d48b"
+    },
+    {
+      "step": 162,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "d27248b71f1ab45032f597358e509ad9463a1baab433a38b5cc84a78cb18d48b",
+      "afterHash": "d27248b71f1ab45032f597358e509ad9463a1baab433a38b5cc84a78cb18d48b"
+    },
+    {
+      "step": 163,
+      "action": "click",
+      "index": 7,
+      "pointer": {
+        "x": 705.2948062463822,
+        "y": 266.2016545232276,
+        "displayedIndex": 7
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "d27248b71f1ab45032f597358e509ad9463a1baab433a38b5cc84a78cb18d48b",
+      "afterHash": "01499b9f57e076d420735d4ab468deac8c4bfa53cc6a31776da5bd55bd8b2424"
+    },
+    {
+      "step": 164,
+      "action": "jump",
+      "number": 4,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "01499b9f57e076d420735d4ab468deac8c4bfa53cc6a31776da5bd55bd8b2424",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 165,
+      "action": "ghost",
+      "index": 3,
+      "performed": false,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 166,
+      "action": "zoom",
+      "delta": 120,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 167,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 168,
+      "action": "panel",
+      "width": 420,
+      "preview": {
+        "filename": "seed-13005-step-168-panel-panel-preview.png",
+        "metrics": {
+          "content": 13948,
+          "cyan": 702,
+          "transparent": 0,
+          "checksum": 102570924,
+          "nonBackground": 14282,
+          "maxAtomRadiusPixels": 23.230441740044263,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-168-panel-after.png",
+        "metrics": {
+          "content": 13948,
+          "cyan": 702,
+          "transparent": 0,
+          "checksum": 102570924,
+          "nonBackground": 14282,
+          "maxAtomRadiusPixels": 23.230441740044263,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 414,
+            "content": 414
+          },
+          "width": 855,
+          "height": 655,
+          "canvasCSS": [
+            855,
+            655
+          ],
+          "viewportCSS": [
+            855,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 169,
+      "action": "panel",
+      "width": 240,
+      "preview": {
+        "filename": "seed-13005-step-169-panel-panel-preview.png",
+        "metrics": {
+          "content": 13948,
+          "cyan": 702,
+          "transparent": 0,
+          "checksum": 119666424,
+          "nonBackground": 14282,
+          "maxAtomRadiusPixels": 23.23044174004427,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-169-panel-after.png",
+        "metrics": {
+          "content": 13948,
+          "cyan": 702,
+          "transparent": 0,
+          "checksum": 119666424,
+          "nonBackground": 14282,
+          "maxAtomRadiusPixels": 23.23044174004427,
+          "panelLayout": {
+            "collapsed": false,
+            "left": 0,
+            "width": 234,
+            "content": 234
+          },
+          "width": 1035,
+          "height": 655,
+          "canvasCSS": [
+            1035,
+            655
+          ],
+          "viewportCSS": [
+            1035,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 170,
+      "action": "rotate",
+      "delta": [
+        -15,
+        12
+      ],
+      "pointer": {
+        "x": 1073,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 171,
+      "action": "bond_length",
+      "key": "ArrowLeft",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 172,
+      "action": "panel",
+      "width": 0,
+      "preview": {
+        "filename": "seed-13005-step-172-panel-panel-preview.png",
+        "metrics": {
+          "content": 13555,
+          "cyan": 673,
+          "transparent": 0,
+          "checksum": 141611422,
+          "nonBackground": 13908,
+          "maxAtomRadiusPixels": 23.230441740044263,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "performed": true,
+      "visual": {
+        "filename": "seed-13005-step-172-panel-after.png",
+        "metrics": {
+          "content": 13555,
+          "cyan": 673,
+          "transparent": 0,
+          "checksum": 141611422,
+          "nonBackground": 13908,
+          "maxAtomRadiusPixels": 23.230441740044263,
+          "panelLayout": {
+            "collapsed": true,
+            "left": 0,
+            "width": 0,
+            "content": 127
+          },
+          "width": 1270,
+          "height": 655,
+          "canvasCSS": [
+            1270,
+            655
+          ],
+          "viewportCSS": [
+            1270,
+            655
+          ],
+          "autoClear": true,
+          "scissor": false,
+          "staleCopies": [],
+          "atomCount": 8,
+          "showCell": false,
+          "showBonds": false,
+          "phase": "idle",
+          "layoutWaitTimedOut": false
+        }
+      },
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 173,
+      "action": "zoom",
+      "delta": 120,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 174,
+      "action": "redo",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e"
+    },
+    {
+      "step": 175,
+      "action": "jump",
+      "panelReopened": true,
+      "number": 7,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "b87bf61e16a17455f38be9befc90c2f1dda814ee6667c2ff77a4b0cd22ba104e",
+      "afterHash": "489a634a35ff010aae852b88c017b8d12557b028d8c8c6caa11a2ce0f4bd62e0"
+    },
+    {
+      "step": 176,
+      "action": "scale",
+      "key": "ArrowRight",
+      "performed": true,
+      "visual": null,
+      "beforeHash": "489a634a35ff010aae852b88c017b8d12557b028d8c8c6caa11a2ce0f4bd62e0",
+      "afterHash": "489a634a35ff010aae852b88c017b8d12557b028d8c8c6caa11a2ce0f4bd62e0"
+    },
+    {
+      "step": 177,
+      "action": "jump",
+      "number": 2,
+      "performed": true,
+      "visual": null,
+      "beforeHash": "489a634a35ff010aae852b88c017b8d12557b028d8c8c6caa11a2ce0f4bd62e0",
+      "afterHash": "07e42dd8220920eaa0a517f0d0cb1b0a18650d3276ecbc119591f231a8ae129d"
+    },
+    {
+      "step": 178,
+      "action": "center",
+      "performed": false,
+      "visual": null,
+      "beforeHash": "07e42dd8220920eaa0a517f0d0cb1b0a18650d3276ecbc119591f231a8ae129d",
+      "afterHash": "07e42dd8220920eaa0a517f0d0cb1b0a18650d3276ecbc119591f231a8ae129d"
+    },
+    {
+      "step": 179,
+      "action": "pan",
+      "delta": [
+        -10,
+        0
+      ],
+      "pointer": {
+        "x": 1070,
+        "y": 192
+      },
+      "performed": true,
+      "visual": null,
+      "beforeHash": "07e42dd8220920eaa0a517f0d0cb1b0a18650d3276ecbc119591f231a8ae129d",
+      "afterHash": "07e42dd8220920eaa0a517f0d0cb1b0a18650d3276ecbc119591f231a8ae129d"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+
+Running 11 tests using 1 worker
+
+(node:91676) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:41:5 › native capture loss preserves mouse placement (8.1s)
+  ✓   2 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:41:5 › native capture loss preserves mouse placement outside the canvas (3.2s)
+  ✓   3 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit escape rollback (2.3s)
+  ✓   4 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit blur rollback (2.4s)
+  ✓   5 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:60:5 › capture loss still permits explicit pointercancel rollback (2.7s)
+  ✓   6 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:75:1 › a missed mouse release commits the held preview once, ignoring unrelated pointers (5.1s)
+  ✓   7 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:93:1 › released-button capture loss immediately commits without a delivered pointerup (2.4s)
+  ✓   8 [chromium] › tests/browser/drag-capture-recovery.spec.cjs:110:1 › releasing the primary mouse button during a chord places the atom once (2.4s)
+  ✓   9 [chromium] › tests/browser/drag-release.spec.cjs:2:48 › release UI refresh cannot roll back a committed mouse move: blur (2.4s)
+  ✓  10 [chromium] › tests/browser/drag-release.spec.cjs:2:48 › release UI refresh cannot roll back a committed mouse move: capture-loss (2.8s)
+  ✓  11 [chromium] › tests/browser/measurement-rotation-click.spec.cjs:3:1 › rotating over a measured atom must not deselect it (3.4s)
+
+  11 passed (38.0s)

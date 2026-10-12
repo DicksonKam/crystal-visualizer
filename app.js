@@ -148,6 +148,7 @@ const sharedAtomMaterials = new Map();
 let smallestAtomRadiusCache = null;
 let displayedAtomCount = 0;
 let renderPending = true;
+let canvasClickGesture = null;
 let viewportResizePending = false;
 let lastRenderedAt = -Infinity;
 let lastCameraMotionAt = -Infinity;
@@ -799,6 +800,12 @@ function initScene() {
     // Capture is a routing aid, not ownership of the edit. Track the owned
     // pointer across the document even if the browser releases canvas capture.
     document.addEventListener('pointermove', trackEditPointer, { capture: true });
+    // A browser emits click after pointerup even when TrackballControls has
+    // rotated the view. Classify the entire pointer path, independently of
+    // geometry editing and camera damping, before routing that click.
+    document.addEventListener('pointermove', trackCanvasClickGesture, { capture: true });
+    document.addEventListener('pointerup', trackCanvasClickGesture, { capture: true });
+    document.addEventListener('pointercancel', trackCanvasClickGesture, { capture: true });
     document.addEventListener('pointerup', finishEditPointer, { capture: true });
     document.addEventListener('lostpointercapture', event => {
         // Some hosts drop pointerup before reporting capture loss on release.
@@ -1499,7 +1506,12 @@ function getAtomIntersectionAt(mouseNDC) {
 function onMouseDown(event) {
     if (!currentStructure) return;
     if (event.button !== 0) return; // Only left click
+    if (event.isPrimary === false) {
+        if (canvasClickGesture) canvasClickGesture.moved = true;
+        return;
+    }
     if (activeEditPointerId !== null) return;
+    canvasClickGesture = { id: event.pointerId, x: event.clientX, y: event.clientY, active: true, moved: false };
     
     pointerDownTime = Date.now();
     wasDragging = false;
@@ -2022,11 +2034,22 @@ function handleMeasureClick(mouseNDC) {
 }
 
 // Click handler for atom selection
+function trackCanvasClickGesture(event) {
+    const gesture = canvasClickGesture;
+    if (!gesture?.active || event.pointerId !== gesture.id) return;
+    // Retain maximum displacement: returning to the start is still a drag.
+    if (Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 3) gesture.moved = true;
+    if (event.type === 'pointercancel') gesture.moved = true;
+    if (event.type !== 'pointermove') gesture.active = false;
+}
+
 function onClickFallback(event) {
     if (!currentStructure) return;
+    const gesture = canvasClickGesture;
+    canvasClickGesture = null;
     
     // Skip if we just finished dragging
-    if (wasDragging) {
+    if (wasDragging || gesture?.moved) {
         wasDragging = false;
         return;
     }

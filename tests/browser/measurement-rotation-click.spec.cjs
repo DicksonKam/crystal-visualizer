@@ -1,7 +1,6 @@
 const {test,expect,upload}=require('./fixtures.cjs');
 const {dragTarget}=require('./measurement-edit-helpers.cjs');
-test('known issue: rotating over a measured atom must not deselect it',async({page},info)=>{
- test.fail(true,'Version 187 handles the click emitted after a camera drag as an atom selection.');
+test('rotating over a measured atom must not deselect it',async({page},info)=>{
  await page.setViewportSize({width:900,height:800});
  await upload(page,'3\nwater\nO 0 0 .1173\nH .7572 0 -.4692\nH -.7572 0 -.4692\n','water.xyz');
  await page.locator('[data-mode="edit"]').click();
@@ -21,4 +20,14 @@ test('known issue: rotating over a measured atom must not deselect it',async({pa
  await info.attach('rotation-selection',{body:JSON.stringify({before,after,initialQuaternion:p.q}),contentType:'application/json'});
  expect(after.q).not.toEqual(p.q);
  expect(after.selection).toEqual(before);
+ // A following genuine click must still deselect and select the atom.
+ const center=await page.evaluate(()=>{
+  const r=renderer.domElement.getBoundingClientRect();
+  const p=atomMeshes[2].getWorldPosition(new THREE.Vector3()).project(camera);
+  return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};
+ });
+ await page.mouse.click(center.x,center.y);
+ expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual([0,1]);
+ await page.mouse.click(center.x,center.y);
+ expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual(before);
 });

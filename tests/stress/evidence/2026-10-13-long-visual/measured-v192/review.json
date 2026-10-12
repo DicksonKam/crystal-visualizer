@@ -23,6 +23,28 @@
         "4-history-and-mode.png"
       ],
       "finding": "No additional confirmed visual defect in reviewed captures. Measurements follow moved atoms, rotation/panel gestures retain their geometry, undo/redo and mode changes clear guides. Caption avoids bright bonds in methane close view; NaCl guide remains bounded."
+    },
+    {
+      "source": "water",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-f12af-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "5-history-and-mode.png"
+      ],
+      "finding": "No additional confirmed defect in reviewed captures. Water captions remain clear of bonds through six measured moves and rotations; graphene captions remain distinct in edge-on panel collapse view. Atom/measurement markers crowd in projection but visible captions retain contrast. Guides clear in history/mode captures."
+    },
+    {
+      "source": "graphene",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-f545b-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "2-panel-held.png"
+      ],
+      "finding": "No additional confirmed defect in reviewed captures. Water captions remain clear of bonds through six measured moves and rotations; graphene captions remain distinct in edge-on panel collapse view. Atom/measurement markers crowd in projection but visible captions retain contrast. Guides clear in history/mode captures."
     }
   ],
   "report": "/private/tmp/crystal-oct13-measured-v192.json"

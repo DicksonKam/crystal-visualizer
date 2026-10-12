@@ -268,10 +268,27 @@
       "full_size": [],
       "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14002",
       "finding": "No additional defect confirmed in overview review. Cell drag/cancel, measured modes and periodic display rebuilds retain geometry. Many views are far zoomed, so additional methane/graphene close-up workflows scheduled."
+    },
+    {
+      "seed": 13029,
+      "version": 189,
+      "checkpoint_count": 71,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual/seed-13029",
+      "finding": "No additional defect confirmed in overview. Measured modes, rotation, panel collapse and atom placement retain geometry; native corner immobility separately reproduced and recorded."
+    },
+    {
+      "seed": 14003,
+      "version": 190,
+      "checkpoint_count": 68,
+      "contact_sheets": 3,
+      "full_size": [],
+      "raw_evidence": "/private/tmp/crystal-oct13-long-visual-v190/seed-14003",
+      "finding": "No additional defect confirmed in overview. Measured modes, rotation, panel collapse and atom placement retain geometry; native corner immobility separately reproduced and recorded."
     }
   ],
   "captured_but_unreviewed_seeds": [
-    13029,
     13030,
     13031,
     13032,

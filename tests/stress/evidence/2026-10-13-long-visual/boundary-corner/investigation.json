@@ -1,0 +1,18 @@
+{
+  "status": "Reproduced natively; root fix under design, production unchanged",
+  "version": 190,
+  "native_tab": 5,
+  "url": "http://127.0.0.1:4173/?version=190&stress=isolated",
+  "source": "Al_fcc_cartesian.poscar",
+  "workflow": "Measure1,2,3; Edit; Reset; drag origin atom1(755,371) to(780,395), atom2(857,294) to(930,340), then origin atom1 to(700,300).",
+  "observed": "Both origin drags end Atom position unchanged. Atom2 moved and measurements updated.",
+  "root_cause": "Camera-facing plane through origin clips to one cell corner at diagonal view. constrainToPolygon returns singleton for every move. Existing geometry tests assert this valid section math, but interaction is unusable.",
+  "proposed_root_fix": "Preserve camera-facing sections with area; for fewer than3 vertices select the most camera-facing constant-fractional-coordinate plane through the atom. Capture before computing pick offset; guide and movement use same plane. Generic cellPlaneSection unchanged.",
+  "validation_needed": [
+    "all corners, edge tangencies and skew cells; face/interior unchanged",
+    "browser original reproduction",
+    "candidate actual native/browser drags, measurements and undo/redo",
+    "visual guide, release, panel and rotation review",
+    "separate Git fix save and fresh campaign remaining duration"
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "status": "visual review in progress; full8-case run still live",
+  "status": "complete:8 cases passed,48 measured edit cycles,240 captures reviewed",
   "version": 192,
   "reviewed": [
     {
@@ -67,7 +67,34 @@
         "4-panel-held.png"
       ],
       "finding": "No additional confirmed visual defect. All measured previews retain bounded cell sections; distance and angle captions remain distinct through history, rotation and held panel gestures. Full-size panel view retains continuous frame and readable captions."
+    },
+    {
+      "source": "methane higher-resolution display",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-92277-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "4-history-and-mode.png"
+      ],
+      "finding": "No additional confirmed defect. Bond-aware captions retain contrast and follow measured atoms across six placements, rotation, sidebar gestures, undo/redo and mode changes. Full-size views inspected; graphene atom-number labels crowd in edge-on projection, as previously recorded."
+    },
+    {
+      "source": "graphene higher-resolution display",
+      "raw_evidence": "/private/tmp/crystal-oct13-measured-v192/ordinary-measured-visual-s-13d02-rotation-and-panel-gestures-chromium",
+      "cycles": 6,
+      "captures_reviewed": 30,
+      "overview_sheets": 2,
+      "full_size": [
+        "5-history-and-mode.png"
+      ],
+      "finding": "No additional confirmed defect. Bond-aware captions retain contrast and follow measured atoms across six placements, rotation, sidebar gestures, undo/redo and mode changes. Full-size views inspected; graphene atom-number labels crowd in edge-on projection, as previously recorded."
     }
   ],
-  "report": "/private/tmp/crystal-oct13-measured-v192.json"
+  "report": "/private/tmp/crystal-oct13-measured-v192.json",
+  "duration_ms": 959327.87,
+  "device_scales": [
+    1,
+    2
+  ]
 }

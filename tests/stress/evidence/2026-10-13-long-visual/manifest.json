@@ -19,7 +19,7 @@
     "images": 4194,
     "elapsedSeconds": 3351.23121625
   },
-  "reviewed_checkpoints": 3626,
+  "reviewed_checkpoints": 3686,
   "compound_output": "/private/tmp/crystal-oct13-compound-results",
   "compound_report": "/private/tmp/crystal-oct13-compound.json",
   "snap_video_report": "/private/tmp/crystal-oct13-snap-video.json",
@@ -71,17 +71,17 @@
     "log": "/private/tmp/crystal-oct13-long-visual-v192.log",
     "status": "running",
     "latest_pass": {
-      "seed": 16004,
-      "actions": 900,
-      "images": 372,
-      "elapsedSeconds": 906.97284525
+      "seed": 16005,
+      "actions": 1080,
+      "images": 448,
+      "elapsedSeconds": 1061.810782958
     }
   },
   "measured_v192_verification": {
     "session": 81766,
     "output": "/private/tmp/crystal-oct13-measured-v192",
     "report": "/private/tmp/crystal-oct13-measured-v192.json",
-    "status": "running",
-    "visual_review": "180 captures reviewed across six ordinary measured sequences; final8-case report still pending."
+    "status": "complete:8 passed,0 failed,0 flaky",
+    "visual_review": "All240 captures reviewed;48 measured edit cycles across four structures at DPR1/2; selected8 full-size renders inspected."
   }
 }

@@ -11,7 +11,8 @@
   "verification": {
     "before_browser": "fails for caption0/bond0 in view2",
     "after_browser": "10 production annotation regressions passed;20 rendered captures reviewed in overview;3 new bond views inspected full size",
-    "unit": "164 unit tests passed, including horizontal/vertical/diagonal/end-on bond cases"
+    "unit": "164 unit tests passed, including horizontal/vertical/diagonal/end-on bond cases",
+    "ordinary_measured_stress": "8 cases passed,48 measured edit cycles,240 captures reviewed including8 full-size samples; no additional confirmed defect."
   },
-  "remaining": "Continue ordinary measured edit/mode/history/rotation stress on version192."
+  "remaining": "Version192 sustained random campaign remains live; final campaign audit pending."
 }

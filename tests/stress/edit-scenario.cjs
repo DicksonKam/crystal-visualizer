@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { cartesianToFractional } = require('../../geometry.js');
 const fs = require('node:fs/promises');
 
 function random(seed) {
@@ -66,7 +67,8 @@ async function capture(page) {
         const redo = editHistory.redoStack.map(entry => ({ id: id(entry.operation), type: entry.operation.type }));
         return { geometry, selection, violations, undo, redo, dirty: editHistory.dirty, revision: editHistory.currentEditRevision,
             atomCount: currentStructure.atoms.length, lattice: hasLattice(currentStructure), periodic: isPeriodicStructure(currentStructure),
-            supportsSD: supportsSelectiveDynamics(currentStructure), trajectory: Boolean(currentStructure.isXDATCAR), frameCount: currentStructure.totalFrames || 0, repeats: { ...settings.periodic } };
+            supportsSD: supportsSelectiveDynamics(currentStructure), trajectory: Boolean(currentStructure.isXDATCAR), frameCount: currentStructure.totalFrames || 0, repeats: { ...settings.periodic },
+            periodicAxes: getPeriodicAxes(currentStructure) };
     });
 }
 function compareGeometry(actual, expected, label) {
@@ -83,9 +85,25 @@ function compareGeometry(actual, expected, label) {
 }
 // Selection history resolves identities against the current display, while
 // periodic-image counts are presentation state outside selection history.
+// A copy is displayed when it lies in a previewed whole cell, or on the far
+// faces, edges and corners of the previewed region (fractional 0 appears at 1).
+function copyDisplayed(originalIndex, offset, state) {
+    if (!state.periodic || !offset) return false;
+    const axes = ['a', 'b', 'c'];
+    if (axes.every(axis => offset[axis] >= 0 && offset[axis] < state.repeats[axis])) return true;
+    const atom = state.geometry?.atoms[originalIndex];
+    const fractional = atom && cartesianToFractional(atom.position, state.geometry.lattice);
+    if (!fractional) return false;
+    const periodicAxes = state.periodicAxes || [true, true, true];
+    return axes.every((axis, i) => {
+        if (!periodicAxes[i]) return offset[axis] === 0;
+        const value = fractional[i] + offset[axis];
+        return value >= -1e-6 && value <= state.repeats[axis] + 1e-6;
+    });
+}
 function displayedSelection(selection, state) {
     const identities = selection.identities.filter(([index, ghost, offset]) => ghost
-        ? state.periodic && offset && ['a', 'b', 'c'].every(axis => offset[axis] >= 0 && offset[axis] < state.repeats[axis])
+        ? copyDisplayed(Number(String(index).split('_')[1]), offset, state)
         : Number.isInteger(index) && index >= 0 && index < state.atomCount);
     return { ...selection, identities, measurement: Boolean(identities.length && selection.measurement) };
 }

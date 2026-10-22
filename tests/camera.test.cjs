@@ -296,3 +296,22 @@ test('damping with no actual rotation input cannot create a snap gesture', () =>
     for (const time of [320, 500, 900]) r.controller.tick(time, false);
     assert.deepEqual(r.events, []);
 });
+
+test('default reset orientation avoids the body diagonal and lattice axes, keeps c up, and falls back for molecules', () => {
+    const degreesBetween = (a, b) => math.degrees(new THREE.Vector3(...a).angleTo(new THREE.Vector3(...b)));
+    const from = quaternion => math.back(quaternion).toArray();
+    const cubicFrom = from(math.defaultOrientation(cubic));
+    for (const axis of [[1, 1, 1], [1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1]]) {
+        assert.ok(degreesBetween(cubicFrom, axis) > 10, `${axis} is only ${degreesBetween(cubicFrom, axis)}° from the reset direction`);
+    }
+    const cubicUp = new THREE.Vector3(0, 1, 0).applyQuaternion(math.defaultOrientation(cubic));
+    assert.ok(cubicUp.z > 0.8, 'c points up on screen');
+    // Hexagonal and slab cells keep the same elevation above the ab plane.
+    const hexagonal = [[2.46, 0, 0], [-1.23, 2.1304, 0], [0, 0, 20]];
+    const elevation = 90 - degreesBetween(from(math.defaultOrientation(hexagonal)), [0, 0, 1]);
+    assert.ok(elevation > 25 && elevation < 35, `elevation ${elevation}`);
+    // Molecules keep the generic Cartesian view; degenerate lattices use it too.
+    const molecule = math.orientation(POLICY.defaultView.cartesian, [0, 1, 0]);
+    close(math.angularDistance(math.defaultOrientation(null), molecule), 0);
+    close(math.angularDistance(math.defaultOrientation([[1, 0, 0], [0, 0, 0], [0, 0, 1]]), molecule), 0);
+});

@@ -11,7 +11,9 @@ for (const axes of [['a'], ['b'], ['c'], ['a', 'b', 'c']]) test(`measured period
     const point = await page.evaluate(() => {
         camera.updateWorldMatrix(true, false); structureGroup.updateWorldMatrix(true, true);
         const rect = renderer.domElement.getBoundingClientRect();
-        for (const mesh of atomMeshes.filter(atom => atom.userData.isGhost)) {
+        // Click a copy inside the previewed cells: those become real atoms on conversion.
+        const whole = mesh => ['a', 'b', 'c'].every(axis => mesh.userData.cellOffset[axis] >= 0 && mesh.userData.cellOffset[axis] < settings.periodic[axis]);
+        for (const mesh of atomMeshes.filter(atom => atom.userData.isGhost && whole(atom))) {
             const p = mesh.getWorldPosition(new THREE.Vector3()).project(camera);
             const x = rect.left + (p.x + 1) * rect.width / 2;
             const y = rect.top + (1 - p.y) * rect.height / 2;

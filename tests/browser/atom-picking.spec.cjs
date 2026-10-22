@@ -24,7 +24,13 @@ async function alignAndPoints(page, sign) {
         raycaster.setFromCamera(new THREE.Vector2((atom.x-rect.left)/rect.width*2-1, 1-(atom.y-rect.top)/rect.height*2), camera);
         const overlaps = raycaster.intersectObjects(vacuumDragState.handles).length;
         const handle = vacuumDragState.handles.find(h => h.userData.extendAxis === 'a' && h.userData.handleType === 'far');
-        return { atom, target: screen(anchor.clone().add(shift)), emptyEdge: screen(handle.getWorldPosition(new THREE.Vector3())), overlaps,
+        // The atom's periodic copy sits on the middle of the far edge; hover an exposed section of that edge.
+        const emptyEdge = [.5, .25, .75, .125, .875].map(fraction => {
+            const world = handle.userData.edgeStart.clone().lerp(handle.userData.edgeEnd, fraction);
+            if (handle.parent) handle.parent.localToWorld(world);
+            return screen(world);
+        }).find(point => !getAtomIntersection({ clientX: point.x, clientY: point.y }));
+        return { atom, target: screen(anchor.clone().add(shift)), emptyEdge, overlaps,
             original: currentStructure.atoms[0].position.toArray(), expected: anchor.clone().add(shift).sub(structureGroup.position).toArray() };
     }, sign);
 }

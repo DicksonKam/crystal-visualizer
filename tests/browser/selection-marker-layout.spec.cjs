@@ -38,7 +38,10 @@ test('a displaced point marker starts the correct atom drag and survives undo',a
  test.setTimeout(90000);await page.setViewportSize({width:1280,height:800});
  await upload(page,await fs.readFile(path.join(__dirname,'../../examples/poscar/SrTiO3_perovskite.vasp'),'utf8'),'SrTiO3_perovskite.vasp');
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
- await page.locator('#resetView').click();await page.locator('[data-mode="edit"]').click();await page.waitForTimeout(300);
+ await page.locator('[data-mode="edit"]').click();await page.locator('#resetView').click();await page.waitForTimeout(300);
+ // Look along the body diagonal so the perovskite's atoms crowd together on screen.
+ await page.evaluate(()=>{cameraController.setPose(cameraMath.fit(getStructureBounds(),cameraMath.orientation([1,.8,1],[0,1,0]),perspectiveCamera.aspect),'fit');clearManualCameraMotion();requestRender();});
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
  const before=await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()));
  const point=await page.evaluate(()=>{
   const marker=selectionRings.find((o,i)=>selectedAtoms[i].index===1 && o.userData.annotationLeader?.visible);

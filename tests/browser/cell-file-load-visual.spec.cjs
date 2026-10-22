@@ -13,9 +13,15 @@ async function framePoint(page){
         updateCameraClipping();updateVacuumHandles();requestRender();
         const r=renderer.domElement.getBoundingClientRect();
         for(const handle of vacuumDragState.handles.filter(h=>h.userData.extendAxis==='a' && h.userData.handleType==='far')){
-            const p=handle.getWorldPosition(new THREE.Vector3()).project(camera);
-            const point={x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};
-            if(!getAtomIntersection({clientX:point.x,clientY:point.y}))return point;
+            // Boundary atoms and their periodic copies can cover the middle of an edge; find an exposed section.
+            for(const fraction of [.5,.25,.75,.125,.875,.375,.625]){
+                const world=handle.userData.edgeStart.clone().lerp(handle.userData.edgeEnd,fraction);
+                if(handle.parent)handle.parent.localToWorld(world);
+                const p=world.project(camera);
+                const point={x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};
+                const hit=checkVacuumHandleIntersection({clientX:point.x,clientY:point.y});
+                if(hit?.extendAxis==='a' && hit.handleType==='far')return point;
+            }
         }
         throw Error('No unobscured frame handle');
     });

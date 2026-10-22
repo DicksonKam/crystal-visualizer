@@ -9,6 +9,11 @@
         meaningfulDegrees: 0.25,
         durationMilliseconds: 300,
         fitPadding: 1.15,
+        // Reset view: camera-from direction as weights on the normalized lattice
+        // vectors with c up (about 30° above the ab plane and 15° from a), or
+        // Cartesian weights with Y up when there is no lattice. Low-index zone
+        // axes such as the body diagonal are avoided so atoms do not overlap.
+        defaultView: Object.freeze({ lattice: Object.freeze([1, 0.27, 0.6]), cartesian: Object.freeze([1, 0.8, 1]) }),
         controlsStepMilliseconds: 1000 / 60,
         controlsCatchUpMilliseconds: 250
     });
@@ -133,7 +138,18 @@
             if (![distance, pose.zoom, ...pivot.toArray()].every(Number.isFinite)) throw new Error('Structure cannot be fitted to a finite camera view');
             return { ...pose, ...clipping(bounds, pose) };
         }
-        return { radians, degrees, unit, back, angularDistance, orientation, axes, canonical, nearestAxis, automaticOrientation, clonePose, interpolate, position, fit, clipping, orthographicDistance };
+        function defaultOrientation(lattice, policy = POLICY) {
+            if (Array.isArray(lattice) && lattice.length === 3) {
+                try {
+                    const directions = lattice.map(unit);
+                    const direction = new THREE.Vector3();
+                    directions.forEach((axis, index) => direction.addScaledVector(axis, policy.defaultView.lattice[index]));
+                    return orientation(direction, directions[2]);
+                } catch { /* degenerate lattice: fall through to the Cartesian view */ }
+            }
+            return orientation(policy.defaultView.cartesian, [0, 1, 0]);
+        }
+        return { radians, degrees, unit, back, angularDistance, orientation, defaultOrientation, axes, canonical, nearestAxis, automaticOrientation, clonePose, interpolate, position, fit, clipping, orthographicDistance };
     }
 
     // The adapter owns Three.js objects and controls; this controller owns decisions

@@ -51,13 +51,20 @@ test('mixed-element instancing, periodic copies, supercells, constraints and exp
   const before=await check(page);expect(before.atomCount).toBe(499);
   await page.getByRole('button',{name:'Increase a periodic images',exact:true}).click();
   await page.getByRole('button',{name:'Reset View',exact:true}).click();
-  await expect.poll(()=>page.evaluate(()=>atomMeshes.length)).toBe(998);
-  const batch=await page.evaluate(()=>structureGroup.children.filter(c=>c.userData.isAtomBatch).map(c=>c.count).sort((a,b)=>a-b));expect(batch).toEqual([249,249,250,250]);
+  // Whole periodic cells double the atoms; grid atoms on the faces add boundary copies.
+  const copies=()=>page.evaluate(()=>atomMeshes.filter(m=>m.userData.isGhost&&['a','b','c'].every(axis=>m.userData.cellOffset[axis]>=0&&m.userData.cellOffset[axis]<settings.periodic[axis])).length);
+  await expect.poll(copies).toBe(499);
+  const batch=await page.evaluate(()=>({sizes:structureGroup.children.filter(c=>c.userData.isAtomBatch).map(c=>c.count).sort((a,b)=>a-b),
+   groups:Object.values(atomMeshes.reduce((acc,m)=>{const k=`${m.userData.element}:${Boolean(m.userData.isGhost)}`;acc[k]=(acc[k]||0)+1;return acc;},{})).sort((a,b)=>a-b)}));
+  expect(batch.sizes).toEqual(batch.groups);expect(batch.sizes.length).toBe(4);
   if(cycle===0)await observe({step:1,action:'periodic',stage:'settled'});
   await page.locator('[data-mode="edit"]').click();await page.locator('#makeSupercellBtn').click();
   const supercell=await check(page);expect(supercell.atomCount).toBe(998);expect(supercell.geometry.counts).toEqual([498,500]);
-  expect(await page.evaluate(()=>atomMeshes.filter(m=>m.userData.isGhost).length)).toBe(0);
-  expect(await page.evaluate(()=>structureGroup.children.filter(c=>c.userData.isAtomBatch).map(c=>c.count).sort((a,b)=>a-b))).toEqual([498,500]);
+  expect(await copies()).toBe(0);
+  const converted=await page.evaluate(()=>({sizes:structureGroup.children.filter(c=>c.userData.isAtomBatch).map(c=>c.count).sort((a,b)=>a-b),
+   groups:Object.values(atomMeshes.reduce((acc,m)=>{const k=`${m.userData.element}:${Boolean(m.userData.isGhost)}`;acc[k]=(acc[k]||0)+1;return acc;},{})).sort((a,b)=>a-b)}));
+  expect(converted.sizes).toEqual(converted.groups);
+  expect(await page.evaluate(()=>atomMeshes.filter(m=>!m.userData.isGhost).length)).toBe(998);
   if(cycle===0)await observe({step:2,action:'supercell',stage:'settled'});
   await page.locator('#fixZThreshold').fill('4');await page.locator('#fixByZBtn').click();expect((await check(page)).geometry.atoms.some(a=>a.sd.every(v=>!v))).toBe(true);
   await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(supercell.geometry);
@@ -68,7 +75,8 @@ test('mixed-element instancing, periodic copies, supercells, constraints and exp
   const canonical=atoms=>atoms.map(a=>[a.element,a.position.x??a.position[0],a.position.y??a.position[1],a.position.z??a.position[2],a.selectiveDynamics??a.sd]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
   expect(canonical(exported.atoms)).toEqual(canonical(supercell.geometry.atoms));
   await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(before.geometry);
-  await page.getByRole('button',{name:'Decrease a periodic images',exact:true}).click();expect(await page.evaluate(()=>atomMeshes.length)).toBe(499);
+  await page.getByRole('button',{name:'Decrease a periodic images',exact:true}).click();expect(await page.evaluate(()=>atomMeshes.filter(m=>!m.userData.isGhost).length)).toBe(499);
+  expect(await copies()).toBe(0);
   expect(await page.evaluate(()=>structureGroup.children.filter(c=>c.userData.isAtomBatch).length)).toBe(0);
  }
  await observe({step:3,action:'history',stage:'settled'});

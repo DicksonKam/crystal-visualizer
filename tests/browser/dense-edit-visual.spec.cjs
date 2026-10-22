@@ -5,11 +5,16 @@ const points=[];
 for(let x=0;x<10;x++)for(let y=0;y<10;y++)for(let z=0;z<6;z++)points.push([x*2,y*2,z*2]);
 const fixture=`dense edit\n1\n20 0 0\n0 20 0\n0 0 12\nAl\n501\nSelective dynamics\nCartesian\n${points.slice(0,501).map(p=>p.join(' ')+' T T T').join('\n')}\n`;
 async function rendererState(page, count) {
+    // Atoms on the cell faces also appear as periodic copies on the far faces;
+    // every displayed mesh, copies included, must belong to one instanced batch.
     const state=await page.evaluate(()=>({count:currentStructure.atoms.length,displayed:displayedAtomCount,
         batches:structureGroup.children.filter(c=>c.userData.isAtomBatch).length,
+        groups:new Set(atomMeshes.map(m=>`${m.userData.element}:${Boolean(m.userData.isGhost)}`)).size,
+        meshes:atomMeshes.length,
         instances:atomMeshes.filter(m=>m.userData.atomInstance).length,
         stale:atomMeshes.some(m=>m.userData.atomInstance && m.userData.atomInstance.batch.parent!==structureGroup)}));
-    expect(state).toEqual({count,displayed:count,batches:count>500?1:0,instances:count>500?count:0,stale:false});
+    expect(state.meshes).toBeGreaterThanOrEqual(count);
+    expect(state).toEqual({...state,count,displayed:count,batches:count>500?state.groups:0,instances:count>500?state.meshes:0,stale:false});
 }
 async function visibleAtom(page) {
     return page.evaluate(()=>{
@@ -62,10 +67,16 @@ test('dense atom/bond rendering survives movement cancellation, 501/500 transiti
         camera.zoom=.5;camera.updateProjectionMatrix();controls.update();camera.updateMatrixWorld(true);
         updateCameraClipping();updateVacuumHandles();requestRender();
         const rect=renderer.domElement.getBoundingClientRect();
+        // Grid atoms and their periodic copies cover the middle of the far edges; find an exposed section.
         for(const h of vacuumDragState.handles.filter(h=>h.userData.extendAxis==='a'&&h.userData.handleType==='far')){
-            const p=h.getWorldPosition(new THREE.Vector3()).project(camera);
-            const x=rect.left+(p.x+1)*rect.width/2,y=rect.top+(1-p.y)*rect.height/2;
-            if(!getAtomIntersection({clientX:x,clientY:y}))return {x,y};
+            for(const fraction of [.5,.25,.75,.125,.875,.375,.625,.0625,.9375]){
+                const world=h.userData.edgeStart.clone().lerp(h.userData.edgeEnd,fraction);
+                if(h.parent)h.parent.localToWorld(world);
+                const p=world.project(camera);
+                const x=rect.left+(p.x+1)*rect.width/2,y=rect.top+(1-p.y)*rect.height/2;
+                const hit=checkVacuumHandleIntersection({clientX:x,clientY:y});
+                if(hit?.extendAxis==='a'&&hit.handleType==='far')return {x,y};
+            }
         }
         return null;
     });

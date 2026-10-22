@@ -65,7 +65,14 @@ async function dragTarget(page, kind, cycle) {
                 structureGroup.updateWorldMatrix(true, true); requestRender();
                 start = screen(mesh.getWorldPosition(new THREE.Vector3()));
             }
-            if (getAtomIntersection({ clientX: start.x, clientY: start.y })?.object !== mesh) throw Error('Fixture atom obscured from both face-on views');
+            if (getAtomIntersection({ clientX: start.x, clientY: start.y })?.object !== mesh) {
+                // Periodic copies on the far face can cover an atom from both
+                // face-on views; drag another real atom that is exposed instead.
+                const exposed = atomMeshes.find(candidate => !candidate.userData.isGhost
+                    && getAtomIntersection({ clientX: screen(candidate.getWorldPosition(new THREE.Vector3())).x, clientY: screen(candidate.getWorldPosition(new THREE.Vector3())).y })?.object === candidate);
+                if (!exposed) throw Error('Fixture atom obscured from both face-on views');
+                start = screen(exposed.getWorldPosition(new THREE.Vector3()));
+            }
             return { ...start, dx: cycle % 2 ? -18 : 18, dy: -12 };
         }
         for (const handle of vacuumDragState.handles.filter(h => h.userData.extendAxis === 'a' && h.userData.handleType === (cycle % 2 ? 'near' : 'far'))) {

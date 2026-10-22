@@ -1173,14 +1173,14 @@ function createGhostAtom(element, position, originalIndex, cellOffset) {
     return mesh;
 }
 
-// Get cell offset label like "[+a]", "[+ab]", "[+abc]"
+// Get cell offset label like "[+a]", "[+ab]", "[+abc]"; a boundary copy on
+// the near side of the cell reads "[-a]" or "[+a-b]".
 function getCellOffsetLabel(cellOffset) {
     if (!cellOffset) return '';
-    let label = '';
-    if (cellOffset.a > 0) label += 'a';
-    if (cellOffset.b > 0) label += 'b';
-    if (cellOffset.c > 0) label += 'c';
-    return label ? `[+${label}]` : '';
+    const axes = ['a', 'b', 'c'].filter(axis => cellOffset[axis]);
+    if (!axes.length) return '';
+    if (axes.every(axis => cellOffset[axis] > 0)) return `[+${axes.join('')}]`;
+    return `[${axes.map(axis => `${cellOffset[axis] > 0 ? '+' : '-'}${axis}`).join('')}]`;
 }
 
 // Get original POSCAR coordinates for an atom (not display coordinates)
@@ -1422,52 +1422,56 @@ function createSupercellWireframe(lattice, na, nb, nc) {
     return cellGroup;
 }
 
-// Add periodic ghost atoms and bonds to structureGroup
-// Called during renderStructure, before centering
+// Periodic copies are displayed for the preview region [0, na] × [0, nb] × [0, nc]
+// in fractional coordinates: every whole cell beyond the original, plus the
+// copies that fall on the region's far faces, edges and corners. An atom at
+// fractional 0 therefore also appears at 1, so a cubic cell shows its corner
+// and face atoms the way a textbook drawing does, and a bond that crosses a
+// face ends at a drawn copy instead of in empty space.
+// Called during renderStructure, before centering.
+const BOUNDARY_IMAGE_TOLERANCE = 1e-6;
+
 function addPeriodicImages(structure) {
     if (!isPeriodicStructure(structure)) return;
     const { a: na, b: nb, c: nc } = getPeriodicRepeats(structure);
-    
-    // Skip if no periodic images
-    if (na === 1 && nb === 1 && nc === 1) return;
-    
+    const counts = [na, nb, nc];
     const lattice = structure.lattice;
-    const aVec = new THREE.Vector3(...lattice[0]);
-    const bVec = new THREE.Vector3(...lattice[1]);
-    const cVec = new THREE.Vector3(...lattice[2]);
+    const vectors = lattice.map(vector => new THREE.Vector3(...vector));
+    const periodicAxes = getPeriodicAxes(structure);
     
     // Add supercell wireframe
-    if (settings.showCell) {
+    if (settings.showCell && !(na === 1 && nb === 1 && nc === 1)) {
         const supercellWireframe = createSupercellWireframe(lattice, na, nb, nc);
         structureGroup.add(supercellWireframe);
     }
     
-    // Generate ghost atoms for each periodic cell (excluding 0,0,0)
-    for (let ia = 0; ia < na; ia++) {
-        for (let ib = 0; ib < nb; ib++) {
-            for (let ic = 0; ic < nc; ic++) {
-                // Skip the original cell
-                if (ia === 0 && ib === 0 && ic === 0) continue;
-                
-                // Translation vector for this cell
-                const translation = new THREE.Vector3()
-                    .addScaledVector(aVec, ia)
-                    .addScaledVector(bVec, ib)
-                    .addScaledVector(cVec, ic);
-                
-                // Create ghost atoms in this cell
-                structure.atoms.forEach((atom, originalIndex) => {
-                    const ghostPos = atom.position.clone().add(translation);
-                    const cellOffset = { a: ia, b: ib, c: ic };
-                    const ghostAtom = createGhostAtom(atom.element, ghostPos, originalIndex, cellOffset);
-                    structureGroup.add(ghostAtom);
-                    // Add to atomMeshes for raycasting (so ghost atoms can be selected)
-                    atomMeshes.push(ghostAtom);
-                });
-            }
-        }
+    const fractionals = structure.atoms.map(atom => cartesianToFractional(atom.position, lattice));
+    const isWholeCell = offsets => offsets.every((offset, axis) => offset >= 0 && offset < counts[axis]);
+    const onBoundary = (fractional, offsets) => Boolean(fractional) && periodicAxes.every((periodic, axis) => {
+        if (!periodic) return true;
+        const value = fractional[axis] + offsets[axis];
+        return value >= -BOUNDARY_IMAGE_TOLERANCE && value <= counts[axis] + BOUNDARY_IMAGE_TOLERANCE;
+    });
+    // Whole cells use offsets 0..n-1; boundary copies may also come from -1 or n.
+    const ranges = counts.map((count, axis) => periodicAxes[axis]
+        ? Array.from({ length: count + 2 }, (_, index) => index - 1) : [0]);
+    for (const ia of ranges[0]) for (const ib of ranges[1]) for (const ic of ranges[2]) {
+        const offsets = [ia, ib, ic];
+        // Skip the original cell
+        if (ia === 0 && ib === 0 && ic === 0) continue;
+        const whole = isWholeCell(offsets);
+        const translation = new THREE.Vector3();
+        offsets.forEach((offset, axis) => translation.addScaledVector(vectors[axis], offset));
+        structure.atoms.forEach((atom, originalIndex) => {
+            if (!whole && !onBoundary(fractionals[originalIndex], offsets)) return;
+            const ghostPos = atom.position.clone().add(translation);
+            const cellOffset = { a: ia, b: ib, c: ic };
+            const ghostAtom = createGhostAtom(atom.element, ghostPos, originalIndex, cellOffset);
+            structureGroup.add(ghostAtom);
+            // Add to atomMeshes for raycasting (so ghost atoms can be selected)
+            atomMeshes.push(ghostAtom);
+        });
     }
-    
 }
 
 // === ATOM SELECTION & MEASUREMENT FUNCTIONS ===
@@ -1499,7 +1503,14 @@ function getAtomIntersectionAt(mouseNDC) {
         const selected = selectedAtoms[selectionRings.indexOf(markerHit.object)];
         if (selected?.mesh?.parent === structureGroup) return { ...markerHit, object: selected.mesh };
     }
-    return raycaster.intersectObjects(atomMeshes, false)[0] || null;
+    const hits = raycaster.intersectObjects(atomMeshes, false);
+    const nearest = hits[0];
+    if (!nearest || !nearest.object.userData.isGhost) return nearest || null;
+    // Viewed along a lattice vector, an atom and its own periodic copy share
+    // the same pixels. The copy is only an image of the real atom, so the real
+    // atom receives the click: that is what editing, focus and history name.
+    return hits.find(hit => !hit.object.userData.isGhost
+        && hit.object.userData.atomIndex === nearest.object.userData.originalIndex) || nearest;
 }
 
 // Mouse down handler
@@ -2742,8 +2753,16 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
         setGeometryWarning('bonds', error.message);
         return;
     }
+    // Copies that are drawn (whole preview cells and boundary copies) already
+    // bond through the ordinary pass; only undrawn translations need stubs.
+    const copyKey = (originalIndex, offsets) => `${originalIndex}|${offsets.join(',')}`;
+    const identity = (atom, index) => atom.userData.isGhost
+        ? [atom.userData.originalIndex, ['a', 'b', 'c'].map(axis => atom.userData.cellOffset?.[axis] || 0)]
+        : [atom.userData.atomIndex ?? index, [0, 0, 0]];
+    const drawnCopies = new Set(atomMeshes.map((atom, index) => copyKey(...identity(atom, index))));
     for (let index = 0; index < atomMeshes.length; index++) {
         const atom = atomMeshes[index];
+        const [originalIndex, baseOffset] = identity(atom, index);
         const shifts = plans[index].map(([first, last], axis) => {
             const values = [];
             for (let count = first; count <= last; count++) values.push(count * repeats[axis]);
@@ -2752,6 +2771,7 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
         for (const ia of shifts[0]) for (const ib of shifts[1]) for (const ic of shifts[2]) {
             if (ia === 0 && ib === 0 && ic === 0) continue;
             const offset = [ia, ib, ic];
+            if (drawnCopies.has(copyKey(originalIndex, offset.map((shift, axis) => baseOffset[axis] + shift)))) continue;
             const translated = new THREE.Vector3(...[0, 1, 2].map(axis =>
                 atom.position.getComponent(axis) + offset.reduce((sum, count, vector) =>
                     sum + count * lattice[vector][axis], 0)
@@ -2821,16 +2841,19 @@ function rebuildLabels() {
     });
     
     // Rebuild if enabled
-    if (settings.showLabels) {
-        atomMeshes.forEach((mesh, index) => {
-            // Skip ghost atoms - only label real atoms
-            if (mesh.userData.isGhost) return;
-            
-            const label = createAtomLabel(index + 1, mesh.position);
-            structureGroup.add(label);
-        });
-    }
+    if (settings.showLabels) addAtomLabels();
     requestRender();
+}
+
+// A periodic copy is the same atom, so it carries that atom's number. The
+// label remembers which mesh it follows and that mesh's picking identity.
+function addAtomLabels() {
+    atomMeshes.forEach((mesh, meshIndex) => {
+        const number = (mesh.userData.isGhost ? mesh.userData.originalIndex : meshIndex) + 1;
+        const label = createAtomLabel(number, mesh.position);
+        Object.assign(label.userData, { meshIndex, atomIndex: mesh.userData.atomIndex });
+        structureGroup.add(label);
+    });
 }
 
 // Keep every glyph and its outline/shadow inside the fixed-size texture.
@@ -2861,7 +2884,7 @@ function updateAtomLabelPositions() {
     }).map(atom => atom.mesh));
     structureGroup.children.forEach(label => {
         if (!label.userData.isAtomLabel) return;
-        const mesh = atomMeshes[label.userData.atomIndex];
+        const mesh = atomMeshes[label.userData.meshIndex ?? label.userData.atomIndex];
         if (!mesh) return;
         label.visible = !numberedMeshes.has(mesh);
         if (!label.visible) return;
@@ -2931,7 +2954,7 @@ function createAtomLabel(indexNumber, position) {
     // Lower render order so selection markers appear on top
     sprite.renderOrder = -10;
     
-    sprite.userData = { isAtomLabel: true, atomIndex: indexNumber - 1, labelBaseScale: sprite.scale.clone() };
+    sprite.userData = { isAtomLabel: true, atomIndex: indexNumber - 1, meshIndex: indexNumber - 1, labelBaseScale: sprite.scale.clone() };
     
     return sprite;
 }
@@ -4305,12 +4328,6 @@ function renderStructure(structure, preserveState = false) {
             const indicator = createFixedAtomIndicator(atom.position, radius, selectiveDynamics);
             structureGroup.add(indicator);
         }
-        
-        // Add atom label if enabled
-        if (settings.showLabels) {
-            const label = createAtomLabel(index + 1, atom.position);
-            structureGroup.add(label);
-        }
     });
     
     // Add unit cell
@@ -4323,6 +4340,8 @@ function renderStructure(structure, preserveState = false) {
     addPeriodicImages(structure);
     addInstancedAtoms();
     addBondsFromAtomMeshes();
+    // Labels number every displayed sphere, copies included, once they exist.
+    if (settings.showLabels) addAtomLabels();
     
     // Establish an origin for a newly loaded document. Rebuilding the same
     // document must retain its placement: display bounds change with atom
@@ -4372,8 +4391,11 @@ function getStructureBounds() {
 }
 
 function fitStructureToView(preserveOrientation = false) {
+    // Reset looks at a periodic cell from a lattice-based direction that avoids
+    // the body diagonal, so symmetric cells do not stack their atoms; see
+    // CrystalCamera.defaultOrientation and docs/camera.md.
     const quaternion = preserveOrientation ? camera.quaternion.clone()
-        : cameraMath.orientation([1, 0.8, 1], [0, 1, 0]);
+        : cameraMath.defaultOrientation(hasLattice(currentStructure) ? currentStructure.lattice : null);
     // Fit the projection actually in use. A file can finish loading before a
     // window/sidebar resize has settled, when the DOM canvas width is zero.
     // The resize handler preserves this fit when it updates the projection.
@@ -5064,13 +5086,24 @@ function convertToSupercell() {
 
     // A periodic copy becomes a real atom without moving. Remap its identity
     // before rebuilding meshes so measurements keep the same physical points.
+    // A boundary copy beyond the converted cells stays a copy of the new atom
+    // that lands in the matching cell, one supercell vector away.
+    const counts = { a: na, b: nb, c: nc };
     selectedAtoms = selectedAtoms.map(atom => {
         if (!atom.isGhost) return atom;
-        const index = prepared.atomSources.findIndex(source => source.originalIndex === atom.originalIndex
-            && source.cellOffset.a === atom.cellOffset.a
-            && source.cellOffset.b === atom.cellOffset.b
-            && source.cellOffset.c === atom.cellOffset.c);
-        return { ...atom, index, originalIndex: index, isGhost: false, cellOffset: null };
+        const source = {}, offset = {};
+        for (const axis of ['a', 'b', 'c']) {
+            const count = counts[axis];
+            source[axis] = ((atom.cellOffset[axis] % count) + count) % count;
+            offset[axis] = (atom.cellOffset[axis] - source[axis]) / count;
+        }
+        const index = prepared.atomSources.findIndex(candidate => candidate.originalIndex === atom.originalIndex
+            && candidate.cellOffset.a === source.a
+            && candidate.cellOffset.b === source.b
+            && candidate.cellOffset.c === source.c);
+        const stillCopy = offset.a !== 0 || offset.b !== 0 || offset.c !== 0;
+        return stillCopy ? { ...atom, index: `ghost_${index}_${offset.a}${offset.b}${offset.c}`, originalIndex: index, isGhost: true, cellOffset: offset }
+            : { ...atom, index, originalIndex: index, isGhost: false, cellOffset: null };
     });
     
     // Update structure
@@ -6062,7 +6095,7 @@ function switchToFrame(frameIndex) {
         rebuildBonds();
         if (settings.showLabels) {
             structureGroup.children.forEach(child => {
-                if (child.userData.isAtomLabel) child.position.copy(atomMeshes[child.userData.atomIndex].position);
+                if (child.userData.isAtomLabel) child.position.copy(atomMeshes[child.userData.meshIndex ?? child.userData.atomIndex].position);
             });
         }
         updateSelectionVisualPositions();

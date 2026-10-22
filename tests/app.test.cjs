@@ -1834,3 +1834,67 @@ for (const [format, parser, fixture] of [
         assert.equal(anchor.download, expected, source);
     }
 });
+
+function periodicImageContext(atoms, periodic, pbc) {
+    const context = app();
+    context.atoms = atoms.map(([element, x, y, z]) => ({ element, position: new Vector3(x, y, z) }));
+    context.pbc = pbc;
+    vm.runInContext(`
+        settings.periodic = ${JSON.stringify(periodic)};
+        settings.showCell = false;
+        atomMeshes = [];
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        createGhostAtom = (element, position, originalIndex, cellOffset) => ({ position, userData: { element, isGhost: true, isAtom: true, originalIndex, cellOffset } });
+        structure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]], atoms, ...(pbc ? { pbc } : {}) };
+        addPeriodicImages(structure);
+    `, context);
+    return JSON.parse(vm.runInContext('JSON.stringify(atomMeshes.map(mesh => [mesh.userData.originalIndex, mesh.userData.cellOffset.a, mesh.userData.cellOffset.b, mesh.userData.cellOffset.c, mesh.position.x, mesh.position.y, mesh.position.z]))', context));
+}
+
+test('periodic copies on the far faces, edges and corners of the displayed cells are drawn', () => {
+    const atoms = [['Na', 0, 0, 0], ['Cl', 5, 5, 0], ['Na', 2.5, 2.5, 2.5], ['Cl', 10, 0, 0]];
+    const single = periodicImageContext(atoms, { a: 1, b: 1, c: 1 });
+    const byAtom = index => single.filter(copy => copy[0] === index).map(copy => copy.slice(1, 4).join(','));
+    assert.equal(byAtom(0).length, 7);
+    assert.ok(byAtom(0).includes('1,1,1'));
+    assert.deepEqual(byAtom(1), ['0,0,1']);
+    assert.deepEqual(byAtom(2), []);
+    assert.equal(byAtom(3).length, 7);
+    assert.ok(byAtom(3).includes('-1,0,0'));
+    const corner = single.find(copy => copy[0] === 0 && copy.slice(1, 4).join(',') === '1,1,1');
+    assert.deepEqual(corner.slice(4), [10, 10, 10]);
+    // A larger preview keeps whole cells and adds copies on the enlarged far faces.
+    const doubled = periodicImageContext(atoms.slice(0, 3), { a: 2, b: 1, c: 1 });
+    assert.equal(doubled.filter(copy => copy[1] === 1 && copy[2] === 0 && copy[3] === 0).length, 3);
+    assert.equal(doubled.filter(copy => copy[0] === 0).length, 11);
+    assert.equal(doubled.filter(copy => copy[0] === 1).length, 3);
+    assert.equal(doubled.filter(copy => copy[0] === 2).length, 1);
+    assert.ok(doubled.every(copy => copy[1] <= 2 && copy[2] <= 1 && copy[3] <= 1));
+    // Nonperiodic axes never receive copies.
+    const slab = periodicImageContext(atoms.slice(0, 1), { a: 1, b: 1, c: 1 }, [true, true, false]);
+    assert.equal(slab.length, 3);
+    assert.ok(slab.every(copy => copy[3] === 0));
+});
+
+test('boundary bond stubs are not duplicated for copies that are drawn', () => {
+    const context = app();
+    // A at 0 bonds to B at 1; C at 9 bonds to the drawn copy of A at 10.
+    context.points = [new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(9, 0, 0)];
+    vm.runInContext(`
+        currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]] };
+        settings.periodic = { a: 1, b: 1, c: 1 };
+        settings.showBonds = true;
+        settings.useElementRadii = false;
+        settings.bondThreshold = 1.5;
+        atomMeshes = points.map((position, index) => ({ position, userData: { element: 'H', atomIndex: index } }));
+        atomMeshes.push({ position: new THREE.Vector3(10, 0, 0), userData: { element: 'H', isGhost: true, originalIndex: 0, cellOffset: { a: 1, b: 0, c: 0 } } });
+        structureGroup = { children: [], add(child) { this.children.push(child); } };
+        createBond = (a, b) => ({ kind: 'interior', start: a, end: b });
+        createGhostBond = (a, b) => ({ kind: 'boundary', start: a, end: b });
+        addBondsFromAtomMeshes();
+    `, context);
+    const bonds = vm.runInContext('structureGroup.children', context);
+    const describe = bond => `${bond.kind}:${[bond.start, bond.end].map(p => p.x.toFixed(1)).sort().join('-')}`;
+    // Without de-duplication the shifted copies of A would add both bonds again.
+    assert.deepEqual(Array.from(bonds.map(describe)).sort(), ['boundary:10.0-9.0', 'interior:0.0-1.0']);
+});

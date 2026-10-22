@@ -191,7 +191,7 @@ test('original interface, reduced motion, keyboard Reset and molecule navigation
     await button.focus();
     await page.keyboard.press('Enter');
     expect((await pose(page)).phase).toBe('idle');
-    const expectedDefault = await page.evaluate(() => new THREE.Vector3(1, .8, 1).normalize().toArray());
+    const expectedDefault = await page.evaluate(() => cameraMath.back(cameraMath.defaultOrientation(currentStructure.lattice)).toArray());
     nearArray((await pose(page)).direction, expectedDefault);
     await seed(page);
     await drag(page, 2);

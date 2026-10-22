@@ -36,11 +36,20 @@ for (const size of [{width:1440,height:900},{width:900,height:760}]) {
             if(cycle===0||cycle===7)await screenshot('atom-preview-'+cycle);
             await page.mouse.up();
             const edge=await page.evaluate(()=>{
-                const handle=vacuumDragState.handles.find(h=>h.userData.extendAxis==='b'&&h.userData.handleType==='far');
                 const rect=renderer.domElement.getBoundingClientRect();
-                const p=handle.getWorldPosition(new THREE.Vector3()).project(camera);
                 const d=getScreenSpaceDirection(getLatticeVector(currentStructure.lattice,1));
-                return {x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2,dx:d.x*24,dy:-d.y*24};
+                // A periodic copy on the far face can cover the middle of an edge; grab an exposed section of a far b edge.
+                for(const handle of vacuumDragState.handles.filter(h=>h.userData.extendAxis==='b'&&h.userData.handleType==='far')){
+                    for(const fraction of [.5,.25,.75,.125,.875,.375,.625]){
+                        const world=handle.userData.edgeStart.clone().lerp(handle.userData.edgeEnd,fraction);
+                        if(handle.parent)handle.parent.localToWorld(world);
+                        const p=world.project(camera);
+                        const point={x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2};
+                        const hit=checkVacuumHandleIntersection({clientX:point.x,clientY:point.y});
+                        if(hit?.extendAxis==='b'&&hit.handleType==='far')return {...point,dx:d.x*24,dy:-d.y*24};
+                    }
+                }
+                throw Error('No exposed far b edge');
             });
             await page.mouse.move(edge.x,edge.y); await page.mouse.down();
             expect(await page.evaluate(()=>vacuumDragState.isDragging)).toBe(true);

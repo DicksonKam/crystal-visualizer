@@ -35,6 +35,8 @@ test('ordinary atom numbers cannot paint over a nearer atom after rotation', asy
         const draw=()=>{renderer.setViewport(0,0,renderSize.x,renderSize.y);renderer.render(scene,camera);const bytes=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,bytes);return bytes;};
         labels.forEach(o=>o.visible=false);const plain=draw();
         const ray=new THREE.Raycaster(),point=new THREE.Vector3(),right=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion);
+        // Translucent periodic copies write no depth and are meant to be seen through; only opaque atoms occlude numbers.
+        const opaque=atomMeshes.filter(m=>!m.userData.isGhost);
         let occludedPixels=0,paintedOccludedPixels=0,visibleNumberPixels=0;
         for(const label of labels){
             label.getWorldPosition(point);const center=point.clone().project(camera);const edge=point.clone().addScaledVector(right,label.scale.x/2).project(camera);
@@ -42,13 +44,13 @@ test('ordinary atom numbers cannot paint over a nearer atom after rotation', asy
             label.visible=true;const numbered=draw();label.visible=false;
             for(let y=Math.max(0,Math.floor(cy-r));y<Math.min(h,Math.ceil(cy+r));y++)for(let x=Math.max(0,Math.floor(cx-r));x<Math.min(w,Math.ceil(cx+r));x++){
                 ray.setFromCamera(new THREE.Vector2((x+.5)/w*2-1,1-(y+.5)/h*2),camera);
-                const hit=ray.intersectObjects(atomMeshes,false)[0];if(!hit)continue;
+                const hit=ray.intersectObjects(opaque,false)[0];if(!hit)continue;
                 let nearer=hit.object.userData.atomIndex!==label.userData.atomIndex && hit.distance+1e-4 < point.clone().sub(ray.ray.origin).dot(ray.ray.direction);
                 // Ignore the two-pixel antialias fringe: only count pixels fully inside
                 // the nearer atom, where every neighboring ray is also occluded.
                 if(nearer) for(const [dx,dy] of [[-2,0],[2,0],[0,-2],[0,2]]) {
                     ray.setFromCamera(new THREE.Vector2((x+.5+dx)/w*2-1,1-(y+.5+dy)/h*2),camera);
-                    const adjacent=ray.intersectObjects(atomMeshes,false)[0];
+                    const adjacent=ray.intersectObjects(opaque,false)[0];
                     if(!adjacent || adjacent.object!==hit.object || adjacent.distance+1e-4 >= point.clone().sub(ray.ray.origin).dot(ray.ray.direction)) {nearer=false;break;}
                 }
                 const offset=((h-1-y)*w+x)*4;

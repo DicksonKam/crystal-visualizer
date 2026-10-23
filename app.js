@@ -130,7 +130,7 @@ let settings = {
     showAxes: true,
     showCell: true,
     periodic: { a: 1, b: 1, c: 1 }, // Periodic images in each direction
-    ghostOpacity: 0.75, // Opacity of ghost atoms (default 75%)
+    ghostOpacity: 0.4, // Periodic copies stay clearly fainter than the atoms they repeat
     showFixedIndicators: true // Show visual indicators for fixed atoms
 };
 

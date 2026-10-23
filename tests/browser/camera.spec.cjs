@@ -183,6 +183,29 @@ test('internal fitting fits narrow large scenes and existing Reset restores dete
 
 });
 
+test('right-button pan moves the structure with the pointer one-to-one', async ({ page }) => {
+    await upload(page, cell(), 'camera.poscar');
+    const screenOf = () => page.evaluate(() => {
+        camera.updateMatrixWorld(true);
+        const rect = renderer.domElement.getBoundingClientRect();
+        const p = atomMeshes[0].getWorldPosition(new THREE.Vector3()).project(camera);
+        return { x: rect.left + (p.x + 1) * rect.width / 2, y: rect.top + (1 - p.y) * rect.height / 2 };
+    });
+    for (const zoomTicks of [0, 300]) {
+        const box = await canvas(page).boundingBox();
+        if (zoomTicks) { await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.wheel(0, zoomTicks); await page.waitForTimeout(600); }
+        const before = await screenOf();
+        const x = box.x + box.width * .7, y = box.y + box.height * .3;
+        await page.mouse.move(x, y); await page.mouse.down({ button: 'right' });
+        await page.mouse.move(x + 180, y + 60, { steps: 12 });
+        await page.mouse.up({ button: 'right' });
+        await page.waitForTimeout(800);
+        const after = await screenOf();
+        expect(after.x - before.x).toBeGreaterThan(165); expect(after.x - before.x).toBeLessThan(195);
+        expect(after.y - before.y).toBeGreaterThan(50); expect(after.y - before.y).toBeLessThan(70);
+    }
+});
+
 test('original interface, reduced motion, keyboard Reset and molecule navigation remain intact', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await upload(page, cell(), 'camera.poscar');

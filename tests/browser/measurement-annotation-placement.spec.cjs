@@ -24,22 +24,27 @@ for (const order of [[1, 2, 3], [2, 1, 3]]) test(`water measurement labels remai
         };
         const labels = measurementGroup.children.filter(object => object.userData.isMeasurementLabel);
         const points = selectedAtoms.map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()));
+        const anchorScreen = label => { const a = measurementGroup.localToWorld((label.userData.annotationAnchor || label.position).clone()).project(camera); return { x: (a.x + 1) * bounds.width / 2, y: (1 - a.y) * bounds.height / 2 }; };
         return {
-            labels: labels.map(rectangle), markers: selectionRings.map(rectangle),
+            labels: labels.map(rectangle), markers: selectionRings.map(rectangle), anchorScreens: labels.map(anchorScreen),
             anchors: labels.slice(0, 2).map(label => (label.userData.annotationAnchor || label.position).toArray()),
             midpoints: points.slice(1).map((point, i) => point.clone().add(points[i]).multiplyScalar(.5).toArray()),
             leaders: measurementGroup.children.filter(object => object.userData.isAnnotationLeader && object.visible).length
         };
     });
     await info.attach('annotation-rectangles', { body: JSON.stringify(view), contentType: 'application/json' });
+    // Captions never cover each other, stay close to what they measure, and use no leader lines.
     for (const [index, label] of view.labels.entries()) {
-        for (const other of [...view.markers, ...view.labels.slice(0, index)]) {
+        for (const other of view.labels.slice(0, index)) {
             const overlapX = (label.width + other.width) / 2 - Math.abs(label.x - other.x);
             const overlapY = (label.height + other.height) / 2 - Math.abs(label.y - other.y);
             expect(Math.min(overlapX, overlapY)).toBeLessThanOrEqual(-3.9);
         }
+        const anchor = view.anchorScreens[index];
+        expect(Math.hypot(label.x - anchor.x, label.y - anchor.y)).toBeLessThanOrEqual(label.height * 6 + 1);
     }
     for (let i = 0; i < 2; i++) for (let axis = 0; axis < 3; axis++) expect(view.anchors[i][axis]).toBeCloseTo(view.midpoints[i][axis], 6);
-    expect(view.leaders).toBeGreaterThan(0);
+    expect(view.leaders).toBe(0);
+    for (const marker of view.markers) expect(marker.width).toBeGreaterThan(0);
     await expect(page.locator('#measurementPanel')).toContainText(order[0] === 1 ? '37.76°' : '104.48°');
 });

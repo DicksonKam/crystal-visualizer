@@ -1431,20 +1431,16 @@ function createSupercellWireframe(lattice, na, nb, nc) {
 // Called during renderStructure, before centering.
 const BOUNDARY_IMAGE_TOLERANCE = 1e-6;
 
-function addPeriodicImages(structure) {
-    if (!isPeriodicStructure(structure)) return;
+// Every periodic copy the current geometry calls for, as
+// { originalIndex, offsets: [ia, ib, ic], whole } with whole marking a copy in
+// a previewed whole cell rather than on the region's boundary.
+function listPeriodicCopies(structure) {
+    const copies = [];
+    if (!isPeriodicStructure(structure)) return copies;
     const { a: na, b: nb, c: nc } = getPeriodicRepeats(structure);
     const counts = [na, nb, nc];
     const lattice = structure.lattice;
-    const vectors = lattice.map(vector => new THREE.Vector3(...vector));
     const periodicAxes = getPeriodicAxes(structure);
-    
-    // Add supercell wireframe
-    if (settings.showCell && !(na === 1 && nb === 1 && nc === 1)) {
-        const supercellWireframe = createSupercellWireframe(lattice, na, nb, nc);
-        structureGroup.add(supercellWireframe);
-    }
-    
     const fractionals = structure.atoms.map(atom => cartesianToFractional(atom.position, lattice));
     const isWholeCell = offsets => offsets.every((offset, axis) => offset >= 0 && offset < counts[axis]);
     const onBoundary = (fractional, offsets) => Boolean(fractional) && periodicAxes.every((periodic, axis) => {
@@ -1457,20 +1453,57 @@ function addPeriodicImages(structure) {
         ? Array.from({ length: count + 2 }, (_, index) => index - 1) : [0]);
     for (const ia of ranges[0]) for (const ib of ranges[1]) for (const ic of ranges[2]) {
         const offsets = [ia, ib, ic];
-        // Skip the original cell
-        if (ia === 0 && ib === 0 && ic === 0) continue;
+        if (ia === 0 && ib === 0 && ic === 0) continue; // the original cell
         const whole = isWholeCell(offsets);
+        structure.atoms.forEach((atom, originalIndex) => {
+            if (whole || onBoundary(fractionals[originalIndex], offsets)) copies.push({ originalIndex, offsets, whole });
+        });
+    }
+    return copies;
+}
+
+const periodicCopyKey = (originalIndex, offsets) => `${originalIndex}|${offsets.join(',')}`;
+
+// Moving an atom onto or off a cell face changes which boundary copies exist.
+// Position updates alone cannot show that; the scene must be rebuilt.
+function boundaryCopiesStale() {
+    if (!currentStructure || !isPeriodicStructure(currentStructure)) return false;
+    const wanted = new Set(listPeriodicCopies(currentStructure).filter(copy => !copy.whole)
+        .map(copy => periodicCopyKey(copy.originalIndex, copy.offsets)));
+    const { a: na, b: nb, c: nc } = getPeriodicRepeats(currentStructure);
+    const counts = [na, nb, nc];
+    const shown = new Set();
+    for (const mesh of atomMeshes) {
+        if (!mesh.userData.isGhost) continue;
+        const offsets = ['a', 'b', 'c'].map(axis => mesh.userData.cellOffset[axis]);
+        if (offsets.every((offset, axis) => offset >= 0 && offset < counts[axis])) continue;
+        shown.add(periodicCopyKey(mesh.userData.originalIndex, offsets));
+    }
+    return shown.size !== wanted.size || [...wanted].some(key => !shown.has(key));
+}
+
+function addPeriodicImages(structure) {
+    if (!isPeriodicStructure(structure)) return;
+    const { a: na, b: nb, c: nc } = getPeriodicRepeats(structure);
+    const lattice = structure.lattice;
+    const vectors = lattice.map(vector => new THREE.Vector3(...vector));
+    
+    // Add supercell wireframe
+    if (settings.showCell && !(na === 1 && nb === 1 && nc === 1)) {
+        const supercellWireframe = createSupercellWireframe(lattice, na, nb, nc);
+        structureGroup.add(supercellWireframe);
+    }
+    
+    for (const { originalIndex, offsets } of listPeriodicCopies(structure)) {
+        const atom = structure.atoms[originalIndex];
         const translation = new THREE.Vector3();
         offsets.forEach((offset, axis) => translation.addScaledVector(vectors[axis], offset));
-        structure.atoms.forEach((atom, originalIndex) => {
-            if (!whole && !onBoundary(fractionals[originalIndex], offsets)) return;
-            const ghostPos = atom.position.clone().add(translation);
-            const cellOffset = { a: ia, b: ib, c: ic };
-            const ghostAtom = createGhostAtom(atom.element, ghostPos, originalIndex, cellOffset);
-            structureGroup.add(ghostAtom);
-            // Add to atomMeshes for raycasting (so ghost atoms can be selected)
-            atomMeshes.push(ghostAtom);
-        });
+        const ghostPos = atom.position.clone().add(translation);
+        const cellOffset = { a: offsets[0], b: offsets[1], c: offsets[2] };
+        const ghostAtom = createGhostAtom(atom.element, ghostPos, originalIndex, cellOffset);
+        structureGroup.add(ghostAtom);
+        // Add to atomMeshes for raycasting (so ghost atoms can be selected)
+        atomMeshes.push(ghostAtom);
     }
 }
 
@@ -1989,8 +2022,11 @@ function onMouseUp(event) {
             currentStructure.atoms[completedDrag.index].fractional = hasLattice(currentStructure)
                 ? cartesianToFractional(newPos, currentStructure.lattice) : null;
             
-            // Rebuild all display options (bonds, fixed indicators, etc.)
-            rebuildDisplayOptions();
+            // Rebuild all display options (bonds, fixed indicators, etc.). An
+            // atom that reached or left a cell face also changes which
+            // periodic copies are drawn, which only a scene rebuild can show.
+            if (boundaryCopiesStale()) renderStructure(currentStructure, true);
+            else rebuildDisplayOptions();
             
             // Update status
             statusText.textContent = changed ? `Moved atom #${completedDrag.index + 1}` : 'Atom position unchanged';
@@ -3760,11 +3796,13 @@ function updateMeasurements() {
         if (pair.unavailable) return;
         drawMeasurementLine(pair.start, pair.end, index === 0 ? 0x00f5d4 : 0xf15bb5);
         const midpoint = pair.start.clone().multiplyScalar(0.5).addScaledVector(pair.end, 0.5);
-        createFloatingDistanceLabel(midpoint, pair.distance);
+        const label = createFloatingDistanceLabel(midpoint, pair.distance);
+        label.userData.annotationSegment = [pair.start.clone(), pair.end.clone()];
     });
     if (geometry.angle) {
         const arc = drawAngleArc(geometry.angle);
-        createFloatingAngleLabel(arc.labelPosition, geometry.angle.angleDeg);
+        const label = createFloatingAngleLabel(arc.labelPosition, geometry.angle.angleDeg);
+        label.userData.annotationVertex = geometry.angle.vertex.clone();
     }
     requestRender();
 }
@@ -3812,6 +3850,10 @@ function getAnnotationWorldPerPixel(position, height) {
 function positionMeasurementLabels() {
     const width = renderer.domElement.clientWidth, height = renderer.domElement.clientHeight;
     if (!width || !height) return;
+    const toScreen = point => {
+        const p = point.clone().project(camera);
+        return { x: (p.x + 1) * width / 2, y: (1 - p.y) * height / 2 };
+    };
     const screenRect = sprite => {
         const point = sprite.getWorldPosition(new THREE.Vector3()).project(camera);
         const unit = sprite.userData.annotationWorldPerPixel;
@@ -3820,78 +3862,34 @@ function positionMeasurementLabels() {
             width: sprite.scale.x / unit, height: sprite.scale.y / unit, depth: point.z };
     };
     const labels = measurementGroup.children.filter(sprite => sprite.userData.isMeasurementLabel);
-    const visible = labels.map(sprite => ({ sprite, rect: screenRect(sprite) })).filter(item => item.rect);
-    const markers = selectionRings.map((sprite, index) => ({ sprite, index, rect: screenRect(sprite) })).filter(item => item.rect);
-    const overlaps = (a, b) => Math.abs(a.x - b.x) < (a.width + b.width) / 2 + 4
-        && Math.abs(a.y - b.y) < (a.height + b.height) / 2 + 4;
-    const crowded = new Set(markers.filter(a => markers.some(b => a !== b && overlaps(a.rect, b.rect))));
-    const bodies = [];
-    if (visible.length || crowded.size) for (const mesh of atomMeshes) {
-        const center = mesh.getWorldPosition(new THREE.Vector3());
-        const point = center.clone().project(camera);
-        const unit = getAnnotationWorldPerPixel(center, height);
-        const radius = (mesh.geometry.parameters.radius || 1) * mesh.getWorldScale(new THREE.Vector3()).x / unit;
-        if (!(unit > 0) || !(radius > 0) || ![point.x, point.y, point.z, radius].every(Number.isFinite) || Math.abs(point.z) > 1) continue;
-        bodies.push({ mesh, rect: { x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2, width: radius * 2, height: radius * 2 } });
-    }
-    selectionRings.forEach(sprite => { if (sprite.userData.annotationLeader) sprite.userData.annotationLeader.visible = false; });
-    const occupied = markers.filter(item => !crowded.has(item)).map(item => item.rect);
-    for (const item of markers) {
-        if (!crowded.has(item)) continue;
-        const owner = selectedAtoms[item.index]?.mesh;
-        const obstacles = [...occupied, ...bodies.filter(body => body.mesh !== owner).map(body => body.rect)];
-        const [target] = CrystalAnnotations.placeLabels([item.rect], obstacles, { width, height });
-        placeMeasurementAnnotation(item.sprite, item.rect, target, width, height, false, item.sprite.userData.annotationColor);
-        occupied.push(target);
-    }
-    const bonds = [];
-    if (visible.length) for (const mesh of structureGroup.children) {
-        if (!mesh.visible || !(mesh.userData.isBond || mesh.userData.isGhostBond)) continue;
-        mesh.updateWorldMatrix(true, false);
-        const center = mesh.getWorldPosition(new THREE.Vector3());
-        const unit = getAnnotationWorldPerPixel(center, height);
-        const radius = mesh.getWorldScale(new THREE.Vector3()).x / unit;
-        const first = mesh.localToWorld(new THREE.Vector3(0, -.5, 0)).project(camera);
-        const second = mesh.localToWorld(new THREE.Vector3(0, .5, 0)).project(camera);
-        if (!(unit > 0) || !(radius > 0) || ![first.x, first.y, first.z, second.x, second.y, second.z, radius].every(Number.isFinite)
-            || first.z < -1 && second.z < -1 || first.z > 1 && second.z > 1) continue;
-        const a = { x: (first.x + 1) * width / 2, y: (1 - first.y) * height / 2 };
-        const b = { x: (second.x + 1) * width / 2, y: (1 - second.y) * height / 2 };
-        bonds.push({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2,
-            width: Math.abs(b.x - a.x) + 2 * radius, height: Math.abs(b.y - a.y) + 2 * radius,
-            segment: { a, b, radius } });
-    }
-    const obstacles = [...selectionRings.map(screenRect).filter(Boolean), ...bodies.map(body => body.rect), ...bonds];
-    const placed = CrystalAnnotations.placeLabels(visible.map(item => item.rect), obstacles, { width, height });
-    labels.forEach(sprite => { if (sprite.userData.annotationLeader) sprite.userData.annotationLeader.visible = false; });
-    visible.forEach(({ sprite, rect }, i) => placeMeasurementAnnotation(sprite, rect, placed[i], width, height, true));
-}
-
-// Display positions may move; the anchor and measured geometry never do.
-function placeMeasurementAnnotation(sprite, rect, target, width, height, measurementVisual, color = 0xffffff) {
-    if (Math.hypot(target.x - rect.x, target.y - rect.y) < .01) return;
-    const world = (x, y) => measurementGroup.worldToLocal(new THREE.Vector3(x / width * 2 - 1, 1 - y / height * 2, rect.depth).unproject(camera));
-    sprite.position.copy(world(target.x, target.y));
-    if (Math.hypot(target.x - rect.x, target.y - rect.y) < 2) return;
-    let leader = sprite.userData.annotationLeader;
-    if (!leader) {
-        const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-        leader = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color, transparent: true, opacity: .35, depthTest: false, depthWrite: false }));
-        leader.userData.isMeasurementVisual = measurementVisual;
-        leader.userData.isAnnotationLeader = true;
-        leader.renderOrder = 997;
-        measurementGroup.add(leader);
-        sprite.userData.annotationLeader = leader;
-    }
-    const endX = Math.max(target.x - target.width / 2, Math.min(target.x + target.width / 2, rect.x));
-    const endY = Math.max(target.y - target.height / 2, Math.min(target.y + target.height / 2, rect.y));
-    const end = world(endX, endY);
-    const positions = leader.geometry.attributes.position;
-    positions.setXYZ(0, sprite.userData.annotationAnchor.x, sprite.userData.annotationAnchor.y, sprite.userData.annotationAnchor.z);
-    positions.setXYZ(1, end.x, end.y, end.z);
-    positions.needsUpdate = true;
-    leader.geometry.computeBoundingSphere();
-    leader.visible = true;
+    const items = labels.map(sprite => ({ sprite, rect: screenRect(sprite) })).filter(item => item.rect);
+    if (!items.length) return;
+    const world = point => measurementGroup.localToWorld(point.clone());
+    const unitVector = (x, y) => { const length = Math.hypot(x, y); return length > 1e-6 ? { x: x / length, y: y / length } : { x: 0, y: -1 }; };
+    // Point markers always sit on their atoms. Captions sit on their anchors
+    // (set by updateAnnotationSizes) and move only to clear another caption:
+    // a distance slides across its line, the angle slides out along its
+    // bisector and also keeps clear of the vertex marker.
+    const vertexMarker = selectionRings[1] ? screenRect(selectionRings[1]) : null;
+    const requests = items.map(({ sprite, rect }) => {
+        const { annotationSegment: segment, annotationVertex: vertex } = sprite.userData;
+        if (vertex) {
+            const from = toScreen(world(vertex));
+            return { ...rect, slide: unitVector(rect.x - from.x, rect.y - from.y), flip: false, obstacles: vertexMarker ? [vertexMarker] : [] };
+        }
+        if (segment) {
+            const a = toScreen(world(segment[0])), b = toScreen(world(segment[1]));
+            return { ...rect, slide: unitVector(-(b.y - a.y), b.x - a.x), flip: true, obstacles: [] };
+        }
+        return { ...rect, slide: { x: 0, y: -1 }, flip: true, obstacles: [] };
+    });
+    // A 6 px gap keeps captions visibly apart after sub-pixel rounding.
+    const placed = CrystalAnnotations.separateLabels(requests, 6);
+    items.forEach(({ sprite, rect }, index) => {
+        const target = placed[index];
+        if (Math.hypot(target.x - rect.x, target.y - rect.y) < .01) return;
+        sprite.position.copy(measurementGroup.worldToLocal(new THREE.Vector3(target.x / width * 2 - 1, 1 - target.y / height * 2, rect.depth).unproject(camera)));
+    });
 }
 
 function getSelectionLabelSize(element) {
@@ -3963,6 +3961,7 @@ function createFloatingDistanceLabel(position, distance) {
     sprite.userData.isMeasurementVisual = true;
     
     measurementGroup.add(sprite);
+    return sprite;
 }
 
 // Create floating angle label (clean text, always faces camera)
@@ -4008,6 +4007,7 @@ function createFloatingAngleLabel(position, angleDeg) {
     sprite.userData.isMeasurementVisual = true;
     
     measurementGroup.add(sprite);
+    return sprite;
 }
 
 // Draw a dashed line between two points
@@ -5368,8 +5368,24 @@ function initCameraController() {
     renderer.domElement.addEventListener('pointercancel', interrupt);
 }
 
+// TrackballControls scales panning by the camera distance, which is arbitrary
+// for an orthographic view and made a right-drag move the structure by a small
+// fraction of the pointer motion. Choose the speed at which the structure
+// follows the pointer one-to-one in the pivot plane for the projection in use.
+function syncPanSpeed() {
+    const width = renderer?.domElement?.clientWidth;
+    if (!(width > 0) || !camera?.position || !controls?.target) return;
+    const distance = camera.position.distanceTo(controls.target);
+    if (!(distance > 0) || !Number.isFinite(distance)) return;
+    // With damping, each update applies the whole remaining pointer delta
+    // while only closing a fraction of it, so the steps sum to 1/factor.
+    const damping = controls.staticMoving ? 1 : controls.dynamicDampingFactor;
+    controls.panSpeed = damping * (camera.isOrthographicCamera ? width / distance
+        : 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+}
+
 function updateCamera(time) {
-    if (!cameraController) { controls.update(); return; }
+    if (!cameraController) { syncPanSpeed(); controls.update(); return; }
     const before = cameraController.phase;
     if (!cameraController.transitioning) {
         // The legacy controls damping is per-update. A fixed simulation step
@@ -5377,6 +5393,7 @@ function updateCamera(time) {
         const step = CrystalCamera.POLICY.controlsStepMilliseconds;
         if (time - manualCameraTickAt > CrystalCamera.POLICY.controlsCatchUpMilliseconds) manualCameraTickAt = time - step;
         while (time - manualCameraTickAt >= step && !cameraController.transitioning) {
+            syncPanSpeed();
             controls.update();
             manualCameraTickAt += step;
             cameraController.tick(manualCameraTickAt, cameraManualInputPending);

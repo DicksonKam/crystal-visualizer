@@ -1,66 +1,38 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { placeLabels } = require('../annotations.js');
-const intersects = (a, b) => Math.abs(a.x - b.x) < (a.width + b.width) / 2 + 3.99
-    && Math.abs(a.y - b.y) < (a.height + b.height) / 2 + 3.99;
+const { separateLabels } = require('../annotations.js');
+const clear = (a, b, gap = 4) => Math.abs(a.x - b.x) >= (a.width + b.width) / 2 + gap || Math.abs(a.y - b.y) >= (a.height + b.height) / 2 + gap;
+const at = (x, y, extra = {}) => ({ x, y, width: 80, height: 20, slide: { x: 0, y: 1 }, flip: true, ...extra });
 
-test('unobstructed measurement labels retain their anchor and proportions', () => {
-    const label = { x: 150, y: 100, width: 72, height: 18, depth: .2 };
-    assert.deepEqual(placeLabels([label], [], { width: 300, height: 200 }), [label]);
+test('captions that cover nothing stay exactly on their anchors', () => {
+    const labels = [at(100, 100), at(300, 100), at(100, 300, { slide: { x: 1, y: 0 } })];
+    assert.deepEqual(separateLabels(labels), labels);
 });
 
-test('crowded distance and angle labels avoid each other and atom markers deterministically', () => {
-    const labels = [72, 72, 45].map(width => ({ x: 150, y: 100, width, height: 18 }));
-    const markers = [{ x: 150, y: 100, width: 14, height: 14 }];
-    const original = JSON.stringify({ labels, markers });
-    const placed = placeLabels(labels, markers, { width: 300, height: 200 });
-    placed.forEach((label, index) => {
-        for (const occupied of [...markers, ...placed.slice(0, index)]) assert.equal(intersects(label, occupied), false);
-        assert.ok(Math.hypot(label.x - labels[index].x, label.y - labels[index].y) <= Math.SQRT2 * 96);
-    });
-    assert.equal(JSON.stringify({ labels, markers }), original);
-    assert.deepEqual(placeLabels(labels, markers, { width: 300, height: 200 }), placed);
+test('a caption covering an earlier caption slides along its own direction until clear', () => {
+    const [first, second] = separateLabels([at(100, 100), at(110, 105)]);
+    assert.deepEqual([first.x, first.y], [100, 100]);
+    assert.equal(second.x, 110);
+    assert.equal(second.y, 125);
+    assert.ok(clear(first, second));
 });
 
-test('labels near viewport edges remain within the visible area', () => {
-    const labels = [{ x: 2, y: 2, width: 72, height: 18 }, { x: 298, y: 198, width: 45, height: 18 }];
-    const placed = placeLabels(labels, [], { width: 300, height: 200 });
-    for (const label of placed) {
-        assert.ok(label.x - label.width / 2 >= 4);
-        assert.ok(label.x + label.width / 2 <= 296);
-        assert.ok(label.y - label.height / 2 >= 4);
-        assert.ok(label.y + label.height / 2 <= 196);
-    }
+test('a flippable caption moves away from what it covers', () => {
+    const [, second] = separateLabels([at(100, 100), at(110, 95)]);
+    assert.equal(second.y, 75);
 });
 
-test('viewport clamping retains collisions far from the original anchor', () => {
-    const label = { x: 0, y: 200, width: 400, height: 100 };
-    const obstacle = { x: 400, y: 200, width: 50, height: 50 };
-    const [placed] = placeLabels([label], [obstacle], { width: 900, height: 400 });
-    const separated = Math.abs(placed.x - obstacle.x) >= (placed.width + obstacle.width) / 2 + 4
-        || Math.abs(placed.y - obstacle.y) >= (placed.height + obstacle.height) / 2 + 4;
-    assert.equal(separated, true);
-    assert.ok(placed.x - placed.width / 2 >= 4);
-    assert.ok(placed.x + placed.width / 2 <= 896);
-    assert.ok(placed.y - placed.height / 2 >= 4);
-    assert.ok(placed.y + placed.height / 2 <= 396);
+test('the angle caption keeps its outward direction and clears the vertex marker', () => {
+    const marker = { x: 100, y: 100, width: 30, height: 30 };
+    const [angle] = separateLabels([at(100, 95, { width: 60, flip: false, obstacles: [marker] })]);
+    assert.equal(angle.y, 135);
+    assert.ok(clear(angle, marker));
 });
 
-
-test('close-view atom bodies can move a caption beyond the local search radius', () => {
-    const label = { x: 500, y: 400, width: 100, height: 40 };
-    const body = { x: 500, y: 400, width: 320, height: 320 };
-    const [placed] = placeLabels([label], [body], { width: 1000, height: 800 });
-    assert.equal(intersects(placed, body), false);
-    assert.ok(Math.hypot(placed.x - label.x, placed.y - label.y) > 96);
-    assert.equal(placed.width, label.width);
-    assert.equal(placed.height, label.height);
-});
-
-test('perimeter fallback checks obstacles outside the original search area', () => {
-    const label = { x: 500, y: 400, width: 100, height: 40 };
-    const bodies = [{ x: 500, y: 400, width: 320, height: 320 },
-        { x: 500, y: 210, width: 120, height: 40 }];
-    const [placed] = placeLabels([label], bodies, { width: 1000, height: 800 });
-    for (const body of bodies) assert.equal(intersects(placed, body), false);
+test('separation is bounded and deterministic for stacked captions', () => {
+    const stacked = separateLabels([at(100, 100), at(100, 100), at(100, 100)]);
+    assert.deepEqual(stacked.map(label => label.y), [100, 130, 160]);
+    assert.deepEqual(separateLabels([at(100, 100), at(100, 100), at(100, 100)]), stacked);
+    const [capped] = separateLabels([{ x: 0, y: 0, width: 10, height: 10, slide: { x: 0, y: 1 }, obstacles: [{ x: 0, y: 0, width: 10000, height: 10000 }] }]);
+    assert.equal(capped.y, 60);
 });

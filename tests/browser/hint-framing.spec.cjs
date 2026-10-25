@@ -5,7 +5,7 @@ const path = require('node:path');
 async function framing(page) {
     return page.evaluate(() => {
         camera.updateWorldMatrix(true, false); structureGroup.updateWorldMatrix(true, true);
-        const bounds = getStructureBounds();
+        const bounds = getFitBounds();
         const canvas = renderer.domElement.getBoundingClientRect();
         const hint = document.querySelector('.controls-hint').getBoundingClientRect();
         const points = [];

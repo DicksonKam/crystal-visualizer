@@ -903,7 +903,7 @@ function resizeViewportForFrame() {
     const frustumSize = 15;
     let framing = null;
     if (currentStructure && cameraMath && cameraController && aspect !== perspectiveCamera.aspect) {
-        const bounds = getStructureBounds();
+        const bounds = getFitBounds();
         const pose = getCameraPose();
         const fov = isPerspective ? perspectiveCamera.fov : null;
         const before = cameraMath.fit(bounds, pose.quaternion, perspectiveCamera.aspect,
@@ -4347,7 +4347,7 @@ function renderStructure(structure, preserveState = false) {
     // document must retain its placement: display bounds change with atom
     // radii, bonds and cell visibility, without moving the atoms themselves.
     if (!savedCameraPose) {
-        const box = getStructureBounds();
+        const box = getFitBounds();
         const center = box.getCenter(new THREE.Vector3());
         structureGroup.position.sub(center);
     }
@@ -4390,6 +4390,40 @@ function getStructureBounds() {
     return box;
 }
 
+// Framing: atoms and bonds set the view. The cell joins them unless it leaves
+// more than this much empty space along some axis, in which case a molecule,
+// slab or sheet in a vacuum box fills the view and the cell may extend beyond
+// it. Clipping planes still use the full bounds so the cell stays drawn.
+const VACUUM_FRAMING_ANGSTROM = 6;
+
+function getFitBounds() {
+    const full = getStructureBounds();
+    if (!currentStructure || !hasLattice(currentStructure) || !atomMeshes.length) return full;
+    structureGroup.updateWorldMatrix(true, false);
+    const content = new THREE.Box3();
+    const childBox = new THREE.Box3();
+    structureGroup.children.forEach(child => {
+        if (child.userData.vacuumEdge || child.userData.isAtomLabel || child.name === 'unitCell' || child.name === 'supercellWireframe') return;
+        content.union(childBox.setFromObject(child));
+    });
+    if (content.isEmpty()) return full;
+    // A lone atom has nothing to frame but itself; keep its cell in view.
+    const diameter = 2 * Math.max(...atomMeshes.map(mesh => mesh.scale.x));
+    const size = content.getSize(new THREE.Vector3());
+    if (Math.max(size.x, size.y, size.z) <= 2 * diameter) return full;
+    const lattice = currentStructure.lattice;
+    const { a, b, c } = getPeriodicRepeats(currentStructure);
+    const counts = [a, b, c];
+    const low = [Infinity, Infinity, Infinity], high = [-Infinity, -Infinity, -Infinity];
+    for (const mesh of atomMeshes) {
+        const fractional = cartesianToFractional(mesh.position, lattice);
+        if (!fractional) return full;
+        fractional.forEach((value, axis) => { low[axis] = Math.min(low[axis], value); high[axis] = Math.max(high[axis], value); });
+    }
+    const vacuum = lattice.map((vector, axis) => (counts[axis] - (high[axis] - low[axis])) * Math.hypot(...vector));
+    return vacuum.some(value => value > VACUUM_FRAMING_ANGSTROM) ? content : full;
+}
+
 function fitStructureToView(preserveOrientation = false) {
     // Reset looks at a periodic cell from a lattice-based direction that avoids
     // the body diagonal, so symmetric cells do not stack their atoms; see
@@ -4402,8 +4436,11 @@ function fitStructureToView(preserveOrientation = false) {
     const frustumHeight = orthographicCamera.top - orthographicCamera.bottom;
     const aspect = isPerspective ? perspectiveCamera.aspect
         : (orthographicCamera.right - orthographicCamera.left) / frustumHeight;
-    const fitted = cameraMath.fit(getStructureBounds(), quaternion, aspect,
+    const fitted = cameraMath.fit(getFitBounds(), quaternion, aspect,
         frustumHeight, isPerspective ? perspectiveCamera.fov : null);
+    // Framing may leave the cell outside the view, but never outside the
+    // clipping planes: whatever part of it is on screen must still draw.
+    Object.assign(fitted, cameraMath.clipping(getStructureBounds(), fitted));
     cameraController.setPose(fitted, preserveOrientation ? 'fit' : 'reset');
 }
 
@@ -4437,10 +4474,24 @@ function updateUI(structure) {
     const sdInfo = constraints && (constraints.fixed > 0 || constraints.partial > 0)
         ? `<div class="info-item"><span class="info-label">Constraints</span><span class="info-value sd-info">${constraints.fixed} fixed / ${constraints.partial} partial / ${constraints.free} free</span></div>`
         : '';
+    // Cell angles (α between b and c, β between a and c, γ between a and b) and
+    // volume describe skewed and hexagonal cells that the lengths alone cannot.
+    const cellAngle = (first, second) => {
+        const dot = first.reduce((sum, value, axis) => sum + value * second[axis], 0);
+        const product = Math.hypot(...first) * Math.hypot(...second);
+        return product > 0 ? (Math.acos(Math.max(-1, Math.min(1, dot / product))) * 180 / Math.PI).toFixed(2) : '—';
+    };
+    const [va, vb, vc] = hasLattice(structure) ? structure.lattice : [[], [], []];
+    const cellVolume = hasLattice(structure) ? Math.abs(
+        va[0] * (vb[1] * vc[2] - vb[2] * vc[1]) - va[1] * (vb[0] * vc[2] - vb[2] * vc[0]) + va[2] * (vb[0] * vc[1] - vb[1] * vc[0])).toFixed(3) : null;
     const latticeInfo = hasLattice(structure) ? `
         <div class="info-item"><span class="info-label">a</span><span class="info-value">${latticeA} Å</span></div>
         <div class="info-item"><span class="info-label">b</span><span class="info-value">${latticeB} Å</span></div>
-        <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>` : '';
+        <div class="info-item"><span class="info-label">c</span><span class="info-value">${latticeC} Å</span></div>
+        <div class="info-item"><span class="info-label">α</span><span class="info-value">${cellAngle(vb, vc)}°</span></div>
+        <div class="info-item"><span class="info-label">β</span><span class="info-value">${cellAngle(va, vc)}°</span></div>
+        <div class="info-item"><span class="info-label">γ</span><span class="info-value">${cellAngle(va, vb)}°</span></div>
+        <div class="info-item"><span class="info-label">Volume</span><span class="info-value">${cellVolume} Å³</span></div>` : '';
     
     structureInfo.innerHTML = `
         <div class="info-item"><span class="info-label">Type</span><span class="info-value">${fileTypeBadge}</span></div>

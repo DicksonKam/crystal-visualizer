@@ -164,7 +164,7 @@ test('internal fitting fits narrow large scenes and existing Reset restores dete
     nearArray((await pose(page)).q, before.q);
     const projected = await page.evaluate(() => {
         camera.updateMatrixWorld(true);
-        const b = getStructureBounds(), result = [];
+        const b = getFitBounds(), result = [];
         for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) result.push(new THREE.Vector3(x, y, z).project(camera).toArray());
         return { points: result, near: camera.near, far: camera.far };
     });
@@ -181,6 +181,24 @@ test('internal fitting fits narrow large scenes and existing Reset restores dete
     await page.setViewportSize({ width: 430, height: 850 });
     await page.evaluate(() => fitStructureToView(true));
 
+});
+
+test('a molecule in a vacuum box fills the view while a small cell keeps its frame in view', async ({ page }) => {
+    const spanOf = () => page.evaluate(() => {
+        camera.updateWorldMatrix(true, false); structureGroup.updateWorldMatrix(true, true);
+        const ys = atomMeshes.filter(m => !m.userData.isGhost).map(m => m.getWorldPosition(new THREE.Vector3()).project(camera).y);
+        const corners = [];
+        const b = getStructureBounds();
+        for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) corners.push(new THREE.Vector3(x, y, z).project(camera).toArray());
+        return { span: Math.max(...ys) - Math.min(...ys), cornersInView: corners.every(p => Math.abs(p[0]) <= 1 && Math.abs(p[1]) <= 1) };
+    });
+    await upload(page, 'water box\n1\n12 0 0\n0 12 0\n0 0 12\nO H\n1 2\nCartesian\n6 6 6.12\n6.76 6 5.53\n5.24 6 5.53\n', 'water-box.poscar');
+    const molecule = await spanOf();
+    expect(molecule.span).toBeGreaterThan(0.25);
+    expect(molecule.cornersInView).toBe(false);
+    await upload(page, 'bcc\n1\n2.87 0 0\n0 2.87 0\n0 0 2.87\nFe\n1\nDirect\n.5 .5 .5\n', 'bcc.poscar');
+    const crystal = await spanOf();
+    expect(crystal.cornersInView).toBe(true);
 });
 
 test('right-button pan moves the structure with the pointer one-to-one', async ({ page }) => {

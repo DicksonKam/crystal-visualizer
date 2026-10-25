@@ -261,9 +261,10 @@ body {
 }
 
 /* === Atom List === */
+/* The species list and the atom-number control grow with their content; the
+   sidebar as a whole scrolls, so nothing is clipped inside the panel. */
 .atom-list-content {
-    max-height: 200px;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .atom-entry {

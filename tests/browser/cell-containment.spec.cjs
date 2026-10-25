@@ -7,7 +7,10 @@ async function edge(page, axis, side) {
         cancelCameraAlignment(); controls.staticMoving = true;
         camera.position.copy(controls.target).add(new THREE.Vector3(0, 0, 40));
         camera.up.set(0, 1, 0); camera.zoom = .8;
-        camera.updateProjectionMatrix(); controls.update(); fitStructureToView(true);
+        camera.updateProjectionMatrix(); controls.update();
+        // Two atoms in a vacuum box are framed on their own; this fixture needs the whole cell and its edges on screen.
+        const frustumHeight = orthographicCamera.top - orthographicCamera.bottom;
+        cameraController.setPose(cameraMath.fit(getStructureBounds(), camera.quaternion.clone(), (orthographicCamera.right - orthographicCamera.left) / frustumHeight, frustumHeight, null), 'fit');
         camera.updateWorldMatrix(true, false); structureGroup.updateWorldMatrix(true, true);
         updateVacuumHandles(); requestRender();
         const r = renderer.domElement.getBoundingClientRect();

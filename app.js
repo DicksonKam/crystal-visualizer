@@ -4269,7 +4269,9 @@ function createUnitCell(lattice) {
 // Render the structure
 // preserveState: if true, keeps selections and camera position (for display option changes)
 function renderStructure(structure, preserveState = false) {
-    cancelCameraAlignment();
+    // A new document cancels camera motion; a rebuild of the same document
+    // keeps a gesture or alignment in progress (see restoreCameraAfterRebuild).
+    if (!preserveState) cancelCameraAlignment();
     // Remove interaction references before disposing the old scene objects.
     cleanupVacuumHandles();
     unitCellEdgeLines = [];
@@ -4343,7 +4345,7 @@ function renderStructure(structure, preserveState = false) {
     }
     
     if (savedCameraPose) {
-        cameraController.setPose(savedCameraPose, 'rebuild');
+        restoreCameraAfterRebuild(savedCameraPose);
         
         // Restore selections with correct mode-aware visuals.
         isMeasurementSelection = savedMeasurementSelection;
@@ -5270,6 +5272,17 @@ function updateCameraClipping() {
     camera.near = planes.near;
     camera.far = planes.far;
     camera.updateProjectionMatrix();
+}
+
+// A rebuild of the same document keeps the camera where it was. Trajectory
+// playback rebuilds whenever the boundary copies change, so this must not
+// cancel a drag or motion in progress: it only refreshes the clipping planes
+// and the vacuum handles for the new scene bounds.
+function restoreCameraAfterRebuild(pose) {
+    cleanupVacuumHandles();
+    updateVacuumHintUI(null);
+    applyCameraPose(pose);
+    updateVacuumHandles();
 }
 
 function applyCameraPose(pose) {

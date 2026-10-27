@@ -6137,7 +6137,7 @@ function switchToFrame(frameIndex) {
     const frame = currentStructure.frames[frameIndex];
     const sameLattice = currentStructure.lattice.every((vector, axis) =>
         vector.every((value, component) => value === frame.lattice[axis][component]));
-    const canReuseMeshes = sameLattice && atomMeshes.length >= currentStructure.atoms.length
+    const sameMeshes = sameLattice && atomMeshes.length >= currentStructure.atoms.length
         && currentStructure.atoms.every((_, index) => atomMeshes[index] && !atomMeshes[index].userData.isGhost);
     currentStructure.currentFrameIndex = frameIndex;
     
@@ -6148,8 +6148,13 @@ function switchToFrame(frameIndex) {
     for (let i = 0; i < currentStructure.atoms.length; i++) {
         currentStructure.atoms[i].position.copy(frame.positions[i]);
         currentStructure.atoms[i].fractional = frame.fractional[i];
-        if (canReuseMeshes) atomMeshes[i].position.copy(frame.positions[i]);
+        if (sameMeshes) atomMeshes[i].position.copy(frame.positions[i]);
     }
+    
+    // A frame can also carry an atom onto or off a cell face, which changes
+    // which boundary copies exist. Moving the existing meshes cannot show
+    // that, so such frames rebuild the scene, as a completed drag does.
+    const canReuseMeshes = sameMeshes && !boundaryCopiesStale();
     
     if (canReuseMeshes) {
         atomMeshes.forEach(mesh => {
@@ -6172,7 +6177,8 @@ function switchToFrame(frameIndex) {
         if (selectedAtoms.length > 0) updateMeasurements();
         requestRender();
     } else {
-        // A changed lattice also changes the cell and axes, so rebuild that frame.
+        // A changed lattice also changes the cell and axes; a changed set of
+        // boundary copies needs the same rebuild.
         renderStructure(currentStructure, true);
     }
     

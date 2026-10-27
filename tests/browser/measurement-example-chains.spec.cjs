@@ -43,7 +43,7 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
         await checkBondRefresh(page); await snap(`${cycle}-bonds-refreshed`);
         // Rebuild the scene through ordinary display and periodic controls
         // while the same three-point measurement remains active.
-        const displayIds = capability.supportsSD ? ['showBonds', 'useElementRadii', 'showFixedIndicators', 'showLabels'] : ['showBonds', 'useElementRadii', 'showLabels'];
+        const displayIds = capability.supportsSD ? ['showFixedIndicators', 'showLabels'] : ['showLabels'];
         const displayId = displayIds[(variant + cycle) % displayIds.length];
         const display = page.locator(`#${displayId}`);
         const checked = await display.isChecked();

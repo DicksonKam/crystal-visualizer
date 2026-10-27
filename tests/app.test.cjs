@@ -1606,7 +1606,6 @@ test('bond rebuild uses one policy for normal and periodic atoms', () => {
     context.positions = positions;
     vm.runInContext(`
         currentStructure = { atoms: [] };
-        settings.showBonds = true;
         settings.bondThreshold = 1.5;
         atomMeshes = positions.map((position, index) => ({ position, userData: { isGhost: index === 2 } }));
         structureGroup = {
@@ -1661,8 +1660,6 @@ test('dense bonds use two disposable batches with correct transforms', () => {
     context.positions = [0, 1, 2].map(x => new Vector3(x, 0, 0));
     vm.runInContext(`
         currentStructure = { atoms: positions.map(position => ({ element: 'H', position })) };
-        settings.showBonds = true;
-        settings.useElementRadii = false;
         settings.bondThreshold = 1.5;
         displayedAtomCount = 600;
         atomMeshes = positions.map((position, index) => ({ position, userData: { element: 'H', isGhost: index === 2 } }));
@@ -1683,33 +1680,12 @@ test('dense bonds use two disposable batches with correct transforms', () => {
     assert.ok(firstBatches.every(batch => batch.geometry.disposed));
 });
 
-test('element radii exclude the false H–H bond in water', () => {
-    const context = app();
-    const water = context.parseXYZ(example('examples/xyz/H2O.xyz'));
-    context.water = water;
-    vm.runInContext(`
-        currentStructure = water;
-        settings.showBonds = true;
-        settings.bondThreshold = 2.5;
-        atomMeshes = water.atoms.map(atom => ({ position: atom.position, userData: { element: atom.element } }));
-        structureGroup = { children: [], add(child) { this.children.push(child); } };
-        createBond = () => ({ userData: { isBond: true } });
-        settings.useElementRadii = true;
-        addBondsFromAtomMeshes();
-    `, context);
-    assert.equal(vm.runInContext('structureGroup.children.length', context), 2);
-    vm.runInContext('structureGroup.children = []; settings.useElementRadii = false; addBondsFromAtomMeshes();', context);
-    assert.equal(vm.runInContext('structureGroup.children.length', context), 3);
-});
-
 test('periodic bonds cross opposite cell faces without a long interior bond', () => {
     const context = app();
     context.points = [new Vector3(0.4, 0, 0), new Vector3(9.6, 0, 0)];
     vm.runInContext(`
         currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]] };
         settings.periodic = { a: 1, b: 1, c: 1 };
-        settings.showBonds = true;
-        settings.useElementRadii = false;
         settings.bondThreshold = 1.5;
         atomMeshes = points.map(position => ({ position, userData: { element: 'H' } }));
         structureGroup = { children: [], add(child) { this.children.push(child); } };
@@ -1736,7 +1712,6 @@ test('XYZ boundary bonds do not cross a nonperiodic face', () => {
         context.positions = positions;
         vm.runInContext(`
             currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]], pbc: [true, false, false], atoms: [] };
-            settings.useElementRadii = false;
             settings.bondThreshold = 1.5;
             atomMeshes = positions.map(position => ({ position, userData: { element: 'H' } }));
             structureGroup = { children: [], add(child) { this.children.push(child); } };
@@ -1754,8 +1729,6 @@ test('dense periodic boundary segments join the ghost batch', () => {
     vm.runInContext(`
         currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]] };
         settings.periodic = { a: 1, b: 1, c: 1 };
-        settings.showBonds = true;
-        settings.useElementRadii = false;
         settings.bondThreshold = 1.5;
         displayedAtomCount = 600;
         atomMeshes = points.map(position => ({ position, userData: { element: 'H' } }));
@@ -1782,8 +1755,6 @@ test('periodic bonds reach neighbors across multiple vectors of a tilted basis',
     vm.runInContext(`
         currentStructure = { lattice };
         settings.periodic = { a: 1, b: 1, c: 1 };
-        settings.showBonds = true;
-        settings.useElementRadii = false;
         settings.bondThreshold = 0.9;
         atomMeshes = points.map(position => ({ position, userData: { element: 'H' } }));
         structureGroup = { children: [], add(child) { this.children.push(child); } };
@@ -1883,8 +1854,6 @@ test('boundary bond stubs are not duplicated for copies that are drawn', () => {
     vm.runInContext(`
         currentStructure = { lattice: [[10, 0, 0], [0, 10, 0], [0, 0, 10]] };
         settings.periodic = { a: 1, b: 1, c: 1 };
-        settings.showBonds = true;
-        settings.useElementRadii = false;
         settings.bondThreshold = 1.5;
         atomMeshes = points.map((position, index) => ({ position, userData: { element: 'H', atomIndex: index } }));
         atomMeshes.push({ position: new THREE.Vector3(10, 0, 0), userData: { element: 'H', isGhost: true, originalIndex: 0, cellOffset: { a: 1, b: 0, c: 0 } } });

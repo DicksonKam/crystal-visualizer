@@ -48,8 +48,7 @@ for (const fixture of ['molecule', 'vacuum-cell']) {
         const checks = [
             () => page.locator('#atomScale').press('Home'),
             () => page.locator('#atomScale').press('End'),
-            () => page.locator('#showBonds').uncheck(),
-            () => page.locator('#useElementRadii').uncheck(),
+            () => page.locator('#bondThreshold').press('Home'),
             () => page.locator('#showLabels').check(),
             ...(fixture === 'vacuum-cell' ? [() => page.locator('#toggleCell').click(),
                 () => page.locator('#showFixedIndicators').uncheck()] : [])

@@ -22,4 +22,9 @@ async function upload(page, content, name) {
     await expect(page.locator('#statusText')).toContainText('Loaded');
 }
 
-module.exports = { test, expect, upload };
+// A Bond Length of 0 draws no bonds.
+async function hideBonds(page) {
+    await page.locator('#bondThreshold').fill('0');
+}
+
+module.exports = { test, expect, upload, hideBonds };

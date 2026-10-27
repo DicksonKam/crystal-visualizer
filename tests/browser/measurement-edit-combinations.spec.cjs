@@ -39,7 +39,7 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
         await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
         // Rebuild the scene through ordinary display and periodic controls
         // while the same three-point measurement remains active.
-        const displayId = ['showBonds', 'useElementRadii', 'showFixedIndicators', 'showLabels'][(variant + cycle) % 4];
+        const displayId = ['showFixedIndicators', 'showLabels'][(variant + cycle) % 2];
         const display = page.locator(`#${displayId}`);
         const checked = await display.isChecked();
         await display.setChecked(!checked); await checkMeasurement(page); await snap(`${cycle}-${displayId}`);

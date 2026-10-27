@@ -123,9 +123,7 @@ let lastJumpAtomNumber = null;
 let axesScene, axesCamera, axesGroup;
 let settings = {
     atomScale: 0.8,
-    bondThreshold: 2.5,
-    showBonds: true,
-    useElementRadii: true,
+    bondThreshold: 2.5, // one cutoff for every pair; 0 draws no bonds
     showLabels: false,
     showAxes: true,
     showCell: true,
@@ -2699,7 +2697,9 @@ function rebuildBonds() {
 
 function addBondsFromAtomMeshes() {
     setGeometryWarning('bonds', '');
-    if (!settings.showBonds) return;
+    // The cutoff also bounds the spatial search; zero means bonds are off.
+    const bucketSize = settings.bondThreshold;
+    if (!(bucketSize > 0)) return;
     const dense = displayedAtomCount > DENSE_VIEW_ATOMS;
     const solidSegments = [];
     const ghostSegments = [];
@@ -2711,7 +2711,6 @@ function addBondsFromAtomMeshes() {
         }
     };
     // Spatial buckets keep bond searches close to linear for sparse structures.
-    const bucketSize = settings.bondThreshold;
     const buckets = new Map();
     for (let i = 0; i < atomMeshes.length; i++) {
         const first = atomMeshes[i];
@@ -2723,8 +2722,7 @@ function addBondsFromAtomMeshes() {
                 for (let dz = -1; dz <= 1; dz++) {
                     for (const second of buckets.get(`${x + dx},${y + dy},${z + dz}`) || []) {
                         const distance = first.position.distanceTo(second.position);
-                        const limit = getBondLimit(first.userData.element, second.userData.element);
-                        if (distance < limit && distance > 0.5) {
+                        if (distance < bucketSize && distance > 0.5) {
                             addBond(first.position, second.position, first.userData.isGhost || second.userData.isGhost);
                         }
                     }
@@ -2769,13 +2767,6 @@ function addInstancedBonds(segments, isGhost) {
     structureGroup.add(bonds);
 }
 
-function getBondLimit(elementA, elementB) {
-    if (!settings.useElementRadii) return settings.bondThreshold;
-    const radiusA = (ELEMENT_DATA[elementA] || ELEMENT_DATA.DEFAULT).radius;
-    const radiusB = (ELEMENT_DATA[elementB] || ELEMENT_DATA.DEFAULT).radius;
-    return Math.min(settings.bondThreshold, 1.3 * (radiusA + radiusB));
-}
-
 function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
     const lattice = currentStructure.lattice;
     const preview = getPeriodicRepeats(currentStructure);
@@ -2783,7 +2774,7 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
     const periodicAxes = getPeriodicAxes(currentStructure);
     let plans;
     try {
-        plans = CrystalGeometry.boundaryTranslationRanges(atomMeshes.map(atom => atom.position), lattice, repeats, periodicAxes, settings.bondThreshold);
+        plans = CrystalGeometry.boundaryTranslationRanges(atomMeshes.map(atom => atom.position), lattice, repeats, periodicAxes, bucketSize);
         setGeometryWarning('bonds', '');
     } catch (error) {
         setGeometryWarning('bonds', error.message);
@@ -2818,8 +2809,7 @@ function addPeriodicBoundaryBonds(buckets, bucketSize, addGhostBond) {
             for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
                 for (const neighbor of buckets.get(`${x + dx},${y + dy},${z + dz}`) || []) {
                     const distance = translated.distanceTo(neighbor.position);
-                    const limit = getBondLimit(atom.userData.element, neighbor.userData.element);
-                    if (distance <= 0.5 || distance >= limit) continue;
+                    if (distance <= 0.5 || distance >= bucketSize) continue;
                     const clipped = CrystalGeometry.clipSegmentToCell(translated, neighbor.position, lattice, repeats, periodicAxes);
                     if (!clipped) continue;
                     addGhostBond(new THREE.Vector3(...clipped[0]), new THREE.Vector3(...clipped[1]));
@@ -4950,25 +4940,17 @@ function setupControls() {
     const bondThreshold = document.getElementById('bondThreshold');
     const bondThresholdValue = document.getElementById('bondThresholdValue');
     
+    const showBondThreshold = () => {
+        bondThresholdValue.textContent = settings.bondThreshold > 0 ? settings.bondThreshold.toFixed(1) : 'none';
+    };
+    showBondThreshold();
+    
     bondThreshold.addEventListener('input', (e) => {
         settings.bondThreshold = parseFloat(e.target.value);
-        bondThresholdValue.textContent = settings.bondThreshold.toFixed(1);
+        showBondThreshold();
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
         }
-    });
-    
-    // Show bonds
-    document.getElementById('showBonds').addEventListener('change', (e) => {
-        settings.showBonds = e.target.checked;
-        if (currentStructure) {
-            renderStructure(currentStructure, true); // Preserve state
-        }
-    });
-
-    document.getElementById('useElementRadii').addEventListener('change', (e) => {
-        settings.useElementRadii = e.target.checked;
-        if (currentStructure) renderStructure(currentStructure, true);
     });
     
     // Show labels (placeholder for future)

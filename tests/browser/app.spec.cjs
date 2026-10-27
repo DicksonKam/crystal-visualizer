@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, hideBonds } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 const { createFormats } = require('../../formats.js');
 const { cartesianToFractional } = require('../../geometry.js');
@@ -144,7 +144,7 @@ test('skew-cell load and measurements stay responsive with an explicit boundary-
     await selectAtom(page, 1);
     await selectAtom(page, 2);
     await expect(page.locator('#measurementPanel')).toContainText('0.5590 Å');
-    await page.locator('#showBonds').uncheck();
+    await hideBonds(page);
     await expect(page.locator('#geometryWarning')).toBeHidden();
 });
 

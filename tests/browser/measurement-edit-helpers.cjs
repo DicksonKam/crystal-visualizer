@@ -103,7 +103,6 @@ async function dragTarget(page, kind, cycle) {
 // A display rebuild must reproduce the bonds already shown after an edit.
 // This catches stale geometry that only disappears when a control is toggled.
 async function checkBondRefresh(page) {
-    if (!await page.locator('#showBonds').isChecked()) return;
     const segments = () => page.evaluate(() => structureGroup.children
         .filter(object => object.userData.isBond || object.userData.isGhostBond)
         .map(bond => {
@@ -113,8 +112,11 @@ async function checkBondRefresh(page) {
             return JSON.stringify([Boolean(bond.userData.isGhostBond), ...endpoints, Number(bond.scale.x.toFixed(6))]);
         }).sort());
     const before = await segments();
-    await page.locator('#showBonds').uncheck();
-    await page.locator('#showBonds').check();
+    const slider = page.locator('#bondThreshold');
+    const value = await slider.inputValue();
+    if (!(Number(value) > 0)) return;
+    await slider.fill('0');
+    await slider.fill(value);
     expect(await segments()).toEqual(before);
     await checkMeasurement(page);
 }

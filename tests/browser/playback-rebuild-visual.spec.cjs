@@ -15,7 +15,7 @@ for(const fixture of ['molecule','dense'])test(`${fixture} continuous playback s
   if(step%6===0)await page.getByRole('button',{name:step%12===0?'Increase a periodic images':'Decrease a periodic images',exact:true}).click();
   else if(step%6===1)await page.setViewportSize({width:[390,900,1440][Math.floor(step/6)%3],height:844});
   else if(step%6===2){await page.locator('#sidebarDivider').focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowRight');await page.keyboard.press('End');}
-  else if(step%6===3){const box=await page.locator('#showBonds');await box.setChecked(!await box.isChecked());}
+  else if(step%6===3)await page.locator('#bondThreshold').fill(step%12===3?'0':'2.5');
   else if(step%6===4)await page.locator('#atomScale').press(step%12===4?'Home':'End');
   else {const labels=page.locator('#showLabels');await labels.setChecked(!await labels.isChecked());}
   const state=await capture(page);expect(state.violations).toEqual([]);expect(state.selection.identities).toHaveLength(2);

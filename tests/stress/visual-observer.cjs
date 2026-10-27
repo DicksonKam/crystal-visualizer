@@ -74,7 +74,7 @@ function createVisualObserver(page, directory, seed, every = 12) {
                 queueMicrotask(()=>resolve({content,cyan,transparent,checksum,nonBackground,maxAtomRadiusPixels,panelLayout,width:w,height:h,
                     canvasCSS:[rect.width,rect.height],viewportCSS:[viewport.clientWidth,viewport.clientHeight],
                     autoClear:renderer.autoClear,scissor:renderer.getScissorTest(),staleCopies:copies,
-                    atomCount:currentStructure.atoms.length,showCell:settings.showCell,showBonds:settings.showBonds,
+                    atomCount:currentStructure.atoms.length,showCell:settings.showCell,bondThreshold:settings.bondThreshold,
                     phase:cameraController.phase}));
                 return result;
             };

@@ -97,7 +97,7 @@ test('boundary atom drag preview rebuilds bonds before pointer release', async (
     await upload(page, 'preview\n1\n4 0 0\n0 4 0\n0 0 4\nH\n2\nCartesian\n0 2 2\n0 3 2\n', 'preview.poscar');
     await page.locator('[data-mode="edit"]').click();
     const points = await page.evaluate(() => {
-        settings.useElementRadii = false; settings.bondThreshold = 1.5;
+        settings.bondThreshold = 1.5;
         rebuildBonds(); cancelCameraAlignment(); controls.staticMoving = true;
         const center = new THREE.Vector3(0, 2, 2).add(structureGroup.position);
         controls.target.copy(center); camera.position.copy(center).add(new THREE.Vector3(-16, 0, 0));

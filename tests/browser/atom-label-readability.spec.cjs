@@ -1,11 +1,11 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, hideBonds } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 
 test('dense-structure labels retain every digit of larger atom numbers', async ({ page }, info) => {
     test.setTimeout(90000);
     const atoms = Array.from({ length: 1024 }, (_, i) => `H ${i % 32} ${Math.floor(i / 32)} 0`);
     await upload(page, `1024\nlabel readability\n${atoms.join('\n')}\n`, 'labels.xyz');
-    await page.locator('#showBonds').uncheck();
+    await hideBonds(page);
     await page.locator('#showLabels').check();
     await page.screenshot({ path: info.outputPath('labeled-structure.png') });
     const result = await page.evaluate(() => {

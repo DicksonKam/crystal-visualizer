@@ -95,7 +95,7 @@ test('the Export menu closes on Escape, on a click outside, and after Structure 
     await expect(menu).toBeHidden();
 });
 
-test('a trajectory can be saved as a movie; other files see no Movie section', async ({ page }) => {
+test('a trajectory can be saved as an MP4 movie; other files see no Movie section', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
     await page.locator('#exportMenuButton').click();
     await expect(page.locator('#exportMovie')).toBeHidden();
@@ -108,15 +108,17 @@ test('a trajectory can be saved as a movie; other files see no Movie section', a
     await page.locator('#exportMenuButton').click();
     await expect(page.locator('#exportMovie')).toBeVisible();
     await expect(page.locator('#exportMovieInfo')).toHaveText('4 at 30 fps · 0.1 s');
+    await expect(page.locator('#exportMovie')).toHaveText('Save MP4');
+    await expect(page.locator('#exportMovieHint')).toHaveText("Plays every frame at the timeline's FPS, at the image size above.");
 
     const pending = page.waitForEvent('download');
     await page.locator('#exportMovie').click();
     const download = await pending;
-    expect(download.suggestedFilename()).toBe('tiny.webm');
+    expect(download.suggestedFilename()).toBe('tiny.mp4');
     const movie = await fs.readFile(await download.path());
     expect(movie.length).toBeGreaterThan(500);
-    expect(movie.readUInt32BE(0)).toBe(0x1a45dfa3); // EBML header: a WebM/Matroska file
-    await expect(page.locator('#statusText')).toHaveText(/Started WEBM download \(4 frames at 30 fps, \d+ × \d+ px\)/);
+    expect(movie.toString('latin1', 4, 8)).toBe('ftyp'); // an ISO base media (MP4) file
+    await expect(page.locator('#statusText')).toHaveText(/Started MP4 download \(4 frames at 30 fps, \d+ × \d+ px\)/);
     // Back where the user was, at the screen's own pixel ratio.
     expect(await page.evaluate(() => ({ frame: currentStructure.currentFrameIndex, ratio: renderer.getPixelRatio(), playing: animationState.isPlaying }))).toEqual({ frame: 1, ratio: 1, playing: false });
 });

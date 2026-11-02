@@ -5180,11 +5180,31 @@ function updateExportMenu() {
     if (trajectory) {
         const total = currentStructure.totalFrames, fps = animationState.fps;
         document.getElementById('exportMovieInfo').textContent = `${total} at ${fps} fps · ${(total / fps).toFixed(1)} s`;
+        const format = movieFormat();
+        document.getElementById('exportMovie').textContent = format ? `Save ${format.label}` : 'Save movie';
+        document.getElementById('exportMovieHint').textContent = format && format.extension === 'webm'
+            ? 'This browser records WebM, not MP4; VLC and any video tool convert it.'
+            : "Plays every frame at the timeline's FPS, at the image size above.";
     }
 }
 
+// The movie format this browser can record: MP4 (H.264) where it can, since
+// that plays in Keynote, PowerPoint and QuickTime; WebM otherwise (Firefox).
+function movieFormat() {
+    if (typeof MediaRecorder === 'undefined' || typeof MediaRecorder.isTypeSupported !== 'function') return null;
+    const candidates = [
+        ['video/mp4;codecs=avc1', 'mp4', 'MP4'],
+        ['video/mp4', 'mp4', 'MP4'],
+        ['video/webm;codecs=vp9', 'webm', 'WebM'],
+        ['video/webm;codecs=vp8', 'webm', 'WebM'],
+        ['video/webm', 'webm', 'WebM']
+    ];
+    const found = candidates.find(([type]) => MediaRecorder.isTypeSupported(type));
+    return found ? { mimeType: found[0], extension: found[1], label: found[2] } : null;
+}
+
 // === Movie export: every frame of the trajectory, recorded from the canvas ===
-// The browser encodes it (WebM where available), so no library is needed.
+// The browser encodes it (MP4 where it can, else WebM), so no library is needed.
 // Frames are drawn and paced in real time at the timeline's FPS, which is
 // what gives the file its playback speed; Escape cancels.
 let movieRecording = null;
@@ -5197,8 +5217,8 @@ async function exportMovie() {
         statusText.className = 'error';
         return;
     }
-    const mimeType = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'].find(type => MediaRecorder.isTypeSupported(type));
-    if (!mimeType) {
+    const format = movieFormat();
+    if (!format) {
         statusText.textContent = 'This browser cannot record a movie; Chrome, Edge or Firefox can';
         statusText.className = 'error';
         return;
@@ -5217,7 +5237,7 @@ async function exportMovie() {
     const stream = canvas.captureStream(0);
     const track = stream.getVideoTracks()[0];
     const requestFrame = () => { if (track.requestFrame) track.requestFrame(); else if (stream.requestFrame) stream.requestFrame(); };
-    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: Math.min(50e6, 6e6 * exportScale * exportScale) });
+    const recorder = new MediaRecorder(stream, { mimeType: format.mimeType, videoBitsPerSecond: Math.min(50e6, 6e6 * exportScale * exportScale) });
     const chunks = [];
     recorder.ondataavailable = event => { if (event.data && event.data.size) chunks.push(event.data); };
     const stopped = new Promise(resolve => { recorder.onstop = resolve; });
@@ -5258,16 +5278,15 @@ async function exportMovie() {
         statusText.className = '';
         return;
     }
-    const container = mimeType.split(';')[0];
-    const extension = container === 'video/mp4' ? 'mp4' : 'webm';
-    const blob = new Blob(chunks, { type: container });
+    const { extension } = format;
+    const blob = new Blob(chunks, { type: format.mimeType.split(';')[0] });
     const stem = (currentFilename || 'trajectory').replace(/\.[^.]+$/, '');
     if (!blob.size || !downloadBlob(blob, `${stem}.${extension}`)) {
         statusText.textContent = 'Could not save the movie';
         statusText.className = 'error';
         return;
     }
-    statusText.textContent = `Started ${extension.toUpperCase()} download (${total} frames at ${fps} fps, ${width} × ${height} px)`;
+    statusText.textContent = `Started ${format.label} download (${total} frames at ${fps} fps, ${width} × ${height} px)`;
     statusText.className = '';
 }
 

@@ -2085,3 +2085,37 @@ body.edit-mode-active .panel-title {
     color: var(--accent-cyan);
     border-color: var(--accent-cyan);
 }
+
+/* The button and the question take turns; their display rules would otherwise beat the hidden attribute. */
+.btn-reset[hidden],
+.reset-confirm[hidden] {
+    display: none;
+}
+
+.reset-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.2rem;
+}
+
+.reset-confirm-text {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.btn-reset-yes,
+.btn-reset-no {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
+}
+
+.btn-reset-yes {
+    border-color: var(--accent-pink);
+    color: var(--accent-pink);
+}
+
+.btn-reset-yes:hover {
+    background: rgba(241, 91, 181, 0.15);
+    color: var(--text-primary);
+}

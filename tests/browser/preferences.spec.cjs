@@ -8,10 +8,13 @@ async function stored(page) {
     return page.evaluate(key => JSON.parse(localStorage.getItem(key)), KEY);
 }
 
-// Reset all asks "are you sure" first.
+// Reset all asks "Reset everything?" in the page first.
 async function resetAll(page) {
-    page.once('dialog', dialog => dialog.accept());
     await page.locator('#resetPreferences').click();
+    await expect(page.locator('#resetConfirm')).toBeVisible();
+    await expect(page.locator('#resetPreferences')).toBeHidden();
+    await page.locator('#resetConfirmYes').click();
+    await expect(page.locator('#resetConfirm')).toBeHidden();
 }
 
 test('display options survive a reload', async ({ page }) => {
@@ -42,8 +45,16 @@ test('Reset all restores the defaults and forgets them', async ({ page }) => {
     await page.locator('#periodicControls .stepper-btn[data-axis="a"][data-dir="plus"]').click();
     await expect(page.locator('#periodicADisplay')).toHaveText('2');
 
-    page.once('dialog', dialog => dialog.dismiss());
+    // Cancel, and Escape, withdraw the question and change nothing.
     await page.locator('#resetPreferences').click();
+    await page.locator('#resetConfirmNo').click();
+    await expect(page.locator('#resetConfirm')).toBeHidden();
+    await expect(page.locator('#resetPreferences')).toBeVisible();
+    await expect(page.locator('#resetPreferences')).toBeFocused();
+    await page.locator('#resetPreferences').click();
+    await expect(page.locator('#resetConfirmYes')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#resetConfirm')).toBeHidden();
     await expect(page.locator('#atomScale')).toHaveValue('1.4');
     await expect(page.locator('#resetPreferences')).toBeEnabled();
 

@@ -5013,7 +5013,10 @@ function setupControls() {
         swatch.addEventListener('click', () => setBackground(swatch.dataset.color));
     });
     document.getElementById('backgroundColor').addEventListener('input', (e) => setBackground(e.target.value));
-    document.getElementById('resetPreferences').addEventListener('click', resetPreferences);
+    document.getElementById('resetPreferences').addEventListener('click', askResetPreferences);
+    document.getElementById('resetConfirmYes').addEventListener('click', () => { hideResetConfirm(); resetPreferences(); });
+    document.getElementById('resetConfirmNo').addEventListener('click', () => hideResetConfirm(true));
+    document.getElementById('resetConfirm').addEventListener('keydown', (e) => { if (e.key === 'Escape') hideResetConfirm(true); });
     applyPreferencesToControls();
 }
 
@@ -5207,8 +5210,31 @@ function updateResetButton() {
 // Reset all: every display option returns to its default, the browser forgets
 // the remembered ones, and the view redraws. The loaded structure, its edits
 // and the camera are left alone.
+// Reset all asks first, in the page rather than a browser dialog (embedded
+// browsers may not show those): the button gives way to "Reset everything?"
+// with Reset and Cancel, and the question withdraws on Cancel, Escape, or
+// after a few seconds without an answer.
+let resetConfirmTimer = null;
+
+function askResetPreferences() {
+    document.getElementById('resetPreferences').hidden = true;
+    const confirmBox = document.getElementById('resetConfirm');
+    confirmBox.hidden = false;
+    document.getElementById('resetConfirmYes').focus();
+    clearTimeout(resetConfirmTimer);
+    resetConfirmTimer = setTimeout(() => hideResetConfirm(), 6000);
+}
+
+function hideResetConfirm(refocus = false) {
+    clearTimeout(resetConfirmTimer);
+    resetConfirmTimer = null;
+    document.getElementById('resetConfirm').hidden = true;
+    const button = document.getElementById('resetPreferences');
+    button.hidden = false;
+    if (refocus) button.focus();
+}
+
 function resetPreferences() {
-    if (!window.confirm('Reset the background, atom colours and display options to their defaults?')) return;
     Object.assign(settings, preferenceStore.reset());
     settings.periodic = { a: 1, b: 1, c: 1 };
     applyPreferencesToControls();

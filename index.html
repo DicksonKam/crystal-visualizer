@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=58">
+    <link rel="stylesheet" href="styles.css?v=60">
 </head>
 <body>
     <div id="app">
@@ -214,6 +214,11 @@
                             </svg>
                             Reset all
                         </button>
+                        <div id="resetConfirm" class="reset-confirm" role="group" aria-label="Confirm reset" hidden>
+                            <span class="reset-confirm-text">Reset everything?</span>
+                            <button type="button" id="resetConfirmYes" class="btn btn-reset-yes">Reset</button>
+                            <button type="button" id="resetConfirmNo" class="btn btn-reset-no">Cancel</button>
+                        </div>
                     </div>
                     <p class="appearance-note">Reset all restores the defaults above and the atom colours. Your choices are remembered by this browser.</p>
 
@@ -347,6 +352,6 @@
     <script src="layout.js?v=1"></script>
     <script src="preferences.js?v=1"></script>
     <script src="annotations.js?v=5"></script>
-    <script src="app.js?v=203"></script>
+    <script src="app.js?v=204"></script>
 </body>
 </html>

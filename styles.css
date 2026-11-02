@@ -1964,29 +1964,21 @@ body.edit-mode-active .panel-title {
 
 /* === Display panel: background swatches and Reset all === */
 .appearance-actions {
-    display: flex;
-    justify-content: flex-start; /* the panel's shared left edge, under the swatches */
+    display: block; /* its own subsection: label, button, note, all on the panel's left edge */
 }
 
-/* Quiet while nothing differs from the defaults; pink once there is
-   something to reset, so the button itself says a choice has been made. */
+/* A plain button, dimmed while nothing differs from the defaults; the pink
+   appears only on hover, so the button informs without inviting. */
 .btn-reset {
+    display: inline-flex;
     gap: 0.45rem;
     font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.5rem 0.9rem;
-}
-
-.btn-reset:not(:disabled) {
-    border-color: var(--accent-pink);
-    color: var(--accent-pink);
-    background: rgba(241, 91, 181, 0.08);
+    padding: 0.45rem 0.85rem;
 }
 
 .btn-reset:not(:disabled):hover {
-    background: rgba(241, 91, 181, 0.18);
-    color: var(--text-primary);
     border-color: var(--accent-pink);
+    color: var(--accent-pink);
 }
 
 .appearance-note {

@@ -5014,6 +5014,13 @@ function setupControls() {
     });
     document.getElementById('backgroundColor').addEventListener('input', (e) => setBackground(e.target.value));
     document.getElementById('resetPreferences').addEventListener('click', resetPreferences);
+    document.getElementById('saveStyle').addEventListener('click', saveStyle);
+    const styleFileInput = document.getElementById('styleFileInput');
+    document.getElementById('loadStyle').addEventListener('click', () => styleFileInput.click());
+    styleFileInput.addEventListener('change', () => {
+        loadStyleFile(styleFileInput.files[0]);
+        styleFileInput.value = '';
+    });
     applyPreferencesToControls();
 }
 
@@ -5112,6 +5119,56 @@ function setElementColor(element, hex) {
     else settings.colors[element] = hex.toLowerCase();
     applyElementColors();
     savePreferences();
+}
+
+// Save style / Load style: the same preferences as a small JSON file, for
+// carrying a look to another browser or keeping more than one look.
+function saveStyle() {
+    const blob = new Blob([preferenceStore.serialize(settings)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'crystal-visualizer-style.json';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    try {
+        a.click();
+        statusText.textContent = 'Started style download';
+        statusText.className = '';
+    } catch {
+        statusText.textContent = 'Could not start the style download';
+        statusText.className = 'error';
+    } finally {
+        // Keep the Blob URL available while the browser starts its download.
+        setTimeout(() => {
+            a.remove();
+            URL.revokeObjectURL(url);
+        }, 60000);
+    }
+}
+
+function loadStyleFile(file) {
+    if (!file) return;
+    file.text().then(text => {
+        let loaded;
+        try {
+            loaded = preferenceStore.parse(text);
+        } catch (error) {
+            statusText.textContent = `${file.name}: ${error.message}`;
+            statusText.className = 'error';
+            return;
+        }
+        Object.assign(settings, loaded);
+        applyPreferencesToControls();
+        savePreferences();
+        if (currentStructure) renderStructure(currentStructure, true);
+        requestRender();
+        statusText.textContent = `Style loaded from ${file.name}`;
+        statusText.className = '';
+    }, () => {
+        statusText.textContent = `Could not read ${file.name}`;
+        statusText.className = 'error';
+    });
 }
 
 function setBackground(color) {

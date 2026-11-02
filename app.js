@@ -865,6 +865,13 @@ function animate(timestamp) {
         resizeViewportForFrame();
     }
     
+    drawFrame();
+}
+
+// One frame of the view: billboards, overlay sizes, clipping, the scene and
+// the axes inset. The animation loop draws it to the screen; image export
+// draws the same frame at a larger pixel size.
+function drawFrame() {
     // Make selection rings face the camera
     if (measurementGroup) {
         measurementGroup.children.forEach(child => {
@@ -888,7 +895,8 @@ function animate(timestamp) {
         // Sync axes rotation with main camera
         axesGroup.quaternion.copy(camera.quaternion).invert();
         
-        // Set viewport for axes (bottom-left corner, 100x100 pixels)
+        // Set viewport for axes (bottom-left corner, 100x100 CSS pixels; the
+        // renderer applies its pixel ratio, so an export keeps the proportion)
         const axesSize = 100;
         renderer.setViewport(10, 10, axesSize, axesSize);
         renderer.setScissor(10, 10, axesSize, axesSize);
@@ -4998,11 +5006,7 @@ function setupControls() {
     // Ghost opacity slider removed - using default 75%
     // Keeping the settings.ghostOpacity for future use
     
-    // Export POSCAR button
-    const exportBtn = document.getElementById('exportPoscar');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', exportStructure);
-    }
+    setupExportMenu();
 
     document.querySelectorAll('#backgroundSwatches .swatch[data-color]').forEach(swatch => {
         swatch.addEventListener('click', () => setBackground(swatch.dataset.color));
@@ -5126,31 +5130,124 @@ function setElementColor(element, hex) {
     savePreferences();
 }
 
+// Hand a file to the browser's download. Returns false when the click
+// itself failed; the Blob URL stays alive while the download starts.
+function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    try {
+        a.click();
+        return true;
+    } catch {
+        return false;
+    } finally {
+        setTimeout(() => {
+            a.remove();
+            URL.revokeObjectURL(url);
+        }, 60000);
+    }
+}
+
+// === Export menu: a structure file, or an image of the view ===
+let exportScale = 1;
+
+function setupExportMenu() {
+    const button = document.getElementById('exportMenuButton');
+    const menu = document.getElementById('exportMenu');
+    if (!button || !menu) return;
+    const open = () => { menu.hidden = false; button.setAttribute('aria-expanded', 'true'); updateExportMenu(); };
+    const close = () => { menu.hidden = true; button.setAttribute('aria-expanded', 'false'); };
+    button.addEventListener('click', () => (menu.hidden ? open() : close()));
+    document.addEventListener('pointerdown', (e) => {
+        if (!menu.hidden && !menu.contains(e.target) && !button.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !menu.hidden) { close(); button.focus(); }
+    });
+    document.getElementById('exportPoscar').addEventListener('click', () => { close(); exportStructure(); });
+    menu.querySelectorAll('.export-size').forEach(size => size.addEventListener('click', () => {
+        exportScale = Number(size.dataset.scale);
+        updateExportMenu();
+    }));
+    document.getElementById('exportImage').addEventListener('click', () => { close(); exportImage(); });
+}
+
+function updateExportMenu() {
+    const menu = document.getElementById('exportMenu');
+    if (!menu || typeof menu.querySelectorAll !== 'function') return; // Not in the page (unit tests stub the document)
+    document.getElementById('exportFormatLabel').textContent =
+        !currentStructure ? '—' : currentStructure.isXDATCAR ? 'XDATCAR' : currentStructure.isXYZ ? 'XYZ' : 'POSCAR';
+    menu.querySelectorAll('.export-size').forEach(size => {
+        const on = Number(size.dataset.scale) === exportScale;
+        size.classList.toggle('active', on);
+        size.setAttribute('aria-checked', String(on));
+    });
+    document.getElementById('exportPixels').textContent = `${viewport.clientWidth * exportScale} × ${viewport.clientHeight * exportScale} px`;
+}
+
+// Draw the view again with more pixels and hand back a PNG. The CSS size,
+// camera and overlay sizes stay as on screen, so the picture is the screen's
+// picture at a larger size; the on-screen canvas is restored afterwards.
+function renderImageBlob({ scale = 1, transparent = false } = {}) {
+    const previousRatio = renderer.getPixelRatio();
+    const previousBackground = scene.background;
+    try {
+        if (transparent) scene.background = null;
+        renderer.setPixelRatio(scale);
+        drawFrame();
+        return new Promise(resolve => renderer.domElement.toBlob(resolve, 'image/png'));
+    } finally {
+        scene.background = previousBackground;
+        renderer.setPixelRatio(previousRatio);
+        requestRender();
+    }
+}
+
+function imageFilename() {
+    const stem = (currentFilename || 'structure').replace(/\.[^.]+$/, '');
+    const frame = currentStructure.isXDATCAR ? `_frame${(currentStructure.currentFrameIndex || 0) + 1}` : '';
+    return `${stem}${frame}.png`;
+}
+
+async function exportImage() {
+    if (!currentStructure) {
+        statusText.textContent = 'No structure to export';
+        statusText.className = '';
+        return;
+    }
+    const transparent = document.getElementById('exportTransparent').checked;
+    const width = viewport.clientWidth * exportScale, height = viewport.clientHeight * exportScale;
+    if (Math.max(width, height) > 16384) {
+        statusText.textContent = `${width} × ${height} px is more than the browser can draw; choose a smaller size`;
+        statusText.className = 'error';
+        return;
+    }
+    const blob = await renderImageBlob({ scale: exportScale, transparent });
+    if (!blob || !downloadBlob(blob, imageFilename())) {
+        statusText.textContent = 'Could not save the image';
+        statusText.className = 'error';
+        return;
+    }
+    statusText.textContent = `Started PNG download (${width} × ${height} px${transparent ? ', transparent' : ''})`;
+    statusText.className = '';
+}
+
 // Style files: the same preferences as a small JSON file, for carrying a look
 // to another browser or keeping more than one look. The Save style / Load
 // style buttons were removed from the panel to keep it simple; these two
 // functions stay so they can be offered again elsewhere.
 function saveStyle() {
     const blob = new Blob([preferenceStore.serialize(settings)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'crystal-visualizer-style.json';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    try {
-        a.click();
+    if (downloadBlob(blob, 'crystal-visualizer-style.json')) {
         statusText.textContent = 'Started style download';
         statusText.className = '';
-    } catch {
+    } else {
         statusText.textContent = 'Could not start the style download';
         statusText.className = 'error';
-    } finally {
-        // Keep the Blob URL available while the browser starts its download.
-        setTimeout(() => {
-            a.remove();
-            URL.revokeObjectURL(url);
-        }, 60000);
     }
 }
 
@@ -6685,6 +6782,7 @@ function updateModeToggleForFileType() {
             exportBtn.title = currentStructure && currentStructure.isXYZ ? 'Export as XYZ' : 'Export as POSCAR';
         }
     }
+    updateExportMenu();
 }
 
 // Helper function to switch to measure mode (used when loading XDATCAR)

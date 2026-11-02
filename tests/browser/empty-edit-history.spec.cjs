@@ -39,7 +39,7 @@ test('complete deletion, refill and history branching remain coherent across rep
         const empty = await checkedState();
         expect(empty.atomCount).toBe(0);
         expect(empty.selection.identities).toEqual([]);
-        await page.locator('#exportPoscar').click();
+        await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click();
         await expect(page.locator('#statusText')).toContainText('Cannot export an empty structure');
         await add('C');
         expect((await checkedState()).geometry.atoms.map(atom => atom.element)).toEqual(['C']);

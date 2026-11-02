@@ -26,7 +26,7 @@ test('empty periodic documents retain duplicate species, constraints and editabl
   await page.getByRole('button',{name:'Reset View',exact:true}).click();
   await page.getByRole('button',{name:'Increase a periodic images',exact:true}).click();
   expect((await check(page)).atomCount).toBe(0);
-  await page.locator('#exportPoscar').click();await expect(page.locator('#statusText')).toContainText('Cannot export an empty structure');
+  await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click();await expect(page.locator('#statusText')).toContainText('Cannot export an empty structure');
   await page.locator('#addAtomElement').selectOption('H');
   await expect(page.locator('#addAtomSpecies')).toBeVisible();
   const ids=await page.locator('#addAtomSpecies option').evaluateAll(options=>options.map(o=>o.value));await page.locator('#addAtomSpecies').selectOption(ids.at(-1));
@@ -70,7 +70,7 @@ test('mixed-element instancing, periodic copies, supercells, constraints and exp
   await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(supercell.geometry);
   await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(before.geometry);
   await page.locator('#redoBtn').click();expect((await check(page)).geometry).toEqual(supercell.geometry);
-  const pending=page.waitForEvent('download');await page.locator('#exportPoscar').click();const file=await pending;const content=await fs.readFile(await file.path(),'utf8');
+  const pending=page.waitForEvent('download');await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click();const file=await pending;const content=await fs.readFile(await file.path(),'utf8');
   const exported=formats.parsePOSCAR(content);expect(exported.counts).toEqual([498,500]);
   const canonical=atoms=>atoms.map(a=>[a.element,a.position.x??a.position[0],a.position.y??a.position[1],a.position.z??a.position[2],a.selectiveDynamics??a.sd]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
   expect(canonical(exported.atoms)).toEqual(canonical(supercell.geometry.atoms));

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=60">
+    <link rel="stylesheet" href="styles.css?v=61">
 </head>
 <body>
     <div id="app">
@@ -96,14 +96,37 @@
 
                 <span id="unsavedIndicator" class="unsaved-indicator" role="status" hidden>Unsaved edits</span>
                 
-                <button id="exportPoscar" class="btn btn-export" title="Export as POSCAR">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    <span>Export</span>
-                </button>
+                <div class="export-wrap">
+                    <button id="exportMenuButton" class="btn btn-export" title="Export a structure file or an image" aria-haspopup="menu" aria-expanded="false" aria-controls="exportMenu">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Export</span>
+                    </button>
+                    <div id="exportMenu" class="export-menu" role="menu" aria-label="Export" hidden>
+                        <button type="button" id="exportPoscar" class="export-item" role="menuitem" title="Export as POSCAR">
+                            <span class="export-item-title">Structure file</span>
+                            <span class="export-item-meta" id="exportFormatLabel">POSCAR</span>
+                        </button>
+                        <div class="export-divider"></div>
+                        <div class="export-section" role="group" aria-label="Image">
+                            <div class="export-item-title">Image</div>
+                            <div class="export-row">
+                                <span>Size</span>
+                                <div class="export-sizes" role="radiogroup" aria-label="Image size">
+                                    <button type="button" class="export-size active" role="radio" aria-checked="true" data-scale="1">1×</button>
+                                    <button type="button" class="export-size" role="radio" aria-checked="false" data-scale="2">2×</button>
+                                    <button type="button" class="export-size" role="radio" aria-checked="false" data-scale="4">4×</button>
+                                </div>
+                            </div>
+                            <div class="export-pixels" id="exportPixels">—</div>
+                            <label class="export-check"><input type="checkbox" id="exportTransparent"><span>Transparent background</span></label>
+                            <button type="button" id="exportImage" class="btn export-save" role="menuitem">Save PNG</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -358,6 +381,6 @@
     <script src="layout.js?v=1"></script>
     <script src="preferences.js?v=1"></script>
     <script src="annotations.js?v=5"></script>
-    <script src="app.js?v=206"></script>
+    <script src="app.js?v=207"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@ async function editX(page, number, value) {
 }
 async function download(page) {
     const pending = page.waitForEvent('download');
-    await page.locator('#exportPoscar').click();
+    await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click();
     const result = await pending;
     return fs.readFile(await result.path(), 'utf8');
 }
@@ -100,6 +100,7 @@ test('XYZ edits warn about stale results, allow cancellation and preserve origin
     expect(await download(page)).toBe(xyz);
     await editX(page, 2, 2);
     const rejectedDialog = page.waitForEvent('dialog');
+    await page.locator('#exportMenuButton').click();
     const click = page.locator('#exportPoscar').click();
     const rejected = await rejectedDialog;
     expect(rejected.message()).toContain('energy, stress');

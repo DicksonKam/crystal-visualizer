@@ -282,7 +282,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             } else if (action === 'download' || action === 'roundtrip') {
                 if(!previous.atomCount) performed=false;
                 else {
-                    const waiting=page.waitForEvent('download'); await page.locator('#exportPoscar').click(); const file=await waiting;
+                    const waiting=page.waitForEvent('download'); await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click(); const file=await waiting;
                     const text=await fs.readFile(await file.path(),'utf8'); record.filename=file.suggestedFilename();
                     const errors=await page.evaluate(text=>{
                         const parsed=currentStructure.isXDATCAR ? parseXDATCAR(text) : currentStructure.isXYZ ? parseXYZ(text) : parsePOSCAR(text);

@@ -19,13 +19,13 @@ for(const [format,source] of [['xyz','examples/xyz/H2O.xyz'],['poscar','examples
         let filename=`structure_edited_edited.${format}`;
         for(let cycle=0;cycle<3;cycle++){
             await reopen(content,filename);
-            const downloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();
+            const downloadPromise=page.waitForEvent('download');await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click();
             const download=await downloadPromise;
             filename=download.suggestedFilename();content=await fs.readFile(await download.path(),'utf8');
             expect(filename).toBe(`structure_edited.${format}`);
         }
         await reopen(content,`internal_edited_notes.${format}`);
-        const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportPoscar').click();
+        const internalDownloadPromise=page.waitForEvent('download');await page.locator('#exportMenuButton').click();await page.locator('#exportPoscar').click();
         expect((await internalDownloadPromise).suggestedFilename()).toBe(`internal_edited_notes_edited.${format}`);
         await page.screenshot({path:info.outputPath('reopened-stable-name.png')});
     });

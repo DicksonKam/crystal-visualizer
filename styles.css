@@ -2119,3 +2119,127 @@ body.edit-mode-active .panel-title {
     background: rgba(241, 91, 181, 0.15);
     color: var(--text-primary);
 }
+
+/* === Export menu === */
+.export-wrap {
+    position: relative;
+}
+
+.export-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    min-width: 250px;
+    padding: 0.4rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    z-index: 50;
+}
+
+.export-menu[hidden] {
+    display: none;
+}
+
+.export-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.875rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.export-item:hover {
+    background: var(--bg-hover);
+}
+
+.export-item-title {
+    font-weight: 500;
+}
+
+.export-item-meta {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.export-divider {
+    height: 1px;
+    margin: 0.3rem 0.4rem;
+    background: var(--border-color);
+}
+
+.export-section {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.45rem 0.7rem 0.6rem;
+    font-size: 0.875rem;
+}
+
+.export-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.export-sizes {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.export-size {
+    padding: 0.25rem 0.6rem;
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.export-size + .export-size {
+    border-left: 1px solid var(--border-color);
+}
+
+.export-size.active {
+    background: rgba(0, 245, 212, 0.15);
+    color: var(--accent-cyan);
+}
+
+.export-pixels {
+    margin-top: -0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.export-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.export-save {
+    justify-content: center;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+}

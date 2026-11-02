@@ -22,7 +22,7 @@ for (const size of [{width:1440,height:900}, {width:800,height:700}, {width:390,
         const original = await page.evaluate(() => ({ atoms:currentStructure.atoms.map(a=>a.position.toArray()), undo:editHistory.undoStack.length, dirty:editHistory.dirty }));
         await dragDivider(page, size.width*.48);
         await canvasMatches(page);
-        const exportBox = await page.locator('#exportPoscar').boundingBox();
+        const exportBox = await page.locator('#exportMenuButton').boundingBox();
         expect(exportBox.x + exportBox.width).toBeLessThanOrEqual(size.width);
         const texts = page.locator('#structureInfo .info-value');
         await expect(texts.nth(1)).toHaveText(filename); await expect(texts.nth(2)).toHaveText(longTitle);

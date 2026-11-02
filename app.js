@@ -5208,6 +5208,7 @@ function updateResetButton() {
 // the remembered ones, and the view redraws. The loaded structure, its edits
 // and the camera are left alone.
 function resetPreferences() {
+    if (!window.confirm('Reset the background, atom colours and display options to their defaults?')) return;
     Object.assign(settings, preferenceStore.reset());
     settings.periodic = { a: 1, b: 1, c: 1 };
     applyPreferencesToControls();

@@ -8,6 +8,12 @@ async function stored(page) {
     return page.evaluate(key => JSON.parse(localStorage.getItem(key)), KEY);
 }
 
+// Reset all asks "are you sure" first.
+async function resetAll(page) {
+    page.once('dialog', dialog => dialog.accept());
+    await page.locator('#resetPreferences').click();
+}
+
 test('display options survive a reload', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
     await page.locator('#atomScale').fill('1.4');
@@ -36,7 +42,12 @@ test('Reset all restores the defaults and forgets them', async ({ page }) => {
     await page.locator('#periodicControls .stepper-btn[data-axis="a"][data-dir="plus"]').click();
     await expect(page.locator('#periodicADisplay')).toHaveText('2');
 
+    page.once('dialog', dialog => dialog.dismiss());
     await page.locator('#resetPreferences').click();
+    await expect(page.locator('#atomScale')).toHaveValue('1.4');
+    await expect(page.locator('#resetPreferences')).toBeEnabled();
+
+    await resetAll(page);
     await expect(page.locator('#statusText')).toHaveText('Defaults restored: background, atom colours, display options');
     await expect(page.locator('#resetPreferences')).toBeDisabled();
     await expect(page.locator('#atomScale')).toHaveValue('0.8');
@@ -82,7 +93,7 @@ test('the background swatches recolour the view and switch the overlay ink', asy
     expect(await page.evaluate(() => scene.background.getHexString())).toBe('204060');
     await expect(page.locator('#backgroundColor')).toHaveValue('#204060');
 
-    await page.locator('#resetPreferences').click();
+    await resetAll(page);
     expect(await page.evaluate(() => scene.background.getHexString())).toBe('0a0a0f');
     await expect(page.getByRole('radio', { name: 'Midnight' })).toHaveAttribute('aria-checked', 'true');
     await expect(page.locator('.swatch-custom')).not.toHaveClass(/selected/);
@@ -127,7 +138,7 @@ test('an element recoloured in the Atoms panel keeps its colour until put back',
 
     // Reset all clears a recolour too.
     await page.locator('.atom-color-input[data-element="Si"]').fill('#00ff00');
-    await page.locator('#resetPreferences').click();
+    await resetAll(page);
     expect(await page.evaluate(() => getAtomMaterial('Si').color.getHexString())).toBe('1b3bfa');
     await expect(page.locator('.atom-color-input[data-element="Si"]')).toHaveValue('#1b3bfa');
 });
@@ -146,7 +157,7 @@ test('the style file functions still round-trip the preferences', async ({ page 
     const text = await fs.readFile(await download.path(), 'utf8');
     expect(JSON.parse(text)).toEqual({ app: 'crystal-visualizer', version: 1, values: { atomScale: 1.2, background: '#ffffff', colors: { Si: '#ff0000' } } });
 
-    await page.locator('#resetPreferences').click();
+    await resetAll(page);
     expect(await page.evaluate(() => scene.background.getHexString())).toBe('0a0a0f');
 
     await page.evaluate(text => loadStyleFile(new File([text], 'figure-style.json', { type: 'application/json' })), text);

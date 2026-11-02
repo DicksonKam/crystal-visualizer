@@ -146,13 +146,23 @@ test('pointer interruption, focus, Escape and scene changes invalidate active mo
     const stopped = await pose(page);
     await page.waitForTimeout(400);
     nearArray((await pose(page)).q, stopped.q);
+    // A rebuild of the same document (display options, periodic images, a
+    // playback frame) keeps an alignment in progress instead of cancelling
+    // it, and the alignment still finishes on its target.
+    // The camera sits near +c here, so the alignments below go to +a and back.
     await page.evaluate(() => {
-        cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[4]), performance.now(), 'explicit', '+c');
+        cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[0]), performance.now(), 'explicit', '+a');
         renderStructure(currentStructure, true);
     });
-    const rebuilt = await pose(page);
+    expect(await page.evaluate(() => cameraController.transitioning)).toBe(true);
     await page.waitForTimeout(400);
-    nearArray((await pose(page)).q, rebuilt.q);
+    expect(await page.evaluate(() => cameraController.transitioning)).toBe(false);
+    expect(await page.evaluate(() => cameraMath.angularDistance(camera.quaternion, cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[0])))).toBeLessThan(1e-6);
+    // Replacing the document still cancels movement.
+    await page.evaluate(() => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[4]), performance.now(), 'explicit', '+c'));
+    expect(await page.evaluate(() => cameraController.transitioning)).toBe(true);
+    await upload(page, cell(), 'camera-again.poscar');
+    expect(await page.evaluate(() => cameraController.transitioning)).toBe(false);
 });
 
 test('internal fitting fits narrow large scenes and existing Reset restores deterministic roll', async ({ page }) => {

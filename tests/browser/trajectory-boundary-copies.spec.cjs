@@ -38,10 +38,15 @@ test('frames that keep the same copies reuse their meshes', async ({ page }) => 
 
 // Frames whose copies change rebuild the scene. A rotation in progress must
 // carry on through those rebuilds exactly as it does through quiet frames.
+// The bug this guards: a frame whose boundary copies changed rebuilds the
+// scene, and a rebuild used to recreate the camera controls, which ended the
+// drag at the first such frame. The check is the mechanism itself (the
+// controls instance survives and the gesture stays active) plus a rotation
+// far above what a drag cut short at frame 1 could reach.
 test('a drag keeps rotating while frames rebuild the scene', async ({ page }) => {
     const lines = Array.from({ length: 41 }, (_, i) => `Direct configuration= ${i + 1}\n${i % 2 ? '0' : '.5'} .5 .5`);
     await upload(page, `alternating copies\n1\n8 0 0\n0 8 0\n0 0 8\nH\n1\n${lines.join('\n')}\n`, 'alternating.xdatcar');
-    const drag = withFrames => page.evaluate(async withFrames => {
+    const result = await page.evaluate(async () => {
         const raf = () => new Promise(resolve => requestAnimationFrame(resolve));
         const canvas = renderer.domElement;
         const pointer = (type, x, y, target) => {
@@ -51,19 +56,27 @@ test('a drag keeps rotating while frames rebuild the scene', async ({ page }) =>
         };
         switchToFrame(0); await raf(); await raf();
         const start = camera.quaternion.clone();
+        let swaps = 0, interactingThroughout = true, rebuilds = 0;
         pointer('pointerdown', 150, 250, canvas);
+        // New input may recreate the controls once; from here on they must survive.
+        const adapter = controls;
         for (let i = 1; i <= 40; i++) {
             pointer('pointermove', 150 + i * 5, 250 + i * 2, document);
-            if (withFrames) switchToFrame(i);
+            const meshBefore = atomMeshes[0];
+            switchToFrame(i);
+            if (atomMeshes[0] !== meshBefore) rebuilds++;
             await raf();
+            if (controls !== adapter) swaps++;
+            if (!cameraController.interacting) interactingThroughout = false;
         }
         pointer('pointerup', 350, 330, document);
         await raf(); await raf();
-        return THREE.MathUtils.radToDeg(start.angleTo(camera.quaternion));
-    }, withFrames);
-    const still = await drag(false);
-    const playing = await drag(true);
-    expect(still).toBeGreaterThan(30);
-    expect(Math.abs(playing - still)).toBeLessThan(5);
-    expect(await page.evaluate(() => currentStructure.currentFrameIndex)).toBe(40);
+        return { degrees: THREE.MathUtils.radToDeg(start.angleTo(camera.quaternion)), swaps, interactingThroughout, rebuilds, frame: currentStructure.currentFrameIndex };
+    });
+    expect(result.rebuilds).toBe(40);
+    expect(result.swaps).toBe(0);
+    expect(result.interactingThroughout).toBe(true);
+    // A drag cut short at frame 1 reaches about 3 degrees; a busy machine that drops frames still gets well past 10.
+    expect(result.degrees).toBeGreaterThan(10);
+    expect(result.frame).toBe(40);
 });

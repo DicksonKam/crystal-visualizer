@@ -181,3 +181,29 @@ test('the style file functions still round-trip the preferences', async ({ page 
     await expect(page.locator('#statusText')).toHaveText('POSCAR: This is not a style file');
     expect(await page.evaluate(() => ({ bg: scene.background.getHexString(), scale: settings.atomScale }))).toEqual({ bg: 'ffffff', scale: 1.2 });
 });
+
+test('Show Axes and the toolbar axes icon are one setting', async ({ page }) => {
+    await upload(page, SILICON, 'POSCAR');
+    const checkbox = page.locator('#showAxes'), icon = page.locator('#toggleAxes');
+    await expect(checkbox).toBeChecked();
+    await expect(icon).toHaveAttribute('aria-pressed', 'true');
+
+    await checkbox.uncheck();
+    await expect(icon).toHaveAttribute('aria-pressed', 'false');
+    expect(await page.evaluate(() => settings.showAxes)).toBe(false);
+    expect(await stored(page)).toEqual({ version: 1, values: { showAxes: false } });
+
+    await icon.click();
+    await expect(checkbox).toBeChecked();
+    expect(await stored(page)).toBeNull();
+
+    await icon.click();
+    await page.reload();
+    await expect(checkbox).not.toBeChecked();
+    await expect(icon).toHaveAttribute('aria-pressed', 'false');
+
+    // A molecule has no lattice axes, so both controls are unavailable.
+    await upload(page, '1\nlone atom\nH 0 0 0\n', 'atom.xyz');
+    await expect(checkbox).toBeDisabled();
+    await expect(icon).toBeDisabled();
+});

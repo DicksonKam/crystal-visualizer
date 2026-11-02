@@ -4943,14 +4943,9 @@ function setupControls() {
     });
     
     // Toggle axes
-    document.getElementById('toggleAxes').addEventListener('click', (e) => {
-        settings.showAxes = !settings.showAxes;
-        e.currentTarget.classList.toggle('active', settings.showAxes);
-        e.currentTarget.setAttribute('aria-pressed', String(settings.showAxes));
-        savePreferences();
-        // Axes HUD visibility is controlled in animate() loop via settings.showAxes
-        requestRender();
-    });
+    // The toolbar icon and the Show Axes checkbox are the same setting.
+    document.getElementById('toggleAxes').addEventListener('click', () => setShowAxes(!settings.showAxes));
+    document.getElementById('showAxes').addEventListener('change', (e) => setShowAxes(e.target.checked));
     
     // Toggle unit cell
     document.getElementById('toggleCell').addEventListener('click', (e) => {
@@ -5020,6 +5015,20 @@ function setupControls() {
     applyPreferencesToControls();
 }
 
+function setShowAxes(on) {
+    settings.showAxes = on;
+    showAxesControls();
+    savePreferences();
+    requestRender(); // The axes HUD reads settings.showAxes in the animation loop.
+}
+
+function showAxesControls() {
+    const button = document.getElementById('toggleAxes');
+    button.classList.toggle('active', settings.showAxes);
+    button.setAttribute('aria-pressed', String(settings.showAxes));
+    document.getElementById('showAxes').checked = settings.showAxes;
+}
+
 // Mirror the settings in the sidebar and toolbar controls, so a remembered
 // preference and a reset both show where they apply.
 function applyPreferencesToControls() {
@@ -5028,11 +5037,10 @@ function applyPreferencesToControls() {
     showBondThresholdValue();
     document.getElementById('showLabels').checked = settings.showLabels;
     document.getElementById('showFixedIndicators').checked = settings.showFixedIndicators;
-    for (const [id, on] of [['toggleAxes', settings.showAxes], ['toggleCell', settings.showCell]]) {
-        const button = document.getElementById(id);
-        button.classList.toggle('active', on);
-        button.setAttribute('aria-pressed', String(on));
-    }
+    showAxesControls();
+    const cellButton = document.getElementById('toggleCell');
+    cellButton.classList.toggle('active', settings.showCell);
+    cellButton.setAttribute('aria-pressed', String(settings.showCell));
     applyBackground();
     applyElementColors();
     updateResetButton();
@@ -6644,6 +6652,9 @@ function updateModeToggleForFileType() {
     const axesBtn = document.getElementById('toggleAxes');
     axesBtn.disabled = !periodic;
     axesBtn.title = periodic ? 'Toggle Axes' : 'No lattice axes in a molecule';
+    const axesCheckbox = document.getElementById('showAxes');
+    axesCheckbox.disabled = !periodic;
+    axesCheckbox.title = periodic ? '' : 'No lattice axes in a molecule';
     cellBtn.disabled = !periodic;
     cellBtn.title = periodic ? 'Toggle Unit Cell' : 'No unit cell in a molecule';
     const periodicAxes = getPeriodicAxes(currentStructure);

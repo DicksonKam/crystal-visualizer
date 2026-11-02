@@ -1965,7 +1965,7 @@ body.edit-mode-active .panel-title {
 /* === Appearance === */
 .appearance-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start; /* the panel's shared left edge, under the swatches */
 }
 
 .btn-reset {

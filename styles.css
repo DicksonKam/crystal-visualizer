@@ -1962,7 +1962,7 @@ body.edit-mode-active .panel-title {
     .sel-coords { padding-left: 0; overflow-wrap: anywhere; }
 }
 
-/* === Appearance === */
+/* === Display panel: background swatches and Reset all === */
 .appearance-actions {
     display: flex;
     justify-content: flex-start; /* the panel's shared left edge, under the swatches */

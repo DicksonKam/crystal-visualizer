@@ -133,7 +133,7 @@
                 </div>
 
                 <div class="panel controls-panel">
-                    <h3 class="panel-title">Display Options</h3>
+                    <h3 class="panel-title">Display</h3>
                     <div class="control-group">
                         <label for="atomScale">Atom Size</label>
                         <input type="range" id="atomScale" min="0.1" max="2" step="0.1" value="0.8">
@@ -191,6 +191,25 @@
                         </div>
                     </div>
                     
+                    <div class="control-divider"></div>
+                    <div class="control-group">
+                        <span class="control-label" id="backgroundLabel">Background</span>
+                        <div class="swatch-row" id="backgroundSwatches" role="radiogroup" aria-labelledby="backgroundLabel">
+                            <button type="button" class="swatch selected" role="radio" aria-checked="true" data-color="#0a0a0f" style="--swatch: #0a0a0f" title="Midnight" aria-label="Midnight"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#000000" style="--swatch: #000000" title="Black" aria-label="Black"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#2a2a35" style="--swatch: #2a2a35" title="Slate" aria-label="Slate"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#f4f4f8" style="--swatch: #f4f4f8" title="Paper" aria-label="Paper"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#ffffff" style="--swatch: #ffffff" title="White" aria-label="White"></button>
+                            <label class="swatch swatch-custom" title="Custom colour">
+                                <input type="color" id="backgroundColor" value="#0a0a0f" aria-label="Custom background colour">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="control-group appearance-actions">
+                        <button type="button" id="resetPreferences" class="btn btn-reset" title="Nothing to reset: everything is at its default" disabled>Reset all</button>
+                    </div>
+                    <p class="appearance-note">Reset all restores the defaults above and the atom colours. Your choices are remembered by this browser.</p>
+
                     <!-- Edit Mode Only: Supercell & Vacuum Controls -->
                     <div id="editModeControls" class="edit-mode-only" style="display: none;">
                         <div class="control-divider"></div>
@@ -212,27 +231,6 @@
                             </p>
                         </div>
                     </div>
-                </div>
-
-                <div class="panel appearance-panel">
-                    <h3 class="panel-title">Appearance</h3>
-                    <div class="control-group">
-                        <span class="control-label" id="backgroundLabel">Background</span>
-                        <div class="swatch-row" id="backgroundSwatches" role="radiogroup" aria-labelledby="backgroundLabel">
-                            <button type="button" class="swatch selected" role="radio" aria-checked="true" data-color="#0a0a0f" style="--swatch: #0a0a0f" title="Midnight" aria-label="Midnight"></button>
-                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#000000" style="--swatch: #000000" title="Black" aria-label="Black"></button>
-                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#2a2a35" style="--swatch: #2a2a35" title="Slate" aria-label="Slate"></button>
-                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#f4f4f8" style="--swatch: #f4f4f8" title="Paper" aria-label="Paper"></button>
-                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#ffffff" style="--swatch: #ffffff" title="White" aria-label="White"></button>
-                            <label class="swatch swatch-custom" title="Custom colour">
-                                <input type="color" id="backgroundColor" value="#0a0a0f" aria-label="Custom background colour">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="control-group appearance-actions">
-                        <button type="button" id="resetPreferences" class="btn btn-reset" title="Nothing to reset: everything is at its default" disabled>Reset all</button>
-                    </div>
-                    <p class="appearance-note">Reset all restores the default background, atom colours and display options. Your choices are remembered by this browser.</p>
                 </div>
             </aside>
             <div id="sidebarDivider" class="sidebar-divider" role="separator" tabindex="0"
@@ -342,6 +340,6 @@
     <script src="layout.js?v=1"></script>
     <script src="preferences.js?v=1"></script>
     <script src="annotations.js?v=5"></script>
-    <script src="app.js?v=201"></script>
+    <script src="app.js?v=202"></script>
 </body>
 </html>

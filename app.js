@@ -5201,7 +5201,7 @@ function updateResetButton() {
     const { a, b, c } = settings.periodic;
     const changed = Object.keys(CrystalPreferences.differences(settings, DEFAULT_PREFERENCES)).length > 0 || a !== 1 || b !== 1 || c !== 1;
     button.disabled = !changed;
-    button.title = changed ? 'Restore the default background, atom colours and display options' : 'Nothing to reset: everything is at its default';
+    button.title = changed ? 'Restore the defaults above and the atom colours' : 'Nothing to reset: everything is at its default';
 }
 
 // Reset all: every display option returns to its default, the browser forgets

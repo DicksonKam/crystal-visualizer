@@ -2,10 +2,7 @@ const { test: base, expect } = require('@playwright/test');
 
 const test = base.extend({
     appSetup: [async ({ page }, use) => {
-        // Exercise the pinned renderer and controls without depending on CDNs.
-        await page.route('https://cdnjs.cloudflare.com/**/three.min.js', route => route.fulfill({ path: require.resolve('three/build/three.min.js'), contentType: 'text/javascript' }));
-        await page.route('https://cdn.jsdelivr.net/**/OrbitControls.js', route => route.fulfill({ path: require.resolve('three/examples/js/controls/OrbitControls.js'), contentType: 'text/javascript' }));
-        await page.route('https://cdn.jsdelivr.net/**/TrackballControls.js', route => route.fulfill({ path: require.resolve('three/examples/js/controls/TrackballControls.js'), contentType: 'text/javascript' }));
+        // three.js is served from vendor/three; only the web fonts are external, and the app must not need them.
         await page.route('https://fonts.googleapis.com/**', route => route.abort());
         await page.route('https://fonts.gstatic.com/**', route => route.abort());
         const errors = [];

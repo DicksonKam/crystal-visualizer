@@ -10,7 +10,9 @@ Serve this directory over HTTP, then open the local URL in a browser. For exampl
 python3 -m http.server 8000
 ```
 
-The built-in examples use `fetch`, so opening `index.html` as a raw file will not load them. The page also loads Three.js and fonts from public CDNs; those resources require an internet connection.
+The app has no build step and no server-side code. three.js (r128) and its TrackballControls are included under `vendor/three`, so a downloaded or cloned copy also works without an internet connection; only the optional web fonts come from Google Fonts, and the page falls back to system fonts without them.
+
+The built-in examples use `fetch`, so opening `index.html` as a raw file will not load them; serve the folder as above.
 
 ## File behavior
 
@@ -72,7 +74,7 @@ Run the focused tests with:
 node --test tests/*.test.cjs
 ```
 
-The browser suite exercises the actual DOM and WebGL renderer, file uploads/downloads, species groups, cell previews, export warnings, undo/redo, skew-cell measurements, trajectory playback, and real damped camera gestures, fitting, alignment, and cancellation. The camera tests include timestamped input at 30, 60, and 120 Hz. It serves the pinned Three.js dependency from local test packages, so CDN availability and fonts cannot affect the result.
+The browser suite exercises the actual DOM and WebGL renderer, file uploads/downloads, species groups, cell previews, export warnings, undo/redo, skew-cell measurements, trajectory playback, and real damped camera gestures, fitting, alignment, and cancellation. The camera tests include timestamped input at 30, 60, and 120 Hz. Three.js is served from the app's own `vendor/three` copy and the web fonts are blocked, so network availability cannot affect the result.
 
 ```sh
 npm ci

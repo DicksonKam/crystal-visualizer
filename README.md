@@ -26,6 +26,8 @@ XYZ property declarations validate column names, types, and counts before loadin
 
 The Bond Length slider is the one bond cutoff: a bond is drawn between any two atoms closer than it, and at 0 no bonds are drawn.
 
+Atoms use VESTA's default element colours (lilac Mo, olive Te, red O, blue Si, and so on), so a structure looks as it does in VESTA. Ball size comes from covalent radii scaled by the Atom Size slider.
+
 The Appearance panel sets the background of the structure view: five swatches (midnight, black, slate, paper, white) or any colour from the custom picker. On a light background the measurement captions, lines, angle arc and cell edges switch to dark ink so they stay readable; atoms, bonds and the sidebar keep their colours.
 
 Display options (atom size, bond length, labels, fixed-atom markers, the axes and cell toggles) and the background are remembered by your browser between visits. They are stored locally and never sent anywhere; another browser or device starts from the defaults. **Reset all** in the Appearance panel restores every default and clears what was remembered. Periodic images are chosen per structure and are not remembered.

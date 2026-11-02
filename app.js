@@ -101,7 +101,7 @@ const ELEMENT_DATA = {
     Pu: { color: 0x4c4c4c, radius: 1.87, name: 'Plutonium' },
     Am: { color: 0x4c4c4c, radius: 1.80, name: 'Americium' },
     Cm: { color: 0x785ce3, radius: 1.69, name: 'Curium' },
-    DEFAULT: { color: 0xff69b4, radius: 1.50, name: 'Unknown' }
+    DEFAULT: { color: 0x4d4d4d, radius: 1.50, name: 'Unknown' } // VESTA's grey for an element outside the table
 };
 Object.setPrototypeOf(ELEMENT_DATA, null);
 
@@ -5014,13 +5014,6 @@ function setupControls() {
     });
     document.getElementById('backgroundColor').addEventListener('input', (e) => setBackground(e.target.value));
     document.getElementById('resetPreferences').addEventListener('click', resetPreferences);
-    document.getElementById('saveStyle').addEventListener('click', saveStyle);
-    const styleFileInput = document.getElementById('styleFileInput');
-    document.getElementById('loadStyle').addEventListener('click', () => styleFileInput.click());
-    styleFileInput.addEventListener('change', () => {
-        loadStyleFile(styleFileInput.files[0]);
-        styleFileInput.value = '';
-    });
     applyPreferencesToControls();
 }
 
@@ -5039,6 +5032,7 @@ function applyPreferencesToControls() {
     }
     applyBackground();
     applyElementColors();
+    updateResetButton();
 }
 
 function backgroundLuminance(hex) {
@@ -5121,8 +5115,10 @@ function setElementColor(element, hex) {
     savePreferences();
 }
 
-// Save style / Load style: the same preferences as a small JSON file, for
-// carrying a look to another browser or keeping more than one look.
+// Style files: the same preferences as a small JSON file, for carrying a look
+// to another browser or keeping more than one look. The Save style / Load
+// style buttons were removed from the panel to keep it simple; these two
+// functions stay so they can be offered again elsewhere.
 function saveStyle() {
     const blob = new Blob([preferenceStore.serialize(settings)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -5189,10 +5185,23 @@ function showPeriodicControls() {
         document.getElementById(`periodic${upper}Display`).textContent = settings.periodic[axis];
         document.getElementById(`periodic${upper}`).value = settings.periodic[axis];
     }
+    updateResetButton();
 }
 
 function savePreferences() {
     preferenceStore.save(settings);
+    updateResetButton();
+}
+
+// Reset all is live only while something differs from the defaults, so the
+// button itself shows whether there is anything to reset.
+function updateResetButton() {
+    const button = document.getElementById('resetPreferences');
+    if (!button) return;
+    const { a, b, c } = settings.periodic;
+    const changed = Object.keys(CrystalPreferences.differences(settings, DEFAULT_PREFERENCES)).length > 0 || a !== 1 || b !== 1 || c !== 1;
+    button.disabled = !changed;
+    button.title = changed ? 'Restore the default background, atom colours and display options' : 'Nothing to reset: everything is at its default';
 }
 
 // Reset all: every display option returns to its default, the browser forgets
@@ -5208,7 +5217,7 @@ function resetPreferences() {
         renderStructure(currentStructure, true);
     }
     requestRender();
-    statusText.textContent = 'Defaults restored';
+    statusText.textContent = 'Defaults restored: background, atom colours, display options';
     statusText.className = '';
 }
 

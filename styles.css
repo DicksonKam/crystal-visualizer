@@ -1965,18 +1965,12 @@ body.edit-mode-active .panel-title {
 /* === Appearance === */
 .appearance-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    justify-content: flex-end;
 }
 
-.btn-small,
 .btn-reset {
     font-size: 0.8rem;
     padding: 0.4rem 0.75rem;
-}
-
-.appearance-actions .btn-reset {
-    margin-left: auto;
 }
 
 .btn-reset:hover {

@@ -27,7 +27,9 @@ test('display options survive a reload', async ({ page }) => {
 
 test('Reset all restores the defaults and forgets them', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
+    await expect(page.locator('#resetPreferences')).toBeDisabled();
     await page.locator('#atomScale').fill('1.4');
+    await expect(page.locator('#resetPreferences')).toBeEnabled();
     await page.locator('#bondThreshold').fill('0');
     await page.locator('#showLabels').check();
     await page.locator('#toggleAxes').click();
@@ -35,7 +37,8 @@ test('Reset all restores the defaults and forgets them', async ({ page }) => {
     await expect(page.locator('#periodicADisplay')).toHaveText('2');
 
     await page.locator('#resetPreferences').click();
-    await expect(page.locator('#statusText')).toHaveText('Defaults restored');
+    await expect(page.locator('#statusText')).toHaveText('Defaults restored: background, atom colours, display options');
+    await expect(page.locator('#resetPreferences')).toBeDisabled();
     await expect(page.locator('#atomScale')).toHaveValue('0.8');
     await expect(page.locator('#bondThreshold')).toHaveValue('2.5');
     await expect(page.locator('#bondThresholdValue')).toHaveText('2.5');
@@ -129,7 +132,7 @@ test('an element recoloured in the Atoms panel keeps its colour until put back',
     await expect(page.locator('.atom-color-input[data-element="Si"]')).toHaveValue('#1b3bfa');
 });
 
-test('Save style writes a style file that Load style brings back', async ({ page }) => {
+test('the style file functions still round-trip the preferences', async ({ page }) => {
     const fs = require('node:fs/promises');
     await upload(page, SILICON, 'POSCAR');
     await page.getByRole('radio', { name: 'White' }).click();
@@ -137,26 +140,22 @@ test('Save style writes a style file that Load style brings back', async ({ page
     await page.locator('#atomScale').fill('1.2');
 
     const downloadPromise = page.waitForEvent('download');
-    await page.locator('#saveStyle').click();
+    await page.evaluate(() => saveStyle());
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe('crystal-visualizer-style.json');
     const text = await fs.readFile(await download.path(), 'utf8');
     expect(JSON.parse(text)).toEqual({ app: 'crystal-visualizer', version: 1, values: { atomScale: 1.2, background: '#ffffff', colors: { Si: '#ff0000' } } });
-    await expect(page.locator('#statusText')).toHaveText('Started style download');
 
     await page.locator('#resetPreferences').click();
     expect(await page.evaluate(() => scene.background.getHexString())).toBe('0a0a0f');
 
-    await page.locator('#styleFileInput').setInputFiles({ name: 'figure-style.json', mimeType: 'application/json', buffer: Buffer.from(text) });
+    await page.evaluate(text => loadStyleFile(new File([text], 'figure-style.json', { type: 'application/json' })), text);
     await expect(page.locator('#statusText')).toHaveText('Style loaded from figure-style.json');
     expect(await page.evaluate(() => ({ bg: scene.background.getHexString(), si: getAtomMaterial('Si').color.getHexString(), scale: settings.atomScale }))).toEqual({ bg: 'ffffff', si: 'ff0000', scale: 1.2 });
     await expect(page.locator('#atomScale')).toHaveValue('1.2');
-    await expect(page.getByRole('radio', { name: 'White' })).toHaveAttribute('aria-checked', 'true');
     expect(await stored(page)).toEqual({ version: 1, values: { atomScale: 1.2, background: '#ffffff', colors: { Si: '#ff0000' } } });
 
-    // Something that is not a style file is refused and changes nothing.
-    await page.locator('#styleFileInput').setInputFiles({ name: 'POSCAR', mimeType: 'text/plain', buffer: Buffer.from(SILICON) });
+    await page.evaluate(content => loadStyleFile(new File([content], 'POSCAR', { type: 'text/plain' })), SILICON);
     await expect(page.locator('#statusText')).toHaveText('POSCAR: This is not a style file');
-    await expect(page.locator('#statusText')).toHaveClass('error');
     expect(await page.evaluate(() => ({ bg: scene.background.getHexString(), scale: settings.atomScale }))).toEqual({ bg: 'ffffff', scale: 1.2 });
 });

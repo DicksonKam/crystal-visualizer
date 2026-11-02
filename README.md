@@ -40,7 +40,7 @@ Supercell conversion validates the expanded cell and every atom before changing 
 
 Editing has Undo and Redo buttons, with ⌘Z/Ctrl+Z and ⌘⇧Z/Ctrl+Y shortcuts. The header marks unsaved structure edits. Exporting clears that marker, while opening a different file or leaving the page asks before discarding unsaved edits. Selection changes alone do not mark the structure as edited.
 Deleting all atoms leaves an editable empty structure. Export waits until you add an atom or undo the deletion, so it cannot download a file the viewer cannot reopen.
-Selective-dynamics controls and fixed-atom indicators are available for POSCAR files, which preserve the flags on export. XYZ editing supports coordinates, atoms, and cells without offering unsaved constraint flags.
+Selective-dynamics controls and fixed-atom markers are available for POSCAR files, which preserve the flags on export. The **Mark Fixed Atoms** checkbox draws a cage around fully fixed atoms and a ring around partly fixed ones; the atoms themselves are always drawn. XYZ editing supports coordinates, atoms, and cells without offering unsaved constraint flags.
 Releasing an atom or cell-edge drag outside the canvas completes the edit. Press Escape to cancel a drag; interrupted drags restore the original geometry, and drags that leave geometry unchanged do not add undo entries.
 Cell resize proposals validate the cell and every atom before changing the live preview. Cell-vector lengths stay positive even when atoms lie outside the cell. An invalid proposal keeps the last valid preview and adds no history entry.
 

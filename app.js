@@ -6647,7 +6647,7 @@ function updateModeToggleForFileType() {
     const fixedIndicators = document.getElementById('showFixedIndicators');
     fixedIndicators.disabled = !supportsSelectiveDynamics(currentStructure);
     fixedIndicators.title = supportsSelectiveDynamics(currentStructure)
-        ? 'Show fixed atoms' : 'Selective dynamics are available in POSCAR files';
+        ? 'Draw a cage around atoms fixed by selective dynamics' : 'Selective dynamics are available in POSCAR files';
     const cellBtn = document.getElementById('toggleCell');
     const axesBtn = document.getElementById('toggleAxes');
     axesBtn.disabled = !periodic;

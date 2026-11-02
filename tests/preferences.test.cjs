@@ -90,3 +90,17 @@ test('parse rejects text that is not a style file', () => {
     }
     assert.deepEqual(prefs.parse(JSON.stringify({ values: { atomScale: 'x', showLabels: true } })), { ...defaults, showLabels: true });
 });
+
+test('an empty-object default is an open map of primitive values', () => {
+    const open = { atomScale: 0.8, colors: {} };
+    const storage = memoryStorage();
+    const prefs = CrystalPreferences.createStore({ key: 'prefs', storage, defaults: open });
+    prefs.save({ atomScale: 0.8, colors: { Mo: '#ff0000', Te: 7, On: true, X: { nested: 1 }, Nope: null, ['k'.repeat(40)]: 'long' } });
+    assert.deepEqual(JSON.parse(storage.getItem('prefs')).values, { colors: { Mo: '#ff0000', Te: 7, On: true } });
+    assert.deepEqual(prefs.load(), { atomScale: 0.8, colors: { Mo: '#ff0000', Te: 7, On: true } });
+    prefs.save({ atomScale: 0.8, colors: {} });
+    assert.equal(storage.getItem('prefs'), null);
+    const hostile = prefs.parse(JSON.stringify({ values: { colors: { __proto__: 'x', constructor: 'y', Si: '#0000ff' } } }));
+    assert.deepEqual(hostile.colors, { Si: '#0000ff' });
+    assert.equal(Object.getPrototypeOf(hostile.colors), Object.prototype);
+});

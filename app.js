@@ -132,7 +132,8 @@ const DEFAULT_PREFERENCES = Object.freeze({
     showAxes: true,
     showCell: true,
     showFixedIndicators: true, // Show visual indicators for fixed atoms
-    background: '#0a0a0f' // Viewport colour behind the structure
+    background: '#0a0a0f', // Viewport colour behind the structure
+    colors: {} // Per-element colour overrides, keyed by symbol
 });
 const preferenceStore = CrystalPreferences.createStore({
     key: 'crystal-visualizer-preferences',
@@ -246,9 +247,8 @@ function getBondMaterial(isGhost) {
 function getAtomMaterial(element, isGhost = false) {
     const key = `${element}:${isGhost ? 'ghost' : 'solid'}`;
     if (!sharedAtomMaterials.has(key)) {
-        const elemData = ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT;
         const material = new THREE.MeshPhysicalMaterial({
-            color: elemData.color,
+            color: elementColor(element),
             metalness: 0.1,
             roughness: 0.3,
             ...(isGhost ? { transparent: true, opacity: settings.ghostOpacity, depthWrite: false }
@@ -4521,8 +4521,8 @@ function updateUI(structure) {
     // Atom list - count fixed per element
     let atomHTML = '';
     structure.elements.forEach((elem, i) => {
-        const elemData = ELEMENT_DATA[elem] || ELEMENT_DATA.DEFAULT;
-        const colorHex = '#' + elemData.color.toString(16).padStart(6, '0');
+        const colorHex = elementColorHex(elem);
+        const symbol = escapeHTML(elem);
         
         const elementConstraints = constraints?.byElement.get(elem);
         const elemFixedCount = elementConstraints?.fixed || 0;
@@ -4534,12 +4534,15 @@ function updateUI(structure) {
         ].join('');
         
         atomHTML += `
-            <div class="atom-entry fade-in" style="animation-delay: ${i * 0.05}s">
-                <div class="atom-sphere" style="background: radial-gradient(circle at 30% 30%, ${lightenColor(colorHex, 40)}, ${colorHex})"></div>
+            <div class="atom-entry fade-in${Object.hasOwn(settings.colors, elem) ? ' recoloured' : ''}" data-element="${symbol}" style="animation-delay: ${i * 0.05}s">
+                <label class="atom-sphere" style="background: ${atomSphereGradient(colorHex)}" title="Change the colour of ${symbol}">
+                    <input type="color" class="atom-color-input" data-element="${symbol}" value="${colorHex}" aria-label="Colour of ${symbol}">
+                </label>
                 <div class="atom-info">
-                    <div class="atom-symbol">${escapeHTML(elem)} ${fixedBadge}</div>
+                    <div class="atom-symbol">${symbol} ${fixedBadge}</div>
                     <div class="atom-count">${structure.counts[i]} atom${structure.counts[i] > 1 ? 's' : ''}</div>
                 </div>
+                <button type="button" class="atom-color-reset" data-element="${symbol}" title="Back to the default colour">default</button>
             </div>
         `;
     });
@@ -4586,6 +4589,14 @@ function jumpToAtom(number) {
 }
 
 function setupAtomJump() {
+    atomList.addEventListener('input', event => {
+        const input = event.target.closest('.atom-color-input');
+        if (input) setElementColor(input.dataset.element, input.value);
+    });
+    atomList.addEventListener('click', event => {
+        const reset = event.target.closest('.atom-color-reset');
+        if (reset) setElementColor(reset.dataset.element, null);
+    });
     atomList.addEventListener('submit', event => {
         if (event.target.id !== 'atomJumpForm') return;
         event.preventDefault();
@@ -5020,6 +5031,7 @@ function applyPreferencesToControls() {
         button.setAttribute('aria-pressed', String(on));
     }
     applyBackground();
+    applyElementColors();
 }
 
 function backgroundLuminance(hex) {
@@ -5059,6 +5071,47 @@ function applyBackground() {
     custom.parentElement.classList.toggle('selected', !matched);
     custom.parentElement.style.setProperty('--swatch', matched ? '' : settings.background);
     document.body.classList.toggle('light-scene', isLightBackground());
+}
+
+// The colour an element is drawn in: the visitor's override, else the table.
+function defaultElementColorHex(element) {
+    return '#' + (ELEMENT_DATA[element] || ELEMENT_DATA.DEFAULT).color.toString(16).padStart(6, '0');
+}
+
+function elementColorHex(element) {
+    const override = settings.colors[element];
+    return typeof override === 'string' && /^#[0-9a-f]{6}$/i.test(override) ? override.toLowerCase() : defaultElementColorHex(element);
+}
+
+function elementColor(element) {
+    return parseInt(elementColorHex(element).slice(1), 16);
+}
+
+function atomSphereGradient(hex) {
+    return `radial-gradient(circle at 30% 30%, ${lightenColor(hex, 40)}, ${hex})`;
+}
+
+// Recolour an element everywhere it shows: the shared atom materials, so
+// every atom and copy changes at once without a rebuild, and its list entry.
+function applyElementColors() {
+    for (const [key, material] of sharedAtomMaterials) {
+        material.color.set(elementColor(key.split(':')[0]));
+    }
+    document.querySelectorAll('#atomList .atom-entry[data-element]').forEach(entry => {
+        const element = entry.dataset.element;
+        const hex = elementColorHex(element);
+        entry.querySelector('.atom-sphere').style.background = atomSphereGradient(hex);
+        entry.querySelector('.atom-color-input').value = hex;
+        entry.classList.toggle('recoloured', Object.hasOwn(settings.colors, element));
+    });
+    requestRender();
+}
+
+function setElementColor(element, hex) {
+    if (!hex || hex.toLowerCase() === defaultElementColorHex(element)) delete settings.colors[element];
+    else settings.colors[element] = hex.toLowerCase();
+    applyElementColors();
+    savePreferences();
 }
 
 function setBackground(color) {

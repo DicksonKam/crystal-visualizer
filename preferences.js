@@ -25,6 +25,26 @@
         return JSON.stringify(a) === JSON.stringify(b);
     }
 
+    // An empty object as a default is an open map, such as colours keyed by
+    // element symbol: any short key may appear, with a string, number or
+    // boolean value.
+    function isOpenMap(reference) {
+        return isPlainObject(reference) && Object.keys(reference).length === 0;
+    }
+
+    const RESERVED_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+    function sanitizeMap(candidate) {
+        const result = {};
+        if (!isPlainObject(candidate)) return result;
+        for (const key of Object.keys(candidate)) {
+            const value = candidate[key];
+            if (RESERVED_KEYS.has(key) || key.length > 32) continue;
+            if (typeof value === 'string' || typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value))) result[key] = value;
+        }
+        return result;
+    }
+
     // Keep only the keys the defaults know, each with a value of the same
     // kind. Nested objects are filtered the same way, so an unknown or
     // malformed entry disappears instead of reaching the app.
@@ -33,7 +53,8 @@
         if (!isPlainObject(candidate)) return result;
         for (const key of Object.keys(defaults)) {
             if (!Object.hasOwn(candidate, key) || !sameShape(candidate[key], defaults[key])) continue;
-            result[key] = isPlainObject(defaults[key]) ? sanitize(candidate[key], defaults[key]) : clone(candidate[key]);
+            if (isOpenMap(defaults[key])) result[key] = sanitizeMap(candidate[key]);
+            else result[key] = isPlainObject(defaults[key]) ? sanitize(candidate[key], defaults[key]) : clone(candidate[key]);
         }
         return result;
     }
@@ -50,7 +71,10 @@
         const result = {};
         for (const key of Object.keys(defaults)) {
             if (!Object.hasOwn(values, key)) continue;
-            if (isPlainObject(defaults[key])) {
+            if (isOpenMap(defaults[key])) {
+                const entries = sanitizeMap(values[key]);
+                if (Object.keys(entries).length) result[key] = entries;
+            } else if (isPlainObject(defaults[key])) {
                 const nested = differences(values[key], defaults[key]);
                 if (Object.keys(nested).length) result[key] = nested;
             } else if (!equal(values[key], defaults[key])) {

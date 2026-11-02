@@ -96,3 +96,35 @@ test('a damaged or foreign stored entry is ignored', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
     await expect(page.locator('#statusText')).toContainText('Loaded');
 });
+
+test('an element recoloured in the Atoms panel keeps its colour until put back', async ({ page }) => {
+    await upload(page, SILICON, 'POSCAR');
+    const input = page.locator('.atom-color-input[data-element="Si"]');
+    await expect(input).toHaveValue('#1b3bfa');
+    await input.fill('#ff0000');
+    expect(await page.evaluate(() => ({
+        solid: getAtomMaterial('Si').color.getHexString(),
+        ghost: getAtomMaterial('Si', true).color.getHexString(),
+        meshes: [...new Set(atomMeshes.map(mesh => mesh.material.color.getHexString()))]
+    }))).toEqual({ solid: 'ff0000', ghost: 'ff0000', meshes: ['ff0000'] });
+    await expect(page.locator('.atom-entry[data-element="Si"]')).toHaveClass(/recoloured/);
+    await expect(page.locator('.atom-color-reset[data-element="Si"]')).toBeVisible();
+    expect(await stored(page)).toEqual({ version: 1, values: { colors: { Si: '#ff0000' } } });
+
+    await page.reload();
+    await upload(page, SILICON, 'POSCAR');
+    expect(await page.evaluate(() => getAtomMaterial('Si').color.getHexString())).toBe('ff0000');
+    await expect(page.locator('.atom-color-input[data-element="Si"]')).toHaveValue('#ff0000');
+
+    await page.locator('.atom-color-reset[data-element="Si"]').click();
+    expect(await page.evaluate(() => getAtomMaterial('Si').color.getHexString())).toBe('1b3bfa');
+    await expect(page.locator('.atom-entry[data-element="Si"]')).not.toHaveClass(/recoloured/);
+    await expect(page.locator('.atom-color-reset[data-element="Si"]')).toBeHidden();
+    expect(await stored(page)).toBeNull();
+
+    // Reset all clears a recolour too.
+    await page.locator('.atom-color-input[data-element="Si"]').fill('#00ff00');
+    await page.locator('#resetPreferences').click();
+    expect(await page.evaluate(() => getAtomMaterial('Si').color.getHexString())).toBe('1b3bfa');
+    await expect(page.locator('.atom-color-input[data-element="Si"]')).toHaveValue('#1b3bfa');
+});

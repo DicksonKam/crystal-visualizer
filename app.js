@@ -121,16 +121,35 @@ let lastJumpAtomNumber = null;
 
 // Axes HUD (separate scene rendered in corner)
 let axesScene, axesCamera, axesGroup;
-let settings = {
+// Display options a visitor keeps between visits. The store remembers only
+// the differences from these defaults, in this browser.
+const DEFAULT_PREFERENCES = Object.freeze({
     atomScale: 0.8,
     bondThreshold: 2.5, // one cutoff for every pair; 0 draws no bonds
     showLabels: false,
     showAxes: true,
     showCell: true,
-    periodic: { a: 1, b: 1, c: 1 }, // Periodic images in each direction
-    ghostOpacity: 0.4, // Periodic copies stay clearly fainter than the atoms they repeat
     showFixedIndicators: true // Show visual indicators for fixed atoms
+});
+const preferenceStore = CrystalPreferences.createStore({
+    key: 'crystal-visualizer-preferences',
+    storage: availableStorage(),
+    defaults: DEFAULT_PREFERENCES
+});
+let settings = {
+    ...preferenceStore.load(),
+    periodic: { a: 1, b: 1, c: 1 }, // Periodic images per structure; not remembered
+    ghostOpacity: 0.4 // Periodic copies stay clearly fainter than the atoms they repeat
 };
+
+function availableStorage() {
+    try {
+        const storage = globalThis.localStorage;
+        return storage && typeof storage.getItem === 'function' ? storage : null;
+    } catch {
+        return null; // Reading the property itself throws when site data is blocked.
+    }
+}
 
 // Measurement state
 let raycaster, mouse;
@@ -4916,6 +4935,7 @@ function setupControls() {
         settings.showAxes = !settings.showAxes;
         e.currentTarget.classList.toggle('active', settings.showAxes);
         e.currentTarget.setAttribute('aria-pressed', String(settings.showAxes));
+        savePreferences();
         // Axes HUD visibility is controlled in animate() loop via settings.showAxes
         requestRender();
     });
@@ -4925,6 +4945,7 @@ function setupControls() {
         settings.showCell = !settings.showCell;
         e.currentTarget.classList.toggle('active', settings.showCell);
         e.currentTarget.setAttribute('aria-pressed', String(settings.showCell));
+        savePreferences();
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
         }
@@ -4933,23 +4954,17 @@ function setupControls() {
     // Atom scale
     document.getElementById('atomScale').addEventListener('input', (e) => {
         settings.atomScale = parseFloat(e.target.value);
+        savePreferences();
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
         }
     });
     
     // Bond threshold
-    const bondThreshold = document.getElementById('bondThreshold');
-    const bondThresholdValue = document.getElementById('bondThresholdValue');
-    
-    const showBondThreshold = () => {
-        bondThresholdValue.textContent = settings.bondThreshold > 0 ? settings.bondThreshold.toFixed(1) : 'none';
-    };
-    showBondThreshold();
-    
-    bondThreshold.addEventListener('input', (e) => {
+    document.getElementById('bondThreshold').addEventListener('input', (e) => {
         settings.bondThreshold = parseFloat(e.target.value);
-        showBondThreshold();
+        showBondThresholdValue();
+        savePreferences();
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
         }
@@ -4958,6 +4973,7 @@ function setupControls() {
     // Show labels (placeholder for future)
     document.getElementById('showLabels').addEventListener('change', (e) => {
         settings.showLabels = e.target.checked;
+        savePreferences();
         if (currentStructure) {
             rebuildLabels();
         }
@@ -4966,6 +4982,7 @@ function setupControls() {
     // Show fixed atom indicators
     document.getElementById('showFixedIndicators').addEventListener('change', (e) => {
         settings.showFixedIndicators = e.target.checked;
+        savePreferences();
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
         }
@@ -4979,6 +4996,57 @@ function setupControls() {
     if (exportBtn) {
         exportBtn.addEventListener('click', exportStructure);
     }
+
+    document.getElementById('resetPreferences').addEventListener('click', resetPreferences);
+    applyPreferencesToControls();
+}
+
+// Mirror the settings in the sidebar and toolbar controls, so a remembered
+// preference and a reset both show where they apply.
+function applyPreferencesToControls() {
+    document.getElementById('atomScale').value = settings.atomScale;
+    document.getElementById('bondThreshold').value = settings.bondThreshold;
+    showBondThresholdValue();
+    document.getElementById('showLabels').checked = settings.showLabels;
+    document.getElementById('showFixedIndicators').checked = settings.showFixedIndicators;
+    for (const [id, on] of [['toggleAxes', settings.showAxes], ['toggleCell', settings.showCell]]) {
+        const button = document.getElementById(id);
+        button.classList.toggle('active', on);
+        button.setAttribute('aria-pressed', String(on));
+    }
+}
+
+function showBondThresholdValue() {
+    document.getElementById('bondThresholdValue').textContent = settings.bondThreshold > 0 ? settings.bondThreshold.toFixed(1) : 'none';
+}
+
+function showPeriodicControls() {
+    for (const axis of ['a', 'b', 'c']) {
+        const upper = axis.toUpperCase();
+        document.getElementById(`periodic${upper}Display`).textContent = settings.periodic[axis];
+        document.getElementById(`periodic${upper}`).value = settings.periodic[axis];
+    }
+}
+
+function savePreferences() {
+    preferenceStore.save(settings);
+}
+
+// Reset all: every display option returns to its default, the browser forgets
+// the remembered ones, and the view redraws. The loaded structure, its edits
+// and the camera are left alone.
+function resetPreferences() {
+    Object.assign(settings, preferenceStore.reset());
+    settings.periodic = { a: 1, b: 1, c: 1 };
+    applyPreferencesToControls();
+    showPeriodicControls();
+    if (currentStructure) {
+        updateSupercellButtonState();
+        renderStructure(currentStructure, true);
+    }
+    requestRender();
+    statusText.textContent = 'Defaults restored';
+    statusText.className = '';
 }
 
 // Update Make Supercell button state based on periodicity
@@ -5017,13 +5085,7 @@ function setupPeriodicControls() {
         // Clamp values (minimum 1, reasonable max of 20 for performance)
         settings.periodic = next;
         
-        // Update displays
-        document.getElementById('periodicADisplay').textContent = settings.periodic.a;
-        document.getElementById('periodicBDisplay').textContent = settings.periodic.b;
-        document.getElementById('periodicCDisplay').textContent = settings.periodic.c;
-        document.getElementById('periodicA').value = settings.periodic.a;
-        document.getElementById('periodicB').value = settings.periodic.b;
-        document.getElementById('periodicC').value = settings.periodic.c;
+        showPeriodicControls();
         
         // Update Make Supercell button state
         updateSupercellButtonState();

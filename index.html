@@ -216,8 +216,21 @@
 
                 <div class="panel appearance-panel">
                     <h3 class="panel-title">Appearance</h3>
+                    <div class="control-group">
+                        <span class="control-label" id="backgroundLabel">Background</span>
+                        <div class="swatch-row" id="backgroundSwatches" role="radiogroup" aria-labelledby="backgroundLabel">
+                            <button type="button" class="swatch selected" role="radio" aria-checked="true" data-color="#0a0a0f" style="--swatch: #0a0a0f" title="Midnight" aria-label="Midnight"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#000000" style="--swatch: #000000" title="Black" aria-label="Black"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#2a2a35" style="--swatch: #2a2a35" title="Slate" aria-label="Slate"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#f4f4f8" style="--swatch: #f4f4f8" title="Paper" aria-label="Paper"></button>
+                            <button type="button" class="swatch" role="radio" aria-checked="false" data-color="#ffffff" style="--swatch: #ffffff" title="White" aria-label="White"></button>
+                            <label class="swatch swatch-custom" title="Custom colour">
+                                <input type="color" id="backgroundColor" value="#0a0a0f" aria-label="Custom background colour">
+                            </label>
+                        </div>
+                    </div>
                     <div class="control-group appearance-actions">
-                        <button type="button" id="resetPreferences" class="btn btn-reset" title="Restore the default display options">Reset all</button>
+                        <button type="button" id="resetPreferences" class="btn btn-reset" title="Restore the default background and display options">Reset all</button>
                     </div>
                     <p class="appearance-note">Your choices are remembered by this browser.</p>
                 </div>
@@ -329,6 +342,6 @@
     <script src="layout.js?v=1"></script>
     <script src="preferences.js?v=1"></script>
     <script src="annotations.js?v=5"></script>
-    <script src="app.js?v=197"></script>
+    <script src="app.js?v=198"></script>
 </body>
 </html>

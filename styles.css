@@ -1983,3 +1983,54 @@ body.edit-mode-active .panel-title {
     font-size: 0.75rem;
     color: var(--text-muted);
 }
+
+.control-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.swatch {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--swatch);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.swatch:hover {
+    transform: scale(1.12);
+}
+
+.swatch.selected {
+    box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent-cyan);
+}
+
+.control-group .swatch-custom {
+    position: relative;
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    border-style: dashed;
+    background: var(--swatch, conic-gradient(#f15bb5, #fee440, #00f5d4, #9b5de5, #f15bb5));
+}
+
+.swatch-custom input {
+    position: absolute;
+    inset: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    opacity: 0;
+    cursor: pointer;
+}

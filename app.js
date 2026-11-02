@@ -129,7 +129,8 @@ const DEFAULT_PREFERENCES = Object.freeze({
     showLabels: false,
     showAxes: true,
     showCell: true,
-    showFixedIndicators: true // Show visual indicators for fixed atoms
+    showFixedIndicators: true, // Show visual indicators for fixed atoms
+    background: '#0a0a0f' // Viewport colour behind the structure
 });
 const preferenceStore = CrystalPreferences.createStore({
     key: 'crystal-visualizer-preferences',
@@ -730,7 +731,7 @@ const atomList = document.getElementById('atomList');
 function initScene() {
     // Scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a0f);
+    scene.background = new THREE.Color(settings.background);
     
     // Cameras
     const aspect = viewport.clientWidth / viewport.clientHeight;
@@ -3803,7 +3804,7 @@ function updateMeasurements() {
     const geometry = getMeasurementGeometry();
     geometry.pairs.forEach((pair, index) => {
         if (pair.unavailable) return;
-        drawMeasurementLine(pair.start, pair.end, index === 0 ? 0x00f5d4 : 0xf15bb5);
+        drawMeasurementLine(pair.start, pair.end, overlayInk().measure[index === 0 ? 0 : 1]);
         const midpoint = pair.start.clone().multiplyScalar(0.5).addScaledVector(pair.end, 0.5);
         const label = createFloatingDistanceLabel(midpoint, pair.distance);
         label.userData.annotationSegment = [pair.start.clone(), pair.end.clone()];
@@ -3942,13 +3943,12 @@ function createFloatingDistanceLabel(position, distance) {
     ctx.textBaseline = 'middle';
     
     // Shadow for contrast against any background
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowColor = overlayInk().shadow;
     ctx.shadowBlur = 4;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
     
-    // White text
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = overlayInk().text;
     ctx.fillText(labelText, 64, 16);
     
     const texture = new THREE.CanvasTexture(canvas);
@@ -3988,13 +3988,12 @@ function createFloatingAngleLabel(position, angleDeg) {
     ctx.textBaseline = 'middle';
     
     // Shadow for contrast
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowColor = overlayInk().shadow;
     ctx.shadowBlur = 4;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
     
-    // White text
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = overlayInk().text;
     ctx.fillText(labelText, canvas.width / 2, 16);
     
     const texture = new THREE.CanvasTexture(canvas);
@@ -4063,7 +4062,7 @@ function drawAngleArc(angleData) {
     const points = Array.from({ length: 33 }, (_, index) =>
         v1.clone().applyAxisAngle(normal, angle * index / 32).multiplyScalar(arcRadius).add(vertex));
     const arc = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),
-        new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2, transparent: true, opacity: 0.9 }));
+        new THREE.LineBasicMaterial({ color: overlayInk().line, linewidth: 2, transparent: true, opacity: 0.9 }));
     arc.userData = { isMeasurementArc: true, isMeasurementVisual: true };
     measurementGroup.add(arc);
     return { labelPosition: v1.clone().applyAxisAngle(normal, angle / 2).multiplyScalar(arcRadius * 1.8).add(vertex) };
@@ -4269,9 +4268,9 @@ function createUnitCell(lattice) {
     
     edges.forEach(({ corners: [i, j], axis }) => {
     const material = new THREE.LineBasicMaterial({
-        color: 0x00f5d4,
+        color: overlayInk().cell,
         transparent: true,
-        opacity: 0.6
+        opacity: overlayInk().cellOpacity
     });
         const geometry = new THREE.BufferGeometry().setFromPoints([corners[i], corners[j]]);
         const line = new THREE.Line(geometry, material);
@@ -4997,6 +4996,10 @@ function setupControls() {
         exportBtn.addEventListener('click', exportStructure);
     }
 
+    document.querySelectorAll('#backgroundSwatches .swatch[data-color]').forEach(swatch => {
+        swatch.addEventListener('click', () => setBackground(swatch.dataset.color));
+    });
+    document.getElementById('backgroundColor').addEventListener('input', (e) => setBackground(e.target.value));
     document.getElementById('resetPreferences').addEventListener('click', resetPreferences);
     applyPreferencesToControls();
 }
@@ -5014,6 +5017,54 @@ function applyPreferencesToControls() {
         button.classList.toggle('active', on);
         button.setAttribute('aria-pressed', String(on));
     }
+    applyBackground();
+}
+
+function backgroundLuminance(hex) {
+    const channel = offset => {
+        const value = parseInt(hex.slice(offset, offset + 2), 16) / 255;
+        return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+}
+
+function isLightBackground() {
+    return backgroundLuminance(settings.background) > 0.4;
+}
+
+// Overlay text and thin lines (measurement captions, the angle arc) are
+// drawn in ink that contrasts with the background: light on dark, dark on
+// light. Atom colours, bonds and the cell keep their own colours.
+function overlayInk() {
+    return isLightBackground()
+        ? { text: '#16161d', shadow: 'rgba(255, 255, 255, 0.85)', line: 0x16161d, cell: 0x0f6e56, cellOpacity: 0.75, measure: [0x0f6e56, 0x993556] }
+        : { text: '#ffffff', shadow: 'rgba(0, 0, 0, 0.8)', line: 0xffffff, cell: 0x00f5d4, cellOpacity: 0.6, measure: [0x00f5d4, 0xf15bb5] };
+}
+
+function applyBackground() {
+    if (!/^#[0-9a-f]{6}$/i.test(settings.background)) settings.background = DEFAULT_PREFERENCES.background;
+    settings.background = settings.background.toLowerCase();
+    if (scene) scene.background = new THREE.Color(settings.background);
+    let matched = false;
+    document.querySelectorAll('#backgroundSwatches .swatch[data-color]').forEach(swatch => {
+        const selected = swatch.dataset.color.toLowerCase() === settings.background;
+        matched = matched || selected;
+        swatch.classList.toggle('selected', selected);
+        swatch.setAttribute('aria-checked', String(selected));
+    });
+    const custom = document.getElementById('backgroundColor');
+    custom.value = settings.background;
+    custom.parentElement.classList.toggle('selected', !matched);
+    custom.parentElement.style.setProperty('--swatch', matched ? '' : settings.background);
+    document.body.classList.toggle('light-scene', isLightBackground());
+}
+
+function setBackground(color) {
+    settings.background = color;
+    applyBackground();
+    savePreferences();
+    if (currentStructure) renderStructure(currentStructure, true); // Overlays take the new ink
+    requestRender();
 }
 
 function showBondThresholdValue() {

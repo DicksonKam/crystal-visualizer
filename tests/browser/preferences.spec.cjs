@@ -54,6 +54,37 @@ test('Reset all restores the defaults and forgets them', async ({ page }) => {
     await expect(page.locator('#showLabels')).not.toBeChecked();
 });
 
+test('the background swatches recolour the view and switch the overlay ink', async ({ page }) => {
+    await upload(page, SILICON, 'POSCAR');
+    await expect(page.getByRole('radio', { name: 'Midnight' })).toHaveAttribute('aria-checked', 'true');
+    expect(await page.evaluate(() => scene.background.getHexString())).toBe('0a0a0f');
+
+    await page.getByRole('radio', { name: 'White' }).click();
+    expect(await page.evaluate(() => ({
+        background: scene.background.getHexString(),
+        light: document.body.classList.contains('light-scene'),
+        ink: overlayInk().text
+    }))).toMatchObject({ background: 'ffffff', light: true, ink: '#16161d' });
+    await expect(page.getByRole('radio', { name: 'White' })).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByRole('radio', { name: 'Midnight' })).toHaveAttribute('aria-checked', 'false');
+    expect(await stored(page)).toEqual({ version: 1, values: { background: '#ffffff' } });
+
+    // A custom colour selects the picker swatch and is kept too.
+    await page.locator('#backgroundColor').fill('#204060');
+    expect(await page.evaluate(() => scene.background.getHexString())).toBe('204060');
+    await expect(page.locator('.swatch-custom')).toHaveClass(/selected/);
+    expect(await page.evaluate(() => document.body.classList.contains('light-scene'))).toBe(false);
+
+    await page.reload();
+    expect(await page.evaluate(() => scene.background.getHexString())).toBe('204060');
+    await expect(page.locator('#backgroundColor')).toHaveValue('#204060');
+
+    await page.locator('#resetPreferences').click();
+    expect(await page.evaluate(() => scene.background.getHexString())).toBe('0a0a0f');
+    await expect(page.getByRole('radio', { name: 'Midnight' })).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('.swatch-custom')).not.toHaveClass(/selected/);
+});
+
 test('a damaged or foreign stored entry is ignored', async ({ page }) => {
     for (const raw of ['{broken', JSON.stringify({ version: 1, values: { atomScale: 'huge', showLabels: 'yes', bondThreshold: 1.5, unknown: true } })]) {
         await page.evaluate(([key, value]) => localStorage.setItem(key, value), [KEY, raw]);

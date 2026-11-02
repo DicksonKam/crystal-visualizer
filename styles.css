@@ -2138,7 +2138,9 @@ body.edit-mode-active .panel-title {
     z-index: 50;
 }
 
-.export-menu[hidden] {
+.export-menu[hidden],
+.export-section[hidden],
+.export-divider[hidden] {
     display: none;
 }
 
@@ -2242,4 +2244,11 @@ body.edit-mode-active .panel-title {
     justify-content: center;
     padding: 0.4rem 0.75rem;
     font-size: 0.8rem;
+}
+
+.export-hint {
+    margin-top: -0.2rem;
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: var(--text-muted);
 }

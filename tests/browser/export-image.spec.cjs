@@ -94,3 +94,29 @@ test('the Export menu closes on Escape, on a click outside, and after Structure 
     expect((await pending).suggestedFilename()).toMatch(/\.poscar$/);
     await expect(menu).toBeHidden();
 });
+
+test('a trajectory can be saved as a movie; other files see no Movie section', async ({ page }) => {
+    await upload(page, SILICON, 'POSCAR');
+    await page.locator('#exportMenuButton').click();
+    await expect(page.locator('#exportMovie')).toBeHidden();
+    await page.keyboard.press('Escape');
+
+    const lines = Array.from({ length: 4 }, (_, i) => `Direct configuration= ${i + 1}\n${0.3 + i * 0.1} .5 .5`);
+    await upload(page, `tiny\n1\n8 0 0\n0 8 0\n0 0 8\nH\n1\n${lines.join('\n')}\n`, 'tiny.xdatcar');
+    await page.locator('#fpsSelect').selectOption('30');
+    await page.evaluate(() => switchToFrame(1));
+    await page.locator('#exportMenuButton').click();
+    await expect(page.locator('#exportMovie')).toBeVisible();
+    await expect(page.locator('#exportMovieInfo')).toHaveText('4 at 30 fps · 0.1 s');
+
+    const pending = page.waitForEvent('download');
+    await page.locator('#exportMovie').click();
+    const download = await pending;
+    expect(download.suggestedFilename()).toBe('tiny.webm');
+    const movie = await fs.readFile(await download.path());
+    expect(movie.length).toBeGreaterThan(500);
+    expect(movie.readUInt32BE(0)).toBe(0x1a45dfa3); // EBML header: a WebM/Matroska file
+    await expect(page.locator('#statusText')).toHaveText(/Started WEBM download \(4 frames at 30 fps, \d+ × \d+ px\)/);
+    // Back where the user was, at the screen's own pixel ratio.
+    expect(await page.evaluate(() => ({ frame: currentStructure.currentFrameIndex, ratio: renderer.getPixelRatio(), playing: animationState.isPlaying }))).toEqual({ frame: 1, ratio: 1, playing: false });
+});

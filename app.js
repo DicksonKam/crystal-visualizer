@@ -5166,8 +5166,11 @@ function setupExportMenu() {
         if (!menu.hidden && !menu.contains(e.target) && !button.contains(e.target)) close();
     });
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !menu.hidden) { close(); button.focus(); }
+        if (e.key !== 'Escape') return;
+        if (movieRecording) movieRecording.cancel();
+        if (!menu.hidden) { close(); button.focus(); }
     });
+    document.getElementById('exportMovie').addEventListener('click', () => { close(); exportMovie(); });
     document.getElementById('exportPoscar').addEventListener('click', () => { close(); exportStructure(); });
     menu.querySelectorAll('.export-size').forEach(size => size.addEventListener('click', () => {
         exportScale = Number(size.dataset.scale);
@@ -5187,6 +5190,100 @@ function updateExportMenu() {
         size.setAttribute('aria-checked', String(on));
     });
     document.getElementById('exportPixels').textContent = `${viewport.clientWidth * exportScale} × ${viewport.clientHeight * exportScale} px`;
+    const trajectory = Boolean(currentStructure && currentStructure.isXDATCAR);
+    menu.querySelectorAll('.export-movie-only').forEach(part => { part.hidden = !trajectory; });
+    if (trajectory) {
+        const total = currentStructure.totalFrames, fps = animationState.fps;
+        document.getElementById('exportMovieInfo').textContent = `${total} at ${fps} fps · ${(total / fps).toFixed(1)} s`;
+    }
+}
+
+// === Movie export: every frame of the trajectory, recorded from the canvas ===
+// The browser encodes it (WebM where available), so no library is needed.
+// Frames are drawn and paced in real time at the timeline's FPS, which is
+// what gives the file its playback speed; Escape cancels.
+let movieRecording = null;
+
+async function exportMovie() {
+    if (!currentStructure || !currentStructure.isXDATCAR || movieRecording) return;
+    const canvas = renderer.domElement;
+    if (typeof MediaRecorder === 'undefined' || typeof canvas.captureStream !== 'function') {
+        statusText.textContent = 'This browser cannot record a movie; Chrome, Edge or Firefox can';
+        statusText.className = 'error';
+        return;
+    }
+    const mimeType = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'].find(type => MediaRecorder.isTypeSupported(type));
+    if (!mimeType) {
+        statusText.textContent = 'This browser cannot record a movie; Chrome, Edge or Firefox can';
+        statusText.className = 'error';
+        return;
+    }
+    const width = viewport.clientWidth * exportScale, height = viewport.clientHeight * exportScale;
+    if (Math.max(width, height) > 16384) {
+        statusText.textContent = `${width} × ${height} px is more than the browser can draw; choose a smaller size`;
+        statusText.className = 'error';
+        return;
+    }
+    stopAnimation();
+    const total = currentStructure.totalFrames, fps = animationState.fps, startFrame = currentStructure.currentFrameIndex;
+    const frameMs = 1000 / fps;
+    const previousRatio = renderer.getPixelRatio();
+    renderer.setPixelRatio(exportScale);
+    const stream = canvas.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    const requestFrame = () => { if (track.requestFrame) track.requestFrame(); else if (stream.requestFrame) stream.requestFrame(); };
+    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: Math.min(50e6, 6e6 * exportScale * exportScale) });
+    const chunks = [];
+    recorder.ondataavailable = event => { if (event.data && event.data.size) chunks.push(event.data); };
+    const stopped = new Promise(resolve => { recorder.onstop = resolve; });
+    let cancelled = false;
+    movieRecording = { cancel: () => { cancelled = true; } };
+    // Draw nothing until the recorder reports it has started: frames requested
+    // before that can be lost, leaving a file with a header and no pictures.
+    const started = new Promise(resolve => { recorder.onstart = resolve; });
+    recorder.start();
+    await started;
+    try {
+        for (let index = 0; index < total && !cancelled; index++) {
+            const frameStart = performance.now();
+            switchToFrame(index);
+            drawFrame();
+            requestFrame();
+            statusText.textContent = `Recording movie: frame ${index + 1} of ${total} (Escape cancels)`;
+            statusText.className = '';
+            await new Promise(resolve => setTimeout(resolve, Math.max(0, frameMs - (performance.now() - frameStart))));
+        }
+        if (!cancelled) {
+            // Hold the last frame for one more interval so it gets its full time.
+            drawFrame();
+            requestFrame();
+            await new Promise(resolve => setTimeout(resolve, frameMs));
+        }
+    } finally {
+        recorder.stop();
+        await stopped;
+        track.stop();
+        renderer.setPixelRatio(previousRatio);
+        switchToFrame(startFrame);
+        requestRender();
+        movieRecording = null;
+    }
+    if (cancelled) {
+        statusText.textContent = 'Movie recording cancelled';
+        statusText.className = '';
+        return;
+    }
+    const container = mimeType.split(';')[0];
+    const extension = container === 'video/mp4' ? 'mp4' : 'webm';
+    const blob = new Blob(chunks, { type: container });
+    const stem = (currentFilename || 'trajectory').replace(/\.[^.]+$/, '');
+    if (!blob.size || !downloadBlob(blob, `${stem}.${extension}`)) {
+        statusText.textContent = 'Could not save the movie';
+        statusText.className = 'error';
+        return;
+    }
+    statusText.textContent = `Started ${extension.toUpperCase()} download (${total} frames at ${fps} fps, ${width} × ${height} px)`;
+    statusText.className = '';
 }
 
 // Draw the view again with more pixels and hand back a PNG. The CSS size,

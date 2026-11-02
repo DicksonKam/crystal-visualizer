@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=61">
+    <link rel="stylesheet" href="styles.css?v=63">
 </head>
 <body>
     <div id="app">
@@ -124,6 +124,13 @@
                             <div class="export-pixels" id="exportPixels">—</div>
                             <label class="export-check"><input type="checkbox" id="exportTransparent"><span>Transparent background</span></label>
                             <button type="button" id="exportImage" class="btn export-save" role="menuitem">Save PNG</button>
+                        </div>
+                        <div class="export-divider export-movie-only" hidden></div>
+                        <div class="export-section export-movie-only" role="group" aria-label="Movie" hidden>
+                            <div class="export-item-title">Movie</div>
+                            <div class="export-row"><span>Frames</span><span class="export-item-meta" id="exportMovieInfo">—</span></div>
+                            <div class="export-hint">Plays every frame at the timeline's FPS, at the image size above.</div>
+                            <button type="button" id="exportMovie" class="btn export-save" role="menuitem">Save WebM</button>
                         </div>
                     </div>
                 </div>
@@ -381,6 +388,6 @@
     <script src="layout.js?v=1"></script>
     <script src="preferences.js?v=1"></script>
     <script src="annotations.js?v=5"></script>
-    <script src="app.js?v=207"></script>
+    <script src="app.js?v=209"></script>
 </body>
 </html>

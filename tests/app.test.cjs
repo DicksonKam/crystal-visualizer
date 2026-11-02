@@ -1399,11 +1399,11 @@ test('XYZ periodic controls disable individual axes while retaining the cell dis
     vm.runInContext('currentStructure = structure;', context);
     context.updateModeToggleForFileType();
     assert.deepEqual(buttons.map(button => button.disabled), [false, true, true]);
-    assert.equal(context.document.getElementById('toggleCell').disabled, false);
+    assert.equal(context.document.getElementById('showCell').disabled, false);
     context.structure.pbc = [false, false, false];
     context.updateModeToggleForFileType();
     assert.ok(buttons.every(button => button.disabled));
-    assert.equal(context.document.getElementById('toggleCell').disabled, false);
+    assert.equal(context.document.getElementById('showCell').disabled, false);
 });
 
 test('a nonperiodic XYZ cell translates without wrapping and centers using its actual coordinates', () => {

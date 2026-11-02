@@ -50,7 +50,7 @@ for (const fixture of ['molecule', 'vacuum-cell']) {
             () => page.locator('#atomScale').press('End'),
             () => page.locator('#bondThreshold').press('Home'),
             () => page.locator('#showLabels').check(),
-            ...(fixture === 'vacuum-cell' ? [() => page.locator('#toggleCell').click(),
+            ...(fixture === 'vacuum-cell' ? [() => page.locator('#showCell').click(),
                 () => page.locator('#showFixedIndicators').uncheck()] : [])
         ];
         for (let i = 0; i < checks.length; i++) {

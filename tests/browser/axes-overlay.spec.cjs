@@ -82,9 +82,9 @@ for (const deviceScaleFactor of [1, 2]) {
                     requestRender();
                 });
             }
-            await page.locator('#toggleAxes').click();
+            await page.locator('#showAxes').click();
             expect(await page.evaluate(() => renderer.autoClear)).toBe(true);
-            await page.locator('#toggleAxes').click();
+            await page.locator('#showAxes').click();
             expect((await capturePasses(page)).transparent).toBe(0);
         });
     });

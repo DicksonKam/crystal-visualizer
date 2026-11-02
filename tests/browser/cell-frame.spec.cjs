@@ -150,9 +150,9 @@ test('handle references refresh after rebuilds and disappear when the cell or ed
         };
     });
     expect(rebuilt).toEqual({ oldRemoved: true, newHandles: 8, attached: true });
-    await page.locator('#toggleCell').click();
+    await page.locator('#showCell').click();
     expect(await page.evaluate(() => ({ active: vacuumDragState.active, handles: vacuumDragState.handles.length, edges: unitCellEdgeLines.length }))).toEqual({ active: false, handles: 0, edges: 0 });
-    await page.locator('#toggleCell').click();
+    await page.locator('#showCell').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
     await page.locator('[data-mode="measure"]').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(0);

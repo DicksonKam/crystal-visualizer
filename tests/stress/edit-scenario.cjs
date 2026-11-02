@@ -266,7 +266,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                     if(action === 'replace') known.clear();
                 }
             } else if (action === 'display') {
-                const selector=['#showLabels','#showFixedIndicators','#toggleCell','#toggleAxes'][integer(4)]; record.selector=selector;
+                const selector=['#showLabels','#showFixedIndicators','#showCell','#showAxes'][integer(4)]; record.selector=selector;
                 await click(selector);
             } else if (action === 'batch_fix') {
                 const selector=integer(2) ? '#fixByZBtn' : '#unfixAllBtn'; record.selector=selector;

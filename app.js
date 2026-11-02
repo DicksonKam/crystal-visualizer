@@ -4951,15 +4951,9 @@ function setupControls() {
     });
     
     // Toggle axes
-    // The toolbar icon and the Show Axes checkbox are the same setting.
-    document.getElementById('toggleAxes').addEventListener('click', () => setShowAxes(!settings.showAxes));
     document.getElementById('showAxes').addEventListener('change', (e) => setShowAxes(e.target.checked));
-    
-    // Toggle unit cell
-    document.getElementById('toggleCell').addEventListener('click', (e) => {
-        settings.showCell = !settings.showCell;
-        e.currentTarget.classList.toggle('active', settings.showCell);
-        e.currentTarget.setAttribute('aria-pressed', String(settings.showCell));
+    document.getElementById('showCell').addEventListener('change', (e) => {
+        settings.showCell = e.target.checked;
         savePreferences();
         if (currentStructure) {
             renderStructure(currentStructure, true); // Preserve state
@@ -5021,16 +5015,9 @@ function setupControls() {
 
 function setShowAxes(on) {
     settings.showAxes = on;
-    showAxesControls();
+    document.getElementById('showAxes').checked = on;
     savePreferences();
     requestRender(); // The axes HUD reads settings.showAxes in the animation loop.
-}
-
-function showAxesControls() {
-    const button = document.getElementById('toggleAxes');
-    button.classList.toggle('active', settings.showAxes);
-    button.setAttribute('aria-pressed', String(settings.showAxes));
-    document.getElementById('showAxes').checked = settings.showAxes;
 }
 
 // Mirror the settings in the sidebar and toolbar controls, so a remembered
@@ -5041,10 +5028,8 @@ function applyPreferencesToControls() {
     showBondThresholdValue();
     document.getElementById('showLabels').checked = settings.showLabels;
     document.getElementById('showFixedIndicators').checked = settings.showFixedIndicators;
-    showAxesControls();
-    const cellButton = document.getElementById('toggleCell');
-    cellButton.classList.toggle('active', settings.showCell);
-    cellButton.setAttribute('aria-pressed', String(settings.showCell));
+    document.getElementById('showAxes').checked = settings.showAxes;
+    document.getElementById('showCell').checked = settings.showCell;
     applyBackground();
     applyElementColors();
     updateResetButton();
@@ -6842,15 +6827,12 @@ function updateModeToggleForFileType() {
     fixedIndicators.disabled = !supportsSelectiveDynamics(currentStructure);
     fixedIndicators.title = supportsSelectiveDynamics(currentStructure)
         ? 'Draw a cage around atoms fixed by selective dynamics' : 'Selective dynamics are available in POSCAR files';
-    const cellBtn = document.getElementById('toggleCell');
-    const axesBtn = document.getElementById('toggleAxes');
-    axesBtn.disabled = !periodic;
-    axesBtn.title = periodic ? 'Toggle Axes' : 'No lattice axes in a molecule';
-    const axesCheckbox = document.getElementById('showAxes');
-    axesCheckbox.disabled = !periodic;
-    axesCheckbox.title = periodic ? '' : 'No lattice axes in a molecule';
-    cellBtn.disabled = !periodic;
-    cellBtn.title = periodic ? 'Toggle Unit Cell' : 'No unit cell in a molecule';
+    const unavailable = periodic ? '' : 'A molecule has no unit cell or lattice axes';
+    for (const id of ['showCell', 'showAxes']) {
+        const checkbox = document.getElementById(id);
+        checkbox.disabled = !periodic;
+        checkbox.title = unavailable;
+    }
     const periodicAxes = getPeriodicAxes(currentStructure);
     document.querySelectorAll('#periodicControls .stepper-btn').forEach(button => {
         button.disabled = !periodicAxes[['a', 'b', 'c'].indexOf(button.dataset.axis)];

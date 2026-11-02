@@ -1968,14 +1968,25 @@ body.edit-mode-active .panel-title {
     justify-content: flex-start; /* the panel's shared left edge, under the swatches */
 }
 
+/* Quiet while nothing differs from the defaults; pink once there is
+   something to reset, so the button itself says a choice has been made. */
 .btn-reset {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.75rem;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 0.9rem;
 }
 
-.btn-reset:hover {
+.btn-reset:not(:disabled) {
     border-color: var(--accent-pink);
     color: var(--accent-pink);
+    background: rgba(241, 91, 181, 0.08);
+}
+
+.btn-reset:not(:disabled):hover {
+    background: rgba(241, 91, 181, 0.18);
+    color: var(--text-primary);
+    border-color: var(--accent-pink);
 }
 
 .appearance-note {

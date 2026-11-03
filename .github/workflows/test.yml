@@ -5,9 +5,28 @@ on:
 permissions:
   contents: read
 jobs:
-  test:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+  browser:
+    # The browser suite takes well over half an hour on one runner, so it is
+    # split into shards that run side by side; each takes a few minutes.
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -18,11 +37,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:all
+      - run: npx playwright test --shard=${{ matrix.shard }}/6
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: browser-test-evidence
+          name: browser-test-evidence-${{ matrix.shard }}
           path: |
             playwright-report/
             test-results/

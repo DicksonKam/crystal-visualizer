@@ -4,7 +4,9 @@ const {createVisualObserver}=require('../stress/visual-observer.cjs');
 const fs=require('node:fs/promises');
 function denseTrajectory(){const p=[];for(let x=0;x<10;x++)for(let y=0;y<10;y++)for(let z=0;z<5;z++)p.push([x/10,y/10,z/6]);return `dense playback\n1\n20 0 0\n0 20 0\n0 0 12\nH\n499\n${Array.from({length:4},(_,f)=>`Direct configuration= ${f+1}\n${p.slice(0,499).map(([x,y,z])=>`${x+f*.005} ${y} ${z}`).join('\n')}`).join('\n')}\n`;}
 for(const fixture of ['molecule','dense'])test(`${fixture} continuous playback survives periodic/display/window/sidebar rebuild combinations`,async({page},info)=>{
- test.setTimeout(240000);await page.setViewportSize({width:900,height:844});
+ // The dense case drives 499 atoms through 24 rebuilds while playing; it needs
+ // most of its budget on a busy machine and on the software-rendered CI runner.
+ test.setTimeout(fixture==='dense'?600000:240000);await page.setViewportSize({width:900,height:844});
  const source=fixture==='dense'?denseTrajectory():await fs.readFile(require('node:path').join(__dirname,'../../examples/xdatcar/H2_vibration.xdatcar'),'utf8');await upload(page,source,fixture+'.xdatcar');
  for(const n of [1,2]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
  if(!await page.locator('#loopCheckbox').isChecked())await page.locator('.loop-toggle').click();await page.locator('#fpsSelect').selectOption('30');

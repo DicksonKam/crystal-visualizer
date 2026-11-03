@@ -8,7 +8,11 @@ module.exports = defineConfig({
     forbidOnly: Boolean(process.env.CI),
     retries: 0,
     workers: process.env.CI ? 1 : 2,
-    reporter: [['list'], ['html', { open: 'never' }]],
+    // On CI the github reporter also writes each failure as an annotation on
+    // the run page, where it can be read without signing in.
+    reporter: process.env.CI
+        ? [['list'], ['github'], ['html', { open: 'never' }]]
+        : [['list'], ['html', { open: 'never' }]],
     use: {
         baseURL: 'http://127.0.0.1:4173',
         viewport: { width: 1440, height: 1000 },

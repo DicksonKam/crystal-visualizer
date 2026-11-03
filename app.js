@@ -4648,8 +4648,7 @@ const EXAMPLE_CATALOG = [
         group: 'XDATCAR',
         items: [
             { title: 'H₂ vibration', meta: '16-frame animation', path: 'examples/xdatcar/H2_vibration.xdatcar' },
-            { title: 'H₂O wobble', meta: '24-frame animation', path: 'examples/xdatcar/H2O_wobble.xdatcar' },
-            { title: 'MoTe₂ ribbon', meta: '209 atoms · 151-frame MD', path: 'examples/xdatcar/MoTe2_ribbon_vacancy.xdatcar' }
+            { title: 'H₂O wobble', meta: '24-frame animation', path: 'examples/xdatcar/H2O_wobble.xdatcar' }
         ]
     }
 ];

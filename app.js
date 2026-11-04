@@ -4938,6 +4938,44 @@ function setupDragDrop() {
     });
 }
 
+// === Trackpad pinch ===
+// Chrome, Edge and Firefox report a trackpad pinch as a wheel event with
+// ctrlKey set and deltas a small fraction of a scroll's. TrackballControls
+// scales every pixel the same, so a whole pinch moved the camera less than one
+// wheel tick. Here the pinch is re-issued as a plain wheel event with its own
+// gain, so the controls, their damping and their start/end events all behave as
+// for a scroll. Safari reports a pinch as gesture events carrying a scale; those
+// are converted the same way, and ctrl-wheel is ignored while a gesture runs.
+const WHEEL_BURST_GAP_MS = 250;    // a longer pause starts a new scroll or pinch
+const PINCH_GAIN = 4;              // wheel pixels per pinch pixel
+const PINCH_PIXELS_PER_SCALE = 600; // wheel pixels for a Safari scale change of 1.0
+const PINCH_MAX_STEP = 300;        // wheel pixels per event, so a fast pinch cannot jump
+
+function setupPinchZoom() {
+    const canvas = renderer.domElement;
+    let gestureActive = false, gestureScale = 1;
+    const reissue = (source, deltaY) => {
+        const step = Math.sign(deltaY) * Math.min(Math.abs(deltaY), PINCH_MAX_STEP);
+        const wheel = new WheelEvent('wheel', { bubbles: true, cancelable: true, clientX: source.clientX, clientY: source.clientY, deltaY: step, deltaMode: 0 });
+        wheel.fromPinch = true;
+        canvas.dispatchEvent(wheel);
+    };
+    document.addEventListener('wheel', event => {
+        if (event.fromPinch || !event.ctrlKey || event.target !== canvas || gestureActive) return;
+        event.preventDefault(); // otherwise the browser zooms the whole page
+        event.stopImmediatePropagation();
+        reissue(event, event.deltaY * PINCH_GAIN);
+    }, { capture: true, passive: false });
+    canvas.addEventListener('gesturestart', event => { event.preventDefault(); gestureActive = true; gestureScale = event.scale || 1; }, { passive: false });
+    canvas.addEventListener('gesturechange', event => {
+        event.preventDefault();
+        const scale = event.scale || 1, ratio = scale / gestureScale;
+        gestureScale = scale;
+        if (ratio > 0 && ratio !== 1) reissue(event, -(ratio - 1) * PINCH_PIXELS_PER_SCALE);
+    }, { passive: false });
+    canvas.addEventListener('gestureend', event => { event.preventDefault(); gestureActive = false; }, { passive: false });
+}
+
 // Setup controls
 function setupControls() {
     document.getElementById('undoBtn').addEventListener('click', performUndo);
@@ -5845,12 +5883,22 @@ function initCameraController() {
             cameraInputPosition = [event.clientX, event.clientY];
         } else updateVacuumHandles();
     }, { capture: true });
+    // A scroll or pinch arrives as a burst of wheel events, dozens per frame
+    // from a trackpad. Cancelling an alignment rebuilds the controls, which
+    // discards the zoom input the burst has queued but not yet applied, so
+    // only the burst's first event (or one that interrupts an alignment
+    // animation) does that; the rest only keep an alignment from starting.
+    let lastWheelAt = -Infinity;
     document.addEventListener('wheel', event => {
         if (activeEditPointerId !== null) return;
-        cancelCameraAlignment();
+        const now = performance.now();
+        if (cameraController.transitioning || now - lastWheelAt > WHEEL_BURST_GAP_MS) cancelCameraAlignment();
+        else cameraController.cancel();
+        lastWheelAt = now;
         cameraInputKind = 'zoom';
         if (event.target !== renderer.domElement) updateVacuumHandles();
     }, { capture: true, passive: true });
+    setupPinchZoom();
     renderer.domElement.addEventListener('touchstart', event => {
         cancelCameraAlignment();
         cameraInputKind = event.touches.length === 1 ? 'rotate' : 'zoom';

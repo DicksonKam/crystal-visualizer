@@ -5629,10 +5629,10 @@ function convertToSupercell() {
     return true;
 }
 
-// Setup mode toggle
+// The Edit toggle: pressed is edit mode, released is measure mode.
 function setupModeToggle() {
-    document.getElementById('modeToggle').querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => setInteractionMode(btn.dataset.mode));
+    document.getElementById('editToggle').addEventListener('click', () => {
+        setInteractionMode(currentMode === 'edit' ? 'measure' : 'edit');
     });
 }
 
@@ -5703,11 +5703,11 @@ function setInteractionMode(mode, restoringSelection = false) {
 }
 
 function updateModeButtonState() {
-    document.querySelectorAll('#modeToggle .mode-btn').forEach(button => {
-        const active = button.dataset.mode === currentMode;
-        button.classList.toggle('active', active);
-        button.setAttribute('aria-pressed', String(active));
-    });
+    const toggle = document.getElementById('editToggle');
+    if (!toggle || typeof toggle.setAttribute !== 'function') return;
+    const editing = currentMode === 'edit';
+    toggle.classList.toggle('active', editing);
+    toggle.setAttribute('aria-pressed', String(editing));
 }
 
 function generatePOSCAR() { return crystalFormats.generatePOSCAR(currentStructure); }
@@ -6838,8 +6838,10 @@ function setupTimelineControls() {
 
 // Update mode toggle button state based on file type
 function updateModeToggleForFileType() {
-    const editBtn = document.querySelector('.mode-btn[data-mode="edit"]');
+    const editBtn = document.getElementById('editToggle');
     const exportBtn = document.getElementById('exportPoscar');
+    const resetView = document.getElementById('resetView');
+    if (resetView) resetView.hidden = !currentStructure;
     const periodic = hasLattice(currentStructure);
     const fixedIndicators = document.getElementById('showFixedIndicators');
     fixedIndicators.disabled = !supportsSelectiveDynamics(currentStructure);
@@ -6862,7 +6864,7 @@ function updateModeToggleForFileType() {
         // Disable edit mode for XDATCAR
         if (editBtn) {
             editBtn.disabled = true;
-            editBtn.title = 'Edit mode disabled for trajectory files';
+            editBtn.title = 'A trajectory cannot be edited';
         }
         // Update export button for XDATCAR
         if (exportBtn) {
@@ -6872,7 +6874,7 @@ function updateModeToggleForFileType() {
         // Enable edit mode for POSCAR
         if (editBtn) {
             editBtn.disabled = false;
-            editBtn.title = 'Edit Mode';
+            editBtn.title = 'Edit mode: move, add and delete atoms (off: measure only)';
         }
         // Update export button for POSCAR
         if (exportBtn) {

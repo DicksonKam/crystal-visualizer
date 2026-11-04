@@ -28,7 +28,7 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
   await dragTarget(page,'atom',cycle);await snapshot(`${cycle}-held-atom`);await page.mouse.up();
   await expect(page.locator('#statusText')).toContainText('Moved atom');
   if(await page.locator('#clearSelectionBtn').count())await page.locator('#clearSelectionBtn').click();
-  await page.locator('[data-mode="measure"]').click();
+  await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
   if(cycle%2===0){
    for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
   } else {
@@ -59,7 +59,7 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
    if(JSON.stringify(selectionBefore)!==JSON.stringify(selectionAfter)){
     findings.push({cycle,view,type:'rotation changed selection',selectionBefore,selectionAfter,mode:await page.evaluate(()=>currentMode)});
     if(await page.locator('#clearSelectionBtn').count())await page.locator('#clearSelectionBtn').click();
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     for(const n of selectionBefore){await page.locator('#atomJumpInput').fill(String(n+1));await page.locator('#atomJumpInput').press('Enter');}
     if(cycle%2)await page.locator('[data-mode="edit"]').click();
    }

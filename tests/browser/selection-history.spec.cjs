@@ -23,7 +23,7 @@ test('undo and redo restore the context of an edit multi-selection without makin
     });
     const before = await state(page);
     expect(before.indices).toEqual([0, 1, 2, 3, 4]);
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     expect((await state(page)).indices).toEqual([]);
     const cleared = await state(page);
     for (let repeat = 0; repeat < 3; repeat++) {
@@ -128,7 +128,7 @@ test('document replacement and disappearing periodic selections reset measuremen
     expect((await state(page)).indices).toEqual([0]);
     expect((await state(page)).measurement).toBe(false);
     await upload(page, 'copies\n1\n4 0 0\n0 4 0\n0 0 4\nH\n1\nCartesian\n1 1 1\n', 'copies.poscar');
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     await page.getByRole('button',{name:'Increase a periodic images',exact:true}).click();
     await page.evaluate(()=>{
         const ghost=atomMeshes.find(mesh=>mesh.userData.isGhost);

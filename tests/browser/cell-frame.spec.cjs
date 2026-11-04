@@ -154,7 +154,7 @@ test('handle references refresh after rebuilds and disappear when the cell or ed
     expect(await page.evaluate(() => ({ active: vacuumDragState.active, handles: vacuumDragState.handles.length, edges: unitCellEdgeLines.length }))).toEqual({ active: false, handles: 0, edges: 0 });
     await page.locator('#showCell').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(0);
     await page.locator('[data-mode="edit"]').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
@@ -222,7 +222,7 @@ test('axis alignment and wheel input restore handles without obsolete transition
     await expect.poll(() => page.evaluate(() => cameraController.phase === 'idle' && vacuumDragState.handles.length === 8)).toBe(true);
     // Mode changes cancel a real transition before its completion can restore handles.
     await page.evaluate(() => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[4]), performance.now(), 'explicit', '+c'));
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     await page.waitForTimeout(400);
     expect(await page.evaluate(() => ({ phase: cameraController.phase, handles: vacuumDragState.handles.length }))).toEqual({ phase: 'idle', handles: 0 });
     await page.locator('[data-mode="edit"]').click();

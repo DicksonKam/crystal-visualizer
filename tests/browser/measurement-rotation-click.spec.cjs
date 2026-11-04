@@ -5,7 +5,7 @@ test('rotating over a measured atom must not deselect it',async({page},info)=>{
  await upload(page,'3\nwater\nO 0 0 .1173\nH .7572 0 -.4692\nH -.7572 0 -.4692\n','water.xyz');
  await page.locator('[data-mode="edit"]').click();
  await dragTarget(page,'atom',0);await page.mouse.up();
- await page.locator('[data-mode="measure"]').click();
+ await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
  const before=await page.evaluate(()=>selectedAtoms.map(a=>a.index));
  await page.screenshot({path:info.outputPath('before-rotation.png')});

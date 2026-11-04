@@ -81,7 +81,7 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     expect(overflow.content).toBeLessThanOrEqual(overflow.width+1);
     await page.locator('.sidebar').evaluate(e=>{e.scrollTop=0;});
     await page.screenshot({path:testInfo.outputPath('narrow-info.png')});
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     for(const number of [1,2]) { await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
     await page.locator('[data-mode="edit"]').click();
     await page.locator('#addAtomX').fill('.25');

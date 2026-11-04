@@ -138,7 +138,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             log.push({ startupPanelReopened: true });
         }
         // Start with the everyday measure-then-edit workflow rather than an empty selection.
-        await page.locator('[data-mode="measure"]').click();
+        await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
         const numberToMeasure = Math.min(3, await page.evaluate(() => currentStructure.atoms.length));
         for (let number = 1; number <= numberToMeasure; number++) {
             await page.locator('#atomJumpInput').fill(String(number));

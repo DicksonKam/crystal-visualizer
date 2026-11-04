@@ -78,7 +78,7 @@ test('mode changes, clear, undo and document replacement dispose and restore act
     await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
     expect((await state(page)).points).toEqual(original.points);
     await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     await page.locator('#clearSelectionBtn').click();
     expect((await state(page)).lines).toHaveLength(0);
     const disposals = await page.evaluate(() => window.measurementDisposals);

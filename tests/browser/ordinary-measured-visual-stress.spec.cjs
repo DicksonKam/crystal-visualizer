@@ -63,7 +63,7 @@ for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rock
                 await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry,before.geometry);
                 await page.locator('#redoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry,placed.geometry);
                 await checkBondRefresh(page);
-                await page.locator('[data-mode="measure"]').click(); await page.locator('[data-mode="edit"]').click();
+                await page.locator('[data-mode="edit"][aria-pressed="true"]').click(); await page.locator('[data-mode="edit"]').click();
                 await checkMeasurement(page);
                 await page.screenshot({path:info.outputPath(`${cycle}-history-and-mode.png`)});
             }

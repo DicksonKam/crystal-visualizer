@@ -108,24 +108,16 @@ body {
     white-space: nowrap;
 }
 
-/* Mode Toggle */
-.mode-toggle {
-    display: flex;
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-md);
-    padding: 3px;
-    gap: 2px;
-}
-
+/* Edit toggle: one button, off = measure (the safe default), on = edit */
 .mode-btn {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.4rem 0.75rem;
-    border: none;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
     font-size: 0.8rem;
     font-family: var(--font-sans);
     cursor: pointer;
@@ -133,17 +125,14 @@ body {
 }
 
 .mode-btn:hover {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     background: var(--bg-hover);
-}
-
-.mode-btn.active[data-mode="measure"] {
-    background: rgba(0, 245, 212, 0.2);
-    color: var(--accent-cyan);
+    border-color: var(--accent-pink);
 }
 
 .mode-btn.active[data-mode="edit"] {
     background: rgba(241, 91, 181, 0.2);
+    border-color: var(--accent-pink);
     color: var(--accent-pink);
 }
 
@@ -186,6 +175,52 @@ body {
     background: rgba(0, 245, 212, 0.15);
     border-color: var(--accent-cyan);
     color: var(--accent-cyan);
+}
+
+/* Toolbar buttons that carry a word beside their icon */
+.btn-labelled {
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+}
+
+/* Reset View lives on the 3D view, since it is about the camera, not the
+   document. It is page chrome over the canvas and never part of an export. */
+.viewport-reset {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: rgba(20, 20, 30, 0.72);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: all var(--transition-fast);
+}
+
+.viewport-reset:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-cyan);
+    background: rgba(20, 20, 30, 0.9);
+}
+
+.viewport-reset[hidden] {
+    display: none;
+}
+
+body.light-scene .viewport-reset {
+    background: rgba(255, 255, 255, 0.78);
+    color: #16161d;
+    border-color: rgba(22, 22, 29, 0.25);
 }
 
 /* === Main Content === */

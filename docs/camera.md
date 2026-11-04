@@ -44,7 +44,7 @@ Automatic alignment first applies the smallest swing from the current camera-fro
 
 ## Existing interface and handles
 
-Automatic snapping remains built into the existing navigation gestures and is on by default. There is no added View panel, Auto Snap checkbox, axis-view button, or Fit View button. Reset View and atom-number focus retain their existing controls. Fit and explicit alignment remain internal controller methods. TrackballControls key bindings are empty so text and coordinate entry stays usable; molecules continue to support normal navigation without lattice snapping. The stylesheet and layout match the interface before the camera-controller work.
+Automatic snapping remains built into the existing navigation gestures and is on by default. There is no added View panel, Auto Snap checkbox, axis-view button, or Fit View button. Reset View is a small button in the corner of the 3D view (page chrome, never part of an export) and atom-number focus keeps its Atoms-panel control. Fit and explicit alignment remain internal controller methods. TrackballControls key bindings are empty so text and coordinate entry stays usable; molecules continue to support normal navigation without lattice snapping. The stylesheet and layout match the interface before the camera-controller work.
 
 Edit-mode resize detectors follow the actual current lattice-axis orientation. Suspend them during rotation, settling, programmed movement, or a cell drag, then rebuild from the current pose and scene. Detectors remain on the raycaster-only layer with color and depth writes disabled. They affect neither rendered pixels nor fitting bounds.
 

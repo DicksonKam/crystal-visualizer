@@ -35,7 +35,7 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
         await page.locator('#addAtomBtn').click(); await checkMeasurement(page); await snap(`${cycle}-add`);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await page.locator('#redoBtn').click(); await checkMeasurement(page);
-        await page.locator('[data-mode="measure"]').click(); await checkMeasurement(page);
+        await page.locator('[data-mode="edit"][aria-pressed="true"]').click(); await checkMeasurement(page);
         await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
         // Rebuild the scene through ordinary display and periodic controls
         // while the same three-point measurement remains active.
@@ -78,7 +78,7 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
     await page.locator('#undoBtn').click();
     // Start a fresh measurement branch after restoring the deleted atom.
-    await page.locator('[data-mode="measure"]').click();
+    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await checkMeasurement(page);
     await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);

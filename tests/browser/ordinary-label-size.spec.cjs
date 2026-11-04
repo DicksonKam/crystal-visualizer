@@ -21,7 +21,7 @@ for(const deviceScaleFactor of [1,2]) test.describe(`ordinary labels at display 
         await page.locator('[data-mode="edit"]').click();
         await page.screenshot({path:info.outputPath('labels-and-preserved-measurement.png')});
         await page.locator('#showLabels').uncheck();await page.locator('#showLabels').check();
-        await page.locator('[data-mode="measure"]').click();
+        await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
         expect(await page.locator('#measurementPanel').innerText()).toBe(measurement);
         await page.locator('#sidebarDivider').focus();await page.keyboard.press('Home');
         await page.screenshot({path:info.outputPath('labels-collapsed-sidebar.png')});

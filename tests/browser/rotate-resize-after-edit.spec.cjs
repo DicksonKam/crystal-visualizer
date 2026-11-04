@@ -1,4 +1,4 @@
-const {test, expect, upload}=require('./fixtures.cjs');
+const {test, expect, upload,setMode}=require('./fixtures.cjs');
 const {dragTarget,checkMeasurement}=require('./measurement-edit-helpers.cjs');
 const fs=require('node:fs/promises'), path=require('node:path');
 const cases=[['xyz/H2O.xyz',900],['xyz/benzene.xyz',1280],['poscar/NaCl_rocksalt.poscar',900],['poscar/graphene_sheet.poscar',1280]];
@@ -24,11 +24,11 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
  };
  for(let cycle=0;cycle<4;cycle++){
   await page.locator('#sidebarDivider').focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowRight');
-  await page.locator('[data-mode="edit"]').click();
+  await setMode(page, 'edit');
   await dragTarget(page,'atom',cycle);await snapshot(`${cycle}-held-atom`);await page.mouse.up();
   await expect(page.locator('#statusText')).toContainText('Moved atom');
   if(await page.locator('#clearSelectionBtn').count())await page.locator('#clearSelectionBtn').click();
-  await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+  await setMode(page, 'measure');
   if(cycle%2===0){
    for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
   } else {
@@ -45,7 +45,7 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
    for(const p of points)await page.mouse.click(p.x,p.y);
   }
   await checkMeasurement(page);await snapshot(`${cycle}-measured`);
-  if(cycle%2)await page.locator('[data-mode="edit"]').click();
+  if(cycle%2)await setMode(page, 'edit');
   // Restore ordinary damping after the deterministic atom-drag fixture.
   await page.evaluate(()=>{controls.staticMoving=false;controls.dynamicDampingFactor=.15;});
   for(let view=0;view<3;view++){
@@ -59,9 +59,9 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
    if(JSON.stringify(selectionBefore)!==JSON.stringify(selectionAfter)){
     findings.push({cycle,view,type:'rotation changed selection',selectionBefore,selectionAfter,mode:await page.evaluate(()=>currentMode)});
     if(await page.locator('#clearSelectionBtn').count())await page.locator('#clearSelectionBtn').click();
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     for(const n of selectionBefore){await page.locator('#atomJumpInput').fill(String(n+1));await page.locator('#atomJumpInput').press('Enter');}
-    if(cycle%2)await page.locator('[data-mode="edit"]').click();
+    if(cycle%2)await setMode(page, 'edit');
    }
    await checkMeasurement(page);
   }

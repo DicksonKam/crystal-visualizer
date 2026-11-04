@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const {capture}=require('../stress/edit-scenario.cjs');
 const {createVisualObserver}=require('../stress/visual-observer.cjs');
 const fs=require('node:fs/promises');
@@ -24,7 +24,7 @@ async function atomPoint(page){return page.evaluate(()=>{
 for(const outcome of ['decline','accept','404','malformed','superseded'])test(`delayed example ${outcome} during a live atom move preserves the right document and visuals`,async({page},info)=>{
  test.setTimeout(90000);await upload(page,original,'original.xyz');
  await page.locator('#atomJumpInput').fill('1');await page.locator('#atomJumpInput').press('Enter');
- await page.locator('[data-mode="edit"]').click();await page.getByRole('button',{name:'Reset View',exact:true}).click();
+ await setMode(page, 'edit');await page.getByRole('button',{name:'Reset View',exact:true}).click();
  await page.waitForFunction(()=>cameraController.phase==='idle');
  const before=await capture(page);const release=await beginDelayed(page);
  const directory=info.outputPath('visual');await fs.mkdir(directory,{recursive:true});const {observe}=createVisualObserver(page,directory,902,1);

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 const { compareGeometry, checkMeasurement, dragTarget, checkBondRefresh } = require('./measurement-edit-helpers.cjs');
 const fs = require('node:fs/promises');
@@ -15,7 +15,7 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
     const capability = await capture(page);
     await info.attach('example', { body: JSON.stringify({ variant, file, capability: { lattice: capability.lattice, supportsSD: capability.supportsSD } }), contentType: 'application/json' });
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const snap = async name => page.screenshot({ path: info.outputPath(`${name}.png`) });
     await checkMeasurement(page); await snap('initial');
     for (let cycle = 0; cycle < 4; cycle++) {
@@ -38,8 +38,8 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
         await page.locator('#addAtomBtn').click(); await checkMeasurement(page); await snap(`${cycle}-add`);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await page.locator('#redoBtn').click(); await checkMeasurement(page);
-        await page.locator('[data-mode="edit"][aria-pressed="true"]').click(); await checkMeasurement(page);
-        await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+        await setMode(page, 'measure'); await checkMeasurement(page);
+        await setMode(page, 'edit'); await checkMeasurement(page);
         await checkBondRefresh(page); await snap(`${cycle}-bonds-refreshed`);
         // Rebuild the scene through ordinary display and periodic controls
         // while the same three-point measurement remains active.
@@ -87,9 +87,9 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
     await page.locator('#undoBtn').click();
     // Start a fresh measurement branch after restoring the deleted atom.
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await checkMeasurement(page);
-    await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+    await setMode(page, 'edit'); await checkMeasurement(page);
     await snap('final');
 });

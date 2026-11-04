@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 
 for (const width of [220, 280, 320]) {
     test(`measurement values stay inside their cards at ${width}px panel width`, async ({ page }, info) => {
@@ -14,7 +14,7 @@ for (const width of [220, 280, 320]) {
         await page.mouse.move(width, divider.y + divider.height / 2, { steps: 5 });
         await page.mouse.up();
         for (const mode of ['measure', 'edit']) {
-            await page.locator(`[data-mode="${mode}"]`).click();
+            await setMode(page, mode);
             await page.locator('#measurementPanel').scrollIntoViewIfNeeded();
             await page.screenshot({ path: info.outputPath(`${mode}.png`) });
             // Scroll width misses text hidden by a card's overflow clipping.

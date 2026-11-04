@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname,'../../examples/poscar/Al_fcc_cartesian.poscar'),'utf8');
@@ -7,7 +7,7 @@ for (const size of [{width:1440,height:900},{width:900,height:760}]) {
         test.setTimeout(180000);
         await page.setViewportSize(size); await upload(page,source,'Al_fcc_cartesian.poscar');
         await page.locator('#showLabels').check();
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         await page.evaluate(() => {
             cancelCameraAlignment(); controls.staticMoving=true;
             camera.position.copy(controls.target).add(new THREE.Vector3(25,0,0));

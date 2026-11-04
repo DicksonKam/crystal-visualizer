@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { createVisualObserver } = require('../stress/visual-observer.cjs');
 const fs = require('node:fs/promises');
 const points=[];
@@ -32,7 +32,7 @@ async function visibleAtom(page) {
 }
 test('dense atom/bond rendering survives movement cancellation, 501/500 transitions and cell resizing',async({page},testInfo)=>{
     test.setTimeout(180000); await upload(page,fixture,'dense-501.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const directory=testInfo.outputPath('visual');await fs.mkdir(directory,{recursive:true});
     const {observe}=createVisualObserver(page,directory,501,1);
     const snap=async(step,action,stage='after')=>observe({step,action,stage});

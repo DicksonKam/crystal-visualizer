@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const {capture}=require('../stress/edit-scenario.cjs');
 const {createVisualObserver}=require('../stress/visual-observer.cjs');
 const fs=require('node:fs/promises');
@@ -10,7 +10,7 @@ async function observer(page,info,seed){const directory=info.outputPath('visual'
 async function check(page){const s=await capture(page);expect(s.violations).toEqual([]);return s;}
 const grouped='empty species cycles\n1\n10 0 0\n0 10 0\n0 0 10\nH H O\n1 1 1\nSelective dynamics\nCartesian\n2 2 5 T T T\n6 2 5 F F F\n4 6 5 T F T\n';
 test('empty periodic documents retain duplicate species, constraints and editable refill through history branches',async({page},info)=>{
- test.setTimeout(150000);await upload(page,grouped,'duplicate-empty.poscar');await page.locator('[data-mode="edit"]').click();
+ test.setTimeout(150000);await upload(page,grouped,'duplicate-empty.poscar');await setMode(page, 'edit');
  const observe=await observer(page,info,903);
  for(let cycle=0;cycle<4;cycle++){
   const before=await check(page);
@@ -58,7 +58,7 @@ test('mixed-element instancing, periodic copies, supercells, constraints and exp
    groups:Object.values(atomMeshes.reduce((acc,m)=>{const k=`${m.userData.element}:${Boolean(m.userData.isGhost)}`;acc[k]=(acc[k]||0)+1;return acc;},{})).sort((a,b)=>a-b)}));
   expect(batch.sizes).toEqual(batch.groups);expect(batch.sizes.length).toBe(4);
   if(cycle===0)await observe({step:1,action:'periodic',stage:'settled'});
-  await page.locator('[data-mode="edit"]').click();await page.locator('#makeSupercellBtn').click();
+  await setMode(page, 'edit');await page.locator('#makeSupercellBtn').click();
   const supercell=await check(page);expect(supercell.atomCount).toBe(998);expect(supercell.geometry.counts).toEqual([498,500]);
   expect(await copies()).toBe(0);
   const converted=await page.evaluate(()=>({sizes:structureGroup.children.filter(c=>c.userData.isAtomBatch).map(c=>c.count).sort((a,b)=>a-b),

@@ -1,9 +1,9 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const fs=require('node:fs/promises');const path=require('node:path');
 test('default graphene constraint threshold and typed decimals remain fully readable',async({page},info)=>{
  test.setTimeout(90000);await page.setViewportSize({width:1280,height:800});
  await upload(page,await fs.readFile(path.join(__dirname,'../../examples/poscar/graphene_sheet.poscar'),'utf8'),'graphene_sheet.poscar');
- await page.locator('[data-mode="edit"]').click();
+ await setMode(page, 'edit');
  for(const [name,keys] of [['default',[]],['narrow',Array(3).fill('ArrowLeft')],['wide',Array(15).fill('ArrowRight')]]){
   await page.locator('#sidebarDivider').focus();for(const k of keys)await page.keyboard.press(k);
   await page.locator('#fixZThreshold').scrollIntoViewIfNeeded();

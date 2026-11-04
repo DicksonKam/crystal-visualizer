@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { checkMeasurement, compareGeometry, dragTarget } = require('./measurement-edit-helpers.cjs');
 
 test('automatic snap after a measured atom move preserves geometry and annotations', async ({ page }, info) => {
@@ -8,7 +8,7 @@ test('automatic snap after a measured atom move preserves geometry and annotatio
         await page.locator('#atomJumpInput').fill(String(n));
         await page.locator('#atomJumpInput').press('Enter');
     }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await dragTarget(page, 'atom', 0); await page.mouse.up();
     const moved = await checkMeasurement(page);
     expect(moved.undo.at(-1).type).toBe('move_atom');

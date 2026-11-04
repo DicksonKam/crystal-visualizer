@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 
 for (const includeReal of [false, true]) test(`shifting a preserved periodic-copy measurement (${includeReal ? 'mixed' : 'copy only'}) reports its editability and preserves history`, async ({ page }) => {
@@ -22,7 +22,7 @@ for (const includeReal of [false, true]) test(`shifting a preserved periodic-cop
         await page.locator('#atomJumpInput').press('Enter');
         expect(await page.evaluate(() => selectedAtoms.map(atom => Boolean(atom.isGhost)))).toEqual([true, false]);
     }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const before = await capture(page);
     await page.locator('input[name="shiftCoordType"][value="cartesian"]').check();
     await page.locator('#shiftA').fill('0.25');

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 const { compareGeometry, checkMeasurement, checkBondRefresh } = require('./measurement-edit-helpers.cjs');
 const fs = require('node:fs/promises');
@@ -8,7 +8,7 @@ test('water measurements survive mouse navigation, resizing, editing and selecti
     test.setTimeout(240000);
     await upload(page, await fs.readFile(path.join(__dirname, '../../examples/xyz/H2O.xyz'), 'utf8'), 'H2O.xyz');
     for (const n of [2, 1, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     for (let cycle = 0; cycle < 6; cycle++) {
         await page.setViewportSize({ width: cycle % 2 ? 900 : 1280, height: cycle % 3 ? 800 : 650 });
         await page.locator('#resetView').click();
@@ -52,8 +52,8 @@ test('water measurements survive mouse navigation, resizing, editing and selecti
         await page.locator('#clearSelectionBtn').click();
         expect((await capture(page)).selection.identities).toHaveLength(0);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
-        await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
-        await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+        await setMode(page, 'measure');
+        await setMode(page, 'edit'); await checkMeasurement(page);
         await page.locator('#resetView').click();
         await page.screenshot({ path: info.outputPath(`${cycle}-edited-and-restored.png`) });
     }

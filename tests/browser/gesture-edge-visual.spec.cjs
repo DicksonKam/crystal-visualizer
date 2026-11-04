@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const {capture}=require('../stress/edit-scenario.cjs');
 const {createVisualObserver}=require('../stress/visual-observer.cjs');
 const fs=require('node:fs/promises');
@@ -38,7 +38,7 @@ for(const [cell,lattice] of Object.entries(cells))for(const kind of ['atom','cel
  test(`${cell} ${kind}: ${interruption} preserves measurement and the next gesture`,async({page},info)=>{
     test.setTimeout(150000);await page.setViewportSize({width:900,height:760});await upload(page,source(lattice),'gesture.poscar');
     for(const n of [1,2]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const directory=info.outputPath('visual');await fs.mkdir(directory,{recursive:true});const {observe}=createVisualObserver(page,directory,901,1);
     for(let cycle=0;cycle<3;cycle++){
         await page.setViewportSize({width:900,height:760});

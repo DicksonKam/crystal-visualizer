@@ -1,8 +1,8 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 
 async function startDrag(page, loseCapture = true) {
     await upload(page, '2\ncapture recovery\nH -1 0 0\nO 1 0 0\n', 'recovery.xyz');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.getByRole('button', { name: 'Reset View', exact: true }).click();
     await page.waitForFunction(() => cameraController.phase === 'idle');
     const point = await page.evaluate(() => {

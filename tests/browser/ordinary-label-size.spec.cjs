@@ -1,4 +1,4 @@
-const {test, expect, upload} = require('./fixtures.cjs');
+const {test, expect, upload,setMode} = require('./fixtures.cjs');
 for(const deviceScaleFactor of [1,2]) test.describe(`ordinary labels at display scale ${deviceScaleFactor}`, () => {
     test.use({deviceScaleFactor});
     test('atom numbers remain readable without changing model bounds or measurements', async ({page},info) => {
@@ -18,10 +18,10 @@ for(const deviceScaleFactor of [1,2]) test.describe(`ordinary labels at display 
         expect(await bounds()).toEqual(before);
         for(const n of [1,2,3]) {await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
         const measurement = await page.locator('#measurementPanel').innerText();
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         await page.screenshot({path:info.outputPath('labels-and-preserved-measurement.png')});
         await page.locator('#showLabels').uncheck();await page.locator('#showLabels').check();
-        await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+        await setMode(page, 'measure');
         expect(await page.locator('#measurementPanel').innerText()).toBe(measurement);
         await page.locator('#sidebarDivider').focus();await page.keyboard.press('Home');
         await page.screenshot({path:info.outputPath('labels-collapsed-sidebar.png')});

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 const { compareGeometry, checkMeasurement } = require('./measurement-edit-helpers.cjs');
 const fs = require('node:fs/promises');
@@ -10,7 +10,7 @@ for (const file of ['poscar/Al_slab_selective.poscar', 'xyz/H2O.xyz']) test(`mea
     const total = (await capture(page)).atomCount;
     const numbers = [total - 2, total - 1, total];
     for (const n of numbers) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     for (let cycle = 0; cycle < 3; cycle++) {
         const before = await checkMeasurement(page);
         await page.locator('#clearSelectionBtn').click();

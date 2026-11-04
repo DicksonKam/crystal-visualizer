@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const source = '5\nselection history\nH 0 0 0\nH 2 0 0\nH 0 2 0\nH 2 2 0\nH 1 1 2\n';
 async function state(page) {
     return page.evaluate(() => ({ mode: currentMode, measurement: isMeasurementSelection,
@@ -16,14 +16,14 @@ async function select(page, number) {
 
 test('undo and redo restore the context of an edit multi-selection without making an oversized measurement', async ({ page }) => {
     await upload(page, source, 'selection.xyz');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.evaluate(() => {
         for (let i = 0; i < 5; i++) selectAtomForEdit(atomMeshes[i], i);
         updateEditUI();
     });
     const before = await state(page);
     expect(before.indices).toEqual([0, 1, 2, 3, 4]);
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     expect((await state(page)).indices).toEqual([]);
     const cleared = await state(page);
     for (let repeat = 0; repeat < 3; repeat++) {
@@ -54,7 +54,7 @@ test('measurement undo replaces the selection, preserves order and resolves curr
     await page.locator('#redoBtn').click();
     expect((await state(page)).indices).toEqual([0, 2]);
     await page.locator('#undoBtn').click();
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#clearSelectionBtn').click();
     // Simulate a newer view/geometry before restoration: history must resolve
     // identities, never replay saved world-space coordinates or append records.
@@ -114,7 +114,7 @@ test('selection history distinguishes periodic copies and safely omits copies no
 test('document replacement and disappearing periodic selections reset measurement purpose', async ({ page }) => {
     await upload(page, source, 'first.xyz');
     await select(page,1); await select(page,2);
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     expect((await state(page)).measurement).toBe(true);
     await upload(page, source, 'replacement.xyz');
     const cleared=await state(page);
@@ -128,13 +128,13 @@ test('document replacement and disappearing periodic selections reset measuremen
     expect((await state(page)).indices).toEqual([0]);
     expect((await state(page)).measurement).toBe(false);
     await upload(page, 'copies\n1\n4 0 0\n0 4 0\n0 0 4\nH\n1\nCartesian\n1 1 1\n', 'copies.poscar');
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     await page.getByRole('button',{name:'Increase a periodic images',exact:true}).click();
     await page.evaluate(()=>{
         const ghost=atomMeshes.find(mesh=>mesh.userData.isGhost);
         selectAtom(ghost,ghost.userData.atomIndex); updateMeasurements(); updateMeasurementUI();
     });
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     expect((await state(page)).measurement).toBe(true);
     await page.getByRole('button',{name:'Decrease a periodic images',exact:true}).click();
     const disappeared=await state(page);

@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 for(const deviceScaleFactor of [1,2])test.describe(`number precedence at display scale ${deviceScaleFactor}`,()=>{
  test.use({deviceScaleFactor});
  test('numbered markers replace indices and clearing restores indices',async({page},info)=>{
@@ -14,7 +14,7 @@ for(const deviceScaleFactor of [1,2])test.describe(`number precedence at display
   await page.mouse.move(450,box.y+box.height/2,{steps:15});
   await page.screenshot({path:info.outputPath('held-resize-numbers.png')});await page.mouse.up();
   expect(await visible()).toEqual([3]);
-  await page.locator('[data-mode="edit"]').click();await settle();
+  await setMode(page, 'edit');await settle();
   expect(await visible()).toEqual([3]);
   await page.screenshot({path:info.outputPath('preserved-measurement-numbers.png')});
   await page.locator('#clearSelectionBtn').click();await settle();

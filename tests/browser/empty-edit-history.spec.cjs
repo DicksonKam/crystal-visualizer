@@ -1,11 +1,11 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 
 test('complete deletion, refill and history branching remain coherent across repeated edit cycles', async ({ page }) => {
     test.setTimeout(120000);
     page.setDefaultTimeout(5000);
     await upload(page, '4\nempty document cycles\nH -2 -2 0\nO 2 -2 0\nH -2 2 0\nO 2 2 0\n', 'empty-cycles.xyz');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     async function add(element) {
         await page.locator('#addAtomElement').selectOption(element);
         await page.locator('input[name="coordType"][value="cartesian"]').check();

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const cells = { cubic: [[10, 0, 0], [0, 10, 0], [0, 0, 10]], skewed: [[9, 2, 1], [1, 11, 2], [2, 1, 8]] };
 
 async function alignAndPoints(page, sign) {
@@ -38,7 +38,7 @@ async function alignAndPoints(page, sign) {
 for (const [name, lattice] of Object.entries(cells)) for (const sign of [-1, 1]) {
     test(`${name}, view ${sign}: boundary atoms win hover, click and drag over overlapping frame handles`, async ({ page }) => {
         await upload(page, `boundary\n1\n${lattice.map(v => v.join(' ')).join('\n')}\nH\n1\nDirect\n0 .5 0\n`, 'boundary.poscar');
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         const points = await alignAndPoints(page, sign);
         expect(points.overlaps).toBeGreaterThan(0);
         await page.mouse.move(points.atom.x, points.atom.y);

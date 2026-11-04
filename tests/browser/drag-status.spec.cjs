@@ -1,8 +1,8 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 
 test('a new mouse drag replaces the previous cancellation message before release', async ({ page }, info) => {
     await upload(page, '2\ndrag feedback\nH -1 0 0\nO 1 0 0\n', 'feedback.xyz');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.getByRole('button', { name: 'Reset View', exact: true }).click();
     await page.waitForFunction(() => cameraController.phase === 'idle');
     const point = await page.evaluate(() => {

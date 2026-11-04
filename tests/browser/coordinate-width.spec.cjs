@@ -1,10 +1,10 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const fs=require('node:fs/promises');
 const path=require('node:path');
 for(const width of [1280,900])test(`precise atom coordinates stay readable while resizing the sidebar at ${width}px`,async({page},info)=>{
  test.setTimeout(90000);await page.setViewportSize({width,height:800});
  await upload(page,await fs.readFile(path.join(__dirname,'../../examples/xyz/H2O.xyz'),'utf8'),'H2O.xyz');
- await page.locator('[data-mode="edit"]').click();await page.waitForTimeout(300);
+ await setMode(page, 'edit');await page.waitForTimeout(300);
  const point=await page.evaluate(()=>{const r=renderer.domElement.getBoundingClientRect(),p=atomMeshes[0].getWorldPosition(new THREE.Vector3()).project(camera);return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};});
  await page.mouse.move(point.x,point.y);await page.mouse.down();await page.mouse.move(point.x+37,point.y-22,{steps:6});await page.mouse.up();
  await page.locator('#atomJumpInput').fill('1');await page.locator('#atomJumpInput').press('Enter');

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const structure = 'boundary atom\n1\n4 0 0\n0 4 0\n0 0 4\nH\n1\nCartesian\n0 2 2\n';
 
 test('boundary guide and movement cover all six cell faces and constrain tangent sections', async ({ page }) => {
@@ -56,7 +56,7 @@ test('boundary guide and movement cover all six cell faces and constrain tangent
 
 test('pointer dragging reaches both halves of a boundary face and supports undo/redo', async ({ page }) => {
     await upload(page, structure, 'boundary.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const points = await page.evaluate(() => {
         cameraController.cancel('test-setup');
         const center = new THREE.Vector3(0, 2, 2).add(structureGroup.position);
@@ -95,7 +95,7 @@ test('pointer dragging reaches both halves of a boundary face and supports undo/
 
 test('boundary atom drag preview rebuilds bonds before pointer release', async ({ page }) => {
     await upload(page, 'preview\n1\n4 0 0\n0 4 0\n0 0 4\nH\n2\nCartesian\n0 2 2\n0 3 2\n', 'preview.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const points = await page.evaluate(() => {
         settings.bondThreshold = 1.5;
         rebuildBonds(); cancelCameraAlignment(); controls.staticMoving = true;

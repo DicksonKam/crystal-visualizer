@@ -1,4 +1,4 @@
-const { test, expect, upload, hideBonds } = require('./fixtures.cjs');
+const { test, expect, upload, hideBonds, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 const { createFormats } = require('../../formats.js');
 const { cartesianToFractional } = require('../../geometry.js');
@@ -16,7 +16,7 @@ async function selectAtom(page, number) {
     await expect(page.locator('#statusText')).toContainText(`Selected atom #${number}`);
 }
 async function editX(page, number, value) {
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await selectAtom(page, number);
     await page.locator('#editAtomCoordMode').selectOption('cartesian');
     await page.locator('#editAtom0').fill(String(value));
@@ -65,7 +65,7 @@ test('duplicate species preserve membership through editing, deletion, undo/redo
 
 test('adding to a repeated species requires a visible group choice', async ({ page }) => {
     await upload(page, groups, 'groups.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await expect(page.locator('#addAtomSpecies')).toBeVisible();
     await page.locator('#addAtomSpecies').selectOption('species-2');
     await page.locator('input[name="coordType"][value="cartesian"]').check();
@@ -81,7 +81,7 @@ test('adding to a repeated species requires a visible group choice', async ({ pa
 
 test('undo adding a new element restores the original species header', async ({ page }) => {
     await upload(page, groups.replace('H H\n1 1', 'H\n2'), 'hydrogen.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#addAtomX').fill('0.2');
     await page.locator('#addAtomElement').selectOption('O');
     await expect(page.locator('#addAtomX')).toHaveValue('0.2');
@@ -119,7 +119,7 @@ test('XYZ edits warn about stale results, allow cancellation and preserve origin
 
 test('real cell resize preview cannot collapse and remains reversible', async ({ page }) => {
     await upload(page, groups.replace('H H\n1 1', 'H\n2').replace('0 0 0\n1 0 0', '-2 0 0\n-1 0 0'), 'outside.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.evaluate(() => {
         vacuumDragState.active = true;
         startVacuumDrag({ extendAxis: 'a', handleType: 'far' }, { clientX: 0, clientY: 0 });

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -36,7 +36,7 @@ async function geometry(page) {
 for (const skew of [-5, 5]) for (const side of ['near', 'far']) {
     test(`tilted cell ${skew}: ${side} shrink cannot cross atom centers`, async ({ page }, info) => {
         await upload(page, `containment\n1\n10 0 0\n${skew} 10 0\n0 0 10\nH\n2\nDirect\n.1 .9 .5\n.9 .9 .5\n`, 'containment.poscar');
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         const point = await edge(page, 'a', side);
         const before = await geometry(page);
         await page.mouse.move(point.x, point.y); await page.mouse.down();
@@ -56,7 +56,7 @@ for (const skew of [-5, 5]) for (const side of ['near', 'far']) {
 for (const axis of ['a', 'b']) {
     test(`graphene ${axis} face remains outside every atom during shrink`, async ({ page }, info) => {
         await upload(page, fs.readFileSync(path.join(__dirname, '../../examples/poscar/graphene_sheet.poscar'), 'utf8'), 'graphene.poscar');
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         await edge(page, axis, 'far');
         const atomDrag = await page.evaluate(axis => {
             const r = renderer.domElement.getBoundingClientRect();

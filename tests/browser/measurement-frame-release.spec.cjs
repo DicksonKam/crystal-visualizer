@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
@@ -9,7 +9,7 @@ test('releasing a cell drag over an atom preserves the measurement', async ({ pa
         await page.locator('#atomJumpInput').fill(String(n));
         await page.locator('#atomJumpInput').press('Enter');
     }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#sidebarDivider').focus(); await page.keyboard.press('Home');
     await page.waitForFunction(() => renderer.domElement.clientWidth === viewport.clientWidth);
     const gesture = await page.evaluate(() => {

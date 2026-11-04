@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const fs=require('node:fs/promises'),path=require('node:path');
 // Point markers sit on their atoms even when the view stacks atoms together;
 // nothing is moved aside or tied to a leader line.
@@ -14,7 +14,7 @@ test('crowded edit checkmarks and measurement numbers stay on their atoms withou
  const markers=()=>page.evaluate(()=>selectionRings.map((s,i)=>({index:i,color:s.userData.annotationColor,
   offset:s.getWorldPosition(new THREE.Vector3()).distanceTo(selectedAtoms[i].mesh.getWorldPosition(new THREE.Vector3())),
   leaders:measurementGroup.children.filter(o=>o.userData.isAnnotationLeader&&o.visible).length})));
- await page.locator('[data-mode="edit"]').click();await page.locator('#atomJumpInput').fill('2');await page.locator('#atomJumpInput').press('Enter');await crowd();
+ await setMode(page, 'edit');await page.locator('#atomJumpInput').fill('2');await page.locator('#atomJumpInput').press('Enter');await crowd();
  // Along the body diagonal several atoms stack; shift-click a real atom whose centre is actually the nearest hit.
  const point=await page.evaluate(()=>{const r=renderer.domElement.getBoundingClientRect();
   for(const mesh of atomMeshes.filter(m=>!m.userData.isGhost&&m.userData.atomIndex!==1)){const q=mesh.getWorldPosition(new THREE.Vector3()).project(camera);const p={x:r.left+(q.x+1)*r.width/2,y:r.top+(1-q.y)*r.height/2};
@@ -25,7 +25,7 @@ test('crowded edit checkmarks and measurement numbers stay on their atoms withou
  const edit=await markers();expect(edit).toHaveLength(2);
  for(const m of edit){expect(m.offset).toBeLessThan(1e-6);expect(m.leaders).toBe(0);expect(m.color).toBe(0x00f5d4);}
  await page.screenshot({path:info.outputPath('edit-markers.png')});
- await page.locator('#clearSelectionBtn').click();await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+ await page.locator('#clearSelectionBtn').click();await setMode(page, 'measure');
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
  await page.locator('#resetView').click();await crowd();
  const measured=await markers();expect(measured).toHaveLength(3);

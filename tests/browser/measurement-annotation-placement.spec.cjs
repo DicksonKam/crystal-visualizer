@@ -1,10 +1,10 @@
-const { test, expect } = require('./fixtures.cjs');
+const { test, expect, setMode } = require('./fixtures.cjs');
 
 for (const order of [[1, 2, 3], [2, 1, 3]]) test(`water measurement labels remain distinct in edit mode, order ${order.join('-')}`, async ({ page }, info) => {
     await page.setViewportSize({ width: 900, height: 900 });
     await page.getByRole('button', { name: 'Water H₂O molecule', exact: true }).click();
     for (const n of order) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#sidebarDivider').focus(); await page.keyboard.press('End');
     await page.locator('#resetView').click();
     await page.screenshot({ path: info.outputPath('water-annotations.png') });

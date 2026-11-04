@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 
 async function markerPoint(page) {
     await upload(page, 'marker interaction\n1\n8 0 0\n0 8 0\n0 0 8\nH O\n3 2\nDirect\n0 .2 .2\n.6 .2 .2\n.6 .7 .2\n.3 .4 .5\n.8 .8 .7\n', 'marker.poscar');
@@ -29,7 +29,7 @@ test('visible numbered marker edges select the atom in measure mode', async ({ p
 
 test('visible numbered marker edges drag their boundary atom in edit mode', async ({ page }, info) => {
     const point = await markerPoint(page);
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.screenshot({ path: info.outputPath('marker-before-drag.png') });
     const before = await page.evaluate(() => currentStructure.atoms[0].position.toArray());
     await page.mouse.move(point.x, point.y); await page.mouse.down();

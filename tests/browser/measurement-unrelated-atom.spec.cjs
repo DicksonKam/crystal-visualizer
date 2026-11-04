@@ -1,11 +1,11 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
 test('adding an unselected smaller atom does not shrink an existing measurement', async ({ page }, info) => {
     await upload(page, await fs.readFile(path.join(__dirname, '../../examples/poscar/Al_fcc_cartesian.poscar'), 'utf8'), 'Al.poscar');
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     // Read the rendered size after reconstruction has reached the animation loop.
     // Undo/redo creates sprites synchronously; their CSS-pixel sizing occurs there.
     const sizes = () => page.evaluate(async () => {

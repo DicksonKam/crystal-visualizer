@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 
 async function annotationSizes(page) {
     return page.evaluate(() => {
@@ -30,7 +30,7 @@ for (const deviceScaleFactor of [1, 2]) test.describe(`annotation CSS sizing at 
     }
     const geometry = () => page.evaluate(() => ({ atoms: currentStructure.atoms.map(atom => atom.position.toArray()), lattice: currentStructure.lattice }));
     const original = await geometry();
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#sidebarDivider').focus(); await page.keyboard.press('End');
     await page.locator('#resetView').click();
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));

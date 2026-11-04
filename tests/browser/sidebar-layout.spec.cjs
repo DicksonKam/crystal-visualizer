@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, '../../examples/poscar/Al_fcc_cartesian.poscar'), 'utf8');
@@ -67,7 +67,7 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     await page.setViewportSize({width:390,height:844});
     const {sourceFor}=require('../stress/edit-scenario.cjs');
     await upload(page,sourceFor(2).content,'tilted.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const threshold=await page.locator('#fixZThreshold').boundingBox();
     const unit=await page.locator('.sd-batch-row > span').boundingBox();
     expect(Math.abs((threshold.y+threshold.height/2)-(unit.y+unit.height/2))).toBeLessThan(2);
@@ -81,9 +81,9 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     expect(overflow.content).toBeLessThanOrEqual(overflow.width+1);
     await page.locator('.sidebar').evaluate(e=>{e.scrollTop=0;});
     await page.screenshot({path:testInfo.outputPath('narrow-info.png')});
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     for(const number of [1,2]) { await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#addAtomX').fill('.25');
     const preserved=await page.locator('.sidebar').evaluate(e=>({left:e.scrollLeft,width:e.clientWidth,content:e.scrollWidth}));
     expect(preserved.left).toBe(0); expect(preserved.content).toBeLessThanOrEqual(preserved.width+1);
@@ -95,7 +95,7 @@ test('constraint threshold and its unit stay together across intermediate panel 
     await page.setViewportSize({width:900,height:760});
     const {sourceFor}=require('../stress/edit-scenario.cjs');
     await upload(page,sourceFor(2).content,'tilted.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     for (const width of [220,240,260]) {
         await dragDivider(page,width);
         await page.locator('#fixZThreshold').scrollIntoViewIfNeeded();

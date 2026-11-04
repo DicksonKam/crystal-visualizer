@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const fs=require('node:fs/promises');
 const path=require('node:path');
 test('ordinary rotated perovskite retains readable and selectable measurement point numbers',async({page},info)=>{
@@ -36,7 +36,7 @@ test('a point marker in a crowded view starts the correct atom drag and survives
  test.setTimeout(90000);await page.setViewportSize({width:1280,height:800});
  await upload(page,await fs.readFile(path.join(__dirname,'../../examples/poscar/SrTiO3_perovskite.vasp'),'utf8'),'SrTiO3_perovskite.vasp');
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
- await page.locator('[data-mode="edit"]').click();await page.locator('#resetView').click();await page.waitForTimeout(300);
+ await setMode(page, 'edit');await page.locator('#resetView').click();await page.waitForTimeout(300);
  // Look along the body diagonal so the perovskite's atoms crowd together on screen.
  await page.evaluate(()=>{cameraController.setPose(cameraMath.fit(getStructureBounds(),cameraMath.orientation([1,.8,1],[0,1,0]),perspectiveCamera.aspect),'fit');clearManualCameraMotion();requestRender();});
  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));

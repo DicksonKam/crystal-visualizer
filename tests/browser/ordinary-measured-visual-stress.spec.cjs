@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { checkMeasurement, compareGeometry, checkBondRefresh } = require('./measurement-edit-helpers.cjs');
 const fs = require('node:fs/promises');
 const path = require('node:path');
@@ -16,7 +16,7 @@ for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rock
                 await page.locator('#atomJumpInput').fill(String(n));
                 await page.locator('#atomJumpInput').press('Enter');
             }
-            await page.locator('[data-mode="edit"]').click();
+            await setMode(page, 'edit');
             await page.locator('#resetView').click();
             for (let cycle = 0; cycle < 6; cycle++) {
                 const before = await checkMeasurement(page);
@@ -63,7 +63,7 @@ for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rock
                 await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry,before.geometry);
                 await page.locator('#redoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry,placed.geometry);
                 await checkBondRefresh(page);
-                await page.locator('[data-mode="edit"][aria-pressed="true"]').click(); await page.locator('[data-mode="edit"]').click();
+                await setMode(page, 'measure'); await setMode(page, 'edit');
                 await checkMeasurement(page);
                 await page.screenshot({path:info.outputPath(`${cycle}-history-and-mode.png`)});
             }

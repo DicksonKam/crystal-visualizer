@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
@@ -24,7 +24,7 @@ for (const axes of [['a'], ['b'], ['c'], ['a', 'b', 'c']]) test(`measured period
     await page.mouse.click(point.x, point.y);
     const positions = () => page.evaluate(() => selectedAtoms.map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()).toArray()));
     const before = await positions(); expect(before).toHaveLength(3);
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.screenshot({ path: info.outputPath('measured-periodic-copy.png') });
     await page.locator('#makeSupercellBtn').click();
     await page.screenshot({ path: info.outputPath('converted-measurement.png') });

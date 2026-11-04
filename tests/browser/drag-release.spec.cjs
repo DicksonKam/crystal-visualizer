@@ -1,6 +1,6 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 for(const interrupt of ['blur','capture-loss'])test('release UI refresh cannot roll back a committed mouse move: '+interrupt,async({page},info)=>{
- await upload(page,'2\ncommit race\nH -1 0 0\nO 1 0 0\n','race.xyz');await page.locator('[data-mode="edit"]').click();
+ await upload(page,'2\ncommit race\nH -1 0 0\nO 1 0 0\n','race.xyz');await setMode(page, 'edit');
  await page.getByRole('button',{name:'Reset View',exact:true}).click();await page.waitForFunction(()=>cameraController.phase==='idle');
  const p=await page.evaluate(()=>{const r=renderer.domElement.getBoundingClientRect();camera.updateWorldMatrix(true,false);structureGroup.updateWorldMatrix(true,true);const p=atomMeshes[0].getWorldPosition(new THREE.Vector3()).project(camera);return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};});
  const before=await page.evaluate(()=>currentStructure.atoms[0].position.toArray());

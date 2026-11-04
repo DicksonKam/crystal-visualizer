@@ -138,14 +138,14 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
             log.push({ startupPanelReopened: true });
         }
         // Start with the everyday measure-then-edit workflow rather than an empty selection.
-        await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+        if (await page.locator('#editToggle').getAttribute('aria-pressed') === 'true') await page.locator('#editToggle').click();
         const numberToMeasure = Math.min(3, await page.evaluate(() => currentStructure.atoms.length));
         for (let number = 1; number <= numberToMeasure; number++) {
             await page.locator('#atomJumpInput').fill(String(number));
             await page.locator('#atomJumpInput').press('Enter');
         }
-        const editMode = page.locator('[data-mode="edit"]');
-        if (await editMode.isEnabled()) await editMode.click();
+        const editMode = page.locator('#editToggle');
+        if (await editMode.isEnabled() && await editMode.getAttribute('aria-pressed') !== 'true') await editMode.click();
     }
     const known = new Map(); const counts = {}, operations = {};
     let previous = await capture(page);
@@ -197,7 +197,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 const r=await page.locator('canvas[aria-label^="3D structure"]').boundingBox();
                 await page.mouse.move(r.x+r.width/2,r.y+r.height/2); record.delta=integer(2)?120:-120;
                 await page.mouse.wheel(0,record.delta);
-            } else if (action === 'mode') await click(`[data-mode="${previous.selection.mode === 'edit' ? 'measure' : 'edit'}"]`);
+            } else if (action === 'mode') await click('#editToggle'); // one toggle: always the other mode
             else if (action === 'jump') {
                 if (!previous.atomCount) performed = false;
                 else { const number = integer(previous.atomCount)+1; record.number = number; await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }

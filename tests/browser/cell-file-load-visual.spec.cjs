@@ -1,4 +1,4 @@
-const {test,expect,upload}=require('./fixtures.cjs');
+const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const {capture,sourceFor}=require('../stress/edit-scenario.cjs');
 const {createVisualObserver}=require('../stress/visual-observer.cjs');
 const fs=require('node:fs/promises');
@@ -37,7 +37,7 @@ for(const outcome of ['accept','decline','invalid'])for(const resize of [false,t
         test.setTimeout(120000);await page.setViewportSize({width:900,height:760});
         await upload(page,sourceFor(1).content,'original.poscar');
         for(const n of [1,2]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         const before=await capture(page);await dragFrame(page);
         expect((await capture(page)).geometry).not.toEqual(before.geometry);
         const directory=info.outputPath('visual');await fs.mkdir(directory,{recursive:true});

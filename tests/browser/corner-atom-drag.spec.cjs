@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { checkMeasurement, compareGeometry } = require('./measurement-edit-helpers.cjs');
 const path = require('node:path');
 
@@ -15,7 +15,7 @@ for (const [name, direction] of [['corner', [1,1,1]], ['edge', [1,1,0]]]) {
             await page.locator('#atomJumpInput').fill(String(n));
             await page.locator('#atomJumpInput').press('Enter');
         }
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         await page.evaluate(direction => {
             cameraController.setPose(cameraMath.fit(getStructureBounds(), cameraMath.orientation(direction,[0,1,0]), perspectiveCamera.aspect), 'fit');
             clearManualCameraMotion(); requestRender();

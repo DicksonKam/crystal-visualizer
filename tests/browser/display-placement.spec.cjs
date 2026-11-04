@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -15,7 +15,7 @@ async function placement(page) {
 
 test('editing and undo preserve the world positions of untouched atoms', async ({ page }, info) => {
     await upload(page, fs.readFileSync(path.join(__dirname, '../../examples/xyz/H2O.xyz'), 'utf8'), 'water.xyz');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.locator('#atomJumpInput').fill('1');
     await page.locator('#atomJumpInput').press('Enter');
     const before = await placement(page);

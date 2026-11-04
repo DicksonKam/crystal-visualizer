@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 
 const cells = {
     cubic: [[10, 0, 0], [0, 10, 0], [0, 0, 10]],
@@ -44,7 +44,7 @@ async function handlePoint(page, extendAxis = 'a', handleType = 'far') {
 for (const [name, lattice] of Object.entries(cells)) {
     test(`${name} cell image is unaffected by resize hitboxes at aligned directions and zoom levels`, async ({ page }) => {
         await upload(page, poscar(lattice), `${name}.poscar`);
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         const result = await page.evaluate(() => {
             // The synchronous sweep cannot race the app's animation loop.
             cancelCameraAlignment();
@@ -103,7 +103,7 @@ for (const [name, lattice] of Object.entries(cells)) {
 
 test('picking-only handles remain immediately pickable and do not affect camera bounds', async ({ page }) => {
     await upload(page, poscar(cells.skewed), 'skewed.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const failures = [];
     for (const axis of [0, 1, 2]) for (const sign of [-1, 1]) {
         await align(page, axis, sign);
@@ -136,7 +136,7 @@ test('picking-only handles remain immediately pickable and do not affect camera 
 
 test('handle references refresh after rebuilds and disappear when the cell or edit mode is hidden', async ({ page }) => {
     await upload(page, poscar(cells.cubic), 'frame.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await align(page);
     const rebuilt = await page.evaluate(() => {
         const old = [...vacuumDragState.handles];
@@ -154,9 +154,9 @@ test('handle references refresh after rebuilds and disappear when the cell or ed
     expect(await page.evaluate(() => ({ active: vacuumDragState.active, handles: vacuumDragState.handles.length, edges: unitCellEdgeLines.length }))).toEqual({ active: false, handles: 0, edges: 0 });
     await page.locator('#showCell').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(0);
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
     await page.locator('#resetView').click();
     expect(await page.evaluate(() => vacuumDragState.handles.length)).toBe(0);
@@ -168,7 +168,7 @@ test('handle references refresh after rebuilds and disappear when the cell or ed
 for (const [name, lattice] of Object.entries(cells)) {
     test(`${name} pointer resizing keeps hover, Escape, undo and redo working with picking-only handles`, async ({ page }) => {
         await upload(page, poscar(lattice), 'frame.poscar');
-        await page.locator('[data-mode="edit"]').click();
+        await setMode(page, 'edit');
         await align(page);
         const originalLength = Math.hypot(...lattice[0]);
         const length = () => page.evaluate(() => getLatticeVector(currentStructure.lattice, 0).length());
@@ -212,7 +212,7 @@ for (const [name, lattice] of Object.entries(cells)) {
 
 test('axis alignment and wheel input restore handles without obsolete transitions', async ({ page }) => {
     await upload(page, poscar(cells.cubic), 'frame.poscar');
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.evaluate(() => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[1]), performance.now(), 'explicit', '-a'));
     await expect(page.locator('#statusText')).toContainText('Aligned to -a axis');
     await expect.poll(() => page.evaluate(() => vacuumDragState.handles.length)).toBe(8);
@@ -222,10 +222,10 @@ test('axis alignment and wheel input restore handles without obsolete transition
     await expect.poll(() => page.evaluate(() => cameraController.phase === 'idle' && vacuumDragState.handles.length === 8)).toBe(true);
     // Mode changes cancel a real transition before its completion can restore handles.
     await page.evaluate(() => cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[4]), performance.now(), 'explicit', '+c'));
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     await page.waitForTimeout(400);
     expect(await page.evaluate(() => ({ phase: cameraController.phase, handles: vacuumDragState.handles.length }))).toEqual({ phase: 'idle', handles: 0 });
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await page.evaluate(() => {
         cameraController.align(cameraMath.canonical(cameraMath.axes(currentStructure.lattice)[0]), performance.now(), 'explicit', '+a');
         loadStructureFromText('1\nmolecule\nH 0 0 0\n', 'replacement.xyz');

@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const source = 'boundary\n1\n10 0 0\n0 10 0\n0 0 10\nH\n3\nCartesian\n.1 0 0\n9.9 0 0\n9.9 2 0\n';
 async function select(page, number) {
     await page.locator('#atomJumpInput').fill(String(number));
@@ -74,11 +74,11 @@ test('mode changes, clear, undo and document replacement dispose and restore act
         for (const [id, resource] of resources) resource.addEventListener('dispose', () => window.measurementDisposals.push(id));
         return [...resources.keys()].sort();
     });
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     await expect(page.locator('#measurementPanel')).toContainText('9.8000 Å');
     expect((await state(page)).points).toEqual(original.points);
     await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     await page.locator('#clearSelectionBtn').click();
     expect((await state(page)).lines).toHaveLength(0);
     const disposals = await page.evaluate(() => window.measurementDisposals);
@@ -132,7 +132,7 @@ test('explicit ghost selections measure their world positions without substituti
 test('canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry', async ({ page }) => {
     await upload(page, '3\nrollback\nH 0 0 0\nH 2 0 0\nH 2 2 0\n', 'rollback.xyz');
     for (const n of [1, 2, 3]) await select(page, n);
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const before = await state(page);
     const historyBefore = await page.evaluate(() => editHistory.undoStack.length);
     const point = await page.evaluate(() => {

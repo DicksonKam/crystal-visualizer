@@ -1,4 +1,4 @@
-const { test, expect, upload } = require('./fixtures.cjs');
+const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 const { compareGeometry, checkMeasurement, dragTarget } = require('./measurement-edit-helpers.cjs');
 
@@ -12,7 +12,7 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
     await upload(page, `measured editing\n1\n${lattice}\n${species}\n3 2\nDirect\n0 .2 .2\n.6 .2 .2\n.6 .7 .2\n.3 .4 .5\n.8 .8 .7\n`, 'measured-editing.poscar');
     await info.attach('variant', { body: JSON.stringify({ variant, lattice, species }), contentType: 'application/json' });
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
-    await page.locator('[data-mode="edit"]').click();
+    await setMode(page, 'edit');
     const snap = async name => page.screenshot({ path: info.outputPath(`${name}.png`) });
     await checkMeasurement(page); await snap('initial');
     for (let cycle = 0; cycle < 4; cycle++) {
@@ -35,8 +35,8 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
         await page.locator('#addAtomBtn').click(); await checkMeasurement(page); await snap(`${cycle}-add`);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await page.locator('#redoBtn').click(); await checkMeasurement(page);
-        await page.locator('[data-mode="edit"][aria-pressed="true"]').click(); await checkMeasurement(page);
-        await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+        await setMode(page, 'measure'); await checkMeasurement(page);
+        await setMode(page, 'edit'); await checkMeasurement(page);
         // Rebuild the scene through ordinary display and periodic controls
         // while the same three-point measurement remains active.
         const displayId = ['showFixedIndicators', 'showLabels'][(variant + cycle) % 2];
@@ -78,9 +78,9 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
     await page.locator('#undoBtn').click();
     // Start a fresh measurement branch after restoring the deleted atom.
-    await page.locator('[data-mode="edit"][aria-pressed="true"]').click();
+    await setMode(page, 'measure');
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await checkMeasurement(page);
-    await page.locator('[data-mode="edit"]').click(); await checkMeasurement(page);
+    await setMode(page, 'edit'); await checkMeasurement(page);
     await snap('final');
 });

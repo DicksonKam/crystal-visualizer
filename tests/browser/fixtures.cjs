@@ -24,4 +24,13 @@ async function hideBonds(page) {
     await page.locator('#bondThreshold').fill('0');
 }
 
-module.exports = { test, expect, upload, hideBonds };
+// Edit is one toggle, so a test sets a mode rather than clicking a mode button.
+// Asking for the mode the viewer is already in does nothing, as clicking the
+// old Measure or Edit button did.
+async function setMode(page, mode) {
+    const toggle = page.locator('#editToggle');
+    const editing = await toggle.getAttribute('aria-pressed') === 'true';
+    if (editing !== (mode === 'edit')) await toggle.click();
+}
+
+module.exports = { test, expect, upload, hideBonds, setMode };

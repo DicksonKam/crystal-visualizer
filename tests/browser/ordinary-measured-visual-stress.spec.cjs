@@ -9,7 +9,8 @@ for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rock
     test.describe(`${source} DPR ${dpr}`, () => {
         test.use({ deviceScaleFactor: dpr });
         test('measured editing remains coherent through rotation and panel gestures', async ({ page }, info) => {
-            test.setTimeout(240000);
+            // Up to 2.5 minutes on a good CI runner and twice that on a slow one.
+            test.setTimeout(600000);
             await upload(page, await fs.readFile(path.join(__dirname, '../../examples', source), 'utf8'), path.basename(source));
             await page.locator('#showLabels').check();
             for (const n of [2, 1, 3]) {

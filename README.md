@@ -2,7 +2,7 @@
 
 View, measure and edit crystal structures in your browser: open a VASP POSCAR, XYZ or XDATCAR file and nothing needs installing.
 
-![Crystal Visualizer showing a SrTiO₃ perovskite cell with a measured Ti–O bond angle](docs/images/viewer.png)
+![Crystal Visualizer: rotating a silicon diamond cell, measuring a Ti–O angle in SrTiO₃, and playing a water trajectory](docs/images/demo.gif)
 
 **▶ [Try it in your browser](https://dicksonkam.github.io/crystal-visualizer/)** — drop a file onto the page or pick a built-in example.
 

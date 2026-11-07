@@ -40,7 +40,7 @@ The app is a static site. `app.js` adapts the pure modules (`geometry.js`, `docu
 
 If Crystal Visualizer helped your work, please cite it. GitHub's "Cite this repository" button reads the metadata in [CITATION.cff](CITATION.cff); in plain form:
 
-> Kam, D. (2026). *Crystal Visualizer* (Version 1.0.0) [Computer software]. https://github.com/DicksonKam/crystal-visualizer
+> Kam, D. (2026). *Crystal Visualizer* (Version 1.1.0) [Computer software]. https://github.com/DicksonKam/crystal-visualizer
 
 A DOI for the archived release will be added here once it is published on Zenodo.
 

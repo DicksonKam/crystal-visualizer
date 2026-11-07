@@ -2,12 +2,12 @@ cff-version: 1.2.0
 message: "If you use Crystal Visualizer in your work, please cite it as below."
 type: software
 title: "Crystal Visualizer"
-abstract: "A browser-based viewer and editor for atomic structures: opens VASP POSCAR, XYZ and XDATCAR files, measures distances and angles, edits coordinates and cells, previews periodic images and exports structures, images and movies. Nothing to install."
+abstract: "A browser-based viewer and editor for atomic structures: opens CIF, VASP POSCAR, XYZ and XDATCAR files, measures distances and angles, edits coordinates and cells, previews periodic images and exports structures, images and movies. Nothing to install."
 authors:
   - family-names: Kam
     given-names: Dickson
-version: 1.0.0
-date-released: 2026-11-07
+version: 1.1.0
+date-released: 2026-11-08
 license: MIT
 repository-code: "https://github.com/DicksonKam/crystal-visualizer"
 url: "https://dicksonkam.github.io/crystal-visualizer/"

@@ -6,6 +6,24 @@ const SILICON = 'Si\n1.0\n5.43 0 0\n0 5.43 0\n0 0 5.43\nSi\n2\nDirect\n0.25 0.25
 const zoomLevel = page => page.evaluate(() =>
     camera.isOrthographicCamera ? camera.zoom : 1 / camera.position.distanceTo(controls.target));
 
+// Wait until the controls' damping has settled: ten consecutive animation
+// frames without a zoom change (below 1e-4, which the damping reaches after
+// about forty frames). The damping runs only in animation frames, and a
+// headless browser drawing through SwiftShader delivers few of them in the
+// first seconds after a load (Chrome's new headless mode none at all), so a
+// fixed wait would measure a zoom that has barely begun. See docs/camera.md.
+const settle = page => page.evaluate(() => new Promise(resolve => {
+    const zoom = () => camera.isOrthographicCamera ? camera.zoom : 1 / camera.position.distanceTo(controls.target);
+    let frames = 0, stable = 0, last = zoom();
+    const check = () => {
+        const now = zoom();
+        stable = Math.abs(now / last - 1) < 1e-4 ? stable + 1 : 0;
+        last = now;
+        if (++frames >= 10 && stable >= 10) resolve(); else requestAnimationFrame(check);
+    };
+    requestAnimationFrame(check);
+}));
+
 // Dispatch wheel events at the canvas centre the way a browser does for a pinch.
 async function wheel(page, events) {
     await page.evaluate(async events => {
@@ -16,11 +34,12 @@ async function wheel(page, events) {
             await new Promise(resolve => setTimeout(resolve, 16));
         }
     }, events);
-    await page.waitForTimeout(900); // let the controls' damping settle
+    await settle(page);
 }
 
 test('a burst of small wheel events, as a trackpad scroll sends, keeps all of its input', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
+    await settle(page);
     const start = await zoomLevel(page);
     await wheel(page, [{ deltaY: -300 }]);
     const oneEvent = await zoomLevel(page);
@@ -33,6 +52,7 @@ test('a burst of small wheel events, as a trackpad scroll sends, keeps all of it
 
 test('a trackpad pinch zooms about as much as a few wheel ticks, in both directions', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
+    await settle(page);
     const start = await zoomLevel(page);
     // A pinch-in in Chrome: a dozen ctrl+wheel events with small negative deltas.
     await wheel(page, Array.from({ length: 12 }, () => ({ deltaY: -10, ctrlKey: true })));
@@ -53,6 +73,7 @@ test('a trackpad pinch zooms about as much as a few wheel ticks, in both directi
 
 test('a Safari pinch gesture zooms by its scale and the page itself does not zoom', async ({ page }) => {
     await upload(page, SILICON, 'POSCAR');
+    await settle(page);
     const start = await zoomLevel(page);
     const defaultPrevented = await page.evaluate(async () => {
         const canvas = renderer.domElement, box = canvas.getBoundingClientRect();
@@ -64,7 +85,7 @@ test('a Safari pinch gesture zooms by its scale and the page itself does not zoo
         return prevented.every(Boolean);
     });
     expect(defaultPrevented).toBe(true);
-    await page.waitForTimeout(900);
+    await settle(page);
     const zoomed = await zoomLevel(page);
     expect(zoomed / start).toBeGreaterThan(1.2);
     expect(zoomed / start).toBeLessThan(3);

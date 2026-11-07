@@ -1066,6 +1066,8 @@ function parseXDATCAR(content) { return crystalFormats.parseXDATCAR(content); }
 function isXDATCARFormat(content) { return crystalFormats.isXDATCARFormat(content); }
 function isXYZFormat(content) { return crystalFormats.isXYZFormat(content); }
 function parseXYZ(content) { return crystalFormats.parseXYZ(content); }
+function isCIFFormat(content) { return crystalFormats.isCIFFormat(content); }
+function parseCIF(content) { return crystalFormats.parseCIF(content); }
 
 function hasLattice(structure) {
     return CrystalDocument.capabilities(structure).cell;
@@ -4478,7 +4480,7 @@ function updateUI(structure) {
     const latticeC = Math.sqrt(structure.lattice[2].reduce((s, v) => s + v * v, 0)).toFixed(4);
     
     // File type badge
-    const fileType = structure.isXDATCAR ? 'xdatcar' : (structure.isXYZ ? 'xyz' : 'poscar');
+    const fileType = structure.isXDATCAR ? 'xdatcar' : structure.isXYZ ? 'xyz' : structure.isCIF ? 'cif' : 'poscar';
     const fileTypeBadge = `<span class="file-type-badge ${fileType}">${fileType.toUpperCase()}</span>`;
     
     // Frame info for XDATCAR (combined into single row)
@@ -4512,6 +4514,13 @@ function updateUI(structure) {
         <div class="info-item"><span class="info-label">β</span><span class="info-value">${cellAngle(va, vc)}°</span></div>
         <div class="info-item"><span class="info-label">γ</span><span class="info-value">${cellAngle(va, vb)}°</span></div>
         <div class="info-item"><span class="info-label">Volume</span><span class="info-value">${cellVolume} Å³</span></div>` : '';
+    // A CIF names its space group and lists an asymmetric unit; the viewer
+    // shows the expanded cell, so say where the atoms came from.
+    const cifInfo = structure.cifInfo ? `
+        <div class="info-item"><span class="info-label">Space group</span><span class="info-value" title="As named in the file">${escapeHTML(structure.cifInfo.spaceGroup || '—')}${structure.cifInfo.spaceGroupNumber ? ` (No. ${structure.cifInfo.spaceGroupNumber})` : ''}</span></div>
+        <div class="info-item"><span class="info-label">Sites</span><span class="info-value" title="Atom sites in the file × symmetry operations applied">${structure.cifInfo.sites} × ${structure.cifInfo.operations} op${structure.cifInfo.operations === 1 ? '' : 's'}</span></div>
+        <div class="info-item"><span class="info-label">Export</span><span class="info-value">POSCAR (P1 cell)</span></div>
+        ${structure.cifInfo.notices.map(notice => `<p class="info-warning" role="note">${escapeHTML(notice)}</p>`).join('')}` : '';
     
     structureInfo.innerHTML = `
         <div class="info-item"><span class="info-label">Type</span><span class="info-value">${fileTypeBadge}</span></div>
@@ -4519,6 +4528,7 @@ function updateUI(structure) {
         <div class="info-item"><span class="info-label">Title</span><span class="info-value" title="${escapeHTML(structure.comment)}">${escapeHTML(structure.comment)}</span></div>
         <div class="info-item"><span class="info-label">Total Atoms</span><span class="info-value">${structure.atoms.length}</span></div>
         ${latticeInfo}
+        ${cifInfo}
         ${structure.isXYZ && structure.hasExplicitLattice ? `<div class="info-item"><span class="info-label">Periodic axes</span><span class="info-value">${['a', 'b', 'c'].filter((_, axis) => getPeriodicAxes(structure)[axis]).join(', ') || 'None'}</span></div>` : ''}
         ${frameInfo}
         ${sdInfo}
@@ -4645,6 +4655,15 @@ const EXAMPLE_CATALOG = [
         ]
     },
     {
+        group: 'CIF',
+        items: [
+            { title: 'ZnS wurtzite', meta: 'hexagonal · P6₃mc', path: 'examples/cif/ZnS_wurtzite.cif' },
+            { title: 'TiO₂ rutile', meta: 'tetragonal · P4₂/mnm', path: 'examples/cif/TiO2_rutile.cif' },
+            { title: 'α-quartz', meta: 'trigonal · P3₂21', path: 'examples/cif/SiO2_quartz.cif' },
+            { title: 'Vanthoffite', meta: 'monoclinic · 54 atoms', path: 'examples/cif/vanthoffite_monoclinic.cif' }
+        ]
+    },
+    {
         group: 'XDATCAR',
         items: [
             { title: 'H₂ vibration', meta: '16-frame animation', path: 'examples/xdatcar/H2_vibration.xdatcar' },
@@ -4662,6 +4681,8 @@ function loadStructureFromText(content, filename, requestId = null) {
         nextStructure = parseXDATCAR(content);
     } else if (nameLower.endsWith('.xyz') || isXYZFormat(content)) {
         nextStructure = parseXYZ(content);
+    } else if (nameLower.endsWith('.cif') || isCIFFormat(content)) {
+        nextStructure = parseCIF(content);
     } else {
         nextStructure = parsePOSCAR(content);
     }
@@ -4706,6 +4727,11 @@ function loadStructureFromText(content, filename, requestId = null) {
         updateTimelineUI();
 
         statusText.textContent = `Loaded XDATCAR: ${filename} (${currentStructure.totalFrames} frames)`;
+    } else if (currentStructure.isCIF) {
+        hideTimelinePanel();
+        const info = currentStructure.cifInfo;
+        statusText.textContent = `Loaded CIF: ${filename} (${currentStructure.atoms.length} atoms from ${info.sites} site${info.sites === 1 ? '' : 's'}`
+            + `${info.spaceGroup ? `, ${info.spaceGroup}` : ''})${info.notices.length ? `. ${info.notices.join(' ')}` : ''}`;
     } else if (currentStructure.isXYZ) {
         hideTimelinePanel();
         statusText.textContent = currentStructure.hasAdditionalProperties
@@ -4729,7 +4755,8 @@ function loadStructureFromText(content, filename, requestId = null) {
     const examplesBtn = document.getElementById('examplesBtn');
     examplesBtn?.setAttribute('aria-expanded', 'false');
     if (focusWasInDropZone) examplesBtn?.focus();
-    statusText.className = currentStructure.hasAdditionalSections || currentStructure.hasAdditionalProperties ? 'warning' : 'success';
+    statusText.className = currentStructure.hasAdditionalSections || currentStructure.hasAdditionalProperties
+        || (currentStructure.cifInfo && currentStructure.cifInfo.notices.length) ? 'warning' : 'success';
     return true;
 }
 
@@ -6517,7 +6544,7 @@ function exportStructure() {
     let content, filename;
     let omittedSourceData = false;
     const sourceName = (currentFilename || 'structure').replace(/[\\/]/g, '_');
-    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar)$/i, '').replace(/(?:_edited)+$/i, '') || 'structure';
+    const stem = sourceName.replace(/\.(xyz|xdatcar|vasp|poscar|cif)$/i, '').replace(/(?:_edited)+$/i, '') || 'structure';
     
     if (currentStructure.isXDATCAR) {
         content = generateXDATCAR();

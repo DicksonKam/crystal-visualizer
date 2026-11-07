@@ -1,4 +1,5 @@
 // File parsing independent of rendering and browser state.
+// POSCAR, XDATCAR, XYZ and CIF readers; POSCAR, XYZ and XDATCAR writers.
 (function (root) {
     const { requireFiniteCell } = typeof module !== 'undefined' && module.exports ? require('./geometry.js') : root.CrystalGeometry;
     const documentModel = typeof module !== 'undefined' && module.exports ? require('./document.js') : root.CrystalDocument;
@@ -718,7 +719,363 @@
             return lines.join('\n');
         }
 
-        return { parsePOSCAR, parseXDATCAR, isXDATCARFormat, isXYZFormat, parseXYZ, generatePOSCAR, generateXYZ, generateXDATCAR, omittedXYZMetadata };
+        // ---- CIF (Crystallographic Information File) ----
+        // Reads the structural subset of CIF 1.1: cell parameters, the
+        // symmetry operations loop and the atom-site loop of one data block,
+        // and expands the asymmetric unit into a full P1 cell. Occupancies,
+        // displacement parameters and everything else are left unread.
+        const CIF_ELEMENTS = new Set(('H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr '
+            + 'Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt '
+            + 'Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og').split(' '));
+        const CIF_MAX_ATOMS = 10000;
+        const CIF_DUPLICATE_TOLERANCE = 1e-3;
+
+        function isCIFFormat(content) {
+            // A data block header alone is not enough: an XYZ comment line may start with "data_".
+            const head = String(content).slice(0, 20000);
+            const structural = /^[ \t]*(_cell[._]length_a|_atom_site[._]fract_x|_atom_site[._]cartn_x|_symmetry_equiv_pos_as_xyz|_space_group_symop[._]operation_xyz)\b/mi.test(head);
+            return structural || (/^[ \t]*data_\S/m.test(head) && /^[ \t]*(loop_|_cell|_atom_site|_symmetry|_space_group)/mi.test(head));
+        }
+
+        // CIF2 and mmCIF write categories with a dot; treat both spellings alike.
+        function normalizeCIFTag(word) {
+            return word.toLowerCase().replace('.', '_');
+        }
+
+        function tokenizeCIF(content) {
+            const tokens = [];
+            const lines = String(content).split(/\r\n|\r|\n/);
+            for (let index = 0; index < lines.length; index++) {
+                let line = lines[index];
+                if (line.startsWith(';')) {
+                    const parts = [line.slice(1)];
+                    index++;
+                    while (index < lines.length && !lines[index].startsWith(';')) parts.push(lines[index++]);
+                    if (index >= lines.length) throw new Error('Invalid CIF: a text field opened with ";" is never closed');
+                    tokens.push({ kind: 'value', value: parts.join('\n') });
+                    line = lines[index].slice(1);
+                }
+                let position = 0;
+                while (position < line.length) {
+                    const character = line[position];
+                    if (character === ' ' || character === '\t') { position++; continue; }
+                    if (character === '#') break;
+                    if (character === "'" || character === '"') {
+                        let end = position + 1;
+                        while (end < line.length && !(line[end] === character && (end + 1 >= line.length || /\s/.test(line[end + 1])))) end++;
+                        if (end >= line.length) throw new Error(`Invalid CIF: unterminated quoted string on line ${index + 1}`);
+                        tokens.push({ kind: 'value', value: line.slice(position + 1, end) });
+                        position = end + 1;
+                        continue;
+                    }
+                    let end = position;
+                    while (end < line.length && line[end] !== ' ' && line[end] !== '\t') end++;
+                    const word = line.slice(position, end);
+                    position = end;
+                    const lower = word.toLowerCase();
+                    if (word[0] === '_') tokens.push({ kind: 'tag', value: normalizeCIFTag(word) });
+                    else if (lower === 'loop_') tokens.push({ kind: 'loop' });
+                    else if (lower.startsWith('data_')) tokens.push({ kind: 'data', value: word.slice(5) });
+                    else if (lower.startsWith('save_')) tokens.push({ kind: 'save' });
+                    else if (lower === 'global_' || lower === 'stop_') tokens.push({ kind: 'reserved' });
+                    else tokens.push({ kind: 'value', value: word });
+                }
+            }
+            return tokens;
+        }
+
+        function parseCIFBlocks(tokens) {
+            const blocks = [];
+            let block = null;
+            const currentBlock = () => {
+                if (!block) {
+                    block = { name: '', items: new Map(), loops: [] };
+                    blocks.push(block);
+                }
+                return block;
+            };
+            let index = 0;
+            while (index < tokens.length) {
+                const token = tokens[index];
+                if (token.kind === 'data') {
+                    block = { name: token.value, items: new Map(), loops: [] };
+                    blocks.push(block);
+                    index++;
+                } else if (token.kind === 'tag') {
+                    const next = tokens[index + 1];
+                    if (!next || next.kind !== 'value') throw new Error(`Invalid CIF: ${token.value} has no value`);
+                    currentBlock().items.set(token.value, next.value);
+                    index += 2;
+                } else if (token.kind === 'loop') {
+                    index++;
+                    const tags = [];
+                    while (index < tokens.length && tokens[index].kind === 'tag') tags.push(tokens[index++].value);
+                    if (!tags.length) throw new Error('Invalid CIF: loop_ without column names');
+                    const values = [];
+                    while (index < tokens.length && tokens[index].kind === 'value') values.push(tokens[index++].value);
+                    if (values.length % tags.length !== 0) {
+                        throw new Error(`Invalid CIF: the ${tags[0]} loop has ${tags.length} columns but ${values.length} values`);
+                    }
+                    const rows = [];
+                    for (let start = 0; start < values.length; start += tags.length) {
+                        const row = Object.create(null);
+                        tags.forEach((tag, column) => { row[tag] = values[start + column]; });
+                        rows.push(row);
+                    }
+                    currentBlock().loops.push({ tags, rows });
+                } else {
+                    // Stray values, save frames and reserved words carry nothing this viewer uses.
+                    index++;
+                }
+            }
+            return blocks;
+        }
+
+        function cifItem(block, ...names) {
+            for (const name of names) if (block.items.has(name)) return block.items.get(name);
+            return null;
+        }
+
+        function cifLoop(block, ...names) {
+            for (const name of names) {
+                const loop = block.loops.find(candidate => candidate.tags.includes(name));
+                if (loop) return { loop, tag: name };
+            }
+            return null;
+        }
+
+        // "5.43070", "0.3748(2)" and "1.2E-3" are numbers; "." and "?" are missing values.
+        function cifNumber(value) {
+            if (value === null || value === undefined) return null;
+            const text = String(value).trim();
+            if (text === '.' || text === '?' || text === '') return null;
+            const match = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:[eEdD][+-]?\d+)?)(?:\(\d+\))?$/.exec(text);
+            return match ? Number(match[1].replace(/[dD]/, 'e')) : NaN;
+        }
+
+        function cifRequiredNumber(block, name, label) {
+            const value = cifNumber(cifItem(block, name));
+            if (value === null) throw new Error(`Invalid CIF: ${label} (${name}) is missing`);
+            if (!Number.isFinite(value)) throw new Error(`Invalid CIF: ${label} (${name}) is not a number`);
+            return value;
+        }
+
+        // Conventional Cartesian frame: a along x, b in the xy plane, c completing a right-handed cell.
+        function latticeFromCellParameters(a, b, c, alpha, beta, gamma) {
+            if ([a, b, c].some(length => !(length > 0))) throw new Error('Invalid CIF: cell lengths must be positive');
+            if ([alpha, beta, gamma].some(angle => !(angle > 0 && angle < 180))) throw new Error('Invalid CIF: cell angles must lie between 0° and 180°');
+            const radians = degrees => degrees * Math.PI / 180;
+            const cosAlpha = Math.cos(radians(alpha));
+            const cosBeta = Math.cos(radians(beta));
+            const cosGamma = Math.cos(radians(gamma));
+            const sinGamma = Math.sin(radians(gamma));
+            const volumeFactor = 1 - cosAlpha * cosAlpha - cosBeta * cosBeta - cosGamma * cosGamma + 2 * cosAlpha * cosBeta * cosGamma;
+            if (!(volumeFactor > 0)) throw new Error('Invalid CIF: cell angles do not describe a three-dimensional cell');
+            const clean = value => (Math.abs(value) < 1e-12 ? 0 : value);
+            return [
+                [a, 0, 0],
+                [clean(b * cosGamma), b * sinGamma, 0],
+                [clean(c * cosBeta), clean(c * (cosAlpha - cosBeta * cosGamma) / sinGamma), c * Math.sqrt(volumeFactor) / sinGamma]
+            ];
+        }
+
+        // "1/2-x, y, -z+1/2" becomes a 3×3 rotation and a translation in fractional units.
+        function parseSymmetryOperation(text) {
+            const parts = String(text).replace(/\s+/g, '').toLowerCase().split(',');
+            if (parts.length !== 3) throw new Error(`Invalid CIF: symmetry operation "${text}" does not have three components`);
+            const rotation = [];
+            const translation = [];
+            const term = /^([+-]?)(?:(\d+\/\d+|\d*\.\d+|\d+)\*?)?([xyz])?/;
+            for (const part of parts) {
+                const row = [0, 0, 0];
+                let shift = 0;
+                let rest = part;
+                if (!rest) throw new Error(`Invalid CIF: symmetry operation "${text}" has an empty component`);
+                while (rest.length) {
+                    const match = term.exec(rest);
+                    if (!match || !match[0].length || (!match[2] && !match[3])) {
+                        throw new Error(`Invalid CIF: cannot read symmetry operation "${text}"`);
+                    }
+                    const sign = match[1] === '-' ? -1 : 1;
+                    let coefficient = 1;
+                    if (match[2]) {
+                        const fraction = match[2].split('/');
+                        coefficient = fraction.length === 2 ? Number(fraction[0]) / Number(fraction[1]) : Number(match[2]);
+                    }
+                    if (match[3]) row['xyz'.indexOf(match[3])] += sign * coefficient;
+                    else shift += sign * coefficient;
+                    rest = rest.slice(match[0].length);
+                }
+                rotation.push(row);
+                translation.push(shift);
+            }
+            const [r0, r1, r2] = rotation;
+            const determinant = r0[0] * (r1[1] * r2[2] - r1[2] * r2[1]) - r0[1] * (r1[0] * r2[2] - r1[2] * r2[0]) + r0[2] * (r1[0] * r2[1] - r1[1] * r2[0]);
+            if (Math.abs(Math.abs(determinant) - 1) > 1e-9) throw new Error(`Invalid CIF: symmetry operation "${text}" is not a proper or improper rotation`);
+            return { rotation, translation };
+        }
+
+        function cifElementSymbol(typeSymbol, label) {
+            for (const candidate of [typeSymbol, label]) {
+                const letters = /^([A-Za-z]{1,2})/.exec(String(candidate || '').trim());
+                if (!letters) continue;
+                const text = letters[1];
+                if (text.length === 2) {
+                    const two = text[0].toUpperCase() + text[1].toLowerCase();
+                    if (CIF_ELEMENTS.has(two)) return two;
+                }
+                const one = text[0].toUpperCase();
+                if (one === 'D' || one === 'T') return 'H';
+                if (CIF_ELEMENTS.has(one)) return one;
+            }
+            return null;
+        }
+
+        function wrapFractional(value) {
+            let wrapped = value - Math.floor(value);
+            if (wrapped > 1 - 1e-6 || wrapped < 1e-6) wrapped = 0;
+            return wrapped;
+        }
+
+        function periodicallyClose(first, second, tolerance) {
+            return [0, 1, 2].every(axis => {
+                const difference = Math.abs(first[axis] - second[axis]);
+                return Math.min(difference, 1 - difference) < tolerance;
+            });
+        }
+
+        // Apply every operation to one site and keep each distinct position once.
+        function expandSite(fractional, operations) {
+            const points = [];
+            for (const { rotation, translation } of operations) {
+                const point = [0, 1, 2].map(row => wrapFractional(
+                    rotation[row][0] * fractional[0] + rotation[row][1] * fractional[1] + rotation[row][2] * fractional[2] + translation[row]));
+                if (!points.some(existing => periodicallyClose(existing, point, CIF_DUPLICATE_TOLERANCE))) points.push(point);
+            }
+            return points;
+        }
+
+        function cifSymmetryOperations(block, notices) {
+            const found = cifLoop(block, '_space_group_symop_operation_xyz', '_symmetry_equiv_pos_as_xyz');
+            if (found) {
+                const operations = found.loop.rows.map(row => parseSymmetryOperation(row[found.tag]));
+                if (!operations.length) throw new Error('Invalid CIF: the symmetry operations loop is empty');
+                return operations;
+            }
+            const symbol = cifItem(block, '_space_group_name_h-m_alt', '_symmetry_space_group_name_h-m');
+            const number = cifNumber(cifItem(block, '_space_group_it_number', '_symmetry_int_tables_number'));
+            const identity = [parseSymmetryOperation('x,y,z')];
+            if (!symbol && !number) {
+                notices.push('No space group or symmetry operations are listed, so the atom sites are shown as given.');
+                return identity;
+            }
+            if (number === 1 || (symbol && symbol.replace(/\s+/g, '').toLowerCase() === 'p1')) return identity;
+            throw new Error(`Invalid CIF: space group ${symbol || `No. ${number}`} is named but no symmetry operations are listed. `
+                + 'This viewer needs the _symmetry_equiv_pos_as_xyz or _space_group_symop_operation_xyz loop, which VESTA, the Materials Project and COD write.');
+        }
+
+        function parseCIF(content) {
+            const blocks = parseCIFBlocks(tokenizeCIF(content));
+            const structural = blocks.filter(block => cifLoop(block, '_atom_site_fract_x', '_atom_site_cartn_x'));
+            if (!structural.length) throw new Error('Invalid CIF: no atom sites found (no _atom_site_fract_x loop)');
+            const block = structural[0];
+            const notices = [];
+            if (structural.length > 1) notices.push(`The file has ${structural.length} data blocks with atoms; only the first (${block.name || 'unnamed'}) is shown.`);
+
+            const lattice = latticeFromCellParameters(
+                cifRequiredNumber(block, '_cell_length_a', 'cell length a'),
+                cifRequiredNumber(block, '_cell_length_b', 'cell length b'),
+                cifRequiredNumber(block, '_cell_length_c', 'cell length c'),
+                cifRequiredNumber(block, '_cell_angle_alpha', 'cell angle alpha'),
+                cifRequiredNumber(block, '_cell_angle_beta', 'cell angle beta'),
+                cifRequiredNumber(block, '_cell_angle_gamma', 'cell angle gamma'));
+            requireFiniteCell(lattice, 'CIF');
+
+            const operations = cifSymmetryOperations(block, notices);
+            const { loop: siteLoop } = cifLoop(block, '_atom_site_fract_x', '_atom_site_cartn_x');
+            const hasFractional = siteLoop.tags.includes('_atom_site_fract_x');
+            if (siteLoop.rows.length * operations.length > CIF_MAX_ATOMS * 20) {
+                throw new Error(`CIF too large: ${siteLoop.rows.length} sites × ${operations.length} operations exceed what this viewer can display`);
+            }
+
+            const sites = [];
+            let skippedSites = 0;
+            let partialOccupancy = 0;
+            siteLoop.rows.forEach((row, rowIndex) => {
+                const label = row._atom_site_label || row._atom_site_type_symbol || `site ${rowIndex + 1}`;
+                const axes = hasFractional
+                    ? ['_atom_site_fract_x', '_atom_site_fract_y', '_atom_site_fract_z']
+                    : ['_atom_site_cartn_x', '_atom_site_cartn_y', '_atom_site_cartn_z'];
+                const values = axes.map(tag => cifNumber(row[tag]));
+                if (values.some(value => value === null)) { skippedSites++; return; }
+                if (!values.every(Number.isFinite)) throw new Error(`Invalid CIF: coordinates of site ${label} are not finite numbers`);
+                let fractional = values;
+                if (!hasFractional) {
+                    fractional = cartesianToFractional({ x: values[0], y: values[1], z: values[2] }, lattice);
+                    if (!fractional || !fractional.every(Number.isFinite)) throw new Error(`Invalid CIF: Cartesian coordinates of site ${label} cannot be placed in the cell`);
+                }
+                const element = cifElementSymbol(row._atom_site_type_symbol, row._atom_site_label);
+                if (!element) throw new Error(`Invalid CIF: cannot tell the element of site ${label}`);
+                const occupancy = cifNumber(row._atom_site_occupancy);
+                if ((Number.isFinite(occupancy) && occupancy < 1) || (row._atom_site_disorder_group && row._atom_site_disorder_group !== '.')) partialOccupancy++;
+                sites.push({ label, element, fractional });
+            });
+            if (!sites.length) throw new Error('Invalid CIF: every atom site is missing coordinates');
+            if (skippedSites) notices.push(`${skippedSites} atom site${skippedSites === 1 ? ' has' : 's have'} no coordinates and ${skippedSites === 1 ? 'is' : 'are'} left out.`);
+            if (partialOccupancy) notices.push(`${partialOccupancy} site${partialOccupancy === 1 ? ' is' : 's are'} partially occupied or disordered; every position is shown.`);
+
+            const elements = [];
+            const atomsByElement = new Map();
+            let total = 0;
+            for (const site of sites) {
+                const points = expandSite(site.fractional, operations);
+                total += points.length;
+                if (total > CIF_MAX_ATOMS) throw new Error(`CIF too large: more than ${CIF_MAX_ATOMS.toLocaleString()} atoms after applying the symmetry operations`);
+                if (!atomsByElement.has(site.element)) {
+                    elements.push(site.element);
+                    atomsByElement.set(site.element, []);
+                }
+                const list = atomsByElement.get(site.element);
+                for (const fractional of points) {
+                    const x = fractional[0] * lattice[0][0] + fractional[1] * lattice[1][0] + fractional[2] * lattice[2][0];
+                    const y = fractional[0] * lattice[0][1] + fractional[1] * lattice[1][1] + fractional[2] * lattice[2][1];
+                    const z = fractional[0] * lattice[0][2] + fractional[1] * lattice[1][2] + fractional[2] * lattice[2][2];
+                    if (![x, y, z].every(Number.isFinite)) throw new Error(`Invalid CIF: a position of site ${site.label} is not finite`);
+                    list.push({ element: site.element, position: new Vector3(x, y, z), fractional, selectiveDynamics: [true, true, true], siteLabel: site.label });
+                }
+            }
+            const atoms = elements.flatMap(element => atomsByElement.get(element));
+            const counts = elements.map(element => atomsByElement.get(element).length);
+
+            const spaceGroup = cifItem(block, '_space_group_name_h-m_alt', '_symmetry_space_group_name_h-m');
+            const spaceGroupNumber = cifNumber(cifItem(block, '_space_group_it_number', '_symmetry_int_tables_number'));
+            const comment = cifItem(block, '_chemical_name_mineral', '_chemical_name_common', '_chemical_name_systematic', '_chemical_formula_sum')
+                || (block.name ? `CIF ${block.name}` : 'CIF structure');
+
+            return documentModel.initialize({
+                comment: String(comment).replace(/\s+/g, ' ').trim(),
+                scale: 1,
+                lattice,
+                elements,
+                counts,
+                hasElementSymbols: true,
+                atoms,
+                isDirect: true,
+                hasSelectiveDynamics: false,
+                hasAdditionalSections: false,
+                isXDATCAR: false,
+                isCIF: true,
+                cifInfo: {
+                    spaceGroup: spaceGroup ? String(spaceGroup).trim() : null,
+                    spaceGroupNumber: Number.isFinite(spaceGroupNumber) ? spaceGroupNumber : null,
+                    operations: operations.length,
+                    sites: sites.length,
+                    notices
+                }
+            });
+        }
+
+        return { parsePOSCAR, parseXDATCAR, isXDATCARFormat, isXYZFormat, parseXYZ, isCIFFormat, parseCIF, generatePOSCAR, generateXYZ, generateXDATCAR, omittedXYZMetadata };
     }
 
     const api = { createFormats };

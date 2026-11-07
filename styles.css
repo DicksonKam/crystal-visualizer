@@ -1930,6 +1930,11 @@ body.edit-mode-active .panel-title {
     color: #fee440;
 }
 
+.file-type-badge.cif {
+    background: rgba(241, 91, 181, 0.2);
+    color: var(--accent-pink);
+}
+
 /* Responsive timeline */
 @media (max-width: 768px) {
     .timeline-controls {

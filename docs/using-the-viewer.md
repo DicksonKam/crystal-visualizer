@@ -14,7 +14,7 @@ Use **Find atom by number** in the Atoms panel to select and center an atom that
 
 ## Structure information
 
-Structure Info lists the file, title, atom count, the cell lengths a, b, c, the angles α, β, γ and the cell volume, and for POSCAR files a summary of selective-dynamics constraints.
+Structure Info lists the file, title, atom count, the cell lengths a, b, c, the angles α, β, γ and the cell volume, for CIF files the space group, site and operation counts, and for POSCAR files a summary of selective-dynamics constraints.
 
 ## Atoms, bonds and colours
 

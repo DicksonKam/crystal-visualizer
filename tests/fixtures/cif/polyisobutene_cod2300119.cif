@@ -1,0 +1,109 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-21 11:56:54 +0200 (Sun, 21 Feb 2016) $
+#$Revision: 176809 $
+#$URL: file:///home/coder/svn-repositories/_RELOADED_COD/cod-reloaded/cif/2/30/01/2300119.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided by IUCr Journals, http://journals.iucr.org/.
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_2300119
+loop_
+_publ_author_name
+'Immirzi, Attilio'
+'Alfano, Davide'
+'Tedesco, Consiglia'
+_publ_section_title
+;
+ New solutions to the problems of chain orientation and chain
+ continuity in structure analysis of fibrous polymers. A
+ reconsideration of the structure of polyisobutene
+;
+_journal_coeditor_code           DB5009
+_journal_issue                   1
+_journal_name_full               'Journal of Applied Crystallography'
+_journal_page_first              10
+_journal_page_last               15
+_journal_paper_doi               10.1107/S0021889806044955
+_journal_volume                  40
+_journal_year                    2007
+_space_group_IT_number           19
+_symmetry_space_group_name_Hall  'P 2ac 2ab'
+_symmetry_space_group_name_H-M   'P 21 21 21'
+_audit_creation_method           TRY
+_cell_angle_alpha                90.00
+_cell_angle_beta                 90.00
+_cell_angle_gamma                90.00
+_cell_length_a                   6.880
+_cell_length_b                   11.910
+_cell_length_c                   18.600
+_cell_volume                     1524.099
+_cod_data_source_file            db5009.cif
+_cod_data_source_block           yill
+_cod_original_sg_symbol_H-M      '    '
+_cod_database_code               2300119
+loop_
+_symmetry_equiv_pos_as_xyz
+' 1/2-x  ,      -y  ,   1/2+z    '
+' 1/2+x  ,   1/2-y  ,      -z    '
+'    +x  ,      +y  ,      +z    '
+'    -x  ,   1/2+y  ,   1/2-z    '
+loop_
+_atom_site_type_symbol
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C C1 0.3421 0.0540 0.0442
+C C2 0.3256 0.0372 0.1261
+C C3 0.1453 0.0277 0.1748
+C C4 0.2067 0.0307 0.2544
+C C5 0.3640 -0.0362 0.2948
+C C6 0.3271 -0.0305 0.3764
+C C7 0.2834 0.0706 0.4254
+C C8 0.2837 0.0335 0.5047
+C C9 0.2716 0.1728 0.0246
+C c10 0.5557 0.0398 0.0212
+C C11 0.0401 -0.0837 0.1591
+C C12 0.0074 0.1267 0.1593
+C C13 0.5651 0.0141 0.2780
+C C14 0.3580 -0.1596 0.2702
+C C15 0.0825 0.1190 0.4062
+C C16 0.4403 0.1612 0.4141
+H H17 0.3962 0.0995 0.1458
+H H18 0.3951 -0.0314 0.1348
+H H19 0.0892 0.0136 0.2799
+H H20 0.2423 0.1077 0.2623
+H H21 0.4419 -0.0631 0.3970
+H H22 0.2180 -0.0795 0.3836
+H H23 0.2608 0.1018 0.5307
+H H24 0.4144 0.0082 0.5127
+H H25 0.3491 0.2280 0.0489
+H H26 0.1382 0.1821 0.0386
+H H27 0.2822 0.1844 -0.0263
+H H28 0.6356 0.0939 0.0456
+H H29 0.5678 0.0507 -0.0297
+H H30 0.6004 -0.0342 0.0332
+H H31 -0.0726 -0.0905 0.1892
+H H32 0.1255 -0.1458 0.1685
+H H33 0.0002 -0.0863 0.1097
+H H34 -0.1056 0.1216 0.1894
+H H35 -0.0326 0.1253 0.1099
+H H36 0.0724 0.1965 0.1688
+H H37 0.6643 -0.0270 0.3029
+H H38 0.5695 0.0912 0.2930
+H H39 0.5900 0.0105 0.2273
+H H40 0.4556 -0.2022 0.2951
+H H41 0.3819 -0.1642 0.2194
+H H42 0.2328 -0.1914 0.2803
+H H43 0.0538 0.1821 0.4364
+H H44 -0.0159 0.0628 0.4129
+H H45 0.0810 0.1430 0.3569
+H H46 0.4144 0.2247 0.4444
+H H47 0.4406 0.1854 0.3649
+H H48 0.5660 0.1314 0.4258

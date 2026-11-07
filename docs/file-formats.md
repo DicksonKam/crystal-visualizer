@@ -1,6 +1,6 @@
 # File formats
 
-Crystal Visualizer opens VASP POSCAR structures, ordinary and lattice-bearing XYZ files, and XDATCAR trajectories, and exports each back in its own format. This page records exactly how each format is read, validated and written.
+Crystal Visualizer opens CIF files, VASP POSCAR structures, ordinary and lattice-bearing XYZ files, and XDATCAR trajectories. POSCAR, XYZ and XDATCAR export back in their own format; a CIF exports as POSCAR. This page records exactly how each format is read, validated and written.
 
 ## POSCAR
 
@@ -19,6 +19,16 @@ Crystal Visualizer opens VASP POSCAR structures, ordinary and lattice-bearing XY
 
 XYZ configuration metadata is separate from the human description. After geometry changes, export asks before omitting potentially stale results such as energy, stress, virial, and unknown metadata fields. Only descriptive fields (`name`, `label`, `comment`, and `config_type`) are retained automatically. Undoing back to the original geometry permits preservation of its source metadata again. Quoted metadata values are read as complete values, so text such as `label="pbc=F"` does not change periodicity.
 
+## CIF
+
+- Reads the structural part of a CIF 1.1 file: `_cell_length_*` and `_cell_angle_*`, the symmetry operations loop (`_symmetry_equiv_pos_as_xyz` or `_space_group_symop_operation_xyz`), and the `_atom_site_*` loop with fractional (or, failing that, Cartesian) coordinates. CIF2 and mmCIF dotted tags such as `_atom_site.fract_x` are accepted. Comments, quoted strings, `;` text fields and save frames are handled; uncertainties such as `0.3748(2)` are read as the value.
+- The cell becomes a lattice with **a** along x and **b** in the xy plane. Every operation is applied to every site, positions are wrapped into the cell, and positions of the same site closer than 0.001 (fractional) are kept once, so the viewer shows the full P1 cell exactly as VESTA does. The source site label is kept on each atom.
+- Elements come from `_atom_site_type_symbol` (charges such as `O2-` or `Si+4` are dropped), otherwise from the leading letters of the label; `D` and `T` count as hydrogen. Species groups follow the order in which elements first appear.
+- A file with no operations loop is accepted when its space group is `P 1` (or No. 1) or unstated. Naming another space group without listing operations is an error, because expanding it would need a space-group table; VESTA, the Materials Project, COD and ICSD all write the loop.
+- Only the first data block with atoms is shown. Sites with missing coordinates are left out, and partially occupied or disordered sites are shown in full; both are reported in the status line and Structure Info. Occupancies, displacement parameters, bonds and everything else in the file are ignored. Files that would expand to more than 10,000 atoms are rejected.
+- Structure Info shows the space group as named in the file, the number of sites and operations, and that export writes POSCAR.
+- A CIF structure behaves like a POSCAR afterwards: it can be edited, takes selective-dynamics flags, and exports as POSCAR with the expanded cell and Cartesian coordinates. There is no CIF writer.
+
 ## XDATCAR
 
 - XDATCAR files display a timeline and export as XDATCAR. Editing is disabled.
@@ -33,7 +43,7 @@ Malformed files with non-finite scaled coordinates, invalid cell volumes, or imp
 
 **Export** opens a small menu.
 
-- *Structure file* writes back the kind of file that is open (POSCAR, XYZ or XDATCAR) with your edits. Exporting clears the unsaved-edits marker. Deleting all atoms leaves an editable empty structure; export waits until you add an atom or undo the deletion, so it cannot download a file the viewer cannot reopen.
+- *Structure file* writes back the kind of file that is open (POSCAR, XYZ or XDATCAR) with your edits; a CIF is written as POSCAR. Exporting clears the unsaved-edits marker. Deleting all atoms leaves an editable empty structure; export waits until you add an atom or undo the deletion, so it cannot download a file the viewer cannot reopen.
 - *Image* saves a PNG of the view exactly as shown, including the background, atom colours, bonds, labels, cell and axes you have switched on, at 1×, 2× or 4× the size of the view. Tick *Transparent background* to leave the background out, for placing the picture on a slide or a figure. For a trajectory the file name carries the frame number.
 - *Movie* (trajectories only) plays every frame at the timeline's FPS, at the chosen image size, and the browser records it as an MP4 file (H.264), which plays in PowerPoint, Keynote, QuickTime and VLC. The status line counts the frames and Escape cancels. Chrome, Edge and Safari record MP4; Firefox cannot, so there the button saves a WebM file and the menu says so.
 

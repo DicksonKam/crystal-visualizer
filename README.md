@@ -1,6 +1,6 @@
 # Crystal Visualizer
 
-View, measure and edit crystal structures in your browser: open a VASP POSCAR, XYZ or XDATCAR file and nothing needs installing.
+View, measure and edit crystal structures in your browser: open a CIF, VASP POSCAR, XYZ or XDATCAR file and nothing needs installing.
 
 ![Crystal Visualizer: rotating a silicon diamond cell, measuring a Ti–O angle in SrTiO₃, and playing a water trajectory](docs/images/demo.gif)
 
@@ -8,7 +8,7 @@ View, measure and edit crystal structures in your browser: open a VASP POSCAR, X
 
 ## Features
 
-- **Opens the files you already have.** VASP POSCAR/CONTCAR, plain and extended XYZ (with lattice and `pbc`), and XDATCAR trajectories with a playback timeline, all parsed in the browser; nothing is uploaded anywhere.
+- **Opens the files you already have.** CIF from any crystallography database (the asymmetric unit is expanded with the file's symmetry operations), VASP POSCAR/CONTCAR, plain and extended XYZ (with lattice and `pbc`), and XDATCAR trajectories with a playback timeline, all parsed in the browser; nothing is uploaded anywhere.
 - **Shows the cell the way textbooks draw it.** Corner and face atoms appear as translucent periodic copies, bonds end where the cell does, and any number of periodic images or a full supercell is one click away.
 - **Measures with a click.** Select up to three atoms for distances, fractional offsets and the angle between them, including to specific periodic copies.
 - **Edits and exports.** Drag atoms or cell edges, type exact Cartesian or fractional coordinates, add, delete, shift and fix atoms, with full undo and redo, then export the structure back in its own format.
@@ -27,7 +27,7 @@ There is no build step and no server-side code. three.js (r128) and its Trackbal
 ## Documentation
 
 - [Using the viewer](docs/using-the-viewer.md): navigation, periodic copies, measurements, editing, display options and the side panel.
-- [File formats](docs/file-formats.md): exactly how POSCAR, XYZ and XDATCAR files are read, validated, and exported, plus image and movie export.
+- [File formats](docs/file-formats.md): exactly how CIF, POSCAR, XYZ and XDATCAR files are read, validated, and exported, plus image and movie export.
 - [Camera contract](docs/camera.md): default view, fitting, snapping and gesture conventions.
 - [Document and editing contract](docs/architecture.md): module layout, document state, editing rules and bounded geometry. Read it before adding an operation or format.
 - [Tests](docs/testing.md): unit and browser suites, CI shards and the opt-in stress campaigns.

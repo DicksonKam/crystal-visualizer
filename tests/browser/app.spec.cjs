@@ -18,7 +18,7 @@ async function selectAtom(page, number) {
 async function editX(page, number, value) {
     await setMode(page, 'edit');
     await selectAtom(page, number);
-    await page.locator('#editAtomCoordMode').selectOption('cartesian');
+    await page.locator('input[name="editAtomCoordMode"][value="cartesian"]').check();
     await page.locator('#editAtom0').fill(String(value));
     await page.locator('#editAtom0').press('Enter');
     await expect(page.locator('#unsavedIndicator')).toBeVisible();

@@ -2357,8 +2357,11 @@ function updateEditUI() {
     let html = '';
     
     // Instructions
-    html += '<div class="edit-instructions">Click to select • Drag to move</div>';
-    
+    html += '<div class="edit-instructions">Click an atom to select · drag it to move</div>';
+    // Select atoms by element, region or range; the selection feeds everything below.
+    if (currentStructure && currentStructure.atoms.length) html += selectByRuleHTML();
+
+    html += '<div class="sd-batch-section selection-section"><div class="sd-batch-title">Selection</div>';
     if (selectedAtoms.length === 0) {
         html += `<p class="placeholder-text">${currentStructure ? (currentStructure.atoms.length ? 'No atoms selected' : 'No atoms remain. Add an atom or Undo the deletion.') : 'Load a structure to start editing'}</p>`;
     } else {
@@ -2386,6 +2389,7 @@ function updateEditUI() {
                     if (angle) html += `<div class="preserved-measurement-value">Angle (${labels.join("—")}): <strong>${angle.angleDeg.toFixed(2)}°</strong></div>`;
                 }
                 
+                html += moveBlockHTML();
                 html += `<button id="clearSelectionBtn" class="btn btn-clear" style="margin-top: 0.5rem;">Clear Measurement</button>`;
                 html += '</div>';
             } else {
@@ -2433,12 +2437,10 @@ function updateEditUI() {
                         const step = currentCoordinateStep(fractional);
                         html += `
                         <div class="exact-atom-section" id="exactAtomSection">
-                            <div class="sd-batch-title">Atom #${selectedAtoms[0].index + 1} coordinates</div>
-                            <label for="editAtomCoordMode">Coordinate system</label>
-                            <select id="editAtomCoordMode" class="element-select">
-                                <option value="cartesian"${fractional ? '' : ' selected'}>Cartesian (Å)</option>
-                                ${hasLattice(currentStructure) ? `<option value="fractional"${fractional ? ' selected' : ''}>Fractional</option>` : ''}
-                            </select>
+                            <div class="move-head">
+                                <div class="constraint-label">Move atom #${selectedAtoms[0].index + 1}</div>
+                                ${coordinateChoiceHTML('editAtomCoordMode', fractional ? 'fractional' : 'cartesian')}
+                            </div>
                             <div class="coord-step-row" role="group" aria-label="Arrow step">
                                 <span class="coord-step-label">Step</span>
                                 ${coordinateStepOptions(fractional).map(option => `<button type="button" id="coordStep-${option}" class="coord-step" data-step="${option}" aria-pressed="${option === step}">${option}${fractional ? '' : ' Å'}</button>`).join('')}
@@ -2454,6 +2456,8 @@ function updateEditUI() {
                         </div>
                     `;
                     }
+                } else {
+                    html += moveBlockHTML();
                 }
                 
                 // Constraints of the selected atoms: one toggle per axis plus
@@ -2468,9 +2472,7 @@ function updateEditUI() {
         
     }
     
-    // Select atoms by element or coordinate range (any format; the selection
-    // feeds delete, shift and constraints).
-    if (currentStructure && currentStructure.atoms.length) html += selectByRuleHTML();
+    html += '</div>';
 
     // Add Atom section (always show when structure loaded)
     if (currentStructure) {
@@ -2506,16 +2508,7 @@ function updateEditUI() {
                             ? `<option value="${group.id}"${group.id === lastAddAtomSpecies ? ' selected' : ''}>${group.element} — group ${index + 1}</option>` : '').join('')}
                     </select>
                 </div>` : ''}
-                <div class="add-atom-coord-type">
-                    <label class="coord-type-label">
-                        <input type="radio" name="coordType" value="cartesian"${isCartesian ? ' checked' : ''}>
-                        <span>Cartesian (Å)</span>
-                    </label>
-                    ${hasLattice(currentStructure) ? `<label class="coord-type-label">
-                        <input type="radio" name="coordType" value="fractional"${!isCartesian ? ' checked' : ''}>
-                        <span>Fractional</span>
-                    </label>` : ''}
-                </div>
+                ${coordinateChoiceHTML('coordType', isCartesian ? 'cartesian' : 'fractional')}
                 <div class="add-atom-coords">
                     <div class="coord-input-group">
                         <label for="addAtomX" id="addAtomLabelX">${isCartesian ? 'x' : 'a'}</label>
@@ -2535,78 +2528,28 @@ function updateEditUI() {
             </div>
         `;
         
-        // Periodic Shift section (context-aware: selected atoms or all)
-        const shiftIsCartesian = !hasLattice(currentStructure) || lastShiftCoordType === 'cartesian';
-        const shiftStep = shiftIsCartesian ? '0.1' : '0.01';
-        const shiftLabelX = shiftIsCartesian ? 'Δx' : 'Δa';
-        const shiftLabelY = shiftIsCartesian ? 'Δy' : 'Δb';
-        const shiftLabelZ = shiftIsCartesian ? 'Δz' : 'Δc';
-        
-        // Context-aware hint and button text
-        const hasSelection = selectedAtoms.length > 0;
-        const shiftTargetHint = getShiftSelectionError() || (hasSelection
-            ? `Will shift ${selectedAtoms.length} selected atom${selectedAtoms.length > 1 ? 's' : ''}`
-            : `Will shift all ${currentStructure.atoms.length} atoms`);
-        const shiftBtnText = hasSelection 
-            ? `Shift ${selectedAtoms.length} Selected`
-            : 'Shift All';
-        
-        html += `
-            <div class="sd-batch-section">
-                <div class="sd-batch-title">${isPeriodicStructure(currentStructure) ? 'Periodic Shift' : 'Move Atoms'}</div>
-                <div class="shift-target-hint">${shiftTargetHint}</div>
-                <div class="add-atom-coord-type">
-                    <label class="coord-type-label">
-                        <input type="radio" name="shiftCoordType" value="cartesian"${shiftIsCartesian ? ' checked' : ''}>
-                        <span>Cartesian (Å)</span>
-                    </label>
-                    ${hasLattice(currentStructure) ? `<label class="coord-type-label">
-                        <input type="radio" name="shiftCoordType" value="fractional"${!shiftIsCartesian ? ' checked' : ''}>
-                        <span>Fractional</span>
-                    </label>` : ''}
+        // Whole-structure actions.
+        const structureActions = [
+            hasLattice(currentStructure) ? '<button id="shiftCenterBtn" class="btn btn-sm" title="Shift every atom so the structure sits in the middle of the cell">Center in cell</button>' : '',
+            supportsSelectiveDynamics(currentStructure) ? '<button id="unfixAllBtn" class="btn btn-sm" title="Make every atom free to move (T T T)">Free all atoms</button>' : ''
+        ].filter(Boolean);
+        if (structureActions.length) html += `
+            <div class="sd-batch-section structure-section">
+                <div class="select-head">
+                    <div class="sd-batch-title">Structure</div>
+                    ${supportsSelectiveDynamics(currentStructure) ? `<div class="sd-stats" id="sdStats">${getSelectiveDynamicsStats()}</div>` : ''}
                 </div>
-                <div class="shift-coords">
-                    <div class="shift-input-group">
-                        <label for="shiftA" id="shiftLabelA">${shiftLabelX}</label>
-                        <input type="number" id="shiftA" step="${shiftStep}" value="${lastShiftCoords.a}" class="shift-input">
-                    </div>
-                    <div class="shift-input-group">
-                        <label for="shiftB" id="shiftLabelB">${shiftLabelY}</label>
-                        <input type="number" id="shiftB" step="${shiftStep}" value="${lastShiftCoords.b}" class="shift-input">
-                    </div>
-                    <div class="shift-input-group">
-                        <label for="shiftC" id="shiftLabelC">${shiftLabelZ}</label>
-                        <input type="number" id="shiftC" step="${shiftStep}" value="${lastShiftCoords.c}" class="shift-input">
-                    </div>
-                </div>
-                <div id="shiftError" class="add-atom-error"></div>
-                <button id="applyShiftBtn" class="btn btn-shift">${shiftBtnText}</button>
-                ${!hasSelection && hasLattice(currentStructure) ? '<button id="shiftCenterBtn" class="btn btn-sm btn-quick" title="Center structure in cell" style="width: 100%; margin-top: 0.5rem;">Center in Cell</button>' : ''}
-            </div>
-        `;
-        
-        // Constraint summary for the whole structure. Per-atom constraints
-        // are set on a selection, made above by click or by rule.
-        if (supportsSelectiveDynamics(currentStructure)) html += `
-            <div class="sd-batch-section">
-                <div class="sd-batch-title">Fixed Atoms</div>
-                <div class="sd-stats" id="sdStats">${getSelectiveDynamicsStats()}</div>
-                ${selectedAtoms.length ? '' : '<div class="constraint-hint">Select atoms, then fix or free them per axis.</div>'}
-                <div class="sd-batch-buttons">
-                    <button id="unfixAllBtn" class="btn btn-sm btn-unfix" title="Make every atom free to move (T T T)">🔓 Free All Atoms</button>
-                </div>
+                <div class="structure-actions">${structureActions.join('')}</div>
             </div>
         `;
     }
     
     replacePanelHTML(panel, html, 'atomJumpInput');
-    const coordinateMode = document.getElementById('editAtomCoordMode');
-    if (coordinateMode) coordinateMode.addEventListener('change', event => {
+    document.querySelectorAll('input[name="editAtomCoordMode"]').forEach(radio => radio.addEventListener('change', event => {
         selectedAtomCoordMode = event.target.value;
         updateEditUI();
-        // Some native popups clear activeElement before firing change.
-        restorePanelFocus('editAtomCoordMode', 'atomJumpInput');
-    });
+        restorePanelFocus(event.target.id, 'atomJumpInput');
+    }));
     // Coordinate fields preview live; the section commits when focus leaves it.
     [0, 1, 2].forEach(axis => {
         const field = document.getElementById(`editAtom${axis}`);
@@ -3345,6 +3288,41 @@ function setSelectedAtomsFixed(isFixed) {
     const action = isFixed ? 'Fixed' : 'Unfixed';
     statusText.textContent = changedCount ? `${action} ${changedCount} atom(s)` : 'Selected atoms already have those constraints';
     statusText.className = changedCount ? 'success' : '';
+}
+
+// A Cartesian / fractional choice as a pill pair; the radios keep their
+// names so the handlers and tests see ordinary radio buttons.
+function coordinateChoiceHTML(name, current) {
+    const options = [['cartesian', 'Å'], ...(hasLattice(currentStructure) ? [['fractional', 'Fractional']] : [])];
+    return `<div class="choice-pills" role="radiogroup" aria-label="Coordinate system">${options.map(([value, label]) =>
+        `<label class="pill"><input type="radio" name="${name}" id="${name}${value === 'cartesian' ? 'Cartesian' : 'Fractional'}" value="${value}"${current === value ? ' checked' : ''}><span>${label}</span></label>`).join('')}</div>`;
+}
+
+// Shift the selected atoms by a vector (several atoms, or a kept measurement).
+function moveBlockHTML() {
+    const count = selectedAtoms.length;
+    if (!count) return '';
+    const cartesian = !hasLattice(currentStructure) || lastShiftCoordType === 'cartesian';
+    const step = cartesian ? '0.1' : '0.01';
+    const labels = cartesian ? ['Δx', 'Δy', 'Δz'] : ['Δa', 'Δb', 'Δc'];
+    const error = getShiftSelectionError();
+    return `
+        <div class="exact-atom-section move-section">
+            <div class="move-head">
+                <div class="constraint-label">Move ${count} atom${count === 1 ? '' : 's'}</div>
+                ${coordinateChoiceHTML('shiftCoordType', cartesian ? 'cartesian' : 'fractional')}
+            </div>
+            ${error ? `<div class="shift-target-hint">${error}</div>` : ''}
+            <div class="shift-coords">
+                ${['A', 'B', 'C'].map((axis, index) => `<div class="shift-input-group">
+                    <label for="shift${axis}" id="shiftLabel${axis}">${labels[index]}</label>
+                    <input type="number" id="shift${axis}" step="${step}" value="${lastShiftCoords[axis.toLowerCase()]}" class="shift-input">
+                </div>`).join('')}
+            </div>
+            <div id="shiftError" class="add-atom-error"></div>
+            <button id="applyShiftBtn" class="btn btn-shift">Shift ${count} atom${count === 1 ? '' : 's'}</button>
+        </div>
+    `;
 }
 
 // === SELECT BY RULE ===
@@ -4446,8 +4424,9 @@ function updateMeasurements() {
 }
 
 // Keep annotation text readable in CSS pixels as the camera and panel change.
-// Keep point markers within a readable size range and leave measured positions
-// untouched; captions retain their world-space proportions above the size floor.
+// Markers and captions both stay within a readable size range: a floor so they
+// survive zooming out, a cap so zooming in does not turn them into headlines.
+// Measured positions are left untouched.
 function updateAnnotationSizes() {
     if (!measurementGroup || !renderer || !camera) return;
     const height = renderer.domElement.clientHeight;
@@ -4471,7 +4450,8 @@ function updateAnnotationSizes() {
         if (!minimumPixels) continue;
         const base = sprite.userData.annotationBaseScale || (sprite.userData.annotationBaseScale = sprite.scale.clone());
         const worldPerPixel = getAnnotationWorldPerPixel(sprite.getWorldPosition(new THREE.Vector3()), height);
-        const upperFactor = sprite.userData.isSelectionLabel ? Math.min(1, 32 * worldPerPixel / base.y) : 1;
+        const maximumPixels = sprite.userData.isSelectionLabel ? 32 : 26;
+        const upperFactor = Math.min(1, maximumPixels * worldPerPixel / base.y);
         const factor = Math.max(upperFactor, minimumPixels * worldPerPixel / base.y);
         sprite.scale.copy(base).multiplyScalar(factor);
         sprite.userData.annotationWorldPerPixel = worldPerPixel;

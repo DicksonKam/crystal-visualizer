@@ -60,7 +60,7 @@ test('arrow steps move the atom at once, Enter keeps the session as one undo, Es
     // focus leaving the section is what commits.
     await page.locator('#editAtom1').fill('0.3');
     await expect.poll(async () => (await fractional(page, 2))[1]).toBeCloseTo(0.3, 6);
-    await page.locator('#editAtomCoordMode').selectOption('cartesian');
+    await page.locator('input[name="editAtomCoordMode"][value="cartesian"]').check();
     expect((await fractional(page, 2))[1]).toBeCloseTo(0.3, 6);
     expect(await undoDepth(page)).toBe(base + 1);
     await expect(page.locator('#editAtom1')).toHaveValue(/^1\.629/);

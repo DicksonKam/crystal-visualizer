@@ -210,7 +210,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if (!await visible(page, '#editAtom0')) performed = false;
                 else {
                     record.coordMode=advanced && previous.lattice && integer(2) ? 'fractional' : 'cartesian';
-                    await page.locator('#editAtomCoordMode').selectOption(record.coordMode);
+                    await page.locator(`input[name="editAtomCoordMode"][value="${record.coordMode}"]`).check();
                     const values = action === 'invalid' ? ['', '1', '2'] : [rng(), rng(), rng()].map(v => ((advanced ? v*2-.5 : v*4)).toFixed(6)); record.values = values;
                     // Typed values preview the atom live; only Enter records history.
                     for (let i=0;i<3;i++) await page.locator(`#editAtom${i}`).fill(values[i]);

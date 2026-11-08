@@ -512,8 +512,16 @@ body.light-scene .viewport-reset {
 }
 
 /* === Measurement Panel === */
+/* The mode panel carries a stripe in the mode's colour: cyan for Measure,
+   the canvas glow's coral for Edit. The Display panel below stays neutral. */
 .measurement-panel {
-    background: linear-gradient(180deg, rgba(0, 245, 212, 0.05) 0%, transparent 100%);
+    background: none;
+    border-left: 3px solid var(--accent-cyan);
+    padding-left: calc(1.25rem - 3px);
+}
+
+body.edit-mode-active .measurement-panel {
+    border-left-color: #ff6b6b;
 }
 
 .measurement-content {
@@ -778,14 +786,9 @@ button.meas-delta:focus-visible {
 
 /* Edit Mode Styles */
 .edit-warning {
-    background: rgba(0, 245, 212, 0.1);
-    border: 1px solid rgba(0, 245, 212, 0.3);
-    border-radius: var(--radius-sm);
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.85rem;
-    color: var(--accent-cyan);
-    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }
 
 /* Preserved measurement display in edit mode */
@@ -843,11 +846,11 @@ button.meas-delta:focus-visible {
 }
 
 .selected-atom.edit .color-strip {
-    background: #ff5050 !important;
+    background: var(--accent-cyan) !important;
 }
 
 .selected-atom.edit {
-    border: 1px solid rgba(255, 80, 80, 0.3);
+    border: 1px solid var(--border-color);
 }
 
 .btn-delete {
@@ -887,9 +890,8 @@ button.meas-delta:focus-visible {
     font-size: 0.75rem;
     color: var(--text-muted);
     text-align: center;
-    padding: 0.4rem;
+    padding: 0 0 0.25rem;
     margin-bottom: 0.5rem;
-    border-bottom: 1px dashed var(--border-color);
 }
 
 .undo-section {
@@ -906,13 +908,6 @@ body.edit-mode-active .viewport {
     box-shadow: inset 0 0 0 2px rgba(255, 80, 80, 0.3);
 }
 
-body.edit-mode-active .measurement-panel {
-    background: linear-gradient(180deg, rgba(255, 80, 80, 0.08) 0%, transparent 100%);
-}
-
-body.edit-mode-active .panel-title {
-    color: #ff8080;
-}
 
 /* === Viewport === */
 .viewport-container {
@@ -1436,7 +1431,16 @@ body.edit-mode-active .panel-title {
 
 /* Constraints of the selected atoms: one toggle per axis */
 .constraint-controls {
-    margin: 0.25rem 0 0.75rem;
+    margin: 0.8rem 0;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+}
+
+.constraint-controls .axis-toggle,
+.constraint-controls .btn {
+    background: var(--bg-secondary);
 }
 
 .constraint-label {
@@ -1714,6 +1718,90 @@ body.edit-mode-active .panel-title {
     color: var(--text-muted);
 }
 
+/* Cartesian / fractional as a pill pair over ordinary radios */
+.choice-pills {
+    display: inline-flex;
+}
+
+.choice-pills .pill {
+    position: relative;
+    border-radius: 0;
+    padding: 0 0.6rem;
+    cursor: pointer;
+}
+
+.choice-pills .pill:first-child {
+    border-radius: 999px 0 0 999px;
+}
+
+.choice-pills .pill:last-child {
+    border-radius: 0 999px 999px 0;
+}
+
+.choice-pills .pill + .pill {
+    margin-left: -1px;
+}
+
+.choice-pills input[type="radio"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.choice-pills .pill:has(input:checked) {
+    background: rgba(0, 245, 212, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    z-index: 1;
+}
+
+.choice-pills .pill:has(input:focus-visible) {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 1px;
+}
+
+/* Move block header: label left, coordinate choice right */
+.move-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+}
+
+.move-head .constraint-label {
+    margin-bottom: 0;
+}
+
+/* Select Atoms is the first section: no rule above it */
+.sd-batch-section.select-rule-section {
+    margin-top: 0.25rem;
+    padding-top: 0;
+    border-top: none;
+}
+
+/* Structure: whole-structure actions, with the constraint summary in the head */
+.structure-section .sd-stats {
+    padding: 0;
+    background: none;
+    font-size: 0.75rem;
+}
+
+.structure-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.structure-actions .btn {
+    flex: 1 1 auto;
+}
+
 .select-range-btn {
     width: 100%;
     margin-top: 0.1rem;
@@ -1728,12 +1816,6 @@ body.edit-mode-active .panel-title {
 .btn-select:hover {
     background: rgba(0, 245, 212, 0.25);
     border-color: var(--accent-cyan);
-}
-
-/* The range error takes no room until there is one */
-#selectRangeError:empty {
-    min-height: 0;
-    margin: 0;
 }
 
 /* Box select: the rectangle drawn over the canvas and its panel button */
@@ -1803,26 +1885,16 @@ body.edit-mode-active .controls-hint .edit-hint {
     font-size: 0.8rem;
 }
 
-.btn-fix {
-    background: rgba(255, 107, 107, 0.15);
-    border: 1px solid rgba(255, 107, 107, 0.4);
-    color: #ff6b6b;
-}
-
-.btn-fix:hover {
-    background: rgba(255, 107, 107, 0.25);
-    border-color: #ff6b6b;
-}
-
+.btn-fix,
 .btn-unfix {
-    background: rgba(0, 245, 212, 0.15);
-    border: 1px solid rgba(0, 245, 212, 0.4);
-    color: var(--accent-cyan);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
+.btn-fix:hover,
 .btn-unfix:hover {
-    background: rgba(0, 245, 212, 0.25);
-    border-color: var(--accent-cyan);
+    border-color: var(--text-muted);
 }
 
 .sd-batch-section {
@@ -1955,7 +2027,7 @@ body.edit-mode-active .controls-hint .edit-hint {
 .add-atom-coords {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    margin: 0.6rem 0 0.75rem;
 }
 
 .coord-input-group {
@@ -1974,13 +2046,14 @@ body.edit-mode-active .controls-hint .edit-hint {
 
 .coord-input {
     width: 100%;
-    padding: 0.4rem 0.35rem;
+    height: 30px;
+    padding: 0 0.5rem;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
     color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-align: center;
 }
 
@@ -2005,15 +2078,15 @@ body.edit-mode-active .controls-hint .edit-hint {
 .btn-add-atom {
     width: 100%;
     padding: 0.5rem 1rem;
-    background: rgba(155, 93, 229, 0.15);
-    border: 1px solid rgba(155, 93, 229, 0.4);
-    color: var(--accent-purple);
+    background: rgba(0, 245, 212, 0.15);
+    border: 1px solid rgba(0, 245, 212, 0.4);
+    color: var(--accent-cyan);
     font-weight: 500;
 }
 
 .btn-add-atom:hover {
-    background: rgba(155, 93, 229, 0.25);
-    border-color: var(--accent-purple);
+    background: rgba(0, 245, 212, 0.25);
+    border-color: var(--accent-cyan);
 }
 
 /* === Global Periodic Shift === */
@@ -2055,13 +2128,14 @@ body.edit-mode-active .controls-hint .edit-hint {
 
 .shift-input {
     width: 100%;
-    padding: 0.4rem 0.35rem;
+    height: 30px;
+    padding: 0 0.5rem;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
     color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-align: center;
 }
 

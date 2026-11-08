@@ -35,14 +35,17 @@ for (const includeReal of [false, true]) test(`shifting a preserved periodic-cop
     expect(after.selection).toEqual(before.selection);
     expect(after.undo).toEqual(before.undo); expect(after.redo).toEqual(before.redo);
     expect(after.revision).toBe(before.revision); expect(after.dirty).toBe(before.dirty);
-    // Clear the read-only selection, then the same valid vector shifts real atoms.
+    // Clear the read-only selection and select the one real atom: its
+    // coordinate fields move it by the same 0.25 Å that was refused above.
     await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
-    await page.locator('#shiftA').fill('0.25');
-    await page.locator('#applyShiftBtn').click();
+    await page.locator('#selectAllBtn').click();
+    await page.locator('input[name="editAtomCoordMode"][value="cartesian"]').check();
+    await page.locator('#editAtom0').fill('1.25');
+    await page.locator('#editAtom0').press('Enter');
     const shifted = await capture(page);
     expect(shifted.violations).toEqual([]);
     expect(shifted.geometry.atoms[0].position[0]).toBeCloseTo(1.25, 8);
-    expect(shifted.undo.at(-1).type).toBe('shift_atoms');
+    expect(shifted.undo.at(-1).type).toBe('move_atom');
     await page.locator('#undoBtn').click();
     expect((await capture(page)).geometry).toEqual(before.geometry);
 });

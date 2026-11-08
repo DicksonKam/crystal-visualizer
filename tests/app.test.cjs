@@ -1704,7 +1704,8 @@ test('only POSCAR edit panels offer constraints while XYZ keeps coordinate editi
         assert.ok(html.includes('class="coord-step"'));
         assert.ok(!html.includes('Cancel Selection'));
         assert.ok(html.includes('Delete 1 atom'));
-        assert.ok(html.includes('id="applyShiftBtn"'));
+        assert.ok(!html.includes('id="applyShiftBtn"'), 'one atom gets exact coordinates, not a shift');
+        assert.ok(html.includes('id="shiftCenterBtn"'));
     }
 });
 

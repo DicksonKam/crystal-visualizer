@@ -2326,10 +2326,16 @@ function replacePanelHTML(panel, html, fallbackId) {
     // first ones (clearing a selection removes its whole card).
     if (!anchors.length && scroller && typeof panel.querySelectorAll === 'function') {
         const top = scroller.getBoundingClientRect().top - 1;
+        const inCard = [];
         for (const element of panel.querySelectorAll('[id]')) {
             const rect = element.getBoundingClientRect();
-            if (rect.top >= top) anchors.push({ id: element.id, top: rect.top });
+            if (rect.top < top) continue;
+            // The selection card is what grows; a visible control outside it
+            // (Select Atoms, Add Atom, …) is the better thing to hold still,
+            // so the card's new rows appear above it rather than pushing it.
+            (element.closest('.selection-card') ? inCard : anchors).push({ id: element.id, top: rect.top });
         }
+        anchors.push(...inCard);
     }
     panel.innerHTML = html;
     for (const anchor of anchors) {
@@ -2383,7 +2389,9 @@ function updateEditUI() {
                 html += `<button id="clearSelectionBtn" class="btn btn-clear" style="margin-top: 0.5rem;">Clear Measurement</button>`;
                 html += '</div>';
             } else {
-                // Normal edit selection UI
+                // Normal edit selection UI. The card grows and shrinks with the
+                // selection, so panel rebuilds prefer to anchor outside it.
+                html += '<div class="selection-card">';
                 html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
                 
                 // A long selection lists its first rows only; the count above
@@ -2454,7 +2462,7 @@ function updateEditUI() {
                 
                 html += `
                     <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete ${selectedAtoms.length} atom${selectedAtoms.length === 1 ? '' : 's'}</button>
-                `;
+                </div>`;
             }
         }
         

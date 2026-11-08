@@ -958,6 +958,8 @@ test('exact fractional coordinates update one atom and round-trip through undo',
         selectedAtoms = [{ index: 0, isGhost: false, element: 'Si' }];
         selectedAtomCoordMode = 'fractional';
         renderStructure = () => {};
+        rebuildDisplayOptions = () => {};
+        boundaryCopiesStale = () => false;
         updateUI = () => {};
         updateEditUI = () => {};
         updateUI_forCurrentMode = () => {};
@@ -1428,7 +1430,7 @@ function selectableApp(atoms, lattice = [[2, 0, 0], [0, 2, 0], [0, 0, 2]]) {
     vm.runInContext(`
         currentStructure = structure;
         currentMode = 'edit';
-        atomMeshes = structure.atoms.map((atom, index) => ({ userData: { atomIndex: index, isGhost: false }, getWorldPosition(target) { target.copy(atom.position); } }));
+        atomMeshes = structure.atoms.map((atom, index) => ({ userData: { atomIndex: index, isGhost: false }, position: atom.position.clone(), getWorldPosition(target) { target.copy(atom.position); } }));
         renderStructure = () => {};
         updateUI = () => {};
         updateEditUI = () => {};
@@ -1551,6 +1553,68 @@ test('element chips, All and Invert replace the selection in single history step
     assert.match(context.document.getElementById('statusText').textContent, /z ≥ 0.5 Å: deselected 1 atom \(0 of 3 selected\)/);
 });
 
+test('typed coordinates preview without history, commit as one move, and revert on cancel', () => {
+    const context = selectableApp([
+        { element: 'Si', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
+        { element: 'Si', position: new Vector3(1, 1, 1), selectiveDynamics: [true, true, true] }
+    ]);
+    vm.runInContext(`
+        selectedAtoms = [{ index: 1, isGhost: false, element: 'Si', position: structure.atoms[1].position.clone() }];
+        selectedAtomCoordMode = 'cartesian';
+        rebuildDisplayOptions = () => {};
+        boundaryCopiesStale = () => false;
+        updateDirtyIndicator = () => {};
+    `, context);
+    const field = id => context.document.getElementById(id);
+    const position = () => plain(vm.runInContext('[currentStructure.atoms[1].position.x, currentStructure.atoms[1].position.y, currentStructure.atoms[1].position.z]', context));
+    const setFields = (a, b, c) => { field('editAtom0').value = a; field('editAtom1').value = b; field('editAtom2').value = c; };
+
+    setFields('1.5', '1', '1');
+    assert.equal(context.previewTypedCoordinates(), true);
+    assert.deepEqual(position(), [1.5, 1, 1]);
+    assert.equal(undoLength(context), 0, 'a preview is not history');
+    setFields('1.7', '1', '1');
+    context.previewTypedCoordinates();
+    assert.deepEqual(position(), [1.7, 1, 1]);
+    assert.equal(context.commitCoordinateSession(), true);
+    assert.equal(undoLength(context), 1, 'one entry for the whole session');
+    const recorded = plain(vm.runInContext('({ type: editHistory.undoStack.at(-1).type, from: editHistory.undoStack.at(-1).oldPosition.x, to: editHistory.undoStack.at(-1).newPosition.x })', context));
+    assert.deepEqual(recorded, { type: 'move_atom', from: 1, to: 1.7 });
+    assert.equal(context.commitCoordinateSession(), false, 'nothing left to commit');
+
+    // Cancel puts the atom back at the session start and records nothing.
+    setFields('2', '2', '2');
+    context.previewTypedCoordinates();
+    assert.deepEqual(position(), [2, 2, 2]);
+    context.cancelCoordinateEdit();
+    assert.deepEqual(position(), [1.7, 1, 1]);
+    assert.equal(undoLength(context), 1);
+    assert.match(field('statusText').textContent, /canceled; atom #2 restored/);
+
+    // Invalid text moves nothing; Enter reports it.
+    setFields('abc', '1', '1');
+    assert.equal(context.previewTypedCoordinates(), false);
+    assert.equal(field('editAtomError').textContent, '');
+    assert.equal(context.applyExactAtomCoordinates(), false);
+    assert.equal(field('editAtomError').textContent, 'Enter three finite coordinates');
+    assert.deepEqual(position(), [1.7, 1, 1]);
+    assert.equal(undoLength(context), 1);
+
+    // Enter previews what is typed and keeps it in one step; undo restores.
+    setFields('1.9', '1', '1');
+    assert.equal(context.applyExactAtomCoordinates(), true);
+    assert.deepEqual(position(), [1.9, 1, 1]);
+    assert.equal(undoLength(context), 2);
+    context.performUndo();
+    assert.deepEqual(position(), [1.7, 1, 1]);
+    context.performUndo();
+    assert.deepEqual(position(), [1, 1, 1]);
+    // The same coordinates again change nothing.
+    setFields('1', '1', '1');
+    assert.equal(context.applyExactAtomCoordinates(), false);
+    assert.match(field('statusText').textContent, /unchanged/);
+});
+
 test('axis toggles fix one axis of the selection, free it once every atom has it fixed, and skip unchanged atoms', () => {
     const context = selectableApp([
         { element: 'H', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
@@ -1636,7 +1700,10 @@ test('only POSCAR edit panels offer constraints while XYZ keeps coordinate editi
         assert.equal(html.includes('class="sel-status"'), !isXYZ);
         assert.ok(html.includes('id="selectRangeBtn"'), 'select by rule is offered for every format');
         assert.ok(html.includes('class="element-chip"'));
-        assert.ok(html.includes('id="saveAtomCoordinates"'));
+        assert.ok(html.includes('id="editAtom0"'));
+        assert.ok(html.includes('class="coord-step"'));
+        assert.ok(!html.includes('Cancel Selection'));
+        assert.ok(html.includes('Delete 1 atom'));
         assert.ok(html.includes('id="applyShiftBtn"'));
     }
 });

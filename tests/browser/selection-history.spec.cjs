@@ -55,7 +55,7 @@ test('measurement undo replaces the selection, preserves order and resolves curr
     expect((await state(page)).indices).toEqual([0, 2]);
     await page.locator('#undoBtn').click();
     await setMode(page, 'edit');
-    await page.locator('#clearSelectionBtn').click();
+    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     // Simulate a newer view/geometry before restoration: history must resolve
     // identities, never replay saved world-space coordinates or append records.
     await page.evaluate(() => {
@@ -88,7 +88,7 @@ test('selection history distinguishes periodic copies and safely omits copies no
     const original = await state(page);
     expect(original.indices).toHaveLength(3);
     expect(new Set(original.indices).size).toBe(3);
-    await page.locator('#clearSelectionBtn').click();
+    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     await page.evaluate(() => renderStructure(currentStructure, true));
     await page.locator('#undoBtn').click();
     const restored = await state(page);

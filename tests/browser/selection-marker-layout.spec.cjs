@@ -28,7 +28,7 @@ test('ordinary rotated perovskite retains readable and selectable measurement po
   expect(state.markers.filter(m=>m.hit).length,'point numbers must select their owners').toBeGreaterThanOrEqual(2);
   if([0,9,11].includes(view))await page.screenshot({path:info.outputPath(`view-${view}.png`)});
  }
- await page.locator('#clearSelectionBtn').click();
+ await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
  expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
 });
 
@@ -62,5 +62,5 @@ test('a point marker in a crowded view starts the correct atom drag and survives
  expect(await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()))).toEqual(before);
  await page.locator('#redoBtn').click();
  expect(await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()))).toEqual(after);
- await page.locator('#clearSelectionBtn').click();expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
+ await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
 });

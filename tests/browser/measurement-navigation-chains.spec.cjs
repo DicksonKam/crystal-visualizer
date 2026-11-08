@@ -49,7 +49,7 @@ test('water measurements survive mouse navigation, resizing, editing and selecti
         await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, before.geometry);
         await page.locator('#redoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, after.geometry);
         await checkBondRefresh(page);
-        await page.locator('#clearSelectionBtn').click();
+        await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
         expect((await capture(page)).selection.identities).toHaveLength(0);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await setMode(page, 'measure');

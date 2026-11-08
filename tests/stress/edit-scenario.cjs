@@ -202,27 +202,28 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if (!previous.atomCount) performed = false;
                 else { const number = integer(previous.atomCount)+1; record.number = number; await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
             } else if (action === 'undo' || action === 'redo') await click(`#${action}Btn`);
-            else if (action === 'clear') await click('#clearSelectionBtn');
+            else if (action === 'clear') await click('#clearSelectionBtn, #selectNoneBtn:enabled');
             else if (action === 'reset') await click('#resetView');
             else if (action === 'delete') await click('#deleteSelectedBtn');
             else if (action === 'fix') await click(integer(2) ? '#fixSelectedBtn' : '#unfixSelectedBtn');
             else if (action === 'coordinates' || action === 'invalid') {
-                if (!await visible(page, '#saveAtomCoordinates')) performed = false;
+                if (!await visible(page, '#editAtom0')) performed = false;
                 else {
                     record.coordMode=advanced && previous.lattice && integer(2) ? 'fractional' : 'cartesian';
                     await page.locator('#editAtomCoordMode').selectOption(record.coordMode);
                     const values = action === 'invalid' ? ['', '1', '2'] : [rng(), rng(), rng()].map(v => ((advanced ? v*2-.5 : v*4)).toFixed(6)); record.values = values;
+                    // Typed values preview the atom live; only Enter records history.
                     for (let i=0;i<3;i++) await page.locator(`#editAtom${i}`).fill(values[i]);
                     if(advanced) {
                         record.inputUndoKey=integer(2)?'Control+z':'Meta+z';
                         await page.locator('#editAtom0').press(record.inputUndoKey);
                         const during=await capture(page);
-                        compareGeometry(during.geometry,previous.geometry,'input undo changes document');
                         assert.deepEqual(during.undo,previous.undo,'input undo changes application history');
+                        assert.equal(during.revision,previous.revision,'a coordinate preview changes the edit revision');
                         assert.deepEqual(during.selection,previous.selection,'input undo changes selection');
                         await page.locator('#editAtom0').fill(values[0]);
                     }
-                    await page.locator('#saveAtomCoordinates').click();
+                    await page.locator('#editAtom2').press('Enter');
                 }
             } else if (action === 'add') {
                 if (previous.atomCount >= 48 || !await visible(page, '#addAtomBtn')) performed = false;

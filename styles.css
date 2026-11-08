@@ -401,6 +401,54 @@ body.light-scene .viewport-reset {
     width: 100%;
 }
 
+/* Arrow step of the coordinate fields */
+.coord-step-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.65rem;
+}
+
+.coord-step-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-right: 0.15rem;
+}
+
+.coord-step {
+    flex: 1;
+    padding: 0.25rem 0.4rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.coord-step:hover {
+    border-color: var(--text-muted);
+}
+
+.coord-step[aria-pressed="true"] {
+    background: rgba(0, 245, 212, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.coord-step:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 1px;
+}
+
+.coord-edit-hint {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
 /* === Controls Panel === */
 .control-group {
     margin-bottom: 1rem;

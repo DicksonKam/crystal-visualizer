@@ -20,7 +20,7 @@ async function editX(page, number, value) {
     await selectAtom(page, number);
     await page.locator('#editAtomCoordMode').selectOption('cartesian');
     await page.locator('#editAtom0').fill(String(value));
-    await page.locator('#saveAtomCoordinates').click();
+    await page.locator('#editAtom0').press('Enter');
     await expect(page.locator('#unsavedIndicator')).toBeVisible();
 }
 async function download(page) {

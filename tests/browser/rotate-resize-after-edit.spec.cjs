@@ -27,7 +27,7 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
   await setMode(page, 'edit');
   await dragTarget(page,'atom',cycle);await snapshot(`${cycle}-held-atom`);await page.mouse.up();
   await expect(page.locator('#statusText')).toContainText('Moved atom');
-  if(await page.locator('#clearSelectionBtn').count())await page.locator('#clearSelectionBtn').click();
+  if(await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').count())await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
   await setMode(page, 'measure');
   if(cycle%2===0){
    for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
@@ -58,7 +58,7 @@ for(const [file,width] of cases) test(`visual rotate/resize after edits and meas
    const selectionAfter=await page.evaluate(()=>selectedAtoms.map(a=>a.index));
    if(JSON.stringify(selectionBefore)!==JSON.stringify(selectionAfter)){
     findings.push({cycle,view,type:'rotation changed selection',selectionBefore,selectionAfter,mode:await page.evaluate(()=>currentMode)});
-    if(await page.locator('#clearSelectionBtn').count())await page.locator('#clearSelectionBtn').click();
+    if(await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').count())await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     await setMode(page, 'measure');
     for(const n of selectionBefore){await page.locator('#atomJumpInput').fill(String(n+1));await page.locator('#atomJumpInput').press('Enter');}
     if(cycle%2)await setMode(page, 'edit');

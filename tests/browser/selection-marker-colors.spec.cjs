@@ -25,7 +25,7 @@ test('crowded edit checkmarks and measurement numbers stay on their atoms withou
  const edit=await markers();expect(edit).toHaveLength(2);
  for(const m of edit){expect(m.offset).toBeLessThan(1e-6);expect(m.leaders).toBe(0);expect(m.color).toBe(0x00f5d4);}
  await page.screenshot({path:info.outputPath('edit-markers.png')});
- await page.locator('#clearSelectionBtn').click();await setMode(page, 'measure');
+ await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();await setMode(page, 'measure');
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
  await page.locator('#resetView').click();await crowd();
  const measured=await markers();expect(measured).toHaveLength(3);

@@ -323,6 +323,9 @@ function setAtomGlow(mesh, color, intensity) {
 // Mode state: 'measure' or 'edit'
 let currentMode = 'measure';
 let lastSelectRange = null; // Remembered select-by-range inputs { axis, unit, min, max }
+let coordinateEditSession = null; // { index, startPosition } while typed coordinates preview an atom
+let coordinateEditTimer = null; // debounce for typed (not stepped) coordinate previews
+let lastCoordinateStep = { fractional: '0.01', cartesian: '0.1' }; // arrow step of the coordinate fields
 let boxSelectMode = false; // Box select is on: a left-drag on the canvas selects the atoms inside
 let boxSelectDrag = null; // { pointerId, startX, startY, x, y } while a box is being drawn
 
@@ -840,10 +843,21 @@ function initScene() {
     renderer.domElement.addEventListener('click', onClickFallback);
     window.addEventListener('blur', cancelEditDrag);
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && (draggedAtom || vacuumDragState.isDragging || boxSelectDrag)) {
+        if (event.key !== 'Escape') return;
+        if (draggedAtom || vacuumDragState.isDragging || boxSelectDrag) {
             event.preventDefault();
             cancelEditDrag(event);
+            return;
         }
+        // With nothing in progress, Escape clears the edit selection. Fields
+        // and dialogs handle their own Escape.
+        const target = event.target;
+        const typing = target instanceof Element && (target.matches('input, select, textarea') || target.isContentEditable || target.closest('#resetConfirm'));
+        if (typing || currentMode !== 'edit' || !selectedAtoms.length || !dropZone.classList.contains('hidden')) return;
+        clearSelection();
+        updateEditUI();
+        statusText.textContent = 'Selection cleared';
+        statusText.className = '';
     });
 }
 
@@ -1253,25 +1267,25 @@ function getOriginalAtomPosition(selectedAtom) {
 
 // Format coordinates for display based on current mode (fractional or cartesian)
 // Returns HTML string with clickable coordinates
-function formatAtomCoordinates(selectedAtom, atomIndex) {
+// The coordinate readout of a selected atom in the current display system.
+function coordinateReadoutText(selectedAtom) {
     const originalPos = getOriginalAtomPosition(selectedAtom);
-    
     if (hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional') {
-        // Get fractional coordinates
-        const frac = cartesianToFractional(
-            new THREE.Vector3(originalPos.x, originalPos.y, originalPos.z),
-            currentStructure.lattice
-        );
-        
-        if (frac) {
-            // Fractional: yellow/gold with square brackets
-            const coordStr = `[${frac[0].toFixed(3)}, ${frac[1].toFixed(3)}, ${frac[2].toFixed(3)}]`;
-            return `<button type="button" id="selectedAtomCoords${atomIndex}" class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Show Cartesian coordinates">${coordStr}</button>`;
-        }
+        const frac = cartesianToFractional(new THREE.Vector3(originalPos.x, originalPos.y, originalPos.z), currentStructure.lattice);
+        if (frac) return { fractional: true, text: `[${frac[0].toFixed(3)}, ${frac[1].toFixed(3)}, ${frac[2].toFixed(3)}]` };
+    }
+    return { fractional: false, text: `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})` };
+}
+
+function formatAtomCoordinates(selectedAtom, atomIndex) {
+    const readout = coordinateReadoutText(selectedAtom);
+    if (readout.fractional) {
+        // Fractional: yellow/gold with square brackets
+        return `<button type="button" id="selectedAtomCoords${atomIndex}" class="sel-coords sel-coords-frac clickable-coords" data-atom-idx="${atomIndex}" title="Show Cartesian coordinates">${readout.text}</button>`;
     }
     
     // Cartesian: cyan with parentheses (default fallback)
-    const coordStr = `(${originalPos.x.toFixed(2)}, ${originalPos.y.toFixed(2)}, ${originalPos.z.toFixed(2)})`;
+    const coordStr = readout.text;
     const toggle = hasLattice(currentStructure) ? 'clickable-coords' : '';
     const title = hasLattice(currentStructure) ? 'Show fractional coordinates' : 'Cartesian coordinates (Å)';
     const tag = hasLattice(currentStructure) ? 'button type="button"' : 'div';
@@ -2291,6 +2305,8 @@ function replacePanelHTML(panel, html, fallbackId) {
 
 // Update edit mode UI
 function updateEditUI() {
+    // A coordinate edit whose atom is no longer the single selection is over.
+    if (coordinateEditSession && (selectedAtoms.length !== 1 || selectedAtoms[0].isGhost || selectedAtoms[0].index !== coordinateEditSession.index)) commitCoordinateSession();
     const panel = document.getElementById('measurementPanel');
     if (!panel) return;
     
@@ -2363,24 +2379,31 @@ function updateEditUI() {
                     const fractional = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
                     const values = fractional ? cartesianToFractional(atom.position, currentStructure.lattice)
                         : [atom.position.x, atom.position.y, atom.position.z];
-                    if (values) html += `
-                        <div class="exact-atom-section">
-                            <div class="sd-batch-title">Set atom #${selectedAtoms[0].index + 1} coordinates</div>
+                    if (values) {
+                        const step = currentCoordinateStep(fractional);
+                        html += `
+                        <div class="exact-atom-section" id="exactAtomSection">
+                            <div class="sd-batch-title">Atom #${selectedAtoms[0].index + 1} coordinates</div>
                             <label for="editAtomCoordMode">Coordinate system</label>
                             <select id="editAtomCoordMode" class="element-select">
                                 <option value="cartesian"${fractional ? '' : ' selected'}>Cartesian (Å)</option>
                                 ${hasLattice(currentStructure) ? `<option value="fractional"${fractional ? ' selected' : ''}>Fractional</option>` : ''}
                             </select>
+                            <div class="coord-step-row" role="group" aria-label="Arrow step">
+                                <span class="coord-step-label">Step</span>
+                                ${coordinateStepOptions(fractional).map(option => `<button type="button" class="coord-step" data-step="${option}" aria-pressed="${option === step}">${option}${fractional ? '' : ' Å'}</button>`).join('')}
+                            </div>
                             <div class="add-atom-coords">
                                 ${values.map((value, axis) => `<div class="coord-input-group">
                                     <label for="editAtom${axis}">${fractional ? ['a', 'b', 'c'][axis] : ['x', 'y', 'z'][axis]}</label>
-                                    <input id="editAtom${axis}" type="number" step="any" value="${Number(value.toFixed(9))}" class="coord-input" required>
+                                    <input id="editAtom${axis}" type="number" step="${step}" value="${Number(value.toFixed(9))}" class="coord-input" required>
                                 </div>`).join('')}
                             </div>
                             <div id="editAtomError" class="add-atom-error" role="alert"></div>
-                            <button id="saveAtomCoordinates" type="button" class="btn btn-add-atom">Apply Coordinates</button>
+                            <div class="coord-edit-hint">Arrows and typing move the atom live · Enter keeps · Esc reverts</div>
                         </div>
                     `;
+                    }
                 }
                 
                 // Constraints of the selected atoms: one toggle per axis plus
@@ -2388,8 +2411,7 @@ function updateEditUI() {
                 if (supportsSelectiveDynamics(currentStructure)) html += constraintControlsHTML();
                 
                 html += `
-                    <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete Selected</button>
-                    <button id="clearSelectionBtn" class="btn btn-clear">Cancel Selection</button>
+                    <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete ${selectedAtoms.length} atom${selectedAtoms.length === 1 ? '' : 's'}</button>
                 `;
             }
         }
@@ -2535,8 +2557,37 @@ function updateEditUI() {
         // Some native popups clear activeElement before firing change.
         restorePanelFocus('editAtomCoordMode', 'atomJumpInput');
     });
-    const saveCoordinates = document.getElementById('saveAtomCoordinates');
-    if (saveCoordinates) saveCoordinates.addEventListener('click', applyExactAtomCoordinates);
+    // Coordinate fields preview live; the section commits when focus leaves it.
+    [0, 1, 2].forEach(axis => {
+        const field = document.getElementById(`editAtom${axis}`);
+        if (!field) return;
+        field.addEventListener('input', scheduleCoordinatePreview);
+        field.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                applyExactAtomCoordinates();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                event.stopPropagation();
+                cancelCoordinateEdit();
+            }
+        });
+    });
+    const exactAtomSection = document.getElementById('exactAtomSection');
+    if (exactAtomSection) exactAtomSection.addEventListener('focusout', event => {
+        if (event.relatedTarget && exactAtomSection.contains(event.relatedTarget)) return;
+        // A panel rebuild (for instance after switching the coordinate system)
+        // removes the focused field and restores focus into the new section;
+        // only focus that really settles outside the section ends the session.
+        if (!exactAtomSection.isConnected) return;
+        setTimeout(() => {
+            const section = document.getElementById('exactAtomSection');
+            if (!section || !section.contains(document.activeElement)) commitCoordinateSession();
+        }, 0);
+    });
+    document.querySelectorAll('.coord-step').forEach(button => {
+        button.addEventListener('click', () => setCoordinateStep(button.dataset.step));
+    });
     
     // Add button listeners
     const deleteBtn = document.getElementById('deleteSelectedBtn');
@@ -2679,34 +2730,149 @@ function updateEditUI() {
     });
 }
 
-function applyExactAtomCoordinates() {
-    if (!currentStructure || selectedAtoms.length !== 1 || selectedAtoms[0].isGhost) return false;
+// === LIVE COORDINATE EDITING ===
+// The single-atom coordinate fields preview the atom as they change, like a
+// drag does: arrow and spinner steps at once, typing after a short pause.
+// One history entry covers the whole editing session; it is recorded when
+// focus leaves the section or Enter is pressed, and Escape puts the atom
+// back where the session started.
+
+function coordinateInputsFractional() {
+    return hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
+}
+
+function coordinateStepOptions(fractional) {
+    return fractional ? ['0.01', '0.05', '0.1'] : ['0.1', '0.5', '1'];
+}
+
+function currentCoordinateStep(fractional) {
+    return lastCoordinateStep[fractional ? 'fractional' : 'cartesian'];
+}
+
+function setCoordinateStep(step) {
+    const fractional = coordinateInputsFractional();
+    if (!coordinateStepOptions(fractional).includes(step)) return;
+    lastCoordinateStep[fractional ? 'fractional' : 'cartesian'] = step;
+    [0, 1, 2].forEach(axis => {
+        const field = document.getElementById(`editAtom${axis}`);
+        if (field) field.step = step;
+    });
+    document.querySelectorAll('.coord-step').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.step === step)));
+}
+
+// The atom the coordinate fields edit, or null when there is no single real
+// selected atom.
+function coordinateEditTarget() {
+    if (!currentStructure || selectedAtoms.length !== 1 || selectedAtoms[0].isGhost) return null;
     const index = selectedAtoms[0].index;
+    return currentStructure.atoms[index] ? index : null;
+}
+
+// Timers exist only in the browser; the unit tests drive the functions directly.
+function clearCoordinatePreviewTimer() {
+    if (coordinateEditTimer !== null && typeof clearTimeout === 'function') clearTimeout(coordinateEditTimer);
+    coordinateEditTimer = null;
+}
+
+function scheduleCoordinatePreview(event) {
+    clearCoordinatePreviewTimer();
+    // Typing reports an inputType (insertText, deleteContentBackward, …);
+    // arrow keys, the spinner and programmatic changes do not.
+    const typing = typeof event?.inputType === 'string' && event.inputType.length > 0;
+    if (typing) coordinateEditTimer = setTimeout(() => previewTypedCoordinates(false), 300);
+    else previewTypedCoordinates(false);
+}
+
+// Move the selected atom to the typed coordinates without recording history.
+function previewTypedCoordinates(report = false) {
+    const index = coordinateEditTarget();
+    if (index === null) return false;
     const fields = [0, 1, 2].map(axis => document.getElementById(`editAtom${axis}`));
+    if (fields.some(field => !field)) return false;
     const error = document.getElementById('editAtomError');
-    const values = fields.map(field => field && field.value.trim() !== '' ? Number(field.value) : NaN);
+    const values = fields.map(field => String(field.value).trim() !== '' ? Number(field.value) : NaN);
     if (values.some(value => !Number.isFinite(value))) {
-        error.textContent = 'Enter three finite coordinates';
+        if (error) error.textContent = report ? 'Enter three finite coordinates' : '';
         return false;
     }
-    const fractionalInput = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
-    const position = fractionalInput ? fractionalToCartesian(values, currentStructure.lattice)
-        : new THREE.Vector3(...values);
-    const atom = currentStructure.atoms[index];
-    if (atom.position.distanceTo(position) < 1e-10) return false;
-    const oldPosition = atom.position.clone();
+    const position = coordinateInputsFractional() ? fractionalToCartesian(values, currentStructure.lattice) : new THREE.Vector3(...values);
+    let prepared;
     try {
-        commitGeometryEdit({ type: 'move_atom', index, oldPosition, newPosition: position.clone() }, [{ index, position }]);
+        [prepared] = CrystalDocument.preparePositions(currentStructure, [position]);
     } catch {
-        error.textContent = 'Coordinates cannot be represented in this cell';
+        if (error) error.textContent = 'Coordinates cannot be represented in this cell';
         return false;
     }
-    renderStructure(currentStructure, true);
+    if (error) error.textContent = '';
+    const atom = currentStructure.atoms[index];
+    if (!coordinateEditSession || coordinateEditSession.index !== index) {
+        coordinateEditSession = { index, startPosition: atom.position.clone() };
+    }
+    if (atom.position.distanceTo(prepared.position) < 1e-12) return true;
+    atom.position.copy(prepared.position);
+    atom.fractional = prepared.fractional;
+    if (atomMeshes[index]) atomMeshes[index].position.copy(atom.position);
+    updateDirtyIndicator();
+    rebuildDisplayOptions();
+    refreshSelectedAtomReadout();
+    return true;
+}
+
+function refreshSelectedAtomReadout() {
+    const readout = document.getElementById('selectedAtomCoords0');
+    if (readout && selectedAtoms.length === 1) readout.textContent = coordinateReadoutText(selectedAtoms[0]).text;
+}
+
+// Record the session's move as one history entry. Returns whether a move
+// was recorded.
+function commitCoordinateSession() {
+    clearCoordinatePreviewTimer();
+    if (!coordinateEditSession) return false;
+    const { index, startPosition } = coordinateEditSession;
+    coordinateEditSession = null;
+    const atom = currentStructure?.atoms[index];
+    if (!atom) return false;
+    const newPosition = atom.position.clone();
+    if (startPosition.distanceTo(newPosition) < 1e-10) return false;
+    pushUndo({ type: 'move_atom', index, oldPosition: startPosition.clone(), newPosition });
+    // An atom that reached or left a cell face changes which periodic copies
+    // are drawn, which only a scene rebuild can show.
+    if (boundaryCopiesStale()) renderStructure(currentStructure, true);
+    else rebuildDisplayOptions();
     updateUI(currentStructure);
     updateEditUI();
     statusText.textContent = `Set coordinates for atom #${index + 1}`;
     statusText.className = 'success';
     return true;
+}
+
+// Enter: preview whatever is typed, then keep it.
+function applyExactAtomCoordinates() {
+    if (!previewTypedCoordinates(true)) return false;
+    if (commitCoordinateSession()) return true;
+    statusText.textContent = 'Atom position unchanged';
+    statusText.className = '';
+    return false;
+}
+
+// Escape in a field: put the atom back where the session started.
+function cancelCoordinateEdit() {
+    clearCoordinatePreviewTimer();
+    if (coordinateEditSession) {
+        const { index, startPosition } = coordinateEditSession;
+        coordinateEditSession = null;
+        const atom = currentStructure?.atoms[index];
+        if (atom) {
+            atom.position.copy(startPosition);
+            atom.fractional = hasLattice(currentStructure) ? cartesianToFractional(atom.position, currentStructure.lattice) : null;
+            if (atomMeshes[index]) atomMeshes[index].position.copy(atom.position);
+            updateDirtyIndicator();
+            rebuildDisplayOptions();
+        }
+        statusText.textContent = `Coordinate edit canceled; atom #${index + 1} restored`;
+        statusText.className = '';
+    }
+    updateEditUI();
 }
 
 // All discrete coordinate edits validate the complete proposal before writing
@@ -5075,6 +5241,8 @@ function loadStructureFromText(content, filename, requestId = null) {
     lastShiftCoords = { a: 0, b: 0, c: 0 };
     lastSelectRange = null;
     setBoxSelectMode(false);
+    coordinateEditSession = null;
+    clearCoordinatePreviewTimer();
     lastAddAtomCoordType = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastShiftCoordType = lastAddAtomCoordType;
     if (currentStructure.isXDATCAR) {

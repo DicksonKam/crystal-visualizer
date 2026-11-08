@@ -36,7 +36,7 @@ for (const includeReal of [false, true]) test(`shifting a preserved periodic-cop
     expect(after.undo).toEqual(before.undo); expect(after.redo).toEqual(before.redo);
     expect(after.revision).toBe(before.revision); expect(after.dirty).toBe(before.dirty);
     // Clear the read-only selection, then the same valid vector shifts real atoms.
-    await page.locator('#clearSelectionBtn').click();
+    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     await page.locator('#shiftA').fill('0.25');
     await page.locator('#applyShiftBtn').click();
     const shifted = await capture(page);

@@ -13,7 +13,7 @@ for (const file of ['poscar/Al_slab_selective.poscar', 'xyz/H2O.xyz']) test(`mea
     await setMode(page, 'edit');
     for (let cycle = 0; cycle < 3; cycle++) {
         const before = await checkMeasurement(page);
-        await page.locator('#clearSelectionBtn').click();
+        await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
         await page.locator('#atomJumpInput').fill('1'); await page.locator('#atomJumpInput').press('Enter');
         await page.locator('#deleteSelectedBtn').click();
         expect((await capture(page)).atomCount).toBe(total - 1);

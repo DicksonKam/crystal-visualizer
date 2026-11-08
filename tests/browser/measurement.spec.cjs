@@ -79,7 +79,7 @@ test('mode changes, clear, undo and document replacement dispose and restore act
     expect((await state(page)).points).toEqual(original.points);
     await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
     await setMode(page, 'measure');
-    await page.locator('#clearSelectionBtn').click();
+    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     expect((await state(page)).lines).toHaveLength(0);
     const disposals = await page.evaluate(() => window.measurementDisposals);
     expect(disposals.sort()).toEqual(expectedDisposals);

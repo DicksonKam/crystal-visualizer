@@ -20,7 +20,7 @@ test('editing and undo preserve the world positions of untouched atoms', async (
     await page.locator('#atomJumpInput').press('Enter');
     const before = await placement(page);
     await page.locator('#editAtom0').fill('0.8');
-    await page.locator('#saveAtomCoordinates').click();
+    await page.locator('#editAtom0').press('Enter');
     const edited = await placement(page);
     expect(edited.atoms[0]).not.toEqual(before.atoms[0]);
     for (const n of [1, 2]) expect(edited.atoms[n]).toEqual(before.atoms[n]);

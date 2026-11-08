@@ -76,7 +76,7 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
     // Switch from the measured trio to an edit selection, delete, and walk
     // back through both geometry history and the measurement context.
     const measured = await checkMeasurement(page);
-    await page.locator('#clearSelectionBtn').click();
+    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     await page.locator('#atomJumpInput').fill('4'); await page.locator('#atomJumpInput').press('Enter');
     await page.locator('#deleteSelectedBtn').click(); await snap('deleted-after-measurement');
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);

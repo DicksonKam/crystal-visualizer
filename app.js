@@ -841,8 +841,10 @@ function initScene() {
         if (activeEditPointerId !== null) cancelEditDrag(event);
     }, { capture: true });
     renderer.domElement.addEventListener('click', onClickFallback);
-    document.getElementById('sidebar')?.addEventListener('pointerdown', event => {
-        lastPanelPointerTarget = event.target instanceof Element ? event.target.closest('button, input, select, label, a') : null;
+    document.addEventListener('pointerdown', event => {
+        const sidebar = document.getElementById('sidebar');
+        lastPanelPointerTarget = event.target instanceof Element && sidebar?.contains(event.target)
+            ? event.target.closest('button, input, select, label, a') : null;
     }, { capture: true });
     window.addEventListener('blur', cancelEditDrag);
     document.addEventListener('keydown', event => {
@@ -2289,6 +2291,9 @@ function createEditSelectionMarker(atomMesh, selectionNumber) {
 function restorePanelFocus(focusedId, fallbackId) {
     const restoreFocus = () => {
         const replacement = focusedId && document.getElementById(focusedId);
+        // A control that the rebuild disabled (None with nothing selected)
+        // keeps no focus, and nothing else should take it either.
+        if (replacement && replacement.disabled) return;
         (replacement || document.getElementById(fallbackId))?.focus({ preventScroll: true });
     };
     restoreFocus();
@@ -2310,14 +2315,28 @@ function replacePanelHTML(panel, html, fallbackId) {
     // Keep the control that caused this rebuild where it is on screen, so a
     // selection card growing above it cannot push it out from under the
     // pointer and break the user's flow.
-    const anchor = hadFocus && active.id ? active
-        : lastPanelPointerTarget?.id && panel.contains(lastPanelPointerTarget) ? lastPanelPointerTarget : null;
     const scroller = typeof panel.closest === 'function' ? panel.closest('.sidebar') : null;
-    const anchorTop = anchor && scroller && typeof anchor.getBoundingClientRect === 'function' ? anchor.getBoundingClientRect().top : null;
+    const anchors = [];
+    const control = hadFocus && active.id ? active
+        : lastPanelPointerTarget?.id && panel.contains(lastPanelPointerTarget) ? lastPanelPointerTarget : null;
+    if (control && scroller && typeof control.getBoundingClientRect === 'function') anchors.push({ id: control.id, top: control.getBoundingClientRect().top });
+    // A rebuild caused outside the panel (a click on an atom, Escape) keeps
+    // the first control that starts inside the visible panel where it is.
+    // Every later control is a fallback, because the rebuild may drop the
+    // first ones (clearing a selection removes its whole card).
+    if (!anchors.length && scroller && typeof panel.querySelectorAll === 'function') {
+        const top = scroller.getBoundingClientRect().top - 1;
+        for (const element of panel.querySelectorAll('[id]')) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top >= top) anchors.push({ id: element.id, top: rect.top });
+        }
+    }
     panel.innerHTML = html;
-    if (anchorTop !== null) {
+    for (const anchor of anchors) {
         const replacement = document.getElementById(anchor.id);
-        if (replacement) scroller.scrollTop += replacement.getBoundingClientRect().top - anchorTop;
+        if (!replacement) continue;
+        scroller.scrollTop += replacement.getBoundingClientRect().top - anchor.top;
+        break;
     }
     if (hadFocus) restorePanelFocus(focusedId, fallbackId);
 }

@@ -154,6 +154,27 @@ test('panel controls stay put under the pointer while the selection card grows a
     await page.locator('#selectNoneBtn').click();
     expect(Math.abs((await allBtn.boundingBox()).y - before.y)).toBeLessThan(2);
     await expect(page.locator('.selected-atom.edit')).toHaveCount(0);
+
+    // Clicking atoms on the canvas rebuilds the panel too; with the section
+    // scrolled into view, it stays where it is while the card grows above.
+    const points = await page.evaluate(() => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const point = new THREE.Vector3();
+        return currentStructure.atoms.map((atom, index) => {
+            atomMeshes[index].getWorldPosition(point);
+            point.project(camera);
+            return { x: rect.left + (point.x + 1) / 2 * rect.width, y: rect.top + (1 - point.y) / 2 * rect.height };
+        });
+    });
+    for (const n of [0, 1, 2]) {
+        await page.mouse.click(points[n].x, points[n].y);
+        await expect(page.locator('.selected-atom.edit')).toHaveCount(n + 1);
+        expect(Math.abs((await allBtn.boundingBox()).y - before.y)).toBeLessThan(2);
+    }
+    await page.evaluate(() => document.activeElement.blur());
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.selected-atom.edit')).toHaveCount(0);
+    expect(Math.abs((await allBtn.boundingBox()).y - before.y)).toBeLessThan(2);
 });
 
 test('a large selection lists its first rows and says how many more there are', async ({ page }) => {

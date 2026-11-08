@@ -872,6 +872,7 @@ body.edit-mode-active .panel-title {
 }
 
 .viewport {
+    position: relative;
     width: 100%;
     flex: 1;
     min-height: 0;
@@ -1395,6 +1396,10 @@ body.edit-mode-active .panel-title {
 .constraint-axes {
     display: flex;
     gap: 0.4rem;
+    margin-bottom: 0.25rem;
+}
+
+.constraint-controls .sd-buttons {
     margin-bottom: 0.5rem;
 }
 
@@ -1521,6 +1526,50 @@ body.edit-mode-active .panel-title {
 .element-chip:focus-visible {
     outline: 2px solid var(--accent-cyan);
     outline-offset: 1px;
+}
+
+/* Box select: the rectangle drawn over the canvas and its panel button */
+#boxSelectRect {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+    border: 1px dashed var(--accent-cyan);
+    background: rgba(0, 245, 212, 0.08);
+    border-radius: 2px;
+}
+
+#boxSelectRect[hidden] {
+    display: none;
+}
+
+.box-select-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.btn-box {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-box:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.btn-box[aria-pressed="true"] {
+    background: rgba(0, 245, 212, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.box-select-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
 }
 
 .select-range-head {

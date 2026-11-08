@@ -323,6 +323,8 @@ function setAtomGlow(mesh, color, intensity) {
 // Mode state: 'measure' or 'edit'
 let currentMode = 'measure';
 let lastSelectRange = null; // Remembered select-by-range inputs { axis, unit, min, max }
+let boxSelectMode = false; // Box select is on: a left-drag on the canvas selects the atoms inside
+let boxSelectDrag = null; // { pointerId, startX, startY, x, y } while a box is being drawn
 
 // XDATCAR / Animation state
 let animationState = {
@@ -838,7 +840,7 @@ function initScene() {
     renderer.domElement.addEventListener('click', onClickFallback);
     window.addEventListener('blur', cancelEditDrag);
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && (draggedAtom || vacuumDragState.isDragging)) {
+        if (event.key === 'Escape' && (draggedAtom || vacuumDragState.isDragging || boxSelectDrag)) {
             event.preventDefault();
             cancelEditDrag(event);
         }
@@ -1586,6 +1588,10 @@ function onMouseDown(event) {
     }
     if (activeEditPointerId !== null) return;
     canvasClickGesture = { id: event.pointerId, x: event.clientX, y: event.clientY, active: true, moved: false };
+    if (currentMode === 'edit' && (boxSelectMode || event.shiftKey)) {
+        beginBoxSelect(event);
+        return;
+    }
     
     pointerDownTime = Date.now();
     wasDragging = false;
@@ -1699,6 +1705,10 @@ function releaseEditPointer() {
 // Interrupted drags restore the document without adding an undo entry.
 function cancelEditDrag(event, actionReason) {
     if (event?.pointerId !== undefined && event.pointerId !== activeEditPointerId) return;
+    if (boxSelectDrag) {
+        cancelBoxSelect(actionReason || event?.type);
+        return;
+    }
     if (!draggedAtom && !vacuumDragState.isDragging) return;
     const reason = actionReason || ({
         blur: 'app lost focus',
@@ -1901,6 +1911,10 @@ function onMouseMove(event) {
     if (!currentStructure) return;
     if (activeEditPointerId !== null && event.pointerId !== activeEditPointerId) return;
     recordEditPointerEvent(event);
+    if (boxSelectDrag) {
+        updateBoxSelect(event);
+        return;
+    }
     
     // Handle vacuum drag
     if (vacuumDragState.isDragging) {
@@ -1920,7 +1934,7 @@ function onMouseMove(event) {
             const cursor = getVacuumDragCursor(handle.extendAxis);
             renderer.domElement.style.cursor = cursor;
         } else {
-            renderer.domElement.style.cursor = 'default';
+            renderer.domElement.style.cursor = boxSelectMode ? 'crosshair' : 'default';
         }
     } else if (currentMode === 'edit') {
         // Clear highlight if not hovering vacuum handles
@@ -1992,6 +2006,10 @@ function onMouseUp(event) {
     if (event.button !== 0) return; // Only left click
     if (activeEditPointerId !== null && event.pointerId !== activeEditPointerId) return;
     recordEditPointerEvent(event);
+    if (boxSelectDrag) {
+        finishBoxSelect();
+        return;
+    }
     
     // Handle vacuum drag end
     if (vacuumDragState.isDragging) {
@@ -2559,6 +2577,8 @@ function updateEditUI() {
     if (selectNoneBtn) selectNoneBtn.addEventListener('click', () => { clearSelection(); updateEditUI(); });
     const selectInvertBtn = document.getElementById('selectInvertBtn');
     if (selectInvertBtn) selectInvertBtn.addEventListener('click', invertSelection);
+    const boxSelectBtn = document.getElementById('boxSelectBtn');
+    if (boxSelectBtn) boxSelectBtn.addEventListener('click', () => setBoxSelectMode(!boxSelectMode));
     ['selectRangeAxis', 'selectRangeMin', 'selectRangeMax'].forEach(id => {
         const field = document.getElementById(id);
         if (field) field.addEventListener('input', rememberSelectRange);
@@ -3274,6 +3294,10 @@ function selectByRuleHTML() {
         <div class="sd-batch-section select-rule-section">
             <div class="sd-batch-title">Select Atoms</div>
             <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
+            <div class="box-select-row">
+                <button type="button" id="boxSelectBtn" class="btn btn-sm btn-box" aria-pressed="${boxSelectMode}" title="Drag a rectangle on the canvas to select the atoms inside it. Shift+drag does the same at any time.">⬚ Box select</button>
+                <span class="box-select-hint">${boxSelectMode ? 'Drag on the canvas · Esc cancels' : 'or Shift+drag on the canvas'}</span>
+            </div>
             <div class="select-range-head">
                 <label for="selectRangeAxis">Along</label>
                 <select id="selectRangeAxis" class="element-select select-range-axis" aria-label="Axis">${axisOptions}</select>
@@ -3297,6 +3321,116 @@ function selectByRuleHTML() {
     `;
 }
 
+// === BOX SELECTION ===
+// A left-drag on the canvas, with Box select on or Shift held, draws a
+// rectangle and selects the real atoms whose projected centres lie inside it,
+// at any depth. The drag owns the pointer like an atom drag does, so the
+// camera and atom-drag handlers stay out of the way.
+
+function boxSelectOverlay() {
+    let overlay = document.getElementById('boxSelectRect');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'boxSelectRect';
+        overlay.hidden = true;
+        viewport.appendChild(overlay);
+    }
+    return overlay;
+}
+
+function setBoxSelectMode(enabled) {
+    const next = Boolean(enabled) && currentMode === 'edit';
+    if (next === boxSelectMode) return;
+    boxSelectMode = next;
+    if (renderer?.domElement) renderer.domElement.style.cursor = boxSelectMode ? 'crosshair' : '';
+    if (boxSelectMode) {
+        statusText.textContent = 'Box select: drag a rectangle over the atoms to select them; Esc cancels';
+        statusText.className = '';
+    }
+    if (currentMode === 'edit') updateEditUI();
+}
+
+function beginBoxSelect(event) {
+    controls.enabled = false;
+    event.preventDefault();
+    event.stopPropagation();
+    boxSelectDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, x: event.clientX, y: event.clientY };
+    captureEditPointer(event);
+    drawBoxSelect();
+}
+
+function boxSelectRectangle() {
+    const { startX, startY, x, y } = boxSelectDrag;
+    return { left: Math.min(startX, x), top: Math.min(startY, y), right: Math.max(startX, x), bottom: Math.max(startY, y) };
+}
+
+function drawBoxSelect() {
+    const overlay = boxSelectOverlay();
+    const rect = boxSelectRectangle();
+    const host = viewport.getBoundingClientRect();
+    overlay.hidden = false;
+    overlay.style.left = `${rect.left - host.left}px`;
+    overlay.style.top = `${rect.top - host.top}px`;
+    overlay.style.width = `${rect.right - rect.left}px`;
+    overlay.style.height = `${rect.bottom - rect.top}px`;
+}
+
+function updateBoxSelect(event) {
+    boxSelectDrag.x = event.clientX;
+    boxSelectDrag.y = event.clientY;
+    drawBoxSelect();
+    const count = atomsInBox(boxSelectRectangle()).length;
+    statusText.textContent = `Box select: ${count} atom${count === 1 ? '' : 's'} inside`;
+    statusText.className = '';
+}
+
+// Real atoms whose projected centre lies inside a client-space rectangle.
+function atomsInBox(rect) {
+    const canvasRect = renderer.domElement.getBoundingClientRect();
+    camera.updateMatrixWorld();
+    const point = new THREE.Vector3();
+    const points = currentStructure.atoms.map((atom, index) => {
+        const mesh = atomMeshes[index];
+        if (!mesh || mesh.userData.isGhost) return null;
+        mesh.getWorldPosition(point);
+        point.project(camera);
+        if (point.z < -1 || point.z > 1) return null;
+        return { x: canvasRect.left + (point.x + 1) / 2 * canvasRect.width, y: canvasRect.top + (1 - point.y) / 2 * canvasRect.height };
+    });
+    return CrystalStructure.indicesInRectangle(points, rect);
+}
+
+function endBoxSelect() {
+    boxSelectOverlay().hidden = true;
+    boxSelectDrag = null;
+    controls.enabled = true;
+    releaseEditPointer();
+}
+
+function finishBoxSelect() {
+    const rect = boxSelectRectangle();
+    const tiny = rect.right - rect.left < 3 && rect.bottom - rect.top < 3;
+    endBoxSelect();
+    // A box too small to be a drag is a click: the click handler selects the
+    // atom under the pointer as usual.
+    if (tiny) return;
+    wasDragging = true;
+    const indices = atomsInBox(rect);
+    if (!indices.length) {
+        statusText.textContent = 'Box select: no atoms inside';
+        statusText.className = '';
+        return;
+    }
+    addAtomsToSelection(indices, 'Box');
+}
+
+function cancelBoxSelect(reason) {
+    endBoxSelect();
+    wasDragging = true;
+    statusText.textContent = reason === 'keydown' ? 'Box select canceled (Escape pressed)' : 'Box select canceled';
+    statusText.className = '';
+}
+
 // === CONSTRAINTS ===
 
 function constraintControlsHTML() {
@@ -3311,11 +3445,11 @@ function constraintControlsHTML() {
     return `
         <div class="constraint-controls">
             <div class="constraint-label">Constraints</div>
-            <div class="constraint-axes" role="group" aria-label="Fix or free the selected atoms along each axis">${toggles}</div>
             <div class="sd-buttons">
                 <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms on all axes (F F F)">🔒 Fix</button>
                 <button id="unfixSelectedBtn" class="btn btn-unfix" title="Free selected atoms on all axes (T T T)">🔓 Free</button>
             </div>
+            <div class="constraint-axes" role="group" aria-label="Fix or free the selected atoms along each axis">${toggles}</div>
         </div>
     `;
 }
@@ -4925,6 +5059,7 @@ function loadStructureFromText(content, filename, requestId = null) {
     lastAddAtomCoords = { x: 0, y: 0, z: 0 };
     lastShiftCoords = { a: 0, b: 0, c: 0 };
     lastSelectRange = null;
+    setBoxSelectMode(false);
     lastAddAtomCoordType = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastShiftCoordType = lastAddAtomCoordType;
     if (currentStructure.isXDATCAR) {
@@ -5928,6 +6063,7 @@ function setInteractionMode(mode, restoringSelection = false) {
     // Record a mode-induced clear in the context that owns the selection.
     if (!restoringSelection && mode === 'measure' && !isMeasurementSelection) clearSelection();
     currentMode = mode;
+    if (mode !== 'edit') setBoxSelectMode(false);
 
     // Update button states
     updateModeButtonState();
@@ -7176,6 +7312,7 @@ function switchToMeasureMode() {
     cancelCameraAlignment();
     cleanupVacuumHandles();
     currentMode = 'measure';
+    setBoxSelectMode(false);
     
     updateModeButtonState();
     

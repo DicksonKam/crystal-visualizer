@@ -152,7 +152,20 @@
         return states;
     }
 
-    const api = { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint, atomsInRange, constraintChanges, constraintAxisStates };
+    // Indices of the points ({ x, y }; null entries are skipped) inside the
+    // rectangle spanned by any two opposite corners, edges included.
+    function indicesInRectangle(points, rect) {
+        const left = Math.min(rect.left, rect.right), right = Math.max(rect.left, rect.right);
+        const top = Math.min(rect.top, rect.bottom), bottom = Math.max(rect.top, rect.bottom);
+        const indices = [];
+        points.forEach((point, index) => {
+            if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
+            if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom) indices.push(index);
+        });
+        return indices;
+    }
+
+    const api = { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint, atomsInRange, constraintChanges, constraintAxisStates, indicesInRectangle };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalStructure = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

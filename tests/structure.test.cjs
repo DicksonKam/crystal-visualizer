@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint, atomsInRange, constraintChanges, constraintAxisStates } = require('../structure.js');
+const { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint, atomsInRange, constraintChanges, constraintAxisStates, indicesInRectangle } = require('../structure.js');
 const { fractionalToCartesian } = require('../geometry.js');
 
 test('supercells prepare tilted-cell copies with current fractional coordinates and independent constraints', () => {
@@ -178,4 +178,13 @@ test('constraint changes set only the named axes, skip unchanged atoms and ignor
     assert.deepEqual(constraintAxisStates(atoms, [1]), ['fixed', 'fixed', 'fixed']);
     assert.deepEqual(constraintAxisStates(atoms, [0, 3]), ['free', 'free', 'mixed']);
     assert.deepEqual(constraintAxisStates(atoms, []), ['free', 'free', 'free']);
+});
+
+test('rectangle selection accepts corners in any order, includes edges and skips missing points', () => {
+    const points = [{ x: 0, y: 0 }, { x: 5, y: 5 }, { x: 10, y: 10 }, null, { x: NaN, y: 2 }, { x: 5, y: 11 }];
+    assert.deepEqual(indicesInRectangle(points, { left: 0, top: 0, right: 10, bottom: 10 }), [0, 1, 2]);
+    assert.deepEqual(indicesInRectangle(points, { left: 10, top: 10, right: 0, bottom: 0 }), [0, 1, 2]);
+    assert.deepEqual(indicesInRectangle(points, { left: 1, top: 1, right: 9, bottom: 9 }), [1]);
+    assert.deepEqual(indicesInRectangle(points, { left: 20, top: 20, right: 30, bottom: 30 }), []);
+    assert.deepEqual(indicesInRectangle([], { left: 0, top: 0, right: 1, bottom: 1 }), []);
 });

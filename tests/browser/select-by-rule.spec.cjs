@@ -199,3 +199,28 @@ test('a large selection lists its first rows and says how many more there are', 
     await expect(page.locator('.selected-atoms-more')).toHaveText('… and 20 more');
     await expect(page.locator('#deleteSelectedBtn')).toHaveText('🗑️ Delete 32 atoms');
 });
+
+test('the coordinate choice sits in the section heading and is a read-only tag without a cell', async ({ page }) => {
+    await openSlab(page);
+    await expect(page.locator('.add-atom-head .choice-pills .pill')).toHaveCount(2);
+    await expect(page.locator('.choice-pills.single')).toHaveCount(0);
+    const section = await page.locator('.add-atom-section').boundingBox();
+    const pills = await page.locator('.add-atom-head .choice-pills').boundingBox();
+    expect(Math.abs(pills.x + pills.width - (section.x + section.width))).toBeLessThan(1.5);
+    await page.locator('.add-atom-head .pill', { hasText: 'Å' }).click();
+    await expect(page.locator('#addAtomLabelX')).toHaveText('x');
+
+    await page.evaluate(() => loadExampleFile('examples/xyz/CH4.xyz'));
+    await expect(page.locator('#statusText')).toContainText('Loaded');
+    await setMode(page, 'edit');
+    await expect(page.locator('.add-atom-head .choice-pills.single')).toHaveText('Å · xyz');
+    await expect(page.locator('input[name="coordType"]')).toHaveCount(1);
+    await expect(page.locator('input[name="coordType"]')).toBeChecked();
+    // The form still knows its coordinate system with no choice on screen.
+    const before = await page.evaluate(() => currentStructure.atoms.length);
+    await page.locator('#addAtomX').fill('3');
+    await page.locator('#addAtomBtn').click();
+    expect(await page.evaluate(() => currentStructure.atoms.length)).toBe(before + 1);
+    await page.locator('#selectAllBtn').click();
+    await expect(page.locator('.move-section .choice-pills.single')).toHaveText('Å · xyz');
+});

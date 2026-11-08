@@ -2590,7 +2590,10 @@ function updateEditUI() {
         
         html += `
             <div class="add-atom-section">
-                <div class="sd-batch-title">Add Atom</div>
+                <div class="move-head add-atom-head">
+                    <div class="sd-batch-title">Add Atom</div>
+                    ${coordinateChoiceHTML('coordType', isCartesian ? 'cartesian' : 'fractional')}
+                </div>
                 <div class="add-atom-row">
                     <label for="addAtomElement">Element</label>
                     <select id="addAtomElement" class="element-select">
@@ -2605,7 +2608,6 @@ function updateEditUI() {
                             ? `<option value="${group.id}"${group.id === lastAddAtomSpecies ? ' selected' : ''}>${group.element} — group ${index + 1}</option>` : '').join('')}
                     </select>
                 </div>` : ''}
-                ${coordinateChoiceHTML('coordType', isCartesian ? 'cartesian' : 'fractional')}
                 <div class="add-atom-coords">
                     <div class="coord-input-group">
                         <label for="addAtomX" id="addAtomLabelX">${isCartesian ? 'x' : 'a'}</label>
@@ -3383,7 +3385,12 @@ function setSelectedAtomsFixed(isFixed) {
 // A Cartesian / fractional choice as a pill pair; the radios keep their
 // names so the handlers and tests see ordinary radio buttons.
 function coordinateChoiceHTML(name, current) {
-    const options = [['cartesian', 'Å · xyz'], ...(hasLattice(currentStructure) ? [['fractional', 'Fractional · abc']] : [])];
+    // With no cell there is nothing to choose, so the only system is a
+    // read-only tag. Its radio stays so every form still has a checked system.
+    if (!hasLattice(currentStructure)) {
+        return `<div class="choice-pills single" title="This structure has no unit cell, so coordinates are in Å"><label class="pill"><input type="radio" name="${name}" id="${name}Cartesian" value="cartesian" tabindex="-1" checked><span>Å · xyz</span></label></div>`;
+    }
+    const options = [['cartesian', 'Å · xyz'], ['fractional', 'Fractional · abc']];
     return `<div class="choice-pills" role="radiogroup" aria-label="Coordinate system">${options.map(([value, label]) =>
         `<label class="pill"><input type="radio" name="${name}" id="${name}${value === 'cartesian' ? 'Cartesian' : 'Fractional'}" value="${value}"${current === value ? ' checked' : ''}><span>${label}</span></label>`).join('')}</div>`;
 }

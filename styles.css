@@ -1788,8 +1788,35 @@ body.edit-mode-active .viewport {
     margin-bottom: 0.6rem;
 }
 
-.move-head .constraint-label {
+.move-head .constraint-label,
+.move-head .sd-batch-title {
     margin-bottom: 0;
+}
+
+/* Stays on the right even when a narrow panel wraps it to its own line */
+.move-head .choice-pills {
+    margin-left: auto;
+}
+
+.add-atom-head {
+    margin-bottom: 0.75rem;
+}
+
+/* No unit cell, no choice: the same pill shape, read-only. Grey outline,
+   muted text, no fill, cyan or hover, so it lines up with the switchable
+   pair without offering to switch. */
+.choice-pills.single .pill,
+.choice-pills.single .pill:hover,
+.choice-pills.single .pill:has(input:checked) {
+    background: none;
+    border-color: var(--border-color);
+    border-radius: 999px;
+    color: var(--text-muted);
+    cursor: default;
+}
+
+.choice-pills.single input[type="radio"] {
+    cursor: default;
 }
 
 /* Select Atoms is the first section: no rule above it */

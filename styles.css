@@ -1538,8 +1538,22 @@ body.edit-mode-active .panel-title {
     border-radius: 2px;
 }
 
+#boxSelectRect.remove {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.08);
+}
+
 #boxSelectRect[hidden] {
     display: none;
+}
+
+/* Box gestures only apply in Edit mode */
+.controls-hint .edit-hint {
+    display: none;
+}
+
+body.edit-mode-active .controls-hint .edit-hint {
+    display: inline;
 }
 
 .box-select-row {

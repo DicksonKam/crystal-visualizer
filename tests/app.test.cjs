@@ -1533,6 +1533,22 @@ test('element chips, All and Invert replace the selection in single history step
     context.performUndo();
     assert.deepEqual(selectedIndices(context), [0, 2, 1]);
     assert.equal(context.hasUnsavedEdits(), false);
+
+    // Alt removes: a chip takes its element out even when not all are selected,
+    // and a range takes out the atoms it covers.
+    context.toggleElementSelection('Al', true);
+    assert.deepEqual(selectedIndices(context), [1]);
+    assert.equal(undoLength(context), 6);
+    context.toggleElementSelection('Al', true);
+    assert.equal(undoLength(context), 6, 'removing nothing records nothing');
+    assert.match(context.document.getElementById('statusText').textContent, /none of those atoms are selected/);
+    context.document.getElementById('selectRangeAxis').value = '2';
+    context.document.getElementById('selectRangeMin').value = '0.5';
+    context.document.getElementById('selectRangeMax').value = '';
+    context.selectAtomsByRange(true);
+    assert.deepEqual(selectedIndices(context), []);
+    assert.equal(undoLength(context), 7);
+    assert.match(context.document.getElementById('statusText').textContent, /z ≥ 0.5 Å: deselected 1 atom \(0 of 3 selected\)/);
 });
 
 test('axis toggles fix one axis of the selection, free it once every atom has it fixed, and skip unchanged atoms', () => {

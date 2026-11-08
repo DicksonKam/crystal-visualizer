@@ -2570,7 +2570,7 @@ function updateEditUI() {
 
     // Select-by-rule controls
     const selectRangeBtn = document.getElementById('selectRangeBtn');
-    if (selectRangeBtn) selectRangeBtn.addEventListener('click', selectAtomsByRange);
+    if (selectRangeBtn) selectRangeBtn.addEventListener('click', event => selectAtomsByRange(Boolean(event.altKey)));
     const selectAllBtn = document.getElementById('selectAllBtn');
     if (selectAllBtn) selectAllBtn.addEventListener('click', selectAllAtoms);
     const selectNoneBtn = document.getElementById('selectNoneBtn');
@@ -2592,7 +2592,7 @@ function updateEditUI() {
         });
     });
     document.querySelectorAll('.element-chip').forEach(chip => {
-        chip.addEventListener('click', () => toggleElementSelection(chip.dataset.element));
+        chip.addEventListener('click', event => toggleElementSelection(chip.dataset.element, Boolean(event.altKey)));
     });
     
     const unfixAllBtn = document.getElementById('unfixAllBtn');
@@ -3183,17 +3183,22 @@ function removeAtomsFromSelection(indices, description) {
     const current = selectedRealIndices();
     const remaining = current.filter(index => !wanted.has(index));
     const removed = current.length - remaining.length;
-    if (!removed) return 0;
+    if (!removed) {
+        reportSelection(`${description}: none of those atoms are selected`, false);
+        return 0;
+    }
     setEditSelection(remaining, 'deselect_atom');
     reportSelection(`${description}: deselected ${removed} atom${removed === 1 ? '' : 's'}`, true);
     return removed;
 }
 
-function toggleElementSelection(element) {
+// A chip adds its element, or removes it when every atom of that element is
+// already selected; Alt+click always removes.
+function toggleElementSelection(element, remove = false) {
     if (!currentStructure) return;
     const indices = elementIndices(element);
     const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
-    if (indices.length && indices.every(index => selected.has(index))) removeAtomsFromSelection(indices, element);
+    if (remove || (indices.length && indices.every(index => selected.has(index)))) removeAtomsFromSelection(indices, element);
     else addAtomsToSelection(indices, `All ${element}`);
 }
 
@@ -3232,9 +3237,9 @@ function selectRangeUsesFractional(range) {
     return range.unit === 'fractional' && hasLattice(currentStructure);
 }
 
-// Select every real atom whose coordinate along one axis lies in the typed
-// range. Either end may be left empty.
-function selectAtomsByRange() {
+// Select (or, with remove, deselect) every real atom whose coordinate along
+// one axis lies in the typed range. Either end may be left empty.
+function selectAtomsByRange(remove = false) {
     if (!currentStructure) return;
     const range = rememberSelectRange();
     const parse = text => {
@@ -3270,7 +3275,8 @@ function selectAtomsByRange() {
     const unit = fractional ? '' : ' Å';
     const bounds = min !== null && max !== null ? `${min} ≤ ${axisName} ≤ ${max}${unit}`
         : min !== null ? `${axisName} ≥ ${min}${unit}` : `${axisName} ≤ ${max}${unit}`;
-    addAtomsToSelection(indices, bounds);
+    if (remove) removeAtomsFromSelection(indices, bounds);
+    else addAtomsToSelection(indices, bounds);
 }
 
 function selectByRuleHTML() {
@@ -3283,7 +3289,7 @@ function selectByRuleHTML() {
         const count = indices.filter(index => selected.has(index)).length;
         const state = count === 0 ? 'none' : count === indices.length ? 'all' : 'some';
         const verb = state === 'all' ? 'Deselect' : 'Select';
-        return `<button type="button" class="element-chip" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'}"><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
+        return `<button type="button" class="element-chip" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'} (Alt+click removes them)"><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
     }).join('');
     const range = lastSelectRange || defaultSelectRange();
     const fractional = selectRangeUsesFractional(range);
@@ -3295,8 +3301,8 @@ function selectByRuleHTML() {
             <div class="sd-batch-title">Select Atoms</div>
             <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
             <div class="box-select-row">
-                <button type="button" id="boxSelectBtn" class="btn btn-sm btn-box" aria-pressed="${boxSelectMode}" title="Drag a rectangle on the canvas to select the atoms inside it. Shift+drag does the same at any time.">⬚ Box select</button>
-                <span class="box-select-hint">${boxSelectMode ? 'Drag on the canvas · Esc cancels' : 'or Shift+drag on the canvas'}</span>
+                <button type="button" id="boxSelectBtn" class="btn btn-sm btn-box" aria-pressed="${boxSelectMode}" title="Drag a rectangle on the canvas to select the atoms inside it; Alt+drag deselects them. Shift+drag and Alt+Shift+drag do the same at any time.">⬚ Box select</button>
+                <span class="box-select-hint">${boxSelectMode ? 'Drag on the canvas · Alt+drag deselects · Esc cancels' : 'or Shift+drag · Alt+Shift+drag deselects'}</span>
             </div>
             <div class="select-range-head">
                 <label for="selectRangeAxis">Along</label>
@@ -3309,7 +3315,7 @@ function selectByRuleHTML() {
                 <input type="number" id="selectRangeMin" class="z-threshold-input" step="${step}" value="${range.min}" placeholder="min" aria-label="Lower bound">
                 <span class="select-range-to">to</span>
                 <input type="number" id="selectRangeMax" class="z-threshold-input" step="${step}" value="${range.max}" placeholder="max" aria-label="Upper bound">
-                <button id="selectRangeBtn" class="btn btn-sm btn-select">Select</button>
+                <button id="selectRangeBtn" class="btn btn-sm btn-select" title="Select the atoms in this range (Alt+click deselects them)">Select</button>
             </div>
             <div id="selectRangeError" class="add-atom-error"></div>
             <div class="select-quick">
@@ -3354,7 +3360,7 @@ function beginBoxSelect(event) {
     controls.enabled = false;
     event.preventDefault();
     event.stopPropagation();
-    boxSelectDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, x: event.clientX, y: event.clientY };
+    boxSelectDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, x: event.clientX, y: event.clientY, remove: Boolean(event.altKey) };
     captureEditPointer(event);
     drawBoxSelect();
 }
@@ -3369,6 +3375,7 @@ function drawBoxSelect() {
     const rect = boxSelectRectangle();
     const host = viewport.getBoundingClientRect();
     overlay.hidden = false;
+    overlay.classList.toggle('remove', boxSelectDrag.remove);
     overlay.style.left = `${rect.left - host.left}px`;
     overlay.style.top = `${rect.top - host.top}px`;
     overlay.style.width = `${rect.right - rect.left}px`;
@@ -3379,8 +3386,14 @@ function updateBoxSelect(event) {
     boxSelectDrag.x = event.clientX;
     boxSelectDrag.y = event.clientY;
     drawBoxSelect();
-    const count = atomsInBox(boxSelectRectangle()).length;
-    statusText.textContent = `Box select: ${count} atom${count === 1 ? '' : 's'} inside`;
+    const inside = atomsInBox(boxSelectRectangle());
+    if (boxSelectDrag.remove) {
+        const selected = new Set(selectedRealIndices());
+        const count = inside.filter(index => selected.has(index)).length;
+        statusText.textContent = `Box deselect: ${count} selected atom${count === 1 ? '' : 's'} inside`;
+    } else {
+        statusText.textContent = `Box select: ${inside.length} atom${inside.length === 1 ? '' : 's'} inside`;
+    }
     statusText.className = '';
 }
 
@@ -3409,6 +3422,7 @@ function endBoxSelect() {
 
 function finishBoxSelect() {
     const rect = boxSelectRectangle();
+    const remove = boxSelectDrag.remove;
     const tiny = rect.right - rect.left < 3 && rect.bottom - rect.top < 3;
     endBoxSelect();
     // A box too small to be a drag is a click: the click handler selects the
@@ -3417,11 +3431,12 @@ function finishBoxSelect() {
     wasDragging = true;
     const indices = atomsInBox(rect);
     if (!indices.length) {
-        statusText.textContent = 'Box select: no atoms inside';
+        statusText.textContent = `Box ${remove ? 'deselect' : 'select'}: no atoms inside`;
         statusText.className = '';
         return;
     }
-    addAtomsToSelection(indices, 'Box');
+    if (remove) removeAtomsFromSelection(indices, 'Box');
+    else addAtomsToSelection(indices, 'Box');
 }
 
 function cancelBoxSelect(reason) {

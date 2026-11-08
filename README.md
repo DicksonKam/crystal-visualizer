@@ -11,7 +11,7 @@ View, measure and edit crystal structures in your browser: open a CIF, VASP POSC
 - **Opens the files you already have.** CIF from any crystallography database (the asymmetric unit is expanded with the file's symmetry operations), VASP POSCAR/CONTCAR, plain and extended XYZ (with lattice and `pbc`), and XDATCAR trajectories with a playback timeline, all parsed in the browser; nothing is uploaded anywhere.
 - **Shows the cell the way textbooks draw it.** Corner and face atoms appear as translucent periodic copies, bonds end where the cell does, and any number of periodic images or a full supercell is one click away.
 - **Measures with a click.** Select up to three atoms for distances, fractional offsets and the angle between them, including to specific periodic copies.
-- **Edits and exports.** Drag atoms or cell edges, type exact Cartesian or fractional coordinates, add, delete, shift and fix atoms, with full undo and redo, then export the structure back in its own format.
+- **Edits and exports.** Drag atoms or cell edges, type exact Cartesian or fractional coordinates, select atoms by element or coordinate range, add, delete, shift and fix them per axis, with full undo and redo, then export the structure back in its own format.
 - **Makes figures.** VESTA element colours, element recolouring, light or dark backgrounds, PNG export at up to 4× with a transparent option, and MP4 movies of trajectories.
 
 ## Run locally

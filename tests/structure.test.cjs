@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint } = require('../structure.js');
+const { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint, atomsInRange, constraintChanges, constraintAxisStates } = require('../structure.js');
 const { fractionalToCartesian } = require('../geometry.js');
 
 test('supercells prepare tilted-cell copies with current fractional coordinates and independent constraints', () => {
@@ -141,4 +141,41 @@ test('oblique cell faces stop at atom fractional extents on both sides', () => {
             });
         }
     }
+});
+
+test('range selection is inclusive, accepts open ends and rejects bad bounds', () => {
+    const values = [0, 1.5, 3, 4.5, NaN, Infinity];
+    assert.deepEqual(atomsInRange(values, 1.5, 3), [1, 2]);
+    assert.deepEqual(atomsInRange(values, null, 1.5), [0, 1]);
+    assert.deepEqual(atomsInRange(values, 3, null), [2, 3]);
+    assert.deepEqual(atomsInRange(values, null, null), [0, 1, 2, 3]);
+    assert.deepEqual(atomsInRange(values, 2, 2), []);
+    assert.throws(() => atomsInRange(values, 4, 1), /above the upper bound/);
+    assert.throws(() => atomsInRange(values, NaN, 1), /Lower bound/);
+    assert.throws(() => atomsInRange(values, 0, 'x'), /Upper bound/);
+    assert.deepEqual(atomsInRange([], 0, 1), []);
+});
+
+test('constraint changes set only the named axes, skip unchanged atoms and ignore bad indices', () => {
+    const atoms = [
+        { selectiveDynamics: [true, true, true] },
+        { selectiveDynamics: [false, false, false] },
+        {},
+        { selectiveDynamics: [true, true, false] }
+    ];
+    const before = JSON.stringify(atoms);
+    // Fix z only: atoms 1 and 3 already have z fixed.
+    assert.deepEqual(constraintChanges(atoms, [0, 1, 2, 3, 3, 9], [null, null, false]), [
+        { index: 0, oldSD: [true, true, true], newSD: [true, true, false] },
+        { index: 2, oldSD: [true, true, true], newSD: [true, true, false] }
+    ]);
+    // Free everything.
+    assert.deepEqual(constraintChanges(atoms, [0, 1, 2, 3], [true, true, true]).map(change => change.index), [1, 3]);
+    assert.deepEqual(constraintChanges(atoms, [], [false, false, false]), []);
+    assert.throws(() => constraintChanges(atoms, [0], [false]), /three axes/);
+    assert.equal(JSON.stringify(atoms), before);
+    assert.deepEqual(constraintAxisStates(atoms, [0, 2]), ['free', 'free', 'free']);
+    assert.deepEqual(constraintAxisStates(atoms, [1]), ['fixed', 'fixed', 'fixed']);
+    assert.deepEqual(constraintAxisStates(atoms, [0, 3]), ['free', 'free', 'mixed']);
+    assert.deepEqual(constraintAxisStates(atoms, []), ['free', 'free', 'free']);
 });

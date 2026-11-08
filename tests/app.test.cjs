@@ -1420,46 +1420,157 @@ test('a nonperiodic XYZ cell translates without wrapping and centers using its a
     assert.deepEqual(Array.from(moved.pbc), [false, false, false]);
 });
 
-test('constraint controls reject invalid thresholds and skip unchanged atoms', () => {
+// A context whose selection functions work without three.js: meshes are
+// plain objects and the selection visuals are stubbed.
+function selectableApp(atoms, lattice = [[2, 0, 0], [0, 2, 0], [0, 0, 2]]) {
     const context = app();
-    context.structure = { lattice: [[2, 0, 0], [0, 2, 0], [0, 0, 2]], atoms: [
-        { element: 'H', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
-        { element: 'H', position: new Vector3(0, 0, 1), selectiveDynamics: [true, true, true] }
-    ] };
+    context.structure = { lattice, atoms, elements: [...new Set(atoms.map(atom => atom.element))] };
     vm.runInContext(`
         currentStructure = structure;
+        currentMode = 'edit';
+        atomMeshes = structure.atoms.map((atom, index) => ({ userData: { atomIndex: index, isGhost: false }, getWorldPosition(target) { target.copy(atom.position); } }));
         renderStructure = () => {};
         updateUI = () => {};
         updateEditUI = () => {};
         updateUI_forCurrentMode = () => {};
         updateSupercellButtonState = () => {};
+        highlightAtomMesh = () => {};
+        unhighlightAtomMesh = () => {};
+        rebuildSelectionVisuals = () => {};
+        clearMeasurementVisuals = () => {};
+        setInteractionMode = () => {};
+        requestRender = () => {};
     `, context);
-    const input = context.document.getElementById('fixZThreshold');
-    input.value = '0.5oops';
-    context.fixAtomsByZThreshold();
-    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 0);
-    assert.deepEqual(context.structure.atoms[0].selectiveDynamics, [true, true, true]);
-    assert.match(context.document.getElementById('statusText').textContent, /finite z threshold/);
+    return context;
+}
+// Values from the vm realm have foreign prototypes, so compare plain copies.
+const plain = value => JSON.parse(JSON.stringify(value));
+const selectedIndices = context => plain(vm.runInContext('selectedAtoms.map(atom => atom.index)', context));
+// Redo restores a document snapshot, so read flags from the live document.
+const liveFlags = context => plain(vm.runInContext('currentStructure.atoms.map(atom => atom.selectiveDynamics)', context));
+const undoLength = context => vm.runInContext('editHistory.undoStack.length', context);
 
-    input.value = '0.5';
-    context.fixAtomsByZThreshold();
-    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
-    assert.deepEqual(Array.from(context.structure.atoms[0].selectiveDynamics), [false, false, false]);
-    assert.deepEqual(context.structure.atoms[1].selectiveDynamics, [true, true, true]);
-    context.fixAtomsByZThreshold();
-    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
+test('range selection validates its bounds, adds matching atoms in one history step and reads either unit', () => {
+    const context = selectableApp([
+        { element: 'Al', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
+        { element: 'Al', position: new Vector3(0, 0, 1), selectiveDynamics: [true, true, true] },
+        { element: 'O', position: new Vector3(0, 0, 1.5), selectiveDynamics: [true, true, true] }
+    ]);
+    const field = id => context.document.getElementById(id);
+    field('selectRangeAxis').value = '2';
+    field('selectRangeMin').value = '';
+    field('selectRangeMax').value = '0.5oops';
+    context.selectAtomsByRange();
+    assert.equal(undoLength(context), 0);
+    assert.deepEqual(selectedIndices(context), []);
+    assert.match(field('statusText').textContent, /must be numbers/);
+    assert.match(field('selectRangeError').textContent, /must be numbers/);
+
+    field('selectRangeMax').value = '';
+    context.selectAtomsByRange();
+    assert.match(field('statusText').textContent, /at least one end/);
+    assert.equal(undoLength(context), 0);
+
+    field('selectRangeMin').value = '2';
+    field('selectRangeMax').value = '1';
+    context.selectAtomsByRange();
+    assert.match(field('statusText').textContent, /above the upper bound/);
+    assert.equal(undoLength(context), 0);
+
+    // z <= 1 Å picks the first two atoms as one undoable selection.
+    field('selectRangeMin').value = '';
+    field('selectRangeMax').value = '1';
+    context.selectAtomsByRange();
+    assert.deepEqual(selectedIndices(context), [0, 1]);
+    assert.equal(undoLength(context), 1);
+    assert.equal(field('selectRangeError').textContent, '');
+    assert.match(field('statusText').textContent, /z ≤ 1 Å: selected 2 atoms \(2 of 3 selected\)/);
+    // The same rule again adds nothing and records nothing.
+    context.selectAtomsByRange();
+    assert.equal(undoLength(context), 1);
+    assert.match(field('statusText').textContent, /already selected/);
+    // A fractional range along c: 0.7 ≤ c ≤ 0.8 is z = 1.4–1.6 Å, the O atom.
+    vm.runInContext("lastSelectRange = { axis: 2, unit: 'fractional', min: '0.7', max: '0.8' }", context);
+    field('selectRangeMin').value = '0.7';
+    field('selectRangeMax').value = '0.8';
+    context.selectAtomsByRange();
+    assert.deepEqual(selectedIndices(context), [0, 1, 2]);
+    assert.equal(undoLength(context), 2);
+    assert.match(field('statusText').textContent, /0.7 ≤ c ≤ 0.8: selected 1 atom/);
     context.performUndo();
-    assert.deepEqual(Array.from(context.structure.atoms[0].selectiveDynamics), [true, true, true]);
+    assert.deepEqual(selectedIndices(context), [0, 1]);
+    context.performUndo();
+    assert.deepEqual(selectedIndices(context), []);
     context.performRedo();
-    assert.deepEqual(Array.from(vm.runInContext('currentStructure.atoms[0].selectiveDynamics', context)), [false, false, false]);
+    assert.deepEqual(selectedIndices(context), [0, 1]);
+});
 
-    vm.runInContext('selectedAtoms = [{ index: 0, isGhost: false }]', context);
+test('element chips, All and Invert replace the selection in single history steps', () => {
+    const context = selectableApp([
+        { element: 'Al', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
+        { element: 'O', position: new Vector3(0, 0, 1), selectiveDynamics: [true, true, true] },
+        { element: 'Al', position: new Vector3(1, 0, 0), selectiveDynamics: [true, true, true] }
+    ]);
+    context.toggleElementSelection('Al');
+    assert.deepEqual(selectedIndices(context), [0, 2]);
+    assert.equal(undoLength(context), 1);
+    context.toggleElementSelection('O');
+    assert.deepEqual(selectedIndices(context), [0, 2, 1]);
+    // Every Al is selected, so the chip now deselects them.
+    context.toggleElementSelection('Al');
+    assert.deepEqual(selectedIndices(context), [1]);
+    assert.equal(undoLength(context), 3);
+    context.invertSelection();
+    assert.deepEqual(selectedIndices(context), [0, 2]);
+    context.selectAllAtoms();
+    assert.deepEqual(selectedIndices(context), [0, 2, 1]);
+    context.selectAllAtoms();
+    assert.equal(undoLength(context), 5);
+    assert.match(context.document.getElementById('statusText').textContent, /already selected/);
+    context.invertSelection();
+    assert.deepEqual(selectedIndices(context), []);
+    assert.equal(undoLength(context), 6);
+    context.performUndo();
+    assert.deepEqual(selectedIndices(context), [0, 2, 1]);
+    assert.equal(context.hasUnsavedEdits(), false);
+});
+
+test('axis toggles fix one axis of the selection, free it once every atom has it fixed, and skip unchanged atoms', () => {
+    const context = selectableApp([
+        { element: 'H', position: new Vector3(0, 0, 0), selectiveDynamics: [true, true, true] },
+        { element: 'H', position: new Vector3(0, 0, 1), selectiveDynamics: [true, true, false] }
+    ]);
+    const flags = () => liveFlags(context);
+    context.toggleConstraintAxis(2);
+    assert.equal(undoLength(context), 0, 'nothing selected: nothing happens');
+    context.selectAllAtoms();
+    assert.equal(undoLength(context), 1);
+    // z is mixed, so the toggle fixes it; only the first atom changes.
+    context.toggleConstraintAxis(2);
+    assert.deepEqual(flags(), [[true, true, false], [true, true, false]]);
+    assert.equal(undoLength(context), 2);
+    assert.match(context.document.getElementById('statusText').textContent, /Fixed z for 1 atom$/);
+    // z is fixed for all, so the toggle frees it.
+    context.toggleConstraintAxis(2);
+    assert.deepEqual(flags(), [[true, true, true], [true, true, true]]);
+    assert.match(context.document.getElementById('statusText').textContent, /Freed z for 2 atoms/);
+    context.toggleConstraintAxis(0);
+    assert.deepEqual(flags(), [[false, true, true], [false, true, true]]);
+    assert.equal(undoLength(context), 4);
+    context.performUndo();
+    assert.deepEqual(flags(), [[true, true, true], [true, true, true]]);
+    context.performRedo();
+    assert.deepEqual(flags(), [[false, true, true], [false, true, true]]);
+    assert.deepEqual(plain(vm.runInContext('CrystalStructure.constraintAxisStates(currentStructure.atoms, selectedRealIndices())', context)), ['fixed', 'free', 'free']);
+
     context.setSelectedAtomsFixed(true);
-    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 1);
+    assert.deepEqual(flags(), [[false, false, false], [false, false, false]]);
+    assert.equal(undoLength(context), 5);
     context.unfixAllAtoms();
-    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 2);
+    assert.equal(undoLength(context), 6);
     context.unfixAllAtoms();
-    assert.equal(vm.runInContext('editHistory.undoStack.length', context), 2);
+    assert.equal(undoLength(context), 6);
+    assert.deepEqual(flags(), [[true, true, true], [true, true, true]]);
 });
 
 test('XYZ and trajectory constraint calls leave atoms, history, and dirty state unchanged', () => {
@@ -1472,9 +1583,8 @@ test('XYZ and trajectory constraint calls leave atoms, history, and dirty state 
             editHistory.redoStack = [{ operation: { type: 'select_atom' } }];
             renderStructure = () => { throw new Error('Unsupported constraint edit rendered'); };
         `, context);
-        context.document.getElementById('fixZThreshold').value = '1';
         context.setSelectedAtomsFixed(true);
-        context.fixAtomsByZThreshold();
+        context.toggleConstraintAxis(2);
         assert.equal(context.applySelectiveDynamicsChanges([{ index: 0, oldSD: [true, true, true], newSD: [false, false, false] }]), 0);
         context.unfixAllAtoms();
         assert.deepEqual(context.structure.atoms[0].selectiveDynamics, [true, true, true]);
@@ -1505,8 +1615,11 @@ test('only POSCAR edit panels offer constraints while XYZ keeps coordinate editi
         `, context);
         const html = context.document.getElementById('measurementPanel').innerHTML;
         assert.equal(html.includes('id="fixSelectedBtn"'), !isXYZ);
-        assert.equal(html.includes('id="fixByZBtn"'), !isXYZ);
+        assert.equal(html.includes('id="constraintAxisZ"'), !isXYZ);
+        assert.equal(html.includes('id="unfixAllBtn"'), !isXYZ);
         assert.equal(html.includes('class="sel-status"'), !isXYZ);
+        assert.ok(html.includes('id="selectRangeBtn"'), 'select by rule is offered for every format');
+        assert.ok(html.includes('class="element-chip"'));
         assert.ok(html.includes('id="saveAtomCoordinates"'));
         assert.ok(html.includes('id="applyShiftBtn"'));
     }
@@ -1555,13 +1668,6 @@ test('panel refresh retains keyboard focus, falls back for removed controls, and
     context.document.activeElement = outsideControl;
     context.replacePanelHTML(panel, '<p>No atoms selected</p>', 'atomJumpInput');
     assert.equal(context.document.activeElement, outsideControl);
-});
-
-test('default constraint threshold handles large structures without overflowing the call stack', () => {
-    const context = app();
-    context.structure = { atoms: Array.from({ length: 200000 }, (_, index) => ({ position: { z: index === 0 ? -2 : 10 } })) };
-    vm.runInContext('currentStructure = structure', context);
-    assert.equal(context.getDefaultZThreshold(), '4.00');
 });
 
 test('sidebar counts constraints in one pass while preserving totals and element badges', () => {

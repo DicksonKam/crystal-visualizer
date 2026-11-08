@@ -104,7 +104,55 @@
         return min / 2 + max / 2;
     }
 
-    const api = { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint };
+    // Indices of the atoms whose coordinate lies in [min, max]. Either bound
+    // may be null for an open end; a bound is inclusive so a layer typed at
+    // its own coordinate is selected. Non-finite coordinates never match.
+    function atomsInRange(values, min, max) {
+        const low = min === null || min === undefined ? -Infinity : min;
+        const high = max === null || max === undefined ? Infinity : max;
+        if (!Number.isFinite(low) && low !== -Infinity) throw new Error('Lower bound is not a number');
+        if (!Number.isFinite(high) && high !== Infinity) throw new Error('Upper bound is not a number');
+        if (low > high) throw new Error('Lower bound is above the upper bound');
+        const indices = [];
+        values.forEach((value, index) => {
+            if (Number.isFinite(value) && value >= low && value <= high) indices.push(index);
+        });
+        return indices;
+    }
+
+    // The constraint changes that give every listed atom the flags in
+    // `flags` (true = free to move along that axis). A null entry keeps that
+    // axis as it is, so one axis can change while the others are left alone.
+    // Atoms that already have the requested flags are left out.
+    function constraintChanges(atoms, indices, flags) {
+        if (!Array.isArray(flags) || flags.length !== 3) throw new Error('Constraint flags need three axes');
+        const changes = [];
+        for (const index of new Set(indices)) {
+            const atom = atoms[index];
+            if (!atom) continue;
+            const oldSD = [...(atom.selectiveDynamics || [true, true, true])];
+            const newSD = oldSD.map((value, axis) => flags[axis] === null || flags[axis] === undefined ? value : Boolean(flags[axis]));
+            if (newSD.some((value, axis) => value !== oldSD[axis])) changes.push({ index, oldSD, newSD });
+        }
+        return changes;
+    }
+
+    // Per-axis state of a set of atoms: 'free', 'fixed' or 'mixed'.
+    function constraintAxisStates(atoms, indices) {
+        const states = [];
+        for (let axis = 0; axis < 3; axis++) {
+            let free = 0, fixed = 0;
+            for (const index of indices) {
+                const atom = atoms[index];
+                if (!atom) continue;
+                if ((atom.selectiveDynamics || [true, true, true])[axis]) free++; else fixed++;
+            }
+            states.push(free && fixed ? 'mixed' : fixed ? 'fixed' : 'free');
+        }
+        return states;
+    }
+
+    const api = { buildSupercell, prepareCellResize, summarizeConstraints, zMidpoint, atomsInRange, constraintChanges, constraintAxisStates };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalStructure = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

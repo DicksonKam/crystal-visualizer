@@ -269,10 +269,15 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 const selector=['#showLabels','#showFixedIndicators','#showCell','#showAxes'][integer(4)]; record.selector=selector;
                 await click(selector);
             } else if (action === 'batch_fix') {
-                const selector=integer(2) ? '#fixByZBtn' : '#unfixAllBtn'; record.selector=selector;
+                // Either free every atom, or select a z range and fix the
+                // atoms it finds (two history entries when it finds any).
+                const selector=integer(2) ? '#selectRangeBtn' : '#unfixAllBtn'; record.selector=selector;
                 if(await visible(page,selector)) {
-                    if(selector==='#fixByZBtn') { record.threshold=(rng()*5).toFixed(5); await page.locator('#fixZThreshold').fill(record.threshold); }
-                    await page.locator(selector).click();
+                    if(selector==='#selectRangeBtn') {
+                        record.threshold=(rng()*5).toFixed(5); await page.locator('#selectRangeMax').fill(record.threshold);
+                        await page.locator(selector).click();
+                        if(await visible(page,'#fixSelectedBtn')) await page.locator('#fixSelectedBtn').click(); else performed=false;
+                    } else await page.locator(selector).click();
                 } else performed=false;
             } else if (action === 'center') {
                 await click('#shiftCenterBtn');
@@ -427,7 +432,13 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if(added.length) {
                     assert.equal(after.redo.length,0,'new action must clear redo branch');
                     if(added.length===1) known.set(added[0].id,{before:previous,after});
-                    else {
+                    else if(action==='batch_fix' && added.length===2 && added[0].type==='select_atom' && added[1].type==='fix_atoms') {
+                        // A range selection followed by Fix: the selection
+                        // step keeps the geometry, the fix keeps the selection.
+                        const selected={...previous,selection:after.selection};
+                        known.set(added[0].id,{before:previous,after:selected});
+                        known.set(added[1].id,{before:selected,after});
+                    } else {
                         // Jumping from an edit selection, or measuring a fourth
                         // atom, records Clear then Select. At the 50-entry limit
                         // stack length cannot reveal that two operations occurred.

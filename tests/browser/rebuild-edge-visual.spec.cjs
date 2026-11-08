@@ -66,7 +66,9 @@ test('mixed-element instancing, periodic copies, supercells, constraints and exp
   expect(converted.sizes).toEqual(converted.groups);
   expect(await page.evaluate(()=>atomMeshes.filter(m=>!m.userData.isGhost).length)).toBe(998);
   if(cycle===0)await observe({step:2,action:'supercell',stage:'settled'});
-  await page.locator('#fixZThreshold').fill('4');await page.locator('#fixByZBtn').click();expect((await check(page)).geometry.atoms.some(a=>a.sd.every(v=>!v))).toBe(true);
+  await page.locator('#selectRangeMax').fill('4');await page.locator('#selectRangeBtn').click();await page.locator('#fixSelectedBtn').click();expect((await check(page)).geometry.atoms.some(a=>a.sd.every(v=>!v))).toBe(true);
+  // Undo the constraint, then the range selection that preceded it.
+  await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(supercell.geometry);
   await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(supercell.geometry);
   await page.locator('#undoBtn').click();expect((await check(page)).geometry).toEqual(before.geometry);
   await page.locator('#redoBtn').click();expect((await check(page)).geometry).toEqual(supercell.geometry);

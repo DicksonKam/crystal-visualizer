@@ -68,10 +68,10 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     const {sourceFor}=require('../stress/edit-scenario.cjs');
     await upload(page,sourceFor(2).content,'tilted.poscar');
     await setMode(page, 'edit');
-    const threshold=await page.locator('#fixZThreshold').boundingBox();
-    const unit=await page.locator('.sd-batch-row > span').boundingBox();
-    expect(Math.abs((threshold.y+threshold.height/2)-(unit.y+unit.height/2))).toBeLessThan(2);
-    await page.locator('#fixZThreshold').scrollIntoViewIfNeeded();
+    const bound=await page.locator('#selectRangeMin').boundingBox();
+    const unit=await page.locator('.select-range-to').boundingBox();
+    expect(Math.abs((bound.y+bound.height/2)-(unit.y+unit.height/2))).toBeLessThan(2);
+    await page.locator('#selectRangeMin').scrollIntoViewIfNeeded();
     await page.screenshot({path:testInfo.outputPath('narrow-constraint-unit.png')});
     await page.locator('#addAtomX').fill('.5');
     await page.getByRole('button',{name:'Increase c periodic images',exact:true}).click();
@@ -91,16 +91,16 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
 });
 
 
-test('constraint threshold and its unit stay together across intermediate panel widths', async ({page},testInfo) => {
+test('range bounds and their separator stay together across intermediate panel widths', async ({page},testInfo) => {
     await page.setViewportSize({width:900,height:760});
     const {sourceFor}=require('../stress/edit-scenario.cjs');
     await upload(page,sourceFor(2).content,'tilted.poscar');
     await setMode(page, 'edit');
     for (const width of [220,240,260]) {
         await dragDivider(page,width);
-        await page.locator('#fixZThreshold').scrollIntoViewIfNeeded();
-        const field=await page.locator('#fixZThreshold').boundingBox();
-        const unit=await page.locator('.sd-batch-row > span').boundingBox();
+        await page.locator('#selectRangeMin').scrollIntoViewIfNeeded();
+        const field=await page.locator('#selectRangeMin').boundingBox();
+        const unit=await page.locator('.select-range-to').boundingBox();
         await page.screenshot({path:testInfo.outputPath(`constraint-unit-${width}.png`)});
         expect(Math.abs((field.y+field.height/2)-(unit.y+unit.height/2))).toBeLessThan(2);
     }

@@ -322,7 +322,7 @@ function setAtomGlow(mesh, color, intensity) {
 
 // Mode state: 'measure' or 'edit'
 let currentMode = 'measure';
-let lastZThreshold = null; // Remember user's z-threshold setting
+let lastSelectRange = null; // Remembered select-by-range inputs { axis, unit, min, max }
 
 // XDATCAR / Animation state
 let animationState = {
@@ -2319,7 +2319,10 @@ function updateEditUI() {
                     // Get selective dynamics status
                     const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
                     const isFixed = sd.every(v => v === false);
-                    const statusIcon = isFixed ? '🔒' : '🔓';
+                    const isFree = sd.every(Boolean);
+                    const flagText = sd.map(v => v ? 'T' : 'F').join(' ');
+                    const statusIcon = isFixed ? '🔒' : isFree ? '🔓' : flagText;
+                    const statusTitle = isFixed ? 'Fixed (F F F)' : isFree ? 'Free (T T T)' : `Partly fixed (${flagText})`;
                     
                     // Get formatted coordinates (clickable to toggle between fractional/cartesian)
                     const coordsHtml = formatAtomCoordinates(atom, i);
@@ -2330,7 +2333,7 @@ function updateEditUI() {
                             <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
                             <span class="sel-elem">${atom.element}</span>
                             <span class="sel-idx">#${atom.index + 1}</span>
-                            ${supportsSelectiveDynamics(currentStructure) ? `<span class="sel-status" title="${isFixed ? 'Fixed' : 'Active'}">${statusIcon}</span>` : ''}
+                            ${supportsSelectiveDynamics(currentStructure) ? `<span class="sel-status${isFixed || isFree ? '' : ' partial'}" title="${statusTitle}">${statusIcon}</span>` : ''}
                             ${coordsHtml}
                         </div>
                     `;
@@ -2362,13 +2365,9 @@ function updateEditUI() {
                     `;
                 }
                 
-                // Selective dynamics buttons for selected atoms
-                if (supportsSelectiveDynamics(currentStructure)) html += `
-                    <div class="sd-buttons">
-                        <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms (F F F)">🔒 Fix</button>
-                        <button id="unfixSelectedBtn" class="btn btn-unfix" title="Make selected atoms active (T T T)">🔓 Active</button>
-                    </div>
-                `;
+                // Constraints of the selected atoms: one toggle per axis plus
+                // the all-axes presets.
+                if (supportsSelectiveDynamics(currentStructure)) html += constraintControlsHTML();
                 
                 html += `
                     <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete Selected</button>
@@ -2379,6 +2378,10 @@ function updateEditUI() {
         
     }
     
+    // Select atoms by element or coordinate range (any format; the selection
+    // feeds delete, shift and constraints).
+    if (currentStructure && currentStructure.atoms.length) html += selectByRuleHTML();
+
     // Add Atom section (always show when structure loaded)
     if (currentStructure) {
         // Get available elements from current structure + common elements
@@ -2492,20 +2495,16 @@ function updateEditUI() {
             </div>
         `;
         
-        // Selective Dynamics section
+        // Constraint summary for the whole structure. Per-atom constraints
+        // are set on a selection, made above by click or by rule.
         if (supportsSelectiveDynamics(currentStructure)) html += `
             <div class="sd-batch-section">
-                <div class="sd-batch-title">Selective Dynamics</div>
-                <div class="sd-batch-row">
-                    <label for="fixZThreshold">Fix atoms with z &lt;</label>
-                    <input type="number" id="fixZThreshold" step="0.5" value="${lastZThreshold !== null ? lastZThreshold : getDefaultZThreshold()}" class="z-threshold-input">
-                    <span>Å</span>
-                </div>
-                <div class="sd-batch-buttons">
-                    <button id="fixByZBtn" class="btn btn-sm btn-fix">Apply</button>
-                    <button id="unfixAllBtn" class="btn btn-sm btn-unfix">Unfix All</button>
-                </div>
+                <div class="sd-batch-title">Fixed Atoms</div>
                 <div class="sd-stats" id="sdStats">${getSelectiveDynamicsStats()}</div>
+                ${selectedAtoms.length ? '' : '<div class="constraint-hint">Select atoms, then fix or free them per axis.</div>'}
+                <div class="sd-batch-buttons">
+                    <button id="unfixAllBtn" class="btn btn-sm btn-unfix" title="Make every atom free to move (T T T)">🔓 Free All Atoms</button>
+                </div>
             </div>
         `;
     }
@@ -2546,10 +2545,35 @@ function updateEditUI() {
         unfixSelectedBtn.addEventListener('click', () => setSelectedAtomsFixed(false));
     }
     
-    const fixByZBtn = document.getElementById('fixByZBtn');
-    if (fixByZBtn) {
-        fixByZBtn.addEventListener('click', fixAtomsByZThreshold);
-    }
+    ['X', 'Y', 'Z'].forEach((axis, index) => {
+        const toggle = document.getElementById(`constraintAxis${axis}`);
+        if (toggle) toggle.addEventListener('click', () => toggleConstraintAxis(index));
+    });
+
+    // Select-by-rule controls
+    const selectRangeBtn = document.getElementById('selectRangeBtn');
+    if (selectRangeBtn) selectRangeBtn.addEventListener('click', selectAtomsByRange);
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (selectAllBtn) selectAllBtn.addEventListener('click', selectAllAtoms);
+    const selectNoneBtn = document.getElementById('selectNoneBtn');
+    if (selectNoneBtn) selectNoneBtn.addEventListener('click', () => { clearSelection(); updateEditUI(); });
+    const selectInvertBtn = document.getElementById('selectInvertBtn');
+    if (selectInvertBtn) selectInvertBtn.addEventListener('click', invertSelection);
+    ['selectRangeAxis', 'selectRangeMin', 'selectRangeMax'].forEach(id => {
+        const field = document.getElementById(id);
+        if (field) field.addEventListener('input', rememberSelectRange);
+    });
+    document.querySelectorAll('input[name="selectRangeUnit"]').forEach(radio => {
+        radio.addEventListener('change', event => {
+            rememberSelectRange();
+            lastSelectRange.unit = event.target.value;
+            updateEditUI();
+            restorePanelFocus(event.target.id, 'selectRangeMin');
+        });
+    });
+    document.querySelectorAll('.element-chip').forEach(chip => {
+        chip.addEventListener('click', () => toggleElementSelection(chip.dataset.element));
+    });
     
     const unfixAllBtn = document.getElementById('unfixAllBtn');
     if (unfixAllBtn) {
@@ -3078,49 +3102,241 @@ function applySelectiveDynamicsChanges(changes) {
 // Set selected atoms as fixed or active
 function setSelectedAtomsFixed(isFixed) {
     if (selectedAtoms.length === 0 || !supportsSelectiveDynamics(currentStructure)) return;
-    const newValue = isFixed ? [false, false, false] : [true, true, true];
-    const changes = selectedAtoms.filter(atom => !atom.isGhost && currentStructure.atoms[atom.index]).map(atom => ({
-        index: atom.index,
-        oldSD: [...(currentStructure.atoms[atom.index].selectiveDynamics || [true, true, true])],
-        newSD: [...newValue]
-    }));
-    const changedCount = applySelectiveDynamicsChanges(changes);
+    const flags = isFixed ? [false, false, false] : [true, true, true];
+    const changedCount = applySelectiveDynamicsChanges(CrystalStructure.constraintChanges(currentStructure.atoms, selectedRealIndices(), flags));
     const action = isFixed ? 'Fixed' : 'Unfixed';
     statusText.textContent = changedCount ? `${action} ${changedCount} atom(s)` : 'Selected atoms already have those constraints';
     statusText.className = changedCount ? 'success' : '';
 }
 
-// Fix atoms below z threshold (common for surface slabs)
-function fixAtomsByZThreshold() {
-    if (!supportsSelectiveDynamics(currentStructure)) return;
-    
-    const thresholdInput = document.getElementById('fixZThreshold');
-    const thresholdText = thresholdInput?.value?.trim() || '';
-    const threshold = Number(thresholdText);
-    if (!thresholdText || !Number.isFinite(threshold)) {
-        statusText.textContent = 'Enter a finite z threshold';
-        statusText.className = 'error';
-        return;
+// === SELECT BY RULE ===
+// Bulk selection replaces the whole edit selection in one undoable step, so a
+// thousand atoms do not cost a thousand history entries or visual rebuilds.
+
+function selectedRealIndices() {
+    if (!currentStructure) return [];
+    return selectedAtoms.filter(atom => !atom.isGhost && currentStructure.atoms[atom.index]).map(atom => atom.index);
+}
+
+function elementIndices(element) {
+    return currentStructure.atoms.map((atom, index) => atom.element === element ? index : -1).filter(index => index >= 0);
+}
+
+// Replace the edit selection with the given real atoms, recording one
+// history entry. A preserved measurement is replaced rather than extended.
+function setEditSelection(indices, type) {
+    const atoms = currentStructure.atoms;
+    const seen = new Set();
+    const selected = [];
+    for (const index of indices) {
+        if (seen.has(index) || !atoms[index] || !atomMeshes[index] || atomMeshes[index].userData.isGhost) continue;
+        seen.add(index);
+        selected.push({ index, originalIndex: index, isGhost: false, cellOffset: null, element: atoms[index].element });
     }
-    
-    // Remember the user's threshold value
-    lastZThreshold = threshold;
-    
-    // Save old values for undo (unified undo stack)
-    const changes = currentStructure.atoms.map((atom, index) => ({
-        index: index,
-        oldSD: [...(atom.selectiveDynamics || [true, true, true])],
-        newSD: atom.position.z < threshold ? [false, false, false] : [true, true, true]
-    }));
-    const changedCount = applySelectiveDynamicsChanges(changes);
-    const fixedCount = currentStructure.atoms.filter(atom => atom.position.z < threshold).length;
+    const selectionBefore = captureSelectionState();
+    applySelectionState({ selected, isMeasurementSelection: false, mode: currentMode });
+    pushUndo({ type, selectionBefore });
+}
+
+function reportSelection(message, changed) {
+    statusText.textContent = `${message} (${selectedRealIndices().length} of ${currentStructure.atoms.length} selected)`;
+    statusText.className = changed ? 'success' : '';
+}
+
+// Add real atoms to the selection; returns how many were new.
+function addAtomsToSelection(indices, description) {
+    if (!currentStructure) return 0;
+    const current = isMeasurementSelection ? [] : selectedRealIndices();
+    const already = new Set(current);
+    const added = [...new Set(indices)].filter(index => currentStructure.atoms[index] && !already.has(index));
+    if (!added.length) {
+        reportSelection(indices.length ? `${description}: already selected` : `${description}: no atoms match`, false);
+        return 0;
+    }
+    setEditSelection([...current, ...added], 'select_atom');
+    reportSelection(`${description}: selected ${added.length} atom${added.length === 1 ? '' : 's'}`, true);
+    return added.length;
+}
+
+function removeAtomsFromSelection(indices, description) {
+    const wanted = new Set(indices);
+    const current = selectedRealIndices();
+    const remaining = current.filter(index => !wanted.has(index));
+    const removed = current.length - remaining.length;
+    if (!removed) return 0;
+    setEditSelection(remaining, 'deselect_atom');
+    reportSelection(`${description}: deselected ${removed} atom${removed === 1 ? '' : 's'}`, true);
+    return removed;
+}
+
+function toggleElementSelection(element) {
+    if (!currentStructure) return;
+    const indices = elementIndices(element);
+    const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
+    if (indices.length && indices.every(index => selected.has(index))) removeAtomsFromSelection(indices, element);
+    else addAtomsToSelection(indices, `All ${element}`);
+}
+
+function selectAllAtoms() {
+    if (!currentStructure) return;
+    addAtomsToSelection(currentStructure.atoms.map((_, index) => index), 'All atoms');
+}
+
+function invertSelection() {
+    if (!currentStructure) return;
+    const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
+    const inverse = currentStructure.atoms.map((_, index) => index).filter(index => !selected.has(index));
+    setEditSelection(inverse, inverse.length ? 'select_atom' : 'clear_selection');
+    reportSelection('Inverted the selection', true);
+}
+
+function defaultSelectRange() {
+    return { axis: 2, unit: 'cartesian', min: '', max: '' };
+}
+
+// Read the range inputs back into lastSelectRange so a panel rebuild keeps
+// what was typed. The unit is set by its radio handler.
+function rememberSelectRange() {
+    const range = { ...(lastSelectRange || defaultSelectRange()) };
+    const axisText = document.getElementById('selectRangeAxis')?.value;
+    if (axisText === '0' || axisText === '1' || axisText === '2') range.axis = Number(axisText);
+    const min = document.getElementById('selectRangeMin');
+    const max = document.getElementById('selectRangeMax');
+    if (min) range.min = min.value;
+    if (max) range.max = max.value;
+    lastSelectRange = range;
+    return range;
+}
+
+function selectRangeUsesFractional(range) {
+    return range.unit === 'fractional' && hasLattice(currentStructure);
+}
+
+// Select every real atom whose coordinate along one axis lies in the typed
+// range. Either end may be left empty.
+function selectAtomsByRange() {
+    if (!currentStructure) return;
+    const range = rememberSelectRange();
+    const parse = text => {
+        const trimmed = String(text ?? '').trim();
+        if (!trimmed) return null;
+        const value = Number(trimmed);
+        return Number.isFinite(value) ? value : NaN;
+    };
+    const min = parse(range.min);
+    const max = parse(range.max);
+    const fractional = selectRangeUsesFractional(range);
+    const axisName = (fractional ? ['a', 'b', 'c'] : ['x', 'y', 'z'])[range.axis];
+    const errorBox = document.getElementById('selectRangeError');
+    const fail = message => {
+        if (errorBox) errorBox.textContent = message;
+        statusText.textContent = message;
+        statusText.className = 'error';
+    };
+    if (Number.isNaN(min) || Number.isNaN(max)) return fail('Range bounds must be numbers; leave an end empty for no bound');
+    if (min === null && max === null) return fail('Enter at least one end of the range');
+    let indices;
+    try {
+        const values = currentStructure.atoms.map(atom => {
+            if (!fractional) return [atom.position.x, atom.position.y, atom.position.z][range.axis];
+            const coords = cartesianToFractional(atom.position, currentStructure.lattice);
+            return coords ? coords[range.axis] : NaN;
+        });
+        indices = CrystalStructure.atomsInRange(values, min, max);
+    } catch (error) {
+        return fail(error.message);
+    }
+    if (errorBox) errorBox.textContent = '';
+    const unit = fractional ? '' : ' Å';
+    const bounds = min !== null && max !== null ? `${min} ≤ ${axisName} ≤ ${max}${unit}`
+        : min !== null ? `${axisName} ≥ ${min}${unit}` : `${axisName} ≤ ${max}${unit}`;
+    addAtomsToSelection(indices, bounds);
+}
+
+function selectByRuleHTML() {
+    const atoms = currentStructure.atoms;
+    const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
+    const elements = currentStructure.elements?.length ? currentStructure.elements : [...new Set(atoms.map(atom => atom.element))];
+    const chips = elements.map(element => {
+        const indices = elementIndices(element);
+        if (!indices.length) return '';
+        const count = indices.filter(index => selected.has(index)).length;
+        const state = count === 0 ? 'none' : count === indices.length ? 'all' : 'some';
+        const verb = state === 'all' ? 'Deselect' : 'Select';
+        return `<button type="button" class="element-chip" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'}"><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
+    }).join('');
+    const range = lastSelectRange || defaultSelectRange();
+    const fractional = selectRangeUsesFractional(range);
+    const axisNames = fractional ? ['a', 'b', 'c'] : ['x', 'y', 'z'];
+    const step = fractional ? '0.01' : '0.5';
+    const axisOptions = [0, 1, 2].map(axis => `<option value="${axis}"${range.axis === axis ? ' selected' : ''}>${axisNames[axis]}</option>`).join('');
+    return `
+        <div class="sd-batch-section select-rule-section">
+            <div class="sd-batch-title">Select Atoms</div>
+            <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
+            <div class="select-range-head">
+                <label for="selectRangeAxis">Along</label>
+                <select id="selectRangeAxis" class="element-select select-range-axis" aria-label="Axis">${axisOptions}</select>
+                ${hasLattice(currentStructure) ? `
+                <label class="coord-type-label"><input type="radio" id="selectRangeUnitCartesian" name="selectRangeUnit" value="cartesian"${fractional ? '' : ' checked'}><span>Å</span></label>
+                <label class="coord-type-label"><input type="radio" id="selectRangeUnitFractional" name="selectRangeUnit" value="fractional"${fractional ? ' checked' : ''}><span>Fractional</span></label>` : '<span class="select-range-unit">Å</span>'}
+            </div>
+            <div class="select-range-row">
+                <input type="number" id="selectRangeMin" class="z-threshold-input" step="${step}" value="${range.min}" placeholder="min" aria-label="Lower bound">
+                <span class="select-range-to">to</span>
+                <input type="number" id="selectRangeMax" class="z-threshold-input" step="${step}" value="${range.max}" placeholder="max" aria-label="Upper bound">
+                <button id="selectRangeBtn" class="btn btn-sm btn-select">Select</button>
+            </div>
+            <div id="selectRangeError" class="add-atom-error"></div>
+            <div class="select-quick">
+                <button id="selectAllBtn" class="btn btn-sm btn-quick">All</button>
+                <button id="selectInvertBtn" class="btn btn-sm btn-quick">Invert</button>
+                <button id="selectNoneBtn" class="btn btn-sm btn-quick"${selected.size ? '' : ' disabled'}>None</button>
+            </div>
+        </div>
+    `;
+}
+
+// === CONSTRAINTS ===
+
+function constraintControlsHTML() {
+    const indices = selectedRealIndices();
+    const states = CrystalStructure.constraintAxisStates(currentStructure.atoms, indices);
+    const toggles = ['x', 'y', 'z'].map((axis, index) => {
+        const state = states[index];
+        const next = state === 'fixed' ? 'free' : 'fix';
+        const title = `${axis}: ${state === 'mixed' ? 'fixed for some selected atoms' : state}. Click to ${next} ${axis} for the selection.`;
+        return `<button type="button" id="constraintAxis${axis.toUpperCase()}" class="axis-toggle" data-state="${state}" aria-pressed="${state === 'fixed' ? 'true' : state === 'mixed' ? 'mixed' : 'false'}" title="${title}"><span class="axis-name">${axis}</span><span class="axis-state">${state}</span></button>`;
+    }).join('');
+    return `
+        <div class="constraint-controls">
+            <div class="constraint-label">Constraints</div>
+            <div class="constraint-axes" role="group" aria-label="Fix or free the selected atoms along each axis">${toggles}</div>
+            <div class="sd-buttons">
+                <button id="fixSelectedBtn" class="btn btn-fix" title="Fix selected atoms on all axes (F F F)">🔒 Fix</button>
+                <button id="unfixSelectedBtn" class="btn btn-unfix" title="Free selected atoms on all axes (T T T)">🔓 Free</button>
+            </div>
+        </div>
+    `;
+}
+
+// Toggle one axis for the selected atoms: fix it unless it is already fixed
+// for every one of them, in which case free it.
+function toggleConstraintAxis(axis) {
+    if (!supportsSelectiveDynamics(currentStructure)) return;
+    const indices = selectedRealIndices();
+    if (!indices.length) return;
+    const state = CrystalStructure.constraintAxisStates(currentStructure.atoms, indices)[axis];
+    const flags = [null, null, null];
+    flags[axis] = state === 'fixed';
+    const changedCount = applySelectiveDynamicsChanges(CrystalStructure.constraintChanges(currentStructure.atoms, indices, flags));
+    const name = 'xyz'[axis];
     statusText.textContent = changedCount
-        ? `Fixed ${fixedCount} atoms below z = ${threshold.toFixed(2)} Å`
-        : 'Atoms already have those z-threshold constraints';
+        ? `${state === 'fixed' ? 'Freed' : 'Fixed'} ${name} for ${changedCount} atom${changedCount === 1 ? '' : 's'}`
+        : `Selected atoms already have that ${name} constraint`;
     statusText.className = changedCount ? 'success' : '';
 }
 
-// Unfix all atoms
 function unfixAllAtoms() {
     if (!supportsSelectiveDynamics(currentStructure)) return;
     
@@ -3133,12 +3349,6 @@ function unfixAllAtoms() {
     const changedCount = applySelectiveDynamicsChanges(changes);
     statusText.textContent = changedCount ? 'All atoms set to active' : 'All atoms are already active';
     statusText.className = changedCount ? 'success' : '';
-}
-
-// Get default z threshold (midpoint of z-range)
-function getDefaultZThreshold() {
-    if (!currentStructure || currentStructure.atoms.length === 0) return 0;
-    return CrystalStructure.zMidpoint(currentStructure.atoms).toFixed(2);
 }
 
 // Get selective dynamics statistics
@@ -4714,7 +4924,7 @@ function loadStructureFromText(content, filename, requestId = null) {
     lastAddAtomSpecies = null;
     lastAddAtomCoords = { x: 0, y: 0, z: 0 };
     lastShiftCoords = { a: 0, b: 0, c: 0 };
-    lastZThreshold = null;
+    lastSelectRange = null;
     lastAddAtomCoordType = hasLattice(currentStructure) ? 'fractional' : 'cartesian';
     lastShiftCoordType = lastAddAtomCoordType;
     if (currentStructure.isXDATCAR) {

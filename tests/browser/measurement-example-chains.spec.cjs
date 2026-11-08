@@ -14,6 +14,15 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
     await upload(page, await fs.readFile(path.join(__dirname, '../../examples', file), 'utf8'), path.basename(file));
     const capability = await capture(page);
     await info.attach('example', { body: JSON.stringify({ variant, file, capability: { lattice: capability.lattice, supportsSD: capability.supportsSD } }), contentType: 'application/json' });
+    if (capability.supportsSD) {
+        // Fix z for every atom so that freeing them later rebuilds the
+        // constraint overlays while the measurement below is kept.
+        await setMode(page, 'edit');
+        await page.locator('#selectAllBtn').click();
+        if (await page.locator('#constraintAxisZ').getAttribute('data-state') !== 'fixed') await page.locator('#constraintAxisZ').click();
+        await page.locator('#selectNoneBtn').click();
+        await setMode(page, 'measure');
+    }
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await setMode(page, 'edit');
     const snap = async name => page.screenshot({ path: info.outputPath(`${name}.png`) });
@@ -58,11 +67,10 @@ for (const width of [900, 1440]) test(`example measurements survive a compound e
         }
         // Constraint overlays also rebuild meshes and participate in history.
         if (capability.supportsSD) {
-        await page.locator('#fixZThreshold').fill('20');
-        await page.locator('#fixByZBtn').click(); await checkMeasurement(page); await snap(`${cycle}-fixed`);
+        await page.locator('#unfixAllBtn').click(); await checkMeasurement(page); await snap(`${cycle}-freed`);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await page.locator('#redoBtn').click(); await checkMeasurement(page);
-        await page.locator('#unfixAllBtn').click(); await checkMeasurement(page);
+        await page.locator('#undoBtn').click(); await checkMeasurement(page);
         }
     }
     // Switch from the measured trio to an edit selection, delete, and walk

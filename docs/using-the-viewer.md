@@ -40,7 +40,11 @@ Distance captions sit at the midpoint of their line and the angle caption on its
 
 ## Editing
 
-Switch **Edit** on to move, add and delete atoms; the toggle is unavailable for a trajectory. Click to select and drag to move. Selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone. Shift and add-atom inputs reject invalid or unrepresentable coordinates without changing the structure or undo history. **Center in Cell** uses periodic coordinates, so a cluster that crosses a cell boundary stays together when moved to the middle.
+Switch **Edit** on to move, add and delete atoms; the toggle is unavailable for a trajectory. Click to select and drag to move. Selecting one atom opens Cartesian or fractional coordinate inputs for precise placement; the change can be undone or redone.
+
+**Select Atoms** picks many atoms at once: one chip per element selects (or, when they are all selected, deselects) every atom of that element, and a range along x, y or z in Å, or along a, b or c in fractional coordinates, selects the atoms whose coordinate lies between the two bounds, either of which may be left empty. Rules add to the current selection, so a layer of one element is two steps; **All**, **Invert** and **None** complete the set. Each rule is a single undo step. The selection feeds Delete, Shift and the constraints below.
+
+For formats that carry selective dynamics (POSCAR and CIF), a selection shows **Constraints**: one toggle per axis that reads free, fixed or mixed for the selected atoms. Clicking a toggle fixes that axis for all of them, or frees it when it is already fixed for every one, so a slab can be fixed in z only or an adatom left free along z alone. **Fix** and **Free** set all three axes at once, the list shows each atom's flags (F F T for an atom fixed in x and y), the markers on the canvas follow, and the exported POSCAR writes the per-axis flags. **Free All Atoms** at the foot of the panel clears every constraint. Shift and add-atom inputs reject invalid or unrepresentable coordinates without changing the structure or undo history. **Center in Cell** uses periodic coordinates, so a cluster that crosses a cell boundary stays together when moved to the middle.
 
 Dragging a cell edge resizes the cell. Resize proposals validate the cell and every atom before changing the live preview; cell-vector lengths stay positive even when atoms lie outside the cell, and an invalid proposal keeps the last valid preview and adds no history entry.
 

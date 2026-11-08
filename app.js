@@ -2679,18 +2679,20 @@ function updateEditUI() {
     const selectInvertBtn = document.getElementById('selectInvertBtn');
     if (selectInvertBtn) selectInvertBtn.addEventListener('click', invertSelection);
     const boxSelectToggle = document.getElementById('boxSelectToggle');
-    if (boxSelectToggle) boxSelectToggle.addEventListener('change', event => setBoxSelectMode(event.target.checked));
-    ['selectRangeAxis', 'selectRangeMin', 'selectRangeMax'].forEach(id => {
+    if (boxSelectToggle) boxSelectToggle.addEventListener('click', () => setBoxSelectMode(!boxSelectMode));
+    ['selectRangeMin', 'selectRangeMax'].forEach(id => {
         const field = document.getElementById(id);
         if (field) field.addEventListener('input', rememberSelectRange);
     });
-    document.querySelectorAll('input[name="selectRangeUnit"]').forEach(radio => {
-        radio.addEventListener('change', event => {
-            rememberSelectRange();
-            lastSelectRange.unit = event.target.value;
+    const selectRangeAxis = document.getElementById('selectRangeAxis');
+    if (selectRangeAxis) selectRangeAxis.addEventListener('change', () => {
+        const unitBefore = (lastSelectRange || defaultSelectRange()).unit;
+        rememberSelectRange();
+        // A new unit changes the fields' step; the axis alone needs no rebuild.
+        if (lastSelectRange.unit !== unitBefore) {
             updateEditUI();
-            restorePanelFocus(event.target.id, 'selectRangeMin');
-        });
+            restorePanelFocus('selectRangeAxis', 'selectRangeMin');
+        } else updateSelectRangePlaceholders();
     });
     document.querySelectorAll('.element-chip').forEach(chip => {
         chip.addEventListener('click', event => toggleElementSelection(chip.dataset.element, Boolean(event.altKey)));
@@ -3439,8 +3441,12 @@ function defaultSelectRange() {
 // what was typed. The unit is set by its radio handler.
 function rememberSelectRange() {
     const range = { ...(lastSelectRange || defaultSelectRange()) };
-    const axisText = document.getElementById('selectRangeAxis')?.value;
-    if (axisText === '0' || axisText === '1' || axisText === '2') range.axis = Number(axisText);
+    const axisText = String(document.getElementById('selectRangeAxis')?.value ?? '');
+    const match = axisText.match(/^(?:(cartesian|fractional):)?([012])$/);
+    if (match) {
+        range.axis = Number(match[2]);
+        if (match[1]) range.unit = match[1];
+    }
     const min = document.getElementById('selectRangeMin');
     const max = document.getElementById('selectRangeMax');
     if (min) range.min = min.value;
@@ -3451,6 +3457,35 @@ function rememberSelectRange() {
 
 function selectRangeUsesFractional(range) {
     return range.unit === 'fractional' && hasLattice(currentStructure);
+}
+
+// The coordinates of every real atom along the range's axis.
+function selectRangeValues(range) {
+    const fractional = selectRangeUsesFractional(range);
+    return currentStructure.atoms.map(atom => {
+        if (!fractional) return [atom.position.x, atom.position.y, atom.position.z][range.axis];
+        const coords = cartesianToFractional(atom.position, currentStructure.lattice);
+        return coords ? coords[range.axis] : NaN;
+    });
+}
+
+// The extent of the structure along the range's axis, as placeholder text:
+// an empty bound is open, and the placeholder shows what that reaches.
+function selectRangeExtent(range) {
+    const values = selectRangeValues(range).filter(Number.isFinite);
+    if (!values.length) return { min: 'min', max: 'max' };
+    const digits = selectRangeUsesFractional(range) ? 3 : 2;
+    const trim = value => String(Number(value.toFixed(digits)));
+    return { min: trim(Math.min(...values)), max: trim(Math.max(...values)) };
+}
+
+function updateSelectRangePlaceholders() {
+    if (!currentStructure) return;
+    const extent = selectRangeExtent(lastSelectRange || defaultSelectRange());
+    const min = document.getElementById('selectRangeMin');
+    const max = document.getElementById('selectRangeMax');
+    if (min) min.placeholder = extent.min;
+    if (max) max.placeholder = extent.max;
 }
 
 // Select (or, with remove, deselect) every real atom whose coordinate along
@@ -3478,12 +3513,7 @@ function selectAtomsByRange(remove = false) {
     if (min === null && max === null) return fail('Enter at least one end of the range');
     let indices;
     try {
-        const values = currentStructure.atoms.map(atom => {
-            if (!fractional) return [atom.position.x, atom.position.y, atom.position.z][range.axis];
-            const coords = cartesianToFractional(atom.position, currentStructure.lattice);
-            return coords ? coords[range.axis] : NaN;
-        });
-        indices = CrystalStructure.atomsInRange(values, min, max);
+        indices = CrystalStructure.atomsInRange(selectRangeValues(range), min, max);
     } catch (error) {
         return fail(error.message);
     }
@@ -3505,44 +3535,50 @@ function selectByRuleHTML() {
         const count = indices.filter(index => selected.has(index)).length;
         const state = count === 0 ? 'none' : count === indices.length ? 'all' : 'some';
         const verb = state === 'all' ? 'Deselect' : 'Select';
-        return `<button type="button" id="elementChip-${element}" class="element-chip" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'} (Alt+click removes them)"><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
+        return `<button type="button" id="elementChip-${element}" class="element-chip pill" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'} (Alt+click removes them)"><span class="chip-dot" aria-hidden="true"></span><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
     }).join('');
     const range = lastSelectRange || defaultSelectRange();
     const fractional = selectRangeUsesFractional(range);
-    const axisNames = fractional ? ['a', 'b', 'c'] : ['x', 'y', 'z'];
     const step = fractional ? '0.01' : '0.5';
-    const axisOptions = [0, 1, 2].map(axis => `<option value="${axis}"${range.axis === axis ? ' selected' : ''}>${axisNames[axis]}</option>`).join('');
+    const extent = selectRangeExtent(range);
+    // One dropdown names the axis and, through it, the unit: x, y, z in Å
+    // and a, b, c along the lattice vectors.
+    const axisGroup = (unit, names, label) => `<optgroup label="${label}">${names.map((name, axis) =>
+        `<option value="${unit}:${axis}"${(fractional ? 'fractional' : 'cartesian') === unit && range.axis === axis ? ' selected' : ''}>${name}</option>`).join('')}</optgroup>`;
+    const axisOptions = axisGroup('cartesian', ['x', 'y', 'z'], 'Cartesian (Å)')
+        + (hasLattice(currentStructure) ? axisGroup('fractional', ['a', 'b', 'c'], 'Fractional') : '');
     return `
         <div class="sd-batch-section select-rule-section">
-            <div class="sd-batch-title">Select Atoms</div>
-            <div class="select-set-row">
-                <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
-                <div class="select-quick">
-                    <button id="selectAllBtn" class="btn btn-sm btn-quick">All</button>
-                    <button id="selectInvertBtn" class="btn btn-sm btn-quick">Invert</button>
-                    <button id="selectNoneBtn" class="btn btn-sm btn-quick"${selected.size ? '' : ' disabled'}>None</button>
+            <div class="select-head">
+                <div class="sd-batch-title">Select Atoms</div>
+                <div class="select-set-actions" role="group" aria-label="Whole selection">
+                    <button type="button" id="selectAllBtn" class="text-action">All</button>
+                    <span class="text-action-sep" aria-hidden="true">·</span>
+                    <button type="button" id="selectInvertBtn" class="text-action">Invert</button>
+                    <span class="text-action-sep" aria-hidden="true">·</span>
+                    <button type="button" id="selectNoneBtn" class="text-action"${selected.size ? '' : ' disabled'}>None</button>
                 </div>
             </div>
-            <div class="box-select-row">
-                <label class="coord-type-label box-select-toggle" title="Every left-drag on the canvas selects the atoms inside the rectangle; Alt+drag deselects them. Shift+drag and Alt+Shift+drag do the same at any time.">
-                    <input type="checkbox" id="boxSelectToggle"${boxSelectMode ? ' checked' : ''}>
-                    <span>Box select</span>
-                </label>
-                <span class="box-select-hint">${boxSelectMode ? 'drag on the canvas · Alt+drag deselects · Esc cancels' : 'or Shift+drag · Alt+Shift+drag deselects'}</span>
+            <div class="select-row">
+                <span class="select-label">Element</span>
+                <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
             </div>
-            <div class="select-range-head">
-                <label for="selectRangeAxis">Along</label>
-                <select id="selectRangeAxis" class="element-select select-range-axis" aria-label="Axis">${axisOptions}</select>
-                ${hasLattice(currentStructure) ? `
-                <label class="coord-type-label"><input type="radio" id="selectRangeUnitCartesian" name="selectRangeUnit" value="cartesian"${fractional ? '' : ' checked'}><span>Å</span></label>
-                <label class="coord-type-label"><input type="radio" id="selectRangeUnitFractional" name="selectRangeUnit" value="fractional"${fractional ? ' checked' : ''}><span>Fractional</span></label>` : '<span class="select-range-unit">Å</span>'}
+            <div class="select-row">
+                <span class="select-label">Region</span>
+                <button type="button" id="boxSelectToggle" class="pill" aria-pressed="${boxSelectMode}" title="${boxSelectMode ? 'On: every left-drag on the canvas selects the atoms inside the rectangle; Alt+drag deselects; Esc cancels a box.' : 'Every left-drag on the canvas selects the atoms inside a rectangle. Shift+drag does the same at any time; Alt+Shift+drag deselects.'}">Box select</button>
             </div>
-            <div class="select-range-row">
-                <input type="number" id="selectRangeMin" class="z-threshold-input" step="${step}" value="${range.min}" placeholder="min" aria-label="Lower bound">
-                <span class="select-range-to">to</span>
-                <input type="number" id="selectRangeMax" class="z-threshold-input" step="${step}" value="${range.max}" placeholder="max" aria-label="Upper bound">
-                <button id="selectRangeBtn" class="btn btn-sm btn-select" title="Select the atoms in this range (Alt+click deselects them)">Select</button>
+            <div class="select-row">
+                <label class="select-label" for="selectRangeAxis">Range</label>
+                <select id="selectRangeAxis" class="pill pill-select" aria-label="Axis and unit">${axisOptions}</select>
             </div>
+            <div class="select-row select-row-indent">
+                <div class="select-range-row">
+                    <input type="number" id="selectRangeMin" class="pill pill-input" step="${step}" value="${range.min}" placeholder="${extent.min}" aria-label="Lower bound (empty: open)">
+                    <span class="select-range-to" aria-hidden="true">–</span>
+                    <input type="number" id="selectRangeMax" class="pill pill-input" step="${step}" value="${range.max}" placeholder="${extent.max}" aria-label="Upper bound (empty: open)">
+                </div>
+            </div>
+            <button id="selectRangeBtn" class="btn btn-select select-range-btn" title="Select the atoms in this range (Alt+click deselects them)">Select in range</button>
             <div id="selectRangeError" class="add-atom-error"></div>
         </div>
     `;

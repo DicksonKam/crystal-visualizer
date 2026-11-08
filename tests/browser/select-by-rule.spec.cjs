@@ -77,8 +77,15 @@ test('element chips, ranges and axis toggles fix a slab layer by layer and expor
 
 test('fractional ranges follow the lattice and bad bounds change nothing', async ({ page }) => {
     await openSlab(page);
-    await page.locator('#selectRangeUnitFractional').check();
+    // The placeholders show the structure's extent along the chosen axis.
+    await expect(page.locator('#selectRangeMin')).toHaveAttribute('placeholder', '2');
+    await expect(page.locator('#selectRangeMax')).toHaveAttribute('placeholder', '6');
+    await page.locator('#selectRangeAxis').selectOption('cartesian:0');
+    await expect(page.locator('#selectRangeMax')).toHaveAttribute('placeholder', '2.02');
+    await page.locator('#selectRangeAxis').selectOption('fractional:2');
     await expect(page.locator('#selectRangeAxis option:checked')).toHaveText('c');
+    await expect(page.locator('#selectRangeMin')).toHaveAttribute('placeholder', '0.1');
+    await expect(page.locator('#selectRangeMax')).toHaveAttribute('placeholder', '0.3');
     await page.locator('#selectRangeMin').fill('0.25');
     await page.locator('#selectRangeMax').fill('0.35');
     await page.locator('#selectRangeBtn').click();
@@ -101,15 +108,16 @@ test('fractional ranges follow the lattice and bad bounds change nothing', async
     expect(await undoDepth(page)).toBe(depth);
 
     // Along a, every atom has a < 0.6; the error clears on success.
-    await page.locator('#selectRangeAxis').selectOption('0');
+    await page.locator('#selectRangeAxis').selectOption('fractional:0');
     await page.locator('#selectRangeMax').fill('0.6');
     await page.locator('#selectRangeBtn').click();
     await expect(page.locator('#selectRangeError')).toHaveText('');
     expect(await selectedNumbers(page)).toEqual([5, 6, 1, 2, 3, 4]);
     await expect(page.locator('#statusText')).toHaveText('a ≤ 0.6: selected 4 atoms (6 of 6 selected)');
-    // Switching back to Å keeps the axis and renames it.
-    await page.locator('#selectRangeUnitCartesian').check();
+    // The Cartesian group names the same axis x.
+    await page.locator('#selectRangeAxis').selectOption('cartesian:0');
     await expect(page.locator('#selectRangeAxis option:checked')).toHaveText('x');
+    await expect(page.locator('#selectRangeMin')).toHaveAttribute('step', '0.5');
 });
 
 test('a molecule offers selection by rule without constraints and a chip replaces a kept measurement', async ({ page }) => {
@@ -119,8 +127,8 @@ test('a molecule offers selection by rule without constraints and a chip replace
     await setMode(page, 'edit');
     await expect(page.locator('.preserved-measurement')).toBeVisible();
     await expect(page.locator('.element-chip')).toHaveText(['C6', 'H6']);
-    await expect(page.locator('#selectRangeUnitFractional')).toHaveCount(0);
-    await expect(page.locator('.select-range-unit')).toHaveText('Å');
+    await expect(page.locator('#selectRangeAxis option')).toHaveCount(3);
+    await expect(page.locator('#selectRangeAxis optgroup')).toHaveAttribute('label', 'Cartesian (Å)');
 
     await page.locator('.element-chip', { hasText: 'H' }).click();
     await expect(page.locator('.preserved-measurement')).toHaveCount(0);

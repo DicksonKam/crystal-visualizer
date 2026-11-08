@@ -1699,7 +1699,7 @@ test('only POSCAR edit panels offer constraints while XYZ keeps coordinate editi
         assert.equal(html.includes('id="unfixAllBtn"'), !isXYZ);
         assert.equal(html.includes('class="sel-status"'), !isXYZ);
         assert.ok(html.includes('id="selectRangeBtn"'), 'select by rule is offered for every format');
-        assert.ok(html.includes('class="element-chip"'));
+        assert.ok(html.includes('class="element-chip pill"'));
         assert.ok(html.includes('id="editAtom0"'));
         assert.ok(html.includes('class="coord-step"'));
         assert.ok(!html.includes('Cancel Selection'));

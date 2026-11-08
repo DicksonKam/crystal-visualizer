@@ -1527,69 +1527,213 @@ body.edit-mode-active .panel-title {
 }
 
 /* === Select Atoms (by element or coordinate range) === */
-/* Chips on the left, All / Invert / None on the right; wraps when narrow */
-.select-set-row {
+/* === Select Atoms: one quiet pill idiom, a label column, header actions === */
+.select-head {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 0.5rem 0.75rem;
+    gap: 0.25rem 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.select-head .sd-batch-title {
+    margin-bottom: 0;
+}
+
+.select-set-actions {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.text-action {
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.text-action:hover {
+    color: var(--accent-cyan);
+}
+
+.text-action[disabled] {
+    color: var(--text-muted);
+    opacity: 0.6;
+    cursor: default;
+}
+
+.text-action:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.text-action-sep {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.select-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
     margin-bottom: 0.6rem;
+}
+
+.select-label {
+    flex: 0 0 55px;
+    line-height: 30px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.select-row-indent {
+    padding-left: calc(55px + 0.5rem);
+}
+
+/* The pill: every small control in the section shares this shape and height */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    height: 30px;
+    padding: 0 0.7rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pill:hover {
+    border-color: var(--text-muted);
+}
+
+.pill[aria-pressed="true"] {
+    background: rgba(0, 245, 212, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.pill:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 1px;
+}
+
+.pill-static {
+    cursor: default;
+    color: var(--text-muted);
+}
+
+.pill-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 1.6rem;
+    font-family: var(--font-mono);
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+    background-position: calc(100% - 0.9rem) 55%, calc(100% - 0.6rem) 55%;
+    background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
+    background-repeat: no-repeat;
+}
+
+.pill-input {
+    flex: 1 1 4rem;
+    min-width: 4rem;
+    width: auto;
+    padding: 0 0.5rem;
+    font-family: var(--font-mono);
+    text-align: center;
+    cursor: text;
+}
+
+.pill-input::placeholder {
+    color: var(--text-muted);
+}
+
+.pill-input:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 245, 212, 0.15);
 }
 
 .element-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3rem;
+    gap: 0.35rem;
 }
 
 .element-chip {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.25rem;
-    padding: 0.15rem 0.45rem 0.15rem 0.4rem;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-left: 3px solid var(--chip-color, var(--text-muted));
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    font: inherit;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    padding: 0 0.6rem 0 0.5rem;
 }
 
-.element-chip .chip-element {
+.chip-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--chip-color, var(--text-muted));
+    flex: none;
+}
+
+.chip-element {
     font-weight: 600;
 }
 
-.element-chip .chip-count {
+.chip-count {
     font-family: var(--font-mono);
     font-size: 0.7rem;
     color: var(--text-muted);
 }
 
-.element-chip:hover {
-    border-color: var(--chip-color, var(--text-muted));
-}
-
 .element-chip[data-state="some"] {
-    border-color: rgba(0, 245, 212, 0.4);
+    border-color: rgba(0, 245, 212, 0.45);
 }
 
-.element-chip[data-state="all"] {
-    background: rgba(0, 245, 212, 0.15);
-    border-color: var(--accent-cyan);
-    border-left-color: var(--chip-color, var(--accent-cyan));
-}
-
-.element-chip[data-state="all"] .chip-count {
+.element-chip[aria-pressed="true"] .chip-count {
     color: var(--accent-cyan);
 }
 
-.element-chip:focus-visible {
-    outline: 2px solid var(--accent-cyan);
-    outline-offset: 1px;
+.select-range-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.select-range-to {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.select-range-btn {
+    width: 100%;
+    margin-top: 0.1rem;
+}
+
+.btn-select {
+    background: rgba(0, 245, 212, 0.15);
+    border: 1px solid rgba(0, 245, 212, 0.4);
+    color: var(--accent-cyan);
+}
+
+.btn-select:hover {
+    background: rgba(0, 245, 212, 0.25);
+    border-color: var(--accent-cyan);
+}
+
+/* The range error takes no room until there is one */
+#selectRangeError:empty {
+    min-height: 0;
+    margin: 0;
 }
 
 /* Box select: the rectangle drawn over the canvas and its panel button */
@@ -1620,73 +1764,6 @@ body.edit-mode-active .controls-hint .edit-hint {
     display: inline;
 }
 
-.box-select-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.2rem 0.5rem;
-    margin-bottom: 0.6rem;
-}
-
-.box-select-toggle {
-    color: var(--text-primary);
-}
-
-.box-select-toggle input[type="checkbox"] {
-    accent-color: var(--accent-cyan);
-}
-
-.box-select-hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.select-range-head {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.35rem 0.6rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-}
-
-.select-range-head .select-range-axis {
-    width: auto;
-    min-width: 3.2rem;
-    padding: 0.3rem 0.5rem;
-    font-family: var(--font-mono);
-}
-
-.select-range-head .coord-type-label:first-of-type {
-    margin-left: auto;
-}
-
-.select-range-unit {
-    margin-left: auto;
-    font-family: var(--font-mono);
-}
-
-/* min, to, max and the button share a line; on a narrow panel the button
-   wraps to its own line and fills it, so the bounds never lose their width. */
-.select-range-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: 0.25rem;
-}
-
-.select-range-row .z-threshold-input {
-    flex: 1 1 5rem;
-    min-width: 5rem;
-    width: auto;
-}
-
-.select-range-row .btn-select {
-    flex: 1 0 auto;
-}
-
 .sd-batch-buttons .btn {
     flex: 1;
 }
@@ -1713,26 +1790,6 @@ body.edit-mode-active .controls-hint .edit-hint {
     margin: 0;
 }
 
-.select-quick {
-    display: flex;
-    gap: 0.35rem;
-    margin-left: auto;
-}
-
-.select-quick .btn {
-    flex: 0 0 auto;
-    padding: 0.3rem 0.6rem;
-}
-
-.select-quick .btn[disabled] {
-    opacity: 0.4;
-    cursor: default;
-}
-
-.select-quick .btn[disabled]:hover {
-    background: rgba(254, 228, 64, 0.1);
-    border-color: rgba(254, 228, 64, 0.3);
-}
 
 .sd-buttons {
     display: flex;
@@ -2341,7 +2398,8 @@ body.edit-mode-active .controls-hint .edit-hint {
     .info-label { margin-right: 0; }
     .info-value { text-align: left; }
     .periodic-row, .add-atom-coord-type, .add-atom-coords, .shift-coords,
-    .sd-buttons, .sd-batch-buttons, .select-quick { flex-wrap: wrap; }
+    .sd-buttons, .sd-batch-buttons, .select-row { flex-wrap: wrap; }
+    .select-row-indent { padding-left: 0; }
     .periodic-axis { flex: 1 1 74px; min-width: 74px; }
     .coord-input-group, .shift-input-group { flex: 1 1 60px; min-width: 0; }
     .element-select { min-width: 0; }

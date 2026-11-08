@@ -25,15 +25,22 @@ async function capture(page) {
             atoms: currentStructure.atoms.map(atom => ({ id: atom.id, speciesId: atom.speciesId, element: atom.element,
                 position: atom.position.toArray(), sd: atom.selectiveDynamics || [true, true, true] }))
         };
-        const selection = { mode: currentMode, measurement: isMeasurementSelection,
-            identities: selectedAtoms.map(atom => [atom.index, Boolean(atom.isGhost), atom.cellOffset]) };
+        const identity = atom => [atom.index, Boolean(atom.isGhost), atom.cellOffset];
+        const measured = measurements.map(measurement => measuredAtoms(measurement));
+        const selection = { mode: currentMode, identities: selectedAtoms.map(identity), measurements: measured.map(atoms => atoms.map(identity)) };
         const violations = [];
         const fail = message => violations.push(message);
         if (new Set(currentStructure.atoms.map(a => a.id)).size !== currentStructure.atoms.length) fail('duplicate document atom IDs');
-        if (!selectedAtoms.length && isMeasurementSelection) fail('empty selection retains measurement purpose');
         if (new Set(selectedAtoms.map(a => a.mesh)).size !== selectedAtoms.length) fail('duplicate selected copies');
-        if ((currentMode === 'measure' || isMeasurementSelection) && selectedAtoms.length > 3) fail('oversized measurement');
+        if (selectedAtoms.some(a => a.isGhost)) fail('periodic copy in the edit selection');
+        measured.forEach((atoms, i) => {
+            if (atoms.length > 3) fail('oversized measurement');
+            if (!atoms.length) fail('empty measurement kept');
+            if (atoms.length !== measurements[i].atoms.length) fail('unresolved measured point kept');
+            if (new Set(atoms.map(a => a.mesh)).size !== atoms.length) fail('duplicate measured copies');
+        });
         if (selectionRings.length !== selectedAtoms.length) fail('marker count disagrees with selection');
+        if (measurementMarkers.length !== measured.reduce((n, atoms) => n + atoms.length, 0)) fail('numbered marker count disagrees with measurements');
         const groups = currentStructure.speciesGroups;
         if (currentStructure.counts.some((count, i) => count !== currentStructure.atoms.filter(a => a.speciesId === groups[i].id).length)) fail('species counts disagree');
         for (const [index, atom] of currentStructure.atoms.entries()) {
@@ -56,12 +63,11 @@ async function capture(page) {
             if (actual.distanceTo(atom.position) > 1e-8) fail(`stale selected world position ${atom.index}`);
         }
         const lines = measurementGroup.children.filter(c => c.userData.isMeasurementLine);
-        const measured = currentMode === 'measure' || isMeasurementSelection;
-        if (lines.length !== (measured ? Math.max(0, selectedAtoms.length - 1) : 0)) fail('distance line count disagrees');
-        if (measured) for (let i = 0; i < lines.length; i++) {
+        const segments = measured.flatMap(atoms => atoms.slice(1).map((atom, i) => [...atoms[i].position.toArray(), ...atom.position.toArray()]));
+        if (lines.length !== segments.length) fail('distance line count disagrees');
+        else for (let i = 0; i < lines.length; i++) {
             const values = lines[i].geometry.attributes.position.array;
-            const expected = [...selectedAtoms[i].position.toArray(), ...selectedAtoms[i+1].position.toArray()];
-            if (expected.some((v, j) => Math.abs(values[j]-v) > 1e-4)) fail('distance endpoint disagrees');
+            if (segments[i].some((v, j) => Math.abs(values[j]-v) > 1e-4)) fail('distance endpoint disagrees');
         }
         const undo = editHistory.undoStack.map(op => ({ id: id(op), type: op.type }));
         const redo = editHistory.redoStack.map(entry => ({ id: id(entry.operation), type: entry.operation.type }));
@@ -101,11 +107,14 @@ function copyDisplayed(originalIndex, offset, state) {
         return value >= -1e-6 && value <= state.repeats[axis] + 1e-6;
     });
 }
+// Measurements are kept as identities too; a measurement whose every point
+// has disappeared is dropped rather than kept empty.
 function displayedSelection(selection, state) {
-    const identities = selection.identities.filter(([index, ghost, offset]) => ghost
+    const displayed = identities => identities.filter(([index, ghost, offset]) => ghost
         ? copyDisplayed(Number(String(index).split('_')[1]), offset, state)
         : Number.isInteger(index) && index >= 0 && index < state.atomCount);
-    return { ...selection, identities, measurement: Boolean(identities.length && selection.measurement) };
+    return { ...selection, identities: displayed(selection.identities),
+        measurements: (selection.measurements || []).map(displayed).filter(identities => identities.length) };
 }
 async function visible(page, selector) { const item = page.locator(selector); return await item.count() > 0 && await item.isVisible() && await item.isEnabled(); }
 async function runScenario(page, { seed, steps = 160, log = [], extended = false, includeGhosts = false, visual = false, observe = null, sourceOverride = null, advanced = false, ordinarySources = null }) {
@@ -152,7 +161,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
     assert.deepEqual(previous.violations, []);
     if (observe) await observe({ stage: 'initial', step: -1, action: 'load', state: previous });
     for (let step = 0; step < steps; step++) {
-        const choices = ['mode', 'jump', 'click', 'undo', 'redo', 'clear', 'reset', 'rotate', 'export'];
+        const choices = ['mode', 'jump', 'click', 'undo', 'redo', 'clear', 'unmeasure', 'reset', 'rotate', 'export'];
         if (previous.selection.mode === 'edit') choices.push('add', 'coordinates', 'shift', 'delete', 'fix', 'drag', 'cancel', 'invalid');
         if (previous.periodic) choices.push('periodic', 'supercell', 'resize');
         if (includeGhosts && previous.periodic && previous.selection.mode === 'measure') choices.push('ghost');
@@ -202,7 +211,8 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 if (!previous.atomCount) performed = false;
                 else { const number = integer(previous.atomCount)+1; record.number = number; await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
             } else if (action === 'undo' || action === 'redo') await click(`#${action}Btn`);
-            else if (action === 'clear') await click('#clearSelectionBtn, #selectNoneBtn:enabled');
+            else if (action === 'clear') await click(previous.selection.mode === 'edit' ? '#selectNoneBtn:enabled' : '#clearMeasurementBtn');
+            else if (action === 'unmeasure') await click('#clearMeasurementBtn'); // the Edit readout's clear, or the Measurements panel's
             else if (action === 'reset') await click('#resetView');
             else if (action === 'delete') await click('#deleteSelectedBtn');
             else if (action === 'fix') await click(integer(2) ? '#fixSelectedBtn' : '#unfixSelectedBtn');
@@ -420,7 +430,7 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                 const entry = known.get(op.id);
                 if (action === 'undo' && entry) entry.after = previous;
                 const expected = entry?.[action === 'undo' ? 'before' : 'after'];
-                if(['select_atom','deselect_atom','clear_selection'].includes(op.type)) {
+                if(['select_atom','deselect_atom','clear_selection','measure_atom','unmeasure_atom','clear_measurement'].includes(op.type)) {
                     // Timeline navigation updates displayed positions outside
                     // edit history. Selection undo must keep the current frame.
                     compareGeometry(after.geometry,previous.geometry,`${action} selection changes document`);
@@ -440,11 +450,12 @@ async function runScenario(page, { seed, steps = 160, log = [], extended = false
                         known.set(added[0].id,{before:previous,after:selected});
                         known.set(added[1].id,{before:selected,after});
                     } else {
-                        // Jumping from an edit selection, or measuring a fourth
-                        // atom, records Clear then Select. At the 50-entry limit
-                        // stack length cannot reveal that two operations occurred.
+                        // Jumping from an edit selection records Clear then
+                        // Select; measuring a fourth atom is one step. At the
+                        // 50-entry limit stack length cannot reveal that two
+                        // operations occurred.
                         assert.deepEqual(added.map(op=>op.type),['clear_selection','select_atom'],'unknown compound UI action');
-                        const cleared={...previous,selection:{mode:previous.selection.mode,measurement:false,identities:[]}};
+                        const cleared={...previous,selection:{...previous.selection,identities:[]}};
                         known.set(added[0].id,{before:previous,after:cleared});
                         known.set(added[1].id,{before:cleared,after});
                     }

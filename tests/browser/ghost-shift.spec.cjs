@@ -1,7 +1,9 @@
 const { test, expect, upload, setMode } = require('./fixtures.cjs');
 const { capture } = require('../stress/edit-scenario.cjs');
 
-for (const includeReal of [false, true]) test(`shifting a preserved periodic-copy measurement (${includeReal ? 'mixed' : 'copy only'}) reports its editability and preserves history`, async ({ page }) => {
+// A measured periodic copy is an annotation on a display copy: Move acts on the
+// edit selection, the copy follows its real atom, and the measurement follows both.
+for (const includeReal of [false, true]) test(`moving atoms carries a measured periodic copy (${includeReal ? 'copy and atom' : 'copy only'}) and keeps history`, async ({ page }) => {
     await upload(page, 'ghost shift\n1\n4 0 0\n0 4 0\n0 0 4\nH\n1\nCartesian\n1 1 1\n', 'ghost-shift.poscar');
     await page.getByRole('button', { name: 'Increase a periodic images', exact: true }).click();
     const point = await page.evaluate(() => {
@@ -16,36 +18,36 @@ for (const includeReal of [false, true]) test(`shifting a preserved periodic-cop
         return { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 };
     });
     await page.mouse.click(point.x, point.y);
-    expect(await page.evaluate(() => selectedAtoms.map(atom => Boolean(atom.isGhost)))).toEqual([true]);
+    const measuredGhosts = () => page.evaluate(() => measuredAtoms().map(atom => Boolean(atom.isGhost)));
+    expect(await measuredGhosts()).toEqual([true]);
     if (includeReal) {
         await page.locator('#atomJumpInput').fill('1');
         await page.locator('#atomJumpInput').press('Enter');
-        expect(await page.evaluate(() => selectedAtoms.map(atom => Boolean(atom.isGhost)))).toEqual([true, false]);
+        expect(await measuredGhosts()).toEqual([true, false]);
     }
     await setMode(page, 'edit');
     const before = await capture(page);
-    await page.locator('input[name="shiftCoordType"][value="cartesian"]').check();
-    await page.locator('#shiftA').fill('0.25');
-    await page.locator('#applyShiftBtn').click();
-    await expect(page.locator('#shiftError')).toContainText('Periodic copies cannot be moved');
-    await expect(page.locator('.shift-target-hint')).toContainText('Periodic copies cannot be moved');
-    const after = await capture(page);
-    expect(after.violations).toEqual([]);
-    expect(after.geometry).toEqual(before.geometry);
-    expect(after.selection).toEqual(before.selection);
-    expect(after.undo).toEqual(before.undo); expect(after.redo).toEqual(before.redo);
-    expect(after.revision).toBe(before.revision); expect(after.dirty).toBe(before.dirty);
-    // Clear the read-only selection and select the one real atom: its
-    // coordinate fields move it by the same 0.25 Å that was refused above.
-    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
+    expect(before.selection.identities).toEqual([]);
+    // Nothing is selected, so there is nothing to move; the readout is there.
+    await expect(page.locator('#applyShiftBtn')).toHaveCount(0);
+    await expect(page.locator('.measurement-readout')).toHaveCount(1);
+    // Select the one real atom and move it by its coordinate field: its copy
+    // moves with it, so the measured points keep their identities and the
+    // copy-to-atom distance.
     await page.locator('#selectAllBtn').click();
     await page.locator('input[name="editAtomCoordMode"][value="cartesian"]').check();
     await page.locator('#editAtom0').fill('1.25');
     await page.locator('#editAtom0').press('Enter');
-    const shifted = await capture(page);
-    expect(shifted.violations).toEqual([]);
-    expect(shifted.geometry.atoms[0].position[0]).toBeCloseTo(1.25, 8);
-    expect(shifted.undo.at(-1).type).toBe('move_atom');
+    const after = await capture(page);
+    expect(after.violations).toEqual([]);
+    expect(after.geometry.atoms[0].position[0]).toBeCloseTo(1.25, 8);
+    expect(after.selection.measurements).toEqual(before.selection.measurements);
+    expect(await measuredGhosts()).toEqual(includeReal ? [true, false] : [true]);
+    if (includeReal) await expect(page.locator('.measurement-readout')).toContainText('4.0000 Å');
+    expect(after.undo.at(-1).type).toBe('move_atom');
+    expect(after.revision).toBe(before.revision + 1);
     await page.locator('#undoBtn').click();
-    expect((await capture(page)).geometry).toEqual(before.geometry);
+    const undone = await capture(page);
+    expect(undone.geometry).toEqual(before.geometry);
+    expect(undone.selection.measurements).toEqual(before.selection.measurements);
 });

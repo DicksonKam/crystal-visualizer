@@ -16,8 +16,8 @@ for(const deviceScaleFactor of [1,2])test.describe(`number precedence at display
   expect(await visible()).toEqual([3]);
   await setMode(page, 'edit');await settle();
   expect(await visible()).toEqual([3]);
-  await page.screenshot({path:info.outputPath('preserved-measurement-numbers.png')});
-  await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();await settle();
+  await page.screenshot({path:info.outputPath('edit-mode-measurement-numbers.png')});
+  await page.locator('#clearMeasurementBtn').click();await settle();
   expect(await visible()).toEqual([0,1,2,3]);
   await page.screenshot({path:info.outputPath('cleared-indices-restored.png')});
   await page.locator('#atomJumpInput').fill('2');await page.locator('#atomJumpInput').press('Enter');await settle();

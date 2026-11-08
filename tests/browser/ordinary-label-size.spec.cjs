@@ -19,7 +19,7 @@ for(const deviceScaleFactor of [1,2]) test.describe(`ordinary labels at display 
         for(const n of [1,2,3]) {await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
         const measurement = await page.locator('#measurementPanel').innerText();
         await setMode(page, 'edit');
-        await page.screenshot({path:info.outputPath('labels-and-preserved-measurement.png')});
+        await page.screenshot({path:info.outputPath('labels-and-kept-measurement.png')});
         await page.locator('#showLabels').uncheck();await page.locator('#showLabels').check();
         await setMode(page, 'measure');
         expect(await page.locator('#measurementPanel').innerText()).toBe(measurement);

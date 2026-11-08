@@ -85,9 +85,10 @@ test('narrow-panel editing and periodic controls stay inside the panel without h
     for(const number of [1,2]) { await page.locator('#atomJumpInput').fill(String(number)); await page.locator('#atomJumpInput').press('Enter'); }
     await setMode(page, 'edit');
     await page.locator('#addAtomX').fill('.25');
-    const preserved=await page.locator('.sidebar').evaluate(e=>({left:e.scrollLeft,width:e.clientWidth,content:e.scrollWidth}));
-    expect(preserved.left).toBe(0); expect(preserved.content).toBeLessThanOrEqual(preserved.width+1);
-    await page.screenshot({path:testInfo.outputPath('narrow-preserved-measurement.png')});
+    await expect(page.locator('.measurement-readout')).toBeVisible();
+    const measured=await page.locator('.sidebar').evaluate(e=>({left:e.scrollLeft,width:e.clientWidth,content:e.scrollWidth}));
+    expect(measured.left).toBe(0); expect(measured.content).toBeLessThanOrEqual(measured.width+1);
+    await page.screenshot({path:testInfo.outputPath('narrow-kept-measurement.png')});
 });
 
 

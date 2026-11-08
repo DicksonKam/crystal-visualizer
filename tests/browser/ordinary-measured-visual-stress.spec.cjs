@@ -23,7 +23,7 @@ for (const dpr of [1, 2]) for (const source of ['xyz/H2O.xyz', 'poscar/NaCl_rock
                 const before = await checkMeasurement(page);
                 const point = await page.evaluate(() => {
                     const r = renderer.domElement.getBoundingClientRect();
-                    for (const selected of selectedAtoms) {
+                    for (const selected of measuredAtoms()) {
                         const p = selected.mesh.getWorldPosition(new THREE.Vector3()).project(camera);
                         const q = { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 };
                         if (q.x > r.left + 25 && q.x < r.right - 25 && q.y > r.top + 25 && q.y < r.bottom - 25 && getAtomIntersection({ clientX: q.x, clientY: q.y })?.object === selected.mesh) return { ...q, index: selected.index };

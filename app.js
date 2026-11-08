@@ -158,7 +158,13 @@ function availableStorage() {
 // Measurement state
 let raycaster, mouse;
 let selectedAtoms = []; // Array of { mesh, index, element, position }
-let selectionRings = []; // Visual rings around selected atoms
+let selectionRings = []; // Cyan check markers, one per edit-selected atom
+// Measurements are live annotations, independent of the edit selection: a list
+// of atom-identity descriptors resolved against the current meshes at every
+// redraw, never scene objects. The UI makes one at a time; the model holds many.
+let measurements = [];
+let measurementMarkers = []; // Numbered markers on measured atoms
+let glowingMeshes = new Set(); // Atoms currently lit by the selection glow
 let atomMeshes = []; // All atom meshes for raycasting
 const sharedRenderResources = new Set();
 const sharedAtomGeometries = new Map();
@@ -352,9 +358,10 @@ const editHistory = CrystalHistory.createHistory(50);
 // - 'make_supercell': { oldStructure } (deep copy)
 // - 'vacuum_drag': { oldLattice, oldAtomPositions }
 // - 'select_atom', 'deselect_atom', 'clear_selection': { selectionBefore }
-//   selectionBefore: ordered identities, measurement purpose, and interaction mode
+//   selectionBefore: ordered identities, measurements, and interaction mode
 
 function pushUndo(operation) {
+    if (!isSelectionOperation(operation) && !operation.measurementsBefore) operation.measurementsBefore = captureMeasurements();
     editHistory.record(operation);
     updateUndoButton();
     updateDirtyIndicator();
@@ -395,19 +402,20 @@ function restoreStructure(snapshot) {
     return structure;
 }
 
-// Selection history stores ordered identities and purpose, never cached positions.
-function captureSelectionState() {
+// Selection history stores ordered identities and purpose, never cached
+// positions: the edit selection, the measurements, and the interaction mode.
+function selectionDescriptor(atom) {
     return {
-        selected: selectedAtoms.map(atom => ({
-            index: atom.index,
-            originalIndex: atom.originalIndex,
-            isGhost: Boolean(atom.isGhost),
-            cellOffset: atom.cellOffset ? { ...atom.cellOffset } : null,
-            element: atom.element
-        })),
-        isMeasurementSelection,
-        mode: currentMode
+        index: atom.index,
+        originalIndex: atom.originalIndex,
+        isGhost: Boolean(atom.isGhost),
+        cellOffset: atom.cellOffset ? { ...atom.cellOffset } : null,
+        element: atom.element
     };
+}
+
+function captureSelectionState() {
+    return { selected: selectedAtoms.map(selectionDescriptor), measurements: captureMeasurements(), mode: currentMode };
 }
 
 function captureRedoState(operation) {
@@ -418,50 +426,182 @@ function captureRedoState(operation) {
     };
 }
 
-// Restore edit selections in their editing context rather than interpreting an
-// arbitrary multi-selection as a measurement or silently discarding its atoms.
+// Restore a selection in the interaction mode that owns it, without recording
+// another selection action.
 function restoreSelectionContext(state) {
-    const mode = state.mode;
-    setInteractionMode(mode, true);
-    isMeasurementSelection = Boolean(state.selected.length && (state.isMeasurementSelection || mode === 'measure'));
+    setInteractionMode(state.mode, true);
 }
 
 function applySelectionState(state) {
-    selectedAtoms.forEach(atom => unhighlightAtomMesh(atom.mesh));
     restoreSelectionContext(state);
     selectedAtoms = restoreSelectedAtoms(state.selected);
-    if (!selectedAtoms.length) isMeasurementSelection = false;
+    measurements = cloneMeasurements(state.measurements || []);
+    pruneMeasurements();
     rebuildSelectionVisuals();
     updateUI_forCurrentMode();
     requestRender();
 }
 
-function restoreSelectedAtoms(savedSelections) {
+// Resolve saved identities against the current display: a real atom by its
+// document id when the descriptor carries one, otherwise by index; a periodic
+// copy by its source atom and cell offset. Missing copies are omitted and each
+// displayed copy appears once.
+function resolveDescriptorMesh(descriptor) {
+    let sourceIndex = descriptor.isGhost ? descriptor.originalIndex : descriptor.index;
+    if (descriptor.atomId != null) {
+        sourceIndex = currentStructure ? currentStructure.atoms.findIndex(atom => atom.id === descriptor.atomId) : -1;
+        if (sourceIndex < 0) return null;
+    }
+    if (!descriptor.isGhost) {
+        const mesh = atomMeshes[sourceIndex];
+        return mesh && !mesh.userData.isGhost ? mesh : null;
+    }
+    const offset = descriptor.cellOffset;
+    if (!offset) return null;
+    return atomMeshes.find(candidate => candidate.userData.isGhost
+        && candidate.userData.originalIndex === sourceIndex
+        && candidate.userData.cellOffset
+        && candidate.userData.cellOffset.a === offset.a
+        && candidate.userData.cellOffset.b === offset.b
+        && candidate.userData.cellOffset.c === offset.c) || null;
+}
+
+function resolveAtomDescriptors(saved, limit = Infinity) {
     const seen = new Set();
-    const restored = savedSelections.map(saved => {
-        const mesh = saved.isGhost
-            ? atomMeshes.find(candidate => saved.cellOffset && candidate.userData.isGhost
-                && candidate.userData.originalIndex === saved.originalIndex
-                && candidate.userData.cellOffset
-                && candidate.userData.cellOffset.a === saved.cellOffset.a
-                && candidate.userData.cellOffset.b === saved.cellOffset.b
-                && candidate.userData.cellOffset.c === saved.cellOffset.c)
-            : atomMeshes[saved.index];
-        if (!mesh || (!saved.isGhost && mesh.userData.isGhost) || seen.has(mesh)) return null;
+    const resolved = [];
+    for (const descriptor of saved) {
+        if (resolved.length >= limit) break;
+        const mesh = resolveDescriptorMesh(descriptor);
+        if (!mesh || seen.has(mesh)) continue;
         seen.add(mesh);
         const position = new THREE.Vector3();
         mesh.getWorldPosition(position);
-        return {
+        const isGhost = Boolean(mesh.userData.isGhost);
+        const index = mesh.userData.atomIndex ?? descriptor.index;
+        resolved.push({
             mesh,
-            index: saved.index,
-            originalIndex: saved.originalIndex,
-            element: saved.element,
+            index,
+            originalIndex: isGhost ? mesh.userData.originalIndex : index,
+            element: mesh.userData.element ?? descriptor.element,
             position,
-            isGhost: Boolean(saved.isGhost),
-            cellOffset: saved.cellOffset
-        };
-    }).filter(Boolean);
-    return currentMode === 'measure' || isMeasurementSelection ? restored.slice(0, 3) : restored;
+            isGhost,
+            cellOffset: isGhost && mesh.userData.cellOffset ? { ...mesh.userData.cellOffset } : null
+        });
+    }
+    return resolved;
+}
+
+function restoreSelectedAtoms(savedSelections) {
+    return resolveAtomDescriptors(savedSelections);
+}
+
+// === MEASUREMENTS ===
+// A measurement is an annotation: up to three atom identities whose distances
+// and angle follow every edit, drag, cell resize and undo. It is made and
+// cleared in Measure mode, survives mode changes, and the edit selection never
+// touches it. Points name document atoms by id, so deleting or adding other
+// atoms cannot move a measurement to a different atom.
+const MEASUREMENT_POINTS = 3;
+
+function cloneMeasurements(list) {
+    return list.map(measurement => ({
+        atoms: measurement.atoms.map(atom => ({ ...atom, cellOffset: atom.cellOffset ? { ...atom.cellOffset } : null }))
+    }));
+}
+
+function captureMeasurements() { return cloneMeasurements(measurements); }
+
+function currentMeasurement() { return measurements[measurements.length - 1] || null; }
+
+function measurementDescriptor(mesh) {
+    const isGhost = Boolean(mesh.userData.isGhost);
+    const originalIndex = isGhost ? mesh.userData.originalIndex : mesh.userData.atomIndex;
+    return {
+        atomId: currentStructure?.atoms[originalIndex]?.id ?? null,
+        index: mesh.userData.atomIndex,
+        originalIndex,
+        isGhost,
+        cellOffset: isGhost && mesh.userData.cellOffset ? { ...mesh.userData.cellOffset } : null,
+        element: mesh.userData.element
+    };
+}
+
+// The measured atoms resolved against the displayed meshes, in measured order.
+function measuredAtoms(measurement = currentMeasurement()) {
+    return measurement ? resolveAtomDescriptors(measurement.atoms, MEASUREMENT_POINTS) : [];
+}
+
+function allMeasuredAtoms() {
+    return measurements.flatMap(measurement => measuredAtoms(measurement));
+}
+
+// Drop points whose atom or copy is no longer displayed, and a measurement left
+// with nothing to show, as periodic copies always have been.
+function pruneMeasurements() {
+    measurements = measurements.map(measurement => {
+        const seen = new Set();
+        const atoms = measurement.atoms.filter(descriptor => {
+            const mesh = resolveDescriptorMesh(descriptor);
+            if (!mesh || seen.has(mesh)) return false;
+            seen.add(mesh);
+            return true;
+        });
+        return { atoms: atoms.slice(0, MEASUREMENT_POINTS) };
+    }).filter(measurement => measurement.atoms.length);
+}
+
+function measuredPointIndex(mesh, measurement = currentMeasurement()) {
+    return measuredAtoms(measurement).findIndex(atom => atom.mesh === mesh);
+}
+
+// A Measure-mode click: measure the atom, unmeasure it when it is already a
+// point, or start a new measurement when three are measured. One undo step each.
+function toggleMeasuredAtom(mesh) {
+    pruneMeasurements();
+    const position = measuredPointIndex(mesh);
+    if (position >= 0) unmeasureAtom(position);
+    else measureAtom(mesh);
+}
+
+function measureAtom(mesh) {
+    if (!mesh || mesh.parent !== structureGroup) return;
+    const measurement = currentMeasurement();
+    if (measurement && measuredPointIndex(mesh, measurement) >= 0) return;
+    const selectionBefore = captureSelectionState();
+    const descriptor = measurementDescriptor(mesh);
+    if (measurement && measuredAtoms(measurement).length < MEASUREMENT_POINTS) measurement.atoms.push(descriptor);
+    else measurements = [{ atoms: [descriptor] }]; // One measurement at a time for now
+    pushUndo({ type: 'measure_atom', selectionBefore });
+    rebuildSelectionVisuals();
+    updateUI_forCurrentMode();
+}
+
+function unmeasureAtom(position, measurementIndex = measurements.length - 1) {
+    pruneMeasurements();
+    const measurement = measurements[measurementIndex];
+    if (!measurement || !measurement.atoms[position]) return;
+    const selectionBefore = captureSelectionState();
+    measurement.atoms.splice(position, 1);
+    if (!measurement.atoms.length) measurements = measurements.filter(other => other !== measurement);
+    pushUndo({ type: 'unmeasure_atom', selectionBefore });
+    rebuildSelectionVisuals();
+    updateUI_forCurrentMode();
+}
+
+function clearMeasurement(index) {
+    if (!measurements[index]) return;
+    pushUndo({ type: 'clear_measurement', selectionBefore: captureSelectionState() });
+    measurements = measurements.filter((_, position) => position !== index);
+    rebuildSelectionVisuals();
+    updateUI_forCurrentMode();
+}
+
+function clearMeasurements(skipUndo = false) {
+    if (!measurements.length) return;
+    if (!skipUndo) pushUndo({ type: 'clear_measurement', selectionBefore: captureSelectionState() });
+    measurements = [];
+    rebuildSelectionVisuals();
+    updateUI_forCurrentMode();
 }
 
 function performRedo() {
@@ -487,6 +627,7 @@ function performRedo() {
         });
         restoreSelectionContext(state);
         selectedAtoms = state.selected;
+        measurements = cloneMeasurements(state.measurements || []);
         renderStructure(currentStructure, true);
         updateUI(currentStructure);
         updateUI_forCurrentMode();
@@ -512,7 +653,10 @@ function performUndo() {
     
     const op = editHistory.undoStack.pop();
     const redoState = captureRedoState(op);
-    
+    // A geometry operation may have dropped measured points (deleting a
+    // measured atom); undoing it brings the measurements back with the atoms.
+    if (!isSelectionOperation(op) && op.measurementsBefore) measurements = cloneMeasurements(op.measurementsBefore);
+
     switch (op.type) {
         case 'move_atom':
             undoMoveAtom(op);
@@ -548,6 +692,17 @@ function performUndo() {
         case 'clear_selection':
             applySelectionState(op.selectionBefore);
             statusText.textContent = 'Restored atom selection';
+            statusText.className = '';
+            break;
+        case 'measure_atom':
+            applySelectionState(op.selectionBefore);
+            statusText.textContent = 'Undid measurement point';
+            statusText.className = '';
+            break;
+        case 'unmeasure_atom':
+        case 'clear_measurement':
+            applySelectionState(op.selectionBefore);
+            statusText.textContent = 'Restored measurement';
             statusText.className = '';
             break;
         default:
@@ -656,6 +811,7 @@ function undoMakeSupercell(op) {
     if (op.selectionBefore) {
         restoreSelectionContext(op.selectionBefore);
         selectedAtoms = op.selectionBefore.selected;
+        measurements = cloneMeasurements(op.selectionBefore.measurements || []);
     }
     renderStructure(currentStructure, true);
     updateUI(currentStructure);
@@ -711,8 +867,6 @@ let lastShiftCoordType = 'fractional'; // Default to fractional for shifts
 // Selected atom coordinate display mode ('fractional' or 'cartesian')
 let selectedAtomCoordMode = 'fractional'; // Default to fractional
 
-// Track if current selection is a preserved measurement (from Measure mode)
-let isMeasurementSelection = false;
 
 // Drag state for moving atoms
 let isDragging = false;
@@ -858,10 +1012,18 @@ function initScene() {
         // and dialogs handle their own Escape.
         const target = event.target;
         const typing = target instanceof Element && (target.matches('input, select, textarea') || target.isContentEditable || target.closest('#resetConfirm'));
-        if (typing || currentMode !== 'edit' || !selectedAtoms.length || !dropZone.classList.contains('hidden')) return;
-        clearSelection();
-        updateEditUI();
-        statusText.textContent = 'Selection cleared';
+        if (typing || !dropZone.classList.contains('hidden')) return;
+        if (currentMode === 'measure') {
+            // Escape in Measure mode clears the measurement; Edit mode keeps it.
+            if (!measurements.length) return;
+            clearMeasurements();
+            statusText.textContent = 'Measurement cleared';
+        } else {
+            if (!selectedAtoms.length) return;
+            clearSelection();
+            updateEditUI();
+            statusText.textContent = 'Selection cleared';
+        }
         statusText.className = '';
     });
 }
@@ -1323,15 +1485,19 @@ function resolveMeasurementGeometry(atoms) {
     }));
     const angle = resolved.angle ? { ...resolved.angle,
         first: points[0].position, vertex: points[1].position, third: points[2].position } : null;
-    return { points, pairs, angle };
+    return { points, pairs, angle, atoms };
 }
 
-function getMeasurementGeometry() { return resolveMeasurementGeometry(selectedAtoms); }
+// Geometry of one measurement, resolved from the atoms' current positions.
+function getMeasurementGeometry(measurement = currentMeasurement()) {
+    return resolveMeasurementGeometry(measuredAtoms(measurement));
+}
 
 function getMeasurementPair(atomA, atomB, geometry = null) {
-    const first = selectedAtoms.indexOf(atomA), second = selectedAtoms.indexOf(atomB);
+    const measured = geometry ? geometry.atoms : [];
+    const first = measured.indexOf(atomA), second = measured.indexOf(atomB);
     if (first >= 0 && second >= 0 && Math.abs(first - second) === 1) {
-        const pair = (geometry || getMeasurementGeometry()).pairs[Math.min(first, second)];
+        const pair = geometry.pairs[Math.min(first, second)];
         if (first < second) return pair;
         return { ...pair, start: pair.end, end: pair.start, delta: pair.delta.clone().multiplyScalar(-1) };
     }
@@ -1381,11 +1547,6 @@ function formatDelta(atomA, atomB, geometry = null) {
         `<span class="delta-item"><span class="delta-label delta-b">Δ${fractional ? 'b' : 'y'}</span> ${fmt(d.db)}</span>` +
         `<span class="delta-item"><span class="delta-label delta-c">Δ${fractional ? 'c' : 'z'}</span> ${fmt(d.dc)}</span>` +
         `</${closingTag}>`;
-}
-
-// Format delta for preserved measurement in edit mode (same style as formatDelta)
-function formatDeltaCompact(atomA, atomB, geometry = null) {
-    return formatDelta(atomA, atomB, geometry);
 }
 
 // Toggle coordinate display mode and refresh UI
@@ -1582,10 +1743,10 @@ function getAtomIntersectionAt(mouseNDC) {
     raycaster.setFromCamera(mouseNDC, camera);
     // Numbered markers are visible handles for their atoms. Their readable
     // screen size can exceed a small sphere, so they share the atom's action.
-    const markerHit = raycaster.intersectObjects(selectionRings, false)[0];
+    const markerHit = raycaster.intersectObjects([...selectionRings, ...measurementMarkers], false)[0];
     if (markerHit) {
-        const selected = selectedAtoms[selectionRings.indexOf(markerHit.object)];
-        if (selected?.mesh?.parent === structureGroup) return { ...markerHit, object: selected.mesh };
+        const mesh = markerHit.object.userData.atomMesh;
+        if (mesh?.parent === structureGroup) return { ...markerHit, object: mesh };
     }
     const hits = raycaster.intersectObjects(atomMeshes, false);
     const nearest = hits[0];
@@ -2125,31 +2286,12 @@ function handleEditClick(mesh, atomIndex) {
 // Handle click for measure mode
 function handleMeasureClick(mouseNDC) {
     if (currentMode !== 'measure') return;
-    
+
     mouse.copy(mouseNDC);
     raycaster.setFromCamera(mouse, camera);
-    
+
     const hit = getAtomIntersectionAt(mouseNDC);
-    const intersects = hit ? [hit] : [];
-    
-    if (intersects.length > 0) {
-        const clickedMesh = intersects[0].object;
-        const atomIndex = clickedMesh.userData.atomIndex;
-        
-        const existingIndex = selectedAtoms.findIndex(a => a.index === atomIndex);
-        
-        if (existingIndex !== -1) {
-            deselectAtom(existingIndex);
-        } else if (selectedAtoms.length < 3) {
-            selectAtom(clickedMesh, atomIndex);
-        } else {
-            clearSelection();
-            selectAtom(clickedMesh, atomIndex);
-        }
-        
-        updateMeasurements();
-        updateMeasurementUI();
-    }
+    if (hit) toggleMeasuredAtom(hit.object);
 }
 
 // Click handler for atom selection
@@ -2187,20 +2329,8 @@ function onClickFallback(event) {
         const isGhost = clickedMesh.userData.isGhost;
         
         if (currentMode === 'measure') {
-            // In Measure mode, both real and ghost atoms can be selected
-            const existingIndex = selectedAtoms.findIndex(a => a.index === atomIndex);
-            
-            if (existingIndex !== -1) {
-                deselectAtom(existingIndex);
-            } else if (selectedAtoms.length < 3) {
-                selectAtom(clickedMesh, atomIndex);
-            } else {
-                clearSelection();
-                selectAtom(clickedMesh, atomIndex);
-            }
-            
-            updateMeasurements();
-            updateMeasurementUI();
+            // In Measure mode, both real and ghost atoms can be measured
+            toggleMeasuredAtom(clickedMesh);
         } else if (currentMode === 'edit') {
             // In Edit mode, ghost atoms cannot be edited - skip them
             if (isGhost) {
@@ -2208,15 +2338,9 @@ function onClickFallback(event) {
                 statusText.className = '';
                 return;
             }
-            
-            // If there's a preserved measurement selection, clear it first
-            // This starts a fresh edit selection
-            if (isMeasurementSelection) {
-                clearSelection();
-                isMeasurementSelection = false;
-            }
-            
-            // Handle edit mode click - select/deselect for editing
+
+            // Handle edit mode click - select/deselect for editing. A kept
+            // measurement is an annotation and stays as it is.
             const existingIndex = selectedAtoms.findIndex(a => a.index === atomIndex);
             
             if (existingIndex !== -1) {
@@ -2281,8 +2405,10 @@ function createEditSelectionMarker(atomMesh, selectionNumber) {
     sprite.scale.set(labelSize, labelSize, labelSize);
     sprite.renderOrder = 999;
     sprite.userData.isSelectionLabel = true;
+    sprite.userData.isEditMarker = true;
+    sprite.userData.atomMesh = atomMesh;
     sprite.userData.annotationColor = 0x00f5d4;
-    
+
     measurementGroup.add(sprite);
     selectionRings.push(sprite);
 }
@@ -2323,8 +2449,9 @@ function replacePanelHTML(panel, html, fallbackId) {
     // A rebuild caused outside the panel (a click on an atom, Escape) keeps
     // the first control that starts inside the visible panel where it is.
     // Every later control is a fallback, because the rebuild may drop the
-    // first ones (clearing a selection removes its whole card).
-    if (!anchors.length && scroller && typeof panel.querySelectorAll === 'function') {
+    // first ones (clearing a selection removes its whole card, and the
+    // measurement readout's Clear removes the readout itself).
+    if (scroller && typeof panel.querySelectorAll === 'function') {
         const top = scroller.getBoundingClientRect().top - 1;
         const inCard = [];
         for (const element of panel.querySelectorAll('[id]')) {
@@ -2358,6 +2485,8 @@ function updateEditUI() {
     
     // Instructions
     html += '<div class="edit-instructions">Click an atom to select · drag it to move</div>';
+    // A kept measurement reads out here while the structure is edited.
+    html += measurementReadoutsHTML();
     // Select atoms by element, region or range; the selection feeds everything below.
     if (currentStructure && currentStructure.atoms.length) html += selectByRuleHTML();
 
@@ -2365,113 +2494,81 @@ function updateEditUI() {
     if (selectedAtoms.length === 0) {
         html += `<p class="placeholder-text">${currentStructure ? (currentStructure.atoms.length ? 'No atoms selected' : 'No atoms remain. Add an atom or Undo the deletion.') : 'Load a structure to start editing'}</p>`;
     } else {
-        if (selectedAtoms.length > 0) {
-            // Check if this is a preserved measurement from Measure mode
-            if (isMeasurementSelection) {
-                // Show compact measurement display (read-only)
-                const geometry = getMeasurementGeometry();
-                const labels = selectedAtoms.map((_, index) => measurementPointLabel(index));
-                html += '<div class="preserved-measurement">';
-                html += '<div class="preserved-measurement-header">📐 Measurement Preserved</div>';
-                html += '<div class="preserved-measurement-hint">Click atom to start editing</div>';
-                
-                // Show measurement values
-                if (selectedAtoms.length >= 2) {
-                    const pair = geometry.pairs[0];
-                    html += `<div class="preserved-measurement-value">Distance (${labels[0]}—${labels[1]}): <strong>${formatMeasuredDistance(pair)}</strong></div>`;
-                    html += formatDeltaCompact(selectedAtoms[0], selectedAtoms[1], geometry);
-                }
-                if (selectedAtoms.length === 3) {
-                    const pair = geometry.pairs[1];
-                    html += `<div class="preserved-measurement-value">Distance (${labels[1]}—${labels[2]}): <strong>${formatMeasuredDistance(pair)}</strong></div>`;
-                    html += formatDeltaCompact(selectedAtoms[1], selectedAtoms[2], geometry);
-                    const angle = geometry.angle;
-                    if (angle) html += `<div class="preserved-measurement-value">Angle (${labels.join("—")}): <strong>${angle.angleDeg.toFixed(2)}°</strong></div>`;
-                }
-                
-                html += moveBlockHTML();
-                html += `<button id="clearSelectionBtn" class="btn btn-clear" style="margin-top: 0.5rem;">Clear Measurement</button>`;
-                html += '</div>';
-            } else {
-                // Normal edit selection UI. The card grows and shrinks with the
-                // selection, so panel rebuilds prefer to anchor outside it.
-                html += '<div class="selection-card">';
-                html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
-                
-                // A long selection lists its first rows only; the count above
-                // and the status line carry the total.
-                const SELECTED_ROWS = 12;
-                html += '<div class="selected-atoms edit-mode">';
-                selectedAtoms.slice(0, SELECTED_ROWS).forEach((atom, i) => {
-                    // Get selective dynamics status
-                    const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
-                    const isFixed = sd.every(v => v === false);
-                    const isFree = sd.every(Boolean);
-                    const flagText = sd.map(v => v ? 'T' : 'F').join(' ');
-                    const statusIcon = isFixed ? '🔒' : isFree ? '🔓' : flagText;
-                    const statusTitle = isFixed ? 'Fixed (F F F)' : isFree ? 'Free (T T T)' : `Partly fixed (${flagText})`;
-                    
-                    // Get formatted coordinates (clickable to toggle between fractional/cartesian)
-                    const coordsHtml = formatAtomCoordinates(atom, i);
-                    
-                    html += `
-                        <div class="selected-atom edit">
-                            <div class="color-strip" style="background: #00f5d4"></div>
-                            <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
-                            <span class="sel-elem">${atom.element}</span>
-                            <span class="sel-idx">#${atom.index + 1}</span>
-                            ${supportsSelectiveDynamics(currentStructure) ? `<span class="sel-status${isFixed || isFree ? '' : ' partial'}" title="${statusTitle}">${statusIcon}</span>` : ''}
-                            ${coordsHtml}
-                        </div>
-                    `;
-                });
-                if (selectedAtoms.length > SELECTED_ROWS) html += `<div class="selected-atoms-more">… and ${selectedAtoms.length - SELECTED_ROWS} more</div>`;
-                html += '</div>';
+        // Normal edit selection UI. The card grows and shrinks with the
+        // selection, so panel rebuilds prefer to anchor outside it.
+        html += '<div class="selection-card">';
+        html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
+        
+        // A long selection lists its first rows only; the count above
+        // and the status line carry the total.
+        const SELECTED_ROWS = 12;
+        html += '<div class="selected-atoms edit-mode">';
+        selectedAtoms.slice(0, SELECTED_ROWS).forEach((atom, i) => {
+            // Get selective dynamics status
+            const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
+            const isFixed = sd.every(v => v === false);
+            const isFree = sd.every(Boolean);
+            const flagText = sd.map(v => v ? 'T' : 'F').join(' ');
+            const statusIcon = isFixed ? '🔒' : isFree ? '🔓' : flagText;
+            const statusTitle = isFixed ? 'Fixed (F F F)' : isFree ? 'Free (T T T)' : `Partly fixed (${flagText})`;
+            
+            // Get formatted coordinates (clickable to toggle between fractional/cartesian)
+            const coordsHtml = formatAtomCoordinates(atom, i);
+            
+            html += `
+                <div class="selected-atom edit">
+                    <div class="color-strip" style="background: #00f5d4"></div>
+                    <span class="sel-num" style="background: #00f5d4; color: #0d1117">✓</span>
+                    <span class="sel-elem">${atom.element}</span>
+                    <span class="sel-idx">#${atom.index + 1}</span>
+                    ${supportsSelectiveDynamics(currentStructure) ? `<span class="sel-status${isFixed || isFree ? '' : ' partial'}" title="${statusTitle}">${statusIcon}</span>` : ''}
+                    ${coordsHtml}
+                </div>
+            `;
+        });
+        if (selectedAtoms.length > SELECTED_ROWS) html += `<div class="selected-atoms-more">… and ${selectedAtoms.length - SELECTED_ROWS} more</div>`;
+        html += '</div>';
 
-                if (selectedAtoms.length === 1 && !selectedAtoms[0].isGhost) {
-                    const atom = currentStructure.atoms[selectedAtoms[0].index];
-                    const fractional = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
-                    const values = fractional ? cartesianToFractional(atom.position, currentStructure.lattice)
-                        : [atom.position.x, atom.position.y, atom.position.z];
-                    if (values) {
-                        const step = currentCoordinateStep(fractional);
-                        html += `
-                        <div class="exact-atom-section" id="exactAtomSection">
-                            <div class="move-head">
-                                <div class="constraint-label">Move atom #${selectedAtoms[0].index + 1}</div>
-                                ${coordinateChoiceHTML('editAtomCoordMode', fractional ? 'fractional' : 'cartesian')}
-                            </div>
-                            <div class="coord-step-row" role="group" aria-label="Arrow step">
-                                <span class="coord-step-label">Step</span>
-                                ${coordinateStepOptions(fractional).map(option => `<button type="button" id="coordStep-${option}" class="coord-step" data-step="${option}" aria-pressed="${option === step}">${option}${fractional ? '' : ' Å'}</button>`).join('')}
-                            </div>
-                            <div class="add-atom-coords">
-                                ${values.map((value, axis) => `<div class="coord-input-group">
-                                    <label for="editAtom${axis}">${fractional ? ['a', 'b', 'c'][axis] : ['x', 'y', 'z'][axis]}</label>
-                                    <input id="editAtom${axis}" type="number" step="${step}" value="${Number(value.toFixed(9))}" class="coord-input" required>
-                                </div>`).join('')}
-                            </div>
-                            <div id="editAtomError" class="add-atom-error" role="alert"></div>
-                            <div class="coord-edit-hint">Arrows and typing move the atom live · Enter keeps · Esc reverts</div>
-                        </div>
-                    `;
-                    }
-                } else {
-                    html += moveBlockHTML();
-                }
-                
-                // Constraints of the selected atoms: one toggle per axis plus
-                // the all-axes presets.
-                if (supportsSelectiveDynamics(currentStructure)) html += constraintControlsHTML();
-                
+        if (selectedAtoms.length === 1 && !selectedAtoms[0].isGhost) {
+            const atom = currentStructure.atoms[selectedAtoms[0].index];
+            const fractional = hasLattice(currentStructure) && selectedAtomCoordMode === 'fractional';
+            const values = fractional ? cartesianToFractional(atom.position, currentStructure.lattice)
+                : [atom.position.x, atom.position.y, atom.position.z];
+            if (values) {
+                const step = currentCoordinateStep(fractional);
                 html += `
-                    <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete ${selectedAtoms.length} atom${selectedAtoms.length === 1 ? '' : 's'}</button>
-                </div>`;
+                <div class="exact-atom-section" id="exactAtomSection">
+                    <div class="move-head">
+                        <div class="constraint-label">Move atom #${selectedAtoms[0].index + 1}</div>
+                        ${coordinateChoiceHTML('editAtomCoordMode', fractional ? 'fractional' : 'cartesian')}
+                    </div>
+                    <div class="coord-step-row" role="group" aria-label="Arrow step">
+                        <span class="coord-step-label">Step</span>
+                        ${coordinateStepOptions(fractional).map(option => `<button type="button" id="coordStep-${option}" class="coord-step" data-step="${option}" aria-pressed="${option === step}">${option}${fractional ? '' : ' Å'}</button>`).join('')}
+                    </div>
+                    <div class="add-atom-coords">
+                        ${values.map((value, axis) => `<div class="coord-input-group">
+                            <label for="editAtom${axis}">${fractional ? ['a', 'b', 'c'][axis] : ['x', 'y', 'z'][axis]}</label>
+                            <input id="editAtom${axis}" type="number" step="${step}" value="${Number(value.toFixed(9))}" class="coord-input" required>
+                        </div>`).join('')}
+                    </div>
+                    <div id="editAtomError" class="add-atom-error" role="alert"></div>
+                    <div class="coord-edit-hint">Arrows and typing move the atom live · Enter keeps · Esc reverts</div>
+                </div>
+            `;
             }
+        } else {
+            html += moveBlockHTML();
         }
         
+        // Constraints of the selected atoms: one toggle per axis plus
+        // the all-axes presets.
+        if (supportsSelectiveDynamics(currentStructure)) html += constraintControlsHTML();
+        
+        html += `
+            <button id="deleteSelectedBtn" class="btn btn-delete">🗑️ Delete ${selectedAtoms.length} atom${selectedAtoms.length === 1 ? '' : 's'}</button>
+        </div>`;
     }
-    
     html += '</div>';
 
     // Add Atom section (always show when structure loaded)
@@ -2588,14 +2685,8 @@ function updateEditUI() {
         deleteBtn.addEventListener('click', deleteSelectedAtoms);
     }
     
-    const clearBtn = document.getElementById('clearSelectionBtn');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-            clearSelection();
-            updateEditUI();
-        });
-    }
-    
+    bindMeasurementReadoutClears();
+
     // Selective dynamics buttons
     const fixSelectedBtn = document.getElementById('fixSelectedBtn');
     if (fixSelectedBtn) {
@@ -2912,7 +3003,7 @@ function rebuildDisplayOptions() {
     updateSelectionVisualPositions();
     // Measurements are derived from the refreshed positions too, including
     // rollback after Escape and periodic-copy updates at drag completion.
-    if (selectedAtoms.length > 0 && (currentMode === 'measure' || isMeasurementSelection)) updateMeasurements();
+    if (measurements.length) updateMeasurements();
     requestRender();
 }
 
@@ -3141,10 +3232,9 @@ function updateAtomLabelPositions() {
     // A numbered measurement marker is the atom's active annotation. Keeping
     // its index underneath creates two competing numbers when that marker
     // moves aside. Ordinary edit checkmarks do not replace atom indices.
-    const numberedMeshes = new Set(selectedAtoms.filter((atom, index) => {
-        const marker = selectionRings[index];
-        return marker?.userData.isNumberedAtomMarker && marker.visible && marker.parent === measurementGroup;
-    }).map(atom => atom.mesh));
+    const numberedMeshes = new Set(measurementMarkers
+        .filter(marker => marker.visible && marker.parent === measurementGroup)
+        .map(marker => marker.userData.atomMesh));
     structureGroup.children.forEach(label => {
         if (!label.userData.isAtomLabel) return;
         const mesh = atomMeshes[label.userData.meshIndex ?? label.userData.atomIndex];
@@ -3339,7 +3429,7 @@ function elementIndices(element) {
 }
 
 // Replace the edit selection with the given real atoms, recording one
-// history entry. A preserved measurement is replaced rather than extended.
+// history entry. Measurements are annotations and stay as they are.
 function setEditSelection(indices, type) {
     const atoms = currentStructure.atoms;
     const seen = new Set();
@@ -3350,7 +3440,7 @@ function setEditSelection(indices, type) {
         selected.push({ index, originalIndex: index, isGhost: false, cellOffset: null, element: atoms[index].element });
     }
     const selectionBefore = captureSelectionState();
-    applySelectionState({ selected, isMeasurementSelection: false, mode: currentMode });
+    applySelectionState({ selected, measurements: captureMeasurements(), mode: currentMode });
     pushUndo({ type, selectionBefore });
 }
 
@@ -3362,7 +3452,7 @@ function reportSelection(message, changed) {
 // Add real atoms to the selection; returns how many were new.
 function addAtomsToSelection(indices, description) {
     if (!currentStructure) return 0;
-    const current = isMeasurementSelection ? [] : selectedRealIndices();
+    const current = selectedRealIndices();
     const already = new Set(current);
     const added = [...new Set(indices)].filter(index => currentStructure.atoms[index] && !already.has(index));
     if (!added.length) {
@@ -3393,7 +3483,7 @@ function removeAtomsFromSelection(indices, description) {
 function toggleElementSelection(element, remove = false) {
     if (!currentStructure) return;
     const indices = elementIndices(element);
-    const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
+    const selected = new Set(selectedRealIndices());
     if (remove || (indices.length && indices.every(index => selected.has(index)))) removeAtomsFromSelection(indices, element);
     else addAtomsToSelection(indices, `All ${element}`);
 }
@@ -3405,7 +3495,7 @@ function selectAllAtoms() {
 
 function invertSelection() {
     if (!currentStructure) return;
-    const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
+    const selected = new Set(selectedRealIndices());
     const inverse = currentStructure.atoms.map((_, index) => index).filter(index => !selected.has(index));
     setEditSelection(inverse, inverse.length ? 'select_atom' : 'clear_selection');
     reportSelection('Inverted the selection', true);
@@ -3505,7 +3595,7 @@ function selectAtomsByRange(remove = false) {
 
 function selectByRuleHTML() {
     const atoms = currentStructure.atoms;
-    const selected = new Set(isMeasurementSelection ? [] : selectedRealIndices());
+    const selected = new Set(selectedRealIndices());
     const elements = currentStructure.elements?.length ? currentStructure.elements : [...new Set(atoms.map(atom => atom.element))];
     const chips = elements.map(element => {
         const indices = elementIndices(element);
@@ -3749,7 +3839,7 @@ function getSelectiveDynamicsStats() {
 
 function getShiftSelectionError() {
     return selectedAtoms.some(atom => atom.isGhost)
-        ? 'Periodic copies cannot be moved. Clear the measurement or make a supercell first.'
+        ? 'Periodic copies cannot be moved. Make a supercell first.'
         : '';
 }
 
@@ -4075,11 +4165,10 @@ function recalculateElementCounts() {
     CrystalDocument.recalculateCounts(currentStructure);
 }
 
-// Select an atom (mode-aware)
+// Select an atom for editing. Measure-mode clicks go to measureAtom instead.
 // For ghost atoms, atomIndex is a string like "ghost_0_100"
 function selectAtom(mesh, atomIndex, skipUndo = false) {
     if (selectedAtoms.some(atom => atom.mesh === mesh)) return;
-    if ((currentMode === 'measure' || isMeasurementSelection) && selectedAtoms.length >= 3) return;
     const selectionBefore = captureSelectionState();
     const isGhost = mesh.userData.isGhost;
     let element, originalIndex, cellOffset;
@@ -4118,16 +4207,11 @@ function selectAtom(mesh, atomIndex, skipUndo = false) {
         });
     }
     
-    // Track whether this is a measurement selection
-    if (currentMode === 'measure') {
-        isMeasurementSelection = true;
-    }
-    
     // Highlight the selected atom (lighten it)
     highlightAtomMesh(mesh);
-    
-    // Create appropriate visual based on current mode
-    createSelectionVisual(mesh, selectedAtoms.length, isGhost);
+    glowingMeshes.add(mesh);
+
+    createSelectionVisual(mesh, selectedAtoms.length);
 }
 
 // Highlight an atom mesh (lighten it with emissive glow)
@@ -4140,50 +4224,56 @@ function unhighlightAtomMesh(mesh) {
     setAtomGlow(mesh, 0, 0);
 }
 
-// Create selection visual based on current mode
-function createSelectionVisual(mesh, selectionNumber, isGhost = false) {
-    // Use measurement visuals if in measure mode OR if preserving a measurement in edit mode
-    if (currentMode === 'measure' || isMeasurementSelection) {
-        createSelectionRing(mesh, selectionNumber, isGhost);
-    } else {
-        createEditSelectionMarker(mesh, selectionNumber);
-    }
+// Create the edit selection marker for a newly selected atom
+function createSelectionVisual(mesh, selectionNumber) {
+    createEditSelectionMarker(mesh, selectionNumber);
     requestRender();
 }
 
-// Rebuild all selection visuals (used after mode change or re-render)
+// Rebuild every annotation: edit check markers, numbered measurement markers,
+// measurement lines, arcs and captions (used after mode change or re-render)
 function rebuildSelectionVisuals() {
     clearMeasurementVisuals();
-    selectedAtoms.forEach((atom, i) => {
-        // Reapply highlight to selected atoms
-        highlightAtomMesh(atom.mesh);
-        // Use measurement visuals if this is a preserved measurement, otherwise mode-appropriate
-        if (isMeasurementSelection || currentMode === 'measure') {
-            createSelectionRing(atom.mesh, i + 1, atom.isGhost);
-        } else {
-            createEditSelectionMarker(atom.mesh, i + 1);
-        }
-    });
-    
-    // Show measurement lines/arcs if in measure mode OR if preserving measurement in edit mode
-    if (currentMode === 'measure' || isMeasurementSelection) {
-        updateMeasurements();
-    }
+    selectedAtoms.forEach((atom, i) => createEditSelectionMarker(atom.mesh, i + 1));
+    rebuildMeasurementVisuals();
+    refreshAtomGlow();
 }
 
-// Update selection visual positions (called during atom drag to move labels with atoms)
-function updateSelectionVisualPositions() {
-    // Update each selection ring/marker position to match its atom
-    selectionRings.forEach((sprite, i) => {
-        if (i < selectedAtoms.length && selectedAtoms[i].mesh) {
-            const worldPos = new THREE.Vector3();
-            selectedAtoms[i].mesh.getWorldPosition(worldPos);
-            sprite.position.copy(worldPos);
-            if (sprite.userData.annotationAnchor) sprite.userData.annotationAnchor.copy(worldPos);
-            // Also update the stored position in selectedAtoms
-            selectedAtoms[i].position.copy(worldPos);
-        }
+// Numbered markers on measured atoms, then the derived lines and captions.
+function rebuildMeasurementVisuals() {
+    for (const marker of measurementMarkers) {
+        measurementGroup.remove(marker);
+        disposeObject3D(marker);
+    }
+    measurementMarkers = [];
+    measurements.forEach((measurement, measurementIndex) => {
+        measuredAtoms(measurement).forEach((atom, i) => createSelectionRing(atom.mesh, i + 1, atom.isGhost, measurementIndex));
     });
+    updateMeasurements();
+}
+
+// The glow marks what editing acts on: the edit selection. In Measure mode,
+// where nothing is selected, the measured atoms glow instead.
+function refreshAtomGlow() {
+    const glowing = new Set(selectedAtoms.map(atom => atom.mesh).filter(Boolean));
+    if (currentMode === 'measure') allMeasuredAtoms().forEach(atom => glowing.add(atom.mesh));
+    for (const mesh of glowingMeshes) if (!glowing.has(mesh)) unhighlightAtomMesh(mesh);
+    for (const mesh of glowing) highlightAtomMesh(mesh);
+    glowingMeshes = glowing;
+}
+
+// Update marker positions (called during atom drag to move labels with atoms)
+function updateSelectionVisualPositions() {
+    const worldPos = new THREE.Vector3();
+    for (const sprite of [...selectionRings, ...measurementMarkers]) {
+        const mesh = sprite.userData.atomMesh;
+        if (!mesh) continue;
+        mesh.getWorldPosition(worldPos);
+        sprite.position.copy(worldPos);
+        if (sprite.userData.annotationAnchor) sprite.userData.annotationAnchor.copy(worldPos);
+    }
+    // Also update the stored positions in selectedAtoms
+    selectedAtoms.forEach(atom => atom.mesh?.getWorldPosition(atom.position));
 }
 
 // Deselect an atom by its index in selectedAtoms array
@@ -4205,7 +4295,6 @@ function deselectAtom(selectedIndex, skipUndo = false) {
     }
     
     selectedAtoms.splice(selectedIndex, 1);
-    if (!selectedAtoms.length) isMeasurementSelection = false;
     rebuildSelectionVisuals();
 }
 
@@ -4224,8 +4313,8 @@ function clearSelection(skipUndo = false) {
     });
     
     selectedAtoms = [];
-    isMeasurementSelection = false; // Reset measurement state
-    clearMeasurementVisuals();
+    // Measurements are annotations: they stay when the selection goes.
+    rebuildSelectionVisuals();
     updateUI_forCurrentMode();
 }
 
@@ -4252,6 +4341,7 @@ function clearMeasurementVisuals() {
         disposeObject3D(child);
     }
     selectionRings = [];
+    measurementMarkers = [];
     requestRender();
 }
 
@@ -4303,7 +4393,7 @@ function getSmallestAtomRadius() {
 // Create selection label directly on atom center (no ring)
 // Each marker stays smaller than the atom it identifies.
 // isGhost: if true, creates a dashed circle style for ghost atoms
-function createSelectionRing(atomMesh, selectionNumber, isGhost = false) {
+function createSelectionRing(atomMesh, selectionNumber, isGhost = false, measurementIndex = 0) {
     const worldPos = new THREE.Vector3();
     atomMesh.getWorldPosition(worldPos);
     
@@ -4382,10 +4472,13 @@ function createSelectionRing(atomMesh, selectionNumber, isGhost = false) {
     sprite.renderOrder = 999; // Render last (on top)
     sprite.userData.isSelectionLabel = true;
     sprite.userData.isNumberedAtomMarker = true;
+    sprite.userData.atomMesh = atomMesh;
+    sprite.userData.measurementIndex = measurementIndex;
+    sprite.userData.pointIndex = selectionNumber - 1;
     sprite.userData.annotationColor = getSelectionColor(selectionNumber);
-    
+
     measurementGroup.add(sprite);
-    selectionRings.push(sprite);
+    measurementMarkers.push(sprite);
 }
 
 // Get color for selection number
@@ -4407,19 +4500,25 @@ function updateMeasurements() {
         measurementGroup.remove(object);
         disposeObject3D(object);
     });
-    const geometry = getMeasurementGeometry();
-    geometry.pairs.forEach((pair, index) => {
-        if (pair.unavailable) return;
-        drawMeasurementLine(pair.start, pair.end, overlayInk().measure[index === 0 ? 0 : 1]);
-        const midpoint = pair.start.clone().multiplyScalar(0.5).addScaledVector(pair.end, 0.5);
-        const label = createFloatingDistanceLabel(midpoint, pair.distance);
-        label.userData.annotationSegment = [pair.start.clone(), pair.end.clone()];
+    measurements.forEach((measurement, measurementIndex) => {
+        const geometry = getMeasurementGeometry(measurement);
+        geometry.pairs.forEach((pair, index) => {
+            if (pair.unavailable) return;
+            drawMeasurementLine(pair.start, pair.end, overlayInk().measure[index === 0 ? 0 : 1]);
+            const midpoint = pair.start.clone().multiplyScalar(0.5).addScaledVector(pair.end, 0.5);
+            const label = createFloatingDistanceLabel(midpoint, pair.distance);
+            label.userData.annotationSegment = [pair.start.clone(), pair.end.clone()];
+            label.userData.measurementIndex = measurementIndex;
+        });
+        if (geometry.angle) {
+            const arc = drawAngleArc(geometry.angle, geometry.atoms[1]?.element);
+            const label = createFloatingAngleLabel(arc.labelPosition, geometry.angle.angleDeg);
+            label.userData.annotationVertex = geometry.angle.vertex.clone();
+            label.userData.measurementIndex = measurementIndex;
+        }
     });
-    if (geometry.angle) {
-        const arc = drawAngleArc(geometry.angle);
-        const label = createFloatingAngleLabel(arc.labelPosition, geometry.angle.angleDeg);
-        label.userData.annotationVertex = geometry.angle.vertex.clone();
-    }
+    if (!measurements.length) setGeometryWarning('measurement', '');
+    refreshMeasurementReadouts();
     requestRender();
 }
 
@@ -4432,12 +4531,17 @@ function updateAnnotationSizes() {
     const height = renderer.domElement.clientHeight;
     if (!height) return;
     camera.updateMatrixWorld();
+    // An atom that is both measured and selected keeps its number at the
+    // centre; its check mark sits at the upper right, in screen space.
+    const numbered = new Set(measurementMarkers.map(marker => marker.userData.atomMesh));
+    const screenRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+    const screenUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
     for (const sprite of measurementGroup.children) {
         if (sprite.userData.isSelectionLabel) {
-            const selected = selectedAtoms[selectionRings.indexOf(sprite)];
-            if (selected?.mesh) {
+            const mesh = sprite.userData.atomMesh;
+            if (mesh?.parent === structureGroup) {
                 const anchor = sprite.userData.annotationAnchor || (sprite.userData.annotationAnchor = new THREE.Vector3());
-                selected.mesh.getWorldPosition(anchor);
+                mesh.getWorldPosition(anchor);
                 measurementGroup.worldToLocal(anchor);
                 sprite.position.copy(anchor);
             }
@@ -4455,6 +4559,10 @@ function updateAnnotationSizes() {
         const factor = Math.max(upperFactor, minimumPixels * worldPerPixel / base.y);
         sprite.scale.copy(base).multiplyScalar(factor);
         sprite.userData.annotationWorldPerPixel = worldPerPixel;
+        if (sprite.userData.isEditMarker && numbered.has(sprite.userData.atomMesh)) {
+            const shift = sprite.scale.x * 0.6;
+            sprite.position.addScaledVector(screenRight, shift).addScaledVector(screenUp, shift);
+        }
     }
     positionMeasurementLabels();
 }
@@ -4488,11 +4596,15 @@ function positionMeasurementLabels() {
     // (set by updateAnnotationSizes) and move only to clear another caption:
     // a distance slides across its line, the angle slides out along its
     // bisector and also keeps clear of the vertex marker.
-    const vertexMarker = selectionRings[1] ? screenRect(selectionRings[1]) : null;
+    const vertexMarkerOf = measurementIndex => {
+        const marker = measurementMarkers.find(candidate => candidate.userData.measurementIndex === measurementIndex && candidate.userData.pointIndex === 1);
+        return marker ? screenRect(marker) : null;
+    };
     const requests = items.map(({ sprite, rect }) => {
         const { annotationSegment: segment, annotationVertex: vertex } = sprite.userData;
         if (vertex) {
             const from = toScreen(world(vertex));
+            const vertexMarker = vertexMarkerOf(sprite.userData.measurementIndex);
             return { ...rect, slide: unitVector(rect.x - from.x, rect.y - from.y), flip: false, obstacles: vertexMarker ? [vertexMarker] : [] };
         }
         if (segment) {
@@ -4517,8 +4629,9 @@ function getSelectionLabelSize(element) {
 
 // Only the measured atoms determine the size of their measurement text.
 function getFloatingLabelSize() {
-    return selectedAtoms.length
-        ? Math.min(...selectedAtoms.map(atom => getSelectionLabelSize(atom.element)))
+    const measured = allMeasuredAtoms();
+    return measured.length
+        ? Math.min(...measured.map(atom => getSelectionLabelSize(atom.element)))
         : getSmallestAtomRadius() * 1.4;
 }
 
@@ -4650,7 +4763,7 @@ function drawMeasurementLine(pos1, pos2, color) {
 
 // Draw angle arc between three points - returns label position data
 // Arc radius scales based on the MIDDLE atom (vertex = atom 2 in angle 1-2-3)
-function drawAngleArc(angleData) {
+function drawAngleArc(angleData, vertexElement) {
     const { vertex, angleDeg } = angleData;
     const v1 = new THREE.Vector3(...angleData.firstDirection);
     const v2 = new THREE.Vector3(...angleData.thirdDirection);
@@ -4664,7 +4777,6 @@ function drawAngleArc(angleData) {
         normal.crossVectors(v1, references[0]);
     }
     normal.normalize();
-    const vertexElement = selectedAtoms[1].element;
     const middleAtomRadius = (ELEMENT_DATA[vertexElement] || ELEMENT_DATA.DEFAULT).radius * 0.4 * settings.atomScale;
     const arcRadius = middleAtomRadius * 1.6;
     const points = Array.from({ length: 33 }, (_, index) =>
@@ -4676,126 +4788,124 @@ function drawAngleArc(angleData) {
     return { labelPosition: v1.clone().applyAxisAngle(normal, angle / 2).multiplyScalar(arcRadius * 1.8).add(vertex) };
 }
 
-function measurementPointLabel(index) {
-    return `${index + 1}${selectedAtoms[index].isGhost ? "′" : ''}`;
+function measurementPointLabel(atoms, index) {
+    return `${index + 1}${atoms[index].isGhost ? "′" : ''}`;
 }
 
-// Update measurement panel in UI with proper multi-color strips
+const MEASUREMENT_COLORS = ['#00f5d4', '#f15bb5', '#fee440']; // cyan, pink, yellow
+
+// The full view of one measurement: its atoms, distances, displacements and angle.
+function measurementDetailHTML(measurement) {
+    const atoms = measuredAtoms(measurement);
+    const geometry = resolveMeasurementGeometry(atoms);
+    const colors = MEASUREMENT_COLORS;
+    const labels = atoms.map((_, i) => measurementPointLabel(atoms, i));
+    let html = '<div class="selected-atoms">';
+    atoms.forEach((atom, i) => {
+        const offsetLabel = atom.isGhost ? getCellOffsetLabel(atom.cellOffset) : '';
+        const ghostClass = atom.isGhost ? ' ghost' : '';
+        const displayIndex = atom.isGhost ? atom.originalIndex + 1 : atom.index + 1;
+        const coordsHtml = formatAtomCoordinates(atom, i);
+        html += `
+            <div class="selected-atom${ghostClass}">
+                <div class="color-strip" style="background: ${colors[i]}${atom.isGhost ? '; border-style: dashed' : ''}"></div>
+                <span class="sel-num${ghostClass}" style="background: ${atom.isGhost ? 'transparent; border: 2px dashed ' + colors[i] + '; color: ' + colors[i] : colors[i]}">${i + 1}${atom.isGhost ? "'" : ''}</span>
+                <span class="sel-elem">${atom.element}</span>
+                <span class="sel-idx">#${displayIndex}${offsetLabel ? ' ' + offsetLabel : ''}</span>
+                ${coordsHtml}
+            </div>
+        `;
+    });
+    html += '</div>';
+    geometry.pairs.forEach((pair, i) => {
+        html += `
+            <div class="measurement-result">
+                <div class="multi-color-strip">
+                    <div class="strip-segment" style="background: ${colors[i]}"></div>
+                    <div class="strip-segment" style="background: ${colors[i + 1]}"></div>
+                </div>
+                <div class="meas-content">
+                    <span class="meas-label">Distance (${labels[i]}—${labels[i + 1]})</span>
+                    <span class="meas-value">${formatMeasuredDistance(pair)}</span>
+                    ${formatDelta(atoms[i], atoms[i + 1], geometry)}
+                </div>
+            </div>
+        `;
+    });
+    if (geometry.angle) html += `
+        <div class="measurement-result">
+            <div class="multi-color-strip triple">
+                <div class="strip-segment" style="background: ${colors[0]}"></div>
+                <div class="strip-segment" style="background: ${colors[1]}"></div>
+                <div class="strip-segment" style="background: ${colors[2]}"></div>
+            </div>
+            <div class="meas-content">
+                <span class="meas-label">Angle (${labels.join('—')})</span>
+                <span class="meas-value angle-value">${geometry.angle.angleDeg.toFixed(2)}°</span>
+            </div>
+        </div>
+    `;
+    return html;
+}
+
+// The Edit panel's readout: one compact row per measurement with the values
+// that matter while editing, and a clear button. The Measurements panel
+// (Edit off) keeps coordinates and displacements.
+function measurementReadoutsHTML() {
+    if (!measurements.length) return '';
+    return `<div class="measurement-readouts" id="measurementReadouts">${measurements.map((measurement, index) => measurementReadoutHTML(measurement, index)).join('')}</div>`;
+}
+
+function measurementReadoutHTML(measurement, index) {
+    const atoms = measuredAtoms(measurement);
+    const geometry = resolveMeasurementGeometry(atoms);
+    const labels = atoms.map((_, i) => measurementPointLabel(atoms, i));
+    const items = geometry.pairs.map((pair, i) => `<span class="readout-item"><span class="readout-label">${labels[i]}—${labels[i + 1]}</span><span class="readout-value">${formatMeasuredDistance(pair)}</span></span>`);
+    if (geometry.angle) items.push(`<span class="readout-item"><span class="readout-label">∠ ${labels.join('—')}</span><span class="readout-value">${geometry.angle.angleDeg.toFixed(2)}°</span></span>`);
+    if (!items.length && atoms.length) items.push(`<span class="readout-item readout-hint">Atom ${labels[0]} measured · switch Edit off to add atoms</span>`);
+    const buttonId = measurements.length === 1 ? ' id="clearMeasurementBtn"' : '';
+    return `<div class="measurement-readout" title="Live measurement · switch Edit off for coordinates and displacements">
+        <div class="multi-color-strip" aria-hidden="true">${atoms.map((_, i) => `<div class="strip-segment" style="background: ${MEASUREMENT_COLORS[i]}"></div>`).join('')}</div>
+        <div class="readout-body">${items.join('')}</div>
+        <button type="button"${buttonId} class="text-action readout-clear" data-measurement="${index}" title="Clear this measurement">Clear</button>
+    </div>`;
+}
+
+function bindMeasurementReadoutClears() {
+    document.querySelectorAll('.readout-clear').forEach(button => {
+        button.addEventListener('click', () => clearMeasurement(Number(button.dataset.measurement)));
+    });
+}
+
+// Keep the Edit panel's readout current during drags and cell resizes without
+// rebuilding the whole panel. A readout that appears or disappears needs the
+// full rebuild, which every such path already performs.
+function refreshMeasurementReadouts() {
+    if (currentMode !== 'edit') return;
+    const container = document.getElementById('measurementReadouts');
+    if (!container || !measurements.length) return;
+    container.innerHTML = measurements.map((measurement, index) => measurementReadoutHTML(measurement, index)).join('');
+    bindMeasurementReadoutClears();
+}
+
+// Update the Measurements panel: every measurement in full, and Clear.
 function updateMeasurementUI() {
     const panel = document.getElementById('measurementPanel');
     if (!panel) return;
-    
-    const geometry = getMeasurementGeometry();
-    const colors = ['#00f5d4', '#f15bb5', '#fee440']; // cyan, pink, yellow
+
     let html = '';
-    
-    if (selectedAtoms.length === 0) {
+    if (!measurements.length) {
         html += '<p class="placeholder-text">Click atoms to measure</p>';
     } else {
-        // List selected atoms
-        html += '<div class="selected-atoms">';
-        selectedAtoms.forEach((atom, i) => {
-            const offsetLabel = atom.isGhost ? getCellOffsetLabel(atom.cellOffset) : '';
-            const ghostClass = atom.isGhost ? ' ghost' : '';
-            const displayIndex = atom.isGhost ? atom.originalIndex + 1 : atom.index + 1;
-            
-            // Get formatted coordinates (clickable to toggle between fractional/cartesian)
-            const coordsHtml = formatAtomCoordinates(atom, i);
-            
-            html += `
-                <div class="selected-atom${ghostClass}">
-                    <div class="color-strip" style="background: ${colors[i]}${atom.isGhost ? '; border-style: dashed' : ''}"></div>
-                    <span class="sel-num${ghostClass}" style="background: ${atom.isGhost ? 'transparent; border: 2px dashed ' + colors[i] + '; color: ' + colors[i] : colors[i]}">${i + 1}${atom.isGhost ? "'" : ''}</span>
-                    <span class="sel-elem">${atom.element}</span>
-                    <span class="sel-idx">#${displayIndex}${offsetLabel ? ' ' + offsetLabel : ''}</span>
-                    ${coordsHtml}
-                </div>
-            `;
-        });
-        html += '</div>';
-        
-        // Show measurements
-        if (selectedAtoms.length >= 2) {
-            const pair = geometry.pairs[0];
-            // Build label with ghost indicators
-            const label1 = measurementPointLabel(0);
-            const label2 = measurementPointLabel(1);
-            
-            // Fractional delta for distance 1-2
-            const deltaHtml12 = formatDelta(selectedAtoms[0], selectedAtoms[1], geometry);
-            
-            // Distance 1-2: two color strips (cyan + pink)
-            html += `
-                <div class="measurement-result">
-                    <div class="multi-color-strip">
-                        <div class="strip-segment" style="background: ${colors[0]}"></div>
-                        <div class="strip-segment" style="background: ${colors[1]}"></div>
-                    </div>
-                    <div class="meas-content">
-                        <span class="meas-label">Distance (${label1}—${label2})</span>
-                        <span class="meas-value">${formatMeasuredDistance(pair)}</span>
-                        ${deltaHtml12}
-                    </div>
-                </div>
-            `;
-        }
-        
-        if (selectedAtoms.length === 3) {
-            const angle = geometry.angle;
-            
-            // Build labels with ghost indicators
-            const label1 = measurementPointLabel(0);
-            const label2 = measurementPointLabel(1);
-            const label3 = measurementPointLabel(2);
-            
-            // Distance 2-3: two color strips (pink + yellow)
-            const pair = geometry.pairs[1];
-            
-            // Fractional delta for distance 2-3
-            const deltaHtml23 = formatDelta(selectedAtoms[1], selectedAtoms[2], geometry);
-            
-            html += `
-                <div class="measurement-result">
-                    <div class="multi-color-strip">
-                        <div class="strip-segment" style="background: ${colors[1]}"></div>
-                        <div class="strip-segment" style="background: ${colors[2]}"></div>
-                    </div>
-                    <div class="meas-content">
-                        <span class="meas-label">Distance (${label2}—${label3})</span>
-                        <span class="meas-value">${formatMeasuredDistance(pair)}</span>
-                        ${deltaHtml23}
-                    </div>
-                </div>
-            `;
-            
-            // Angle 1-2-3: three color strips (cyan + pink + yellow)
-            if (angle) html += `
-                <div class="measurement-result">
-                    <div class="multi-color-strip triple">
-                        <div class="strip-segment" style="background: ${colors[0]}"></div>
-                        <div class="strip-segment" style="background: ${colors[1]}"></div>
-                        <div class="strip-segment" style="background: ${colors[2]}"></div>
-                    </div>
-                    <div class="meas-content">
-                        <span class="meas-label">Angle (${label1}—${label2}—${label3})</span>
-                        <span class="meas-value angle-value">${angle.angleDeg.toFixed(2)}°</span>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Clear button
-        html += `<button id="clearSelectionBtn" class="btn btn-clear">Clear Selection</button>`;
+        measurements.forEach(measurement => { html += measurementDetailHTML(measurement); });
+        html += `<button id="clearMeasurementBtn" class="btn btn-clear">Clear Measurement</button>`;
     }
-    
+
     replacePanelHTML(panel, html, 'atomJumpInput');
-    
-    // Add clear button listener
-    const clearBtn = document.getElementById('clearSelectionBtn');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => clearSelection());
-    }
-    
+
+    const clearBtn = document.getElementById('clearMeasurementBtn');
+    if (clearBtn) clearBtn.addEventListener('click', () => clearMeasurements());
+
     // Clickable coordinates toggle (atom coords and delta rows)
     document.querySelectorAll('.clickable-coords, .clickable-delta').forEach(el => {
         el.addEventListener('click', toggleCoordinateDisplayMode);
@@ -4903,15 +5013,9 @@ function renderStructure(structure, preserveState = false) {
     unitCellEdgeLines = [];
     smallestAtomRadiusCache = null;
     configureRenderQuality(structure);
-    // Save current selection info including ghost atoms
-    const savedSelections = preserveState ? selectedAtoms.map(a => ({
-        index: a.index,
-        originalIndex: a.originalIndex,
-        isGhost: a.isGhost || false,
-        cellOffset: a.cellOffset ? { ...a.cellOffset } : null,
-        element: a.element
-    })) : [];
-    const savedMeasurementSelection = preserveState && isMeasurementSelection;
+    // Save current selection identities including ghost atoms; measurements
+    // are already identities and are resolved again once the meshes exist.
+    const savedSelections = preserveState ? selectedAtoms.map(selectionDescriptor) : [];
     const savedCameraPose = preserveState ? getCameraPose() : null;
     
     // Update axes HUD to reflect actual lattice vectors (for tilted/non-cubic cells)
@@ -4929,7 +5033,8 @@ function renderStructure(structure, preserveState = false) {
     // Clear measurement visuals (will rebuild if preserving)
     clearMeasurementVisuals();
     selectedAtoms = [];
-    isMeasurementSelection = false;
+    glowingMeshes = new Set();
+    if (!preserveState) measurements = [];
     atomMeshes = [];
     
     // Add atoms
@@ -4973,12 +5078,9 @@ function renderStructure(structure, preserveState = false) {
     if (savedCameraPose) {
         restoreCameraAfterRebuild(savedCameraPose);
         
-        // Restore selections with correct mode-aware visuals.
-        isMeasurementSelection = savedMeasurementSelection;
+        // Restore the selection and measurements against the new meshes.
         selectedAtoms = restoreSelectedAtoms(savedSelections);
-        if (!selectedAtoms.length) isMeasurementSelection = false;
-        
-        // Rebuild visuals based on current mode
+        pruneMeasurements();
         rebuildSelectionVisuals();
         
         // Update the correct UI
@@ -5184,18 +5286,16 @@ function jumpToAtom(number) {
     lastJumpAtomNumber = index + 1;
     if (currentMode === 'edit') {
         if (selectedAtoms.length > 0) clearSelection();
-        isMeasurementSelection = false;
         selectAtomForEdit(mesh, index);
-    } else if (!selectedAtoms.some(atom => atom.index === index)) {
-        if (selectedAtoms.length >= 3) clearSelection();
-        selectAtom(mesh, index);
+    } else {
+        // Adds the atom to the measurement, or starts a new one at three.
+        measureAtom(mesh);
     }
     const target = new THREE.Vector3();
     mesh.getWorldPosition(target);
     const pose = getCameraPose();
     pose.pivot.copy(target);
     cameraController.setPose(pose, 'focus');
-    if (currentMode === 'measure' || isMeasurementSelection) updateMeasurements();
     updateUI_forCurrentMode();
     statusText.textContent = `Selected atom #${index + 1} (${currentStructure.atoms[index].element})`;
     statusText.className = '';
@@ -6255,7 +6355,7 @@ function convertToSupercell() {
     // A boundary copy beyond the converted cells stays a copy of the new atom
     // that lands in the matching cell, one supercell vector away.
     const counts = { a: na, b: nb, c: nc };
-    selectedAtoms = selectedAtoms.map(atom => {
+    const convertCopy = atom => {
         if (!atom.isGhost) return atom;
         const source = {}, offset = {};
         for (const axis of ['a', 'b', 'c']) {
@@ -6268,9 +6368,13 @@ function convertToSupercell() {
             && candidate.cellOffset.b === source.b
             && candidate.cellOffset.c === source.c);
         const stillCopy = offset.a !== 0 || offset.b !== 0 || offset.c !== 0;
-        return stillCopy ? { ...atom, index: `ghost_${index}_${offset.a}${offset.b}${offset.c}`, originalIndex: index, isGhost: true, cellOffset: offset }
+        const converted = stillCopy ? { ...atom, index: `ghost_${index}_${offset.a}${offset.b}${offset.c}`, originalIndex: index, isGhost: true, cellOffset: offset }
             : { ...atom, index, originalIndex: index, isGhost: false, cellOffset: null };
-    });
+        if ('atomId' in atom) converted.atomId = newAtoms[index]?.id ?? null;
+        return converted;
+    };
+    selectedAtoms = selectedAtoms.map(convertCopy);
+    measurements = measurements.map(measurement => ({ atoms: measurement.atoms.map(convertCopy) }));
     
     // Update structure
     currentStructure.atoms = newAtoms;
@@ -6314,8 +6418,10 @@ function setInteractionMode(mode, restoringSelection = false) {
     // Update mode
     cancelEditDrag(null, 'mode changed');
     cancelCameraAlignment();
-    // Record a mode-induced clear in the context that owns the selection.
-    if (!restoringSelection && mode === 'measure' && !isMeasurementSelection) clearSelection();
+    // The edit selection belongs to Edit mode: entering Measure clears it, as
+    // one recorded step in the context that owns it. Measurements are
+    // annotations and survive both directions.
+    if (!restoringSelection && mode === 'measure' && selectedAtoms.length) clearSelection();
     currentMode = mode;
     if (mode !== 'edit') setBoxSelectMode(false);
 
@@ -6327,15 +6433,8 @@ function setInteractionMode(mode, restoringSelection = false) {
         panelTitle.textContent = mode === 'measure' ? '📐 Measurements' : '✏️ Edit Actions';
     }
 
-    // Preserve measurement selection when switching modes
-    // If switching FROM measure mode with a selection, mark it as preserved measurement
-    if (!restoringSelection && mode === 'edit' && selectedAtoms.length > 0) {
-        isMeasurementSelection = true;
-        // Keep measurement visuals visible - don't clear
-    } else if (!restoringSelection && mode === 'measure') {
-        // Rebuild visuals for the preserved measurement.
-        rebuildSelectionVisuals();
-    }
+    // Only the glow on measured atoms belongs to Measure mode.
+    if (!restoringSelection) refreshAtomGlow();
 
     // Update UI for the new mode
     updateUI_forCurrentMode();
@@ -6906,18 +7005,6 @@ function updateVacuumDrag(event) {
     renderStructure(currentStructure, true);
     createDragFaceHighlight(axis, dragHandle);
     
-    // Update measurements in real-time during vacuum drag
-    if (isMeasurementSelection && selectedAtoms.length > 0) {
-        // Update positions in selectedAtoms from the new mesh positions
-        selectedAtoms.forEach(atom => {
-            if (atom.mesh) {
-                atom.mesh.getWorldPosition(atom.position);
-            }
-        });
-        updateMeasurements();
-        updateEditUI();
-    }
-    
     // Update status with current axis length
     const finalLen = getLatticeVector(currentStructure.lattice, axisIdx).length();
     statusText.textContent = `${axis}-axis: ${finalLen.toFixed(3)} Å`;
@@ -7309,8 +7396,7 @@ function switchToFrame(frameIndex) {
             });
         }
         updateSelectionVisualPositions();
-        selectedAtoms.forEach(atom => atom.mesh.getWorldPosition(atom.position));
-        if (selectedAtoms.length > 0) updateMeasurements();
+        if (measurements.length) updateMeasurements();
         requestRender();
     } else {
         // A changed lattice also changes the cell and axes; a changed set of

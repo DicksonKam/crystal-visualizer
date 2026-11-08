@@ -1,13 +1,13 @@
 const {test,expect,upload,setMode}=require('./fixtures.cjs');
 const {dragTarget}=require('./measurement-edit-helpers.cjs');
-test('rotating over a measured atom must not deselect it',async({page},info)=>{
+test('rotating over a measured atom must not unmeasure it',async({page},info)=>{
  await page.setViewportSize({width:900,height:800});
  await upload(page,'3\nwater\nO 0 0 .1173\nH .7572 0 -.4692\nH -.7572 0 -.4692\n','water.xyz');
  await setMode(page, 'edit');
  await dragTarget(page,'atom',0);await page.mouse.up();
  await setMode(page, 'measure');
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
- const before=await page.evaluate(()=>selectedAtoms.map(a=>a.index));
+ const before=await page.evaluate(()=>measuredAtoms().map(a=>a.index));
  await page.screenshot({path:info.outputPath('before-rotation.png')});
  const p=await page.evaluate(()=>{
   const r=renderer.domElement.getBoundingClientRect();camera.updateMatrixWorld(true);
@@ -16,27 +16,27 @@ test('rotating over a measured atom must not deselect it',async({page},info)=>{
  });
  await page.mouse.move(p.x,p.y);await page.mouse.down();await page.mouse.move(p.x+12,p.y+8,{steps:5});await page.mouse.up();
  await page.screenshot({path:info.outputPath('after-rotation.png')});
- const after=await page.evaluate(()=>({selection:selectedAtoms.map(a=>a.index),q:camera.quaternion.toArray()}));
+ const after=await page.evaluate(()=>({selection:measuredAtoms().map(a=>a.index),q:camera.quaternion.toArray()}));
  await info.attach('rotation-selection',{body:JSON.stringify({before,after,initialQuaternion:p.q}),contentType:'application/json'});
  expect(after.q).not.toEqual(p.q);
  expect(after.selection).toEqual(before);
- // A following genuine click must still deselect and select the atom.
+ // A following genuine click must still unmeasure and measure the atom.
  const center=await page.evaluate(()=>{
   const r=renderer.domElement.getBoundingClientRect();
   const p=atomMeshes[2].getWorldPosition(new THREE.Vector3()).project(camera);
   return{x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};
  });
  await page.mouse.click(center.x,center.y);
- expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual([0,1]);
+ expect(await page.evaluate(()=>measuredAtoms().map(a=>a.index))).toEqual([0,1]);
  await page.mouse.click(center.x,center.y);
- expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual(before);
+ expect(await page.evaluate(()=>measuredAtoms().map(a=>a.index))).toEqual(before);
  // Returning to the origin must not turn a completed drag into a click.
  await page.mouse.move(center.x,center.y);await page.mouse.down();
  await page.mouse.move(center.x+12,center.y+8,{steps:5});
  await page.mouse.move(center.x,center.y,{steps:5});await page.mouse.up();
- expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual(before);
+ expect(await page.evaluate(()=>measuredAtoms().map(a=>a.index))).toEqual(before);
  // Small pointer jitter still counts as an ordinary click.
  await page.mouse.move(center.x,center.y);await page.mouse.down();
  await page.mouse.move(center.x+1,center.y+1);await page.mouse.up();
- expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual([0,1]);
+ expect(await page.evaluate(()=>measuredAtoms().map(a=>a.index))).toEqual([0,1]);
 });

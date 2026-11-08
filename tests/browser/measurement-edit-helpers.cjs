@@ -12,7 +12,7 @@ async function checkMeasurement(page) {
     const state = await capture(page);
     expect(state.violations).toEqual([]);
     const view = await page.evaluate(() => {
-        const points = selectedAtoms.map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()));
+        const points = measuredAtoms().map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()));
         const distances = points.slice(1).map((point, i) => point.distanceTo(points[i]));
         const a = points[0].clone().sub(points[1]);
         const b = points[2].clone().sub(points[1]);
@@ -23,12 +23,13 @@ async function checkMeasurement(page) {
             distances, angle,
             labelPositions: labels.slice(0, 2).map(label => (label.userData.annotationAnchor || label.position).toArray()),
             midpoints: midpoints.map(point => point.toArray()),
-            markers: selectionRings.map(ring => (ring.userData.annotationAnchor || ring.position).toArray()),
+            markers: measurementMarkers.map(ring => (ring.userData.annotationAnchor || ring.position).toArray()),
             points: points.map(point => point.toArray()),
             arc: measurementGroup.children.filter(object => object.userData.isMeasurementArc).length
         };
     });
-    expect(state.selection.identities).toHaveLength(3);
+    expect(state.selection.measurements).toHaveLength(1);
+    expect(state.selection.measurements[0]).toHaveLength(3);
     expect(view.arc).toBe(1);
     for (let i = 0; i < 3; i++) for (let axis = 0; axis < 3; axis++) expect(view.markers[i][axis]).toBeCloseTo(view.points[i][axis], 6);
     for (let i = 0; i < 2; i++) {

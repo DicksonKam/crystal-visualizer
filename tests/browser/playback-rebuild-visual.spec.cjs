@@ -20,7 +20,7 @@ for(const fixture of ['molecule','dense'])test(`${fixture} continuous playback s
   else if(step%6===3)await page.locator('#bondThreshold').fill(step%12===3?'0':'2.5');
   else if(step%6===4)await page.locator('#atomScale').press(step%12===4?'Home':'End');
   else {const labels=page.locator('#showLabels');await labels.setChecked(!await labels.isChecked());}
-  const state=await capture(page);expect(state.violations).toEqual([]);expect(state.selection.identities).toHaveLength(2);
+  const state=await capture(page);expect(state.violations).toEqual([]);expect(state.selection.measurements[0]).toHaveLength(2);
   expect(await page.evaluate(()=>animationState.isPlaying)).toBe(true);
   if(step%6===0||step===23)await observe({step,action:'playing-rebuild',stage:'settled'});
  }

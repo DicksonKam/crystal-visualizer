@@ -29,7 +29,7 @@ test('seeded periodic-copy selection and editing combinations, seed 5',async({pa
         const result = await runScenario(page,{seed:5,steps:160,log,includeGhosts:true});
         expect(result.counts.ghost || 0).toBeGreaterThan(0);
         expect(log.some(entry => entry.action === 'ghost' && entry.pointer &&
-            entry.after?.selection.identities.some(identity => identity[1] && identity[0] === entry.pointer.displayedIndex))).toBe(true);
+            entry.after?.selection.measurements.some(points => points.some(identity => identity[1] && identity[0] === entry.pointer.displayedIndex)))).toBe(true);
     }
     catch(error) { await testInfo.attach('seed-and-actions',{body:JSON.stringify({seed:5,log},null,2),contentType:'application/json'}); throw error; }
 });

@@ -401,7 +401,7 @@ test('trajectory frames reuse atom meshes and update periodic copies', () => {
             userData: { isGhost: true, originalIndex: 0, cellOffset: { a: 1, b: 0, c: 0 } }
         };
         atomMeshes.push(ghost);
-        selectedAtoms = [{ mesh: atomMeshes[0], position: atomMeshes[0].position.clone() }];
+        measurements = [{ atoms: [{ index: 0, originalIndex: 0, isGhost: false, cellOffset: null, element: 'H' }] }];
         structureGroup = { children: [{ userData: { isAtomLabel: true, atomIndex: 0 }, position: atomMeshes[0].position.clone() }] };
         settings.showLabels = true;
         rebuildBonds = () => { calls.bonds++; };
@@ -418,7 +418,7 @@ test('trajectory frames reuse atom meshes and update periodic copies', () => {
     assert.equal(calls.measurements, 1);
     assert.ok(vm.runInContext('atomMeshes[0].position.distanceTo(currentStructure.frames[1].positions[0])', context) < 1e-10);
     assert.ok(vm.runInContext('atomMeshes[2].position.distanceTo(atomMeshes[0].position.clone().add(new THREE.Vector3(...currentStructure.lattice[0])))', context) < 1e-10);
-    assert.ok(vm.runInContext('selectedAtoms[0].position.distanceTo(atomMeshes[0].position)', context) < 1e-10);
+    assert.ok(vm.runInContext('measuredAtoms()[0].position.distanceTo(atomMeshes[0].position)', context) < 1e-10);
     assert.ok(vm.runInContext('structureGroup.children[0].position.distanceTo(atomMeshes[0].position)', context) < 1e-10);
     vm.runInContext('currentStructure.frames[2].lattice[0][0] += 1; switchToFrame(2)', context);
     assert.equal(calls.renders, 1);
@@ -803,7 +803,7 @@ test('undo and redo restore an edit; a new edit invalidates redo', () => {
     assert.equal(vm.runInContext('editHistory.redoStack.length', context), 0);
 });
 
-test('redoing regular and periodic-image selections reuses atom meshes', () => {
+test('redoing regular and periodic-image measurements reuses atom meshes', () => {
     for (const isGhost of [false, true]) {
         const context = app();
         const offset = { a: 1, b: 0, c: 0 };
@@ -826,32 +826,30 @@ test('redoing regular and periodic-image selections reuses atom meshes', () => {
         `, context);
         context.isGhost = isGhost;
         vm.runInContext(`
-            selectedAtoms = [{
-                mesh: isGhost ? ghostMesh : regularMesh,
+            measurements = [{ atoms: [{
                 index: isGhost ? 'ghost_0_100' : 0,
                 originalIndex: 0,
                 element: 'Si',
-                position: new THREE.Vector3(isGhost ? 4 : 1, 2, 3),
                 isGhost,
                 cellOffset: isGhost ? { a: 1, b: 0, c: 0 } : null
-            }];
-            isMeasurementSelection = true;
-            pushUndo({ type: 'select_atom', selectionBefore: { selected: [], isMeasurementSelection: false, mode: currentMode } });
+            }] }];
+            pushUndo({ type: 'measure_atom', selectionBefore: { selected: [], measurements: [], mode: currentMode } });
         `, context);
         context.performUndo();
-        assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
+        assert.equal(vm.runInContext('measurements.length', context), 0);
         vm.runInContext('settings.periodic.a = 3', context);
         context.performRedo();
-        assert.equal(vm.runInContext('selectedAtoms.length', context), 1);
-        assert.equal(vm.runInContext('selectedAtoms[0].mesh === (isGhost ? ghostMesh : regularMesh)', context), true);
-        assert.equal(vm.runInContext('selectedAtoms[0].position.x', context), isGhost ? 4 : 1);
-        assert.equal(vm.runInContext('isMeasurementSelection', context), true);
+        assert.equal(vm.runInContext('measurements.length', context), 1);
+        assert.equal(vm.runInContext('measuredAtoms().length', context), 1);
+        assert.equal(vm.runInContext('measuredAtoms()[0].mesh === (isGhost ? ghostMesh : regularMesh)', context), true);
+        assert.equal(vm.runInContext('measuredAtoms()[0].position.x', context), isGhost ? 4 : 1);
+        assert.equal(vm.runInContext('editHistory.currentEditRevision', context), 0);
         assert.equal(vm.runInContext('settings.periodic.a', context), 3);
         assert.equal(context.hasUnsavedEdits(), false);
     }
 });
 
-test('redoing cleared selections does not rebuild the structure', () => {
+test('redoing cleared selections does not rebuild the structure or touch measurements', () => {
     const context = app();
     const mesh = {
         userData: { isGhost: false },
@@ -868,14 +866,17 @@ test('redoing cleared selections does not rebuild the structure', () => {
         clearMeasurementVisuals = () => {};
         highlightAtomMesh = () => {};
         unhighlightAtomMesh = () => {};
-        isMeasurementSelection = true;
+        measurements = [{ atoms: [{ index: 0, originalIndex: 0, isGhost: false, cellOffset: null, element: 'Si' }] }];
         clearSelection();
     `, context);
     assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
+    assert.equal(vm.runInContext('measurements.length', context), 1);
     context.performUndo();
     assert.equal(vm.runInContext('selectedAtoms.length', context), 1);
+    assert.equal(vm.runInContext('measurements.length', context), 1);
     context.performRedo();
     assert.equal(vm.runInContext('selectedAtoms.length', context), 0);
+    assert.equal(vm.runInContext('measurements.length', context), 1);
     assert.equal(context.hasUnsavedEdits(), false);
 });
 
@@ -916,7 +917,7 @@ test('failed supercell preparation preserves structure, preview, selections, and
             settings.periodic = { a: 20, b: currentStructure.lattice[0][0] < 1e200 ? 20 : 1, c: 1 };
             if (currentStructure.lattice[0][0] > 1e200) settings.periodic.a = 2;
             selectedAtoms = [{ index: 0, element: 'H' }];
-            pushUndo({ type: 'select_atom', selectionBefore: { selected: [], isMeasurementSelection: false, mode: currentMode } });
+            pushUndo({ type: 'select_atom', selectionBefore: { selected: [], measurements: [], mode: currentMode } });
             editHistory.redoStack = [{ operation: { type: 'clear_selection' } }];
             globalThis.beforeState = JSON.stringify({ structure: currentStructure, periodic: settings.periodic, selectedAtoms, undoStack: editHistory.undoStack, redoStack: editHistory.redoStack });
         `, context);
@@ -1080,7 +1081,7 @@ test('canceled atom drag restores coordinates, history, and pointer control', ()
 test('undo cancels an unfinished drag before touching existing history', () => {
     const { context } = prepareDragContext({ isXYZ: true, atoms: [{ element: 'H', position: new Vector3(2, 0, 0) }] });
     vm.runInContext(`
-        pushUndo({ type: 'select_atom', selectionBefore: { selected: [], isMeasurementSelection: false, mode: currentMode } });
+        pushUndo({ type: 'select_atom', selectionBefore: { selected: [], measurements: [], mode: currentMode } });
         draggedAtom = { index: 0, mesh: { position: new THREE.Vector3(2, 0, 0) }, startPosition: new THREE.Vector3(1, 0, 0) };
         isDragging = true;
     `, context);

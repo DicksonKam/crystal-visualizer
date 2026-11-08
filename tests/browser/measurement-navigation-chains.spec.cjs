@@ -33,7 +33,7 @@ test('water measurements survive mouse navigation, resizing, editing and selecti
         // agree with what the marker represents, even after camera changes.
         const atom = await page.evaluate(() => {
             const r = renderer.domElement.getBoundingClientRect();
-            for (const selected of selectedAtoms) {
+            for (const selected of measuredAtoms()) {
                 const p = selected.mesh.getWorldPosition(new THREE.Vector3()).project(camera);
                 const point = { x: r.left + (p.x + 1) * r.width / 2, y: r.top + (1 - p.y) * r.height / 2 };
                 if (getAtomIntersection({ clientX: point.x, clientY: point.y })?.object === selected.mesh) return { ...point, index: selected.index };
@@ -49,8 +49,9 @@ test('water measurements survive mouse navigation, resizing, editing and selecti
         await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, before.geometry);
         await page.locator('#redoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, after.geometry);
         await checkBondRefresh(page);
-        await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
-        expect((await capture(page)).selection.identities).toHaveLength(0);
+        // The Edit panel's readout clears the measurement; undo brings it back.
+        await page.locator('#clearMeasurementBtn').click();
+        expect((await capture(page)).selection.measurements).toHaveLength(0);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
         await setMode(page, 'measure');
         await setMode(page, 'edit'); await checkMeasurement(page);

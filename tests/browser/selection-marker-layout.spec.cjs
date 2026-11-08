@@ -13,14 +13,15 @@ test('ordinary rotated perovskite retains readable and selectable measurement po
   await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+15,y+35,{steps:8});await page.mouse.up();await page.waitForTimeout(250);
   const state=await page.evaluate(()=>{
    const r=renderer.domElement.getBoundingClientRect();
-   const markers=selectionRings.map((sprite,i)=>{
+   const measured=measuredAtoms();
+   const markers=measurementMarkers.map((sprite,i)=>{
     const world=sprite.getWorldPosition(new THREE.Vector3()),q=world.clone().project(camera),unit=getAnnotationWorldPerPixel(world,r.height);
     const x=r.left+(q.x+1)*r.width/2,y=r.top+(1-q.y)*r.height/2;
     const anchor=sprite.userData.annotationAnchor||sprite.position;
-    const mesh=selectedAtoms[i].mesh;const leader=sprite.userData.annotationLeader;
+    const mesh=measured[i].mesh;const leader=sprite.userData.annotationLeader;
     return{x,y,width:sprite.scale.x/unit,height:sprite.scale.y/unit,anchorError:anchor.distanceTo(mesh.getWorldPosition(new THREE.Vector3())),hit:getAtomIntersection({clientX:x,clientY:y})?.object===mesh,leaderStartError:leader?.visible?new THREE.Vector3().fromBufferAttribute(leader.geometry.attributes.position,0).distanceTo(anchor):0};
    });
-   return{markers,source:generatePOSCAR(),distances:getMeasurementGeometry().distances};
+   return{markers,source:generatePOSCAR()};
   });
   expect(state.source).toBe(source);expect(state.markers).toHaveLength(3);
   // Markers stay on their atoms; where the view stacks two atoms, the nearer one owns the shared pixels.
@@ -28,7 +29,7 @@ test('ordinary rotated perovskite retains readable and selectable measurement po
   expect(state.markers.filter(m=>m.hit).length,'point numbers must select their owners').toBeGreaterThanOrEqual(2);
   if([0,9,11].includes(view))await page.screenshot({path:info.outputPath(`view-${view}.png`)});
  }
- await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
+ await page.locator('#clearMeasurementBtn').click();
  expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
 });
 
@@ -43,10 +44,11 @@ test('a point marker in a crowded view starts the correct atom drag and survives
  const before=await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()));
  const point=await page.evaluate(()=>{
   const r=renderer.domElement.getBoundingClientRect();
-  for(const [i,marker] of selectionRings.entries()){
+  const measured=measuredAtoms();
+  for(const [i,marker] of measurementMarkers.entries()){
    const q=marker.getWorldPosition(new THREE.Vector3()).project(camera);
    const point={x:r.left+(q.x+1)*r.width/2,y:r.top+(1-q.y)*r.height/2};
-   if(getAtomIntersection({clientX:point.x,clientY:point.y})?.object===selectedAtoms[i].mesh)return{...point,index:selectedAtoms[i].index};
+   if(getAtomIntersection({clientX:point.x,clientY:point.y})?.object===measured[i].mesh)return{...point,index:measured[i].index};
   }
   throw Error('Fixture must produce a marker that selects its atom');
  });
@@ -56,11 +58,11 @@ test('a point marker in a crowded view starts the correct atom drag and survives
  const after=await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()));
  expect(after[point.index]).not.toEqual(before[point.index]);
  for(let i=0;i<before.length;i++)if(i!==point.index)expect(after[i]).toEqual(before[i]);
- expect(await page.evaluate(()=>selectedAtoms.length)).toBe(3);
+ expect(await page.evaluate(()=>measuredAtoms().length)).toBe(3);
  await page.screenshot({path:info.outputPath('crowded-after-drag.png')});
  await page.locator('#undoBtn').click();
  expect(await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()))).toEqual(before);
  await page.locator('#redoBtn').click();
  expect(await page.evaluate(()=>currentStructure.atoms.map(atom=>atom.position.toArray()))).toEqual(after);
- await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
+ await page.locator('#clearMeasurementBtn').click();expect(await page.evaluate(()=>measurementGroup.children.length)).toBe(0);
 });

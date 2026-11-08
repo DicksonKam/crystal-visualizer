@@ -79,7 +79,7 @@ test('mode changes, clear, undo and document replacement dispose and restore act
     expect((await state(page)).points).toEqual(original.points);
     await expect(page.locator('#measurementModeToggle')).toHaveCount(0);
     await setMode(page, 'measure');
-    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
+    await page.locator('#clearMeasurementBtn').click();
     expect((await state(page)).lines).toHaveLength(0);
     const disposals = await page.evaluate(() => window.measurementDisposals);
     expect(disposals.sort()).toEqual(expectedDisposals);
@@ -115,9 +115,8 @@ test('explicit ghost selections measure their world positions without substituti
     await select(page, 1);
     const displayed = await page.evaluate(() => {
         const ghost = atomMeshes.find(mesh => mesh.userData.isGhost && mesh.userData.originalIndex === 1);
-        selectAtom(ghost, ghost.userData.atomIndex);
-        updateMeasurements(); updateMeasurementUI();
-        return selectedAtoms.map(atom => atom.position.toArray());
+        measureAtom(ghost);
+        return measuredAtoms().map(atom => atom.position.toArray());
     });
     const measured = await state(page);
     expect(measured.points).toEqual(displayed);
@@ -129,7 +128,7 @@ test('explicit ghost selections measure their world positions without substituti
     await expect(page.locator('#measurementPanel')).toContainText('Distance (1—2′)');
 });
 
-test('canceling a preserved-measurement atom drag restores lines, angle and panel along with atom geometry', async ({ page }) => {
+test('canceling an Edit-mode drag of a measured atom restores lines, angle and panel along with atom geometry', async ({ page }) => {
     await upload(page, '3\nrollback\nH 0 0 0\nH 2 0 0\nH 2 2 0\n', 'rollback.xyz');
     for (const n of [1, 2, 3]) await select(page, n);
     await setMode(page, 'edit');
@@ -137,7 +136,7 @@ test('canceling a preserved-measurement atom drag restores lines, angle and pane
     const historyBefore = await page.evaluate(() => editHistory.undoStack.length);
     const point = await page.evaluate(() => {
         cancelCameraAlignment(); controls.staticMoving = true;
-        const anchor = selectedAtoms[1].mesh.getWorldPosition(new THREE.Vector3());
+        const anchor = measuredAtoms()[1].mesh.getWorldPosition(new THREE.Vector3());
         camera.position.copy(controls.target).add(new THREE.Vector3(0, 0, 20)); camera.up.set(0, 1, 0);
         camera.zoom = .8; camera.updateProjectionMatrix(); camera.lookAt(controls.target);
         controls.update(); camera.updateWorldMatrix(true, false); requestRender();

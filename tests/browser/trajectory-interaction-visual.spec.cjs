@@ -15,7 +15,7 @@ for(const width of [900,390])for(const key of ['ArrowRight','Home','End'])test(`
  await page.locator('#frameSlider').press(key);await observe({step:1,action:'keyboard-scrub',stage:'settled'});
  expect(await page.evaluate(()=>animationState.isPlaying)).toBe(false);
  expect(await page.evaluate(()=>animationState.intervalId)).toBeNull();
- const state=await capture(page);expect(state.violations).toEqual([]);expect(state.selection.identities).toHaveLength(2);
+ const state=await capture(page);expect(state.violations).toEqual([]);expect(state.selection.measurements[0]).toHaveLength(2);
  expect(await page.locator('#frameSlider').inputValue()).toBe(String(await page.evaluate(()=>currentStructure.currentFrameIndex)));
  await expect(page.locator('#playPause')).toHaveAttribute('aria-label','Play trajectory');
 });

@@ -23,10 +23,10 @@ for (const order of [[1, 2, 3], [2, 1, 3]]) test(`water measurement labels remai
                 width: Math.abs(point.x - left.x) * bounds.width, height: Math.abs(point.y - top.y) * bounds.height };
         };
         const labels = measurementGroup.children.filter(object => object.userData.isMeasurementLabel);
-        const points = selectedAtoms.map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()));
+        const points = measuredAtoms().map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()));
         const anchorScreen = label => { const a = measurementGroup.localToWorld((label.userData.annotationAnchor || label.position).clone()).project(camera); return { x: (a.x + 1) * bounds.width / 2, y: (1 - a.y) * bounds.height / 2 }; };
         return {
-            labels: labels.map(rectangle), markers: selectionRings.map(rectangle), anchorScreens: labels.map(anchorScreen),
+            labels: labels.map(rectangle), markers: measurementMarkers.map(rectangle), anchorScreens: labels.map(anchorScreen),
             anchors: labels.slice(0, 2).map(label => (label.userData.annotationAnchor || label.position).toArray()),
             midpoints: points.slice(1).map((point, i) => point.clone().add(points[i]).multiplyScalar(.5).toArray()),
             leaders: measurementGroup.children.filter(object => object.userData.isAnnotationLeader && object.visible).length

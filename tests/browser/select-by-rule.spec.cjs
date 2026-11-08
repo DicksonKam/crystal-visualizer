@@ -120,18 +120,20 @@ test('fractional ranges follow the lattice and bad bounds change nothing', async
     await expect(page.locator('#selectRangeMin')).toHaveAttribute('step', '0.5');
 });
 
-test('a molecule offers selection by rule without constraints and a chip replaces a kept measurement', async ({ page }) => {
+test('a molecule offers selection by rule without constraints and a chip selects beside a kept measurement', async ({ page }) => {
     await page.evaluate(() => loadExampleFile('examples/xyz/benzene.xyz'));
     await expect(page.locator('#statusText')).toContainText('Loaded');
     for (const n of [1, 2]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await setMode(page, 'edit');
-    await expect(page.locator('.preserved-measurement')).toBeVisible();
+    await expect(page.locator('.measurement-readout')).toBeVisible();
     await expect(page.locator('.element-chip')).toHaveText(['C6', 'H6']);
     await expect(page.locator('#selectRangeAxis option')).toHaveCount(3);
     await expect(page.locator('#selectRangeAxis optgroup')).toHaveAttribute('label', 'Cartesian (Å)');
 
     await page.locator('.element-chip', { hasText: 'H' }).click();
-    await expect(page.locator('.preserved-measurement')).toHaveCount(0);
+    // The measurement is an annotation: selecting atoms leaves it in place.
+    await expect(page.locator('.measurement-readout')).toHaveCount(1);
+    expect(await page.evaluate(() => measuredAtoms().map(atom => atom.index + 1))).toEqual([1, 2]);
     expect(await selectedNumbers(page)).toEqual([7, 8, 9, 10, 11, 12]);
     await expect(page.locator('#constraintAxisZ')).toHaveCount(0);
     await expect(page.locator('#fixSelectedBtn')).toHaveCount(0);

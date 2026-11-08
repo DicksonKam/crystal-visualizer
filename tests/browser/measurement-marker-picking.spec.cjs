@@ -14,17 +14,17 @@ async function markerPoint(page) {
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     return page.evaluate(() => {
         const r = renderer.domElement.getBoundingClientRect();
-        const p = selectedAtoms[0].mesh.getWorldPosition(new THREE.Vector3()).project(camera);
+        const p = measuredAtoms()[0].mesh.getWorldPosition(new THREE.Vector3()).project(camera);
         return { x: r.left + (p.x + 1) * r.width / 2 + 4, y: r.top + (1 - p.y) * r.height / 2 };
     });
 }
 
-test('visible numbered marker edges select the atom in measure mode', async ({ page }, info) => {
+test('visible numbered marker edges unmeasure the atom in measure mode', async ({ page }, info) => {
     const point = await markerPoint(page);
     await page.screenshot({ path: info.outputPath('marker-before-click.png') });
     await page.mouse.click(point.x, point.y);
     await page.screenshot({ path: info.outputPath('marker-after-click.png') });
-    expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([1, 2]);
+    expect(await page.evaluate(() => measuredAtoms().map(atom => atom.index))).toEqual([1, 2]);
 });
 
 test('visible numbered marker edges drag their boundary atom in edit mode', async ({ page }, info) => {

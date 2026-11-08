@@ -1,6 +1,9 @@
 // Bounded history and document revisions, independent of rendering and UI.
 (function (root) {
-    const isSelectionOperation = operation => ['select_atom', 'deselect_atom', 'clear_selection'].includes(operation.type);
+    // Selection-class operations change what is selected or measured, never
+    // the document: they are reversible but do not advance the edit revision.
+    const SELECTION_OPERATIONS = ['select_atom', 'deselect_atom', 'clear_selection', 'measure_atom', 'unmeasure_atom', 'clear_measurement'];
+    const isSelectionOperation = operation => SELECTION_OPERATIONS.includes(operation.type);
     function createHistory(limit = 50) {
         if (!Number.isSafeInteger(limit) || limit < 1) throw new Error('History limit must be a positive integer');
         const history = {
@@ -31,7 +34,7 @@
         };
         return history;
     }
-    const api = { createHistory, isSelectionOperation };
+    const api = { createHistory, isSelectionOperation, SELECTION_OPERATIONS };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.CrystalHistory = api;
 })(globalThis);

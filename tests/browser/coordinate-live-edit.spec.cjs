@@ -15,7 +15,7 @@ test('arrow steps move the atom at once, Enter keeps the session as one undo, Es
     await setMode(page, 'edit');
     await selectAtom(page, 2);
     await expect(page.locator('#saveAtomCoordinates')).toHaveCount(0);
-    await expect(page.locator('#clearSelectionBtn')).toHaveCount(0);
+    await expect(page.locator('#clearMeasurementBtn')).toHaveCount(0);
     await expect(page.locator('#deleteSelectedBtn')).toHaveText('🗑️ Delete 1 atom');
     const start = await fractional(page, 2);
     const base = await undoDepth(page); // the selection itself is one history entry

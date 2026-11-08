@@ -39,12 +39,12 @@ test('releasing a cell drag over an atom preserves the measurement', async ({ pa
     await page.screenshot({ path: info.outputPath('frame-before-release.png') });
     await page.mouse.up();
     await page.screenshot({ path: info.outputPath('frame-after-release.png') });
-    const state = await page.evaluate(() => ({ selected: selectedAtoms.map(atom => atom.index), preserved: isMeasurementSelection, history: editHistory.undoStack.map(operation => operation.type) }));
-    expect(state.selected).toEqual([0, 1, 2]);
-    expect(state.preserved).toBe(true);
+    const state = await page.evaluate(() => ({ measured: measuredAtoms().map(atom => atom.index), selected: selectedAtoms.map(atom => atom.index), history: editHistory.undoStack.map(operation => operation.type) }));
+    expect(state.measured).toEqual([0, 1, 2]);
+    expect(state.selected).toEqual([]);
     expect(state.history.at(-1)).toBe('vacuum_drag');
     await page.locator('#undoBtn').click();
-    expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([0, 1, 2]);
+    expect(await page.evaluate(() => measuredAtoms().map(atom => atom.index))).toEqual([0, 1, 2]);
     await page.locator('#redoBtn').click();
-    expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([0, 1, 2]);
+    expect(await page.evaluate(() => measuredAtoms().map(atom => atom.index))).toEqual([0, 1, 2]);
 });

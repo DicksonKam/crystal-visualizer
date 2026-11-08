@@ -791,58 +791,72 @@ button.meas-delta:focus-visible {
     color: var(--text-secondary);
 }
 
-/* Preserved measurement display in edit mode */
-.preserved-measurement {
-    background: rgba(241, 91, 181, 0.1);
-    border: 1px solid rgba(241, 91, 181, 0.3);
-    border-radius: var(--radius-md);
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
+/* Live measurement readout in Edit mode: one flat row per measurement under
+   the instruction line, carrying the Measurements panel's colour stripe. The
+   full view (atoms, coordinates, displacements) stays in that panel. */
+.measurement-readouts {
+    display: flex;
+    flex-direction: column;
+    margin: 0.25rem 0 0.75rem;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.preserved-measurement-header {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--accent-pink);
-    margin-bottom: 0.25rem;
+.measurement-readout {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0;
 }
 
-.preserved-measurement-hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
+.measurement-readout + .measurement-readout {
+    border-top: 1px solid var(--border-color);
 }
 
-.preserved-measurement-value {
+.measurement-readout .multi-color-strip {
+    width: 3px;
+    align-self: stretch;
+    min-height: 1.1rem;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.measurement-readout .readout-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.75rem;
+}
+
+.readout-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.readout-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.readout-value {
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    color: var(--text-secondary);
-    padding: 0.35rem 0 0.25rem 0;
-    margin-top: 0.4rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
-.preserved-measurement-value:first-of-type {
-    margin-top: 0;
-    border-top: none;
+.readout-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: normal;
 }
 
-
-.preserved-measurement-value strong {
-    color: var(--accent-pink);
-}
-
-.preserved-measurement .meas-delta {
-    border-top: none;
-    margin-top: 0;
-    padding-top: 0;
-}
-
-.preserved-delta {
-    font-size: 0.7rem !important;
-    opacity: 0.6;
-    white-space: nowrap;
-    letter-spacing: -0.02em;
+.measurement-readout .readout-clear {
+    flex-shrink: 0;
 }
 
 .selected-atom.edit .color-strip {

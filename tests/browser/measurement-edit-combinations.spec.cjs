@@ -38,8 +38,11 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
             await page.locator('#undoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, before.geometry, 'undo');
             await page.locator('#redoBtn').click(); compareGeometry((await checkMeasurement(page)).geometry, after.geometry, 'redo');
         }
+        // Move acts on the edit selection; the measurement follows the moved atoms.
+        await page.locator('#selectAllBtn').click();
         await page.locator('#shiftA').fill(variant % 2 ? '-.1' : '.1'); await page.locator('#shiftB').fill('0'); await page.locator('#shiftC').fill('0');
         await page.locator('#applyShiftBtn').click(); await checkMeasurement(page); await snap(`${cycle}-shift`);
+        await page.locator('#selectNoneBtn').click(); await checkMeasurement(page);
         await page.locator('#addAtomElement').selectOption('C');
         for (const [axis, value] of [['X', .3 + cycle * .1], ['Y', .35 + (variant % 4) * .1], ['Z', .4 + cycle * .05]]) await page.locator(`#addAtom${axis}`).fill(String(value));
         await page.locator('#addAtomBtn').click(); await checkMeasurement(page); await snap(`${cycle}-add`);
@@ -65,29 +68,27 @@ for (const width of [900, 1440]) test(`measurement survives a sustained edit cha
         await page.locator('#redoBtn').click(); await checkMeasurement(page);
         await page.locator('#undoBtn').click(); await checkMeasurement(page);
     }
-    // Switch from the measured trio to an edit selection, delete, and walk
-    // back through both geometry history and the measurement context.
+    // Select and delete an unmeasured atom while the measured trio stays, then
+    // walk back through geometry history with the measurement in place.
     const measured = await checkMeasurement(page);
-    await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
     await page.locator('#atomJumpInput').fill('4'); await page.locator('#atomJumpInput').press('Enter');
     await page.locator('#deleteSelectedBtn').click(); await snap('deleted-after-measurement');
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
-    expect(await page.evaluate(() => measurementGroup.children.filter(object => object.userData.isMeasurementVisual).length)).toBe(0);
+    await checkMeasurement(page);
     await page.locator('#undoBtn').click();
-    // Deletion undo restores geometry; selection is restored by its own
-    // earlier history operations rather than reselecting the deleted atom.
+    // Deletion undo restores geometry; the deleted atom is not reselected.
     expect((await capture(page)).selection.identities).toHaveLength(0);
-    compareGeometry((await capture(page)).geometry, measured.geometry);
-    await page.locator('#undoBtn').click();
-    expect((await capture(page)).selection.identities).toHaveLength(0);
-    await page.locator('#undoBtn').click();
     compareGeometry((await checkMeasurement(page)).geometry, measured.geometry);
-    await snap('measurement-restored-through-deletion');
-    for (let i = 0; i < 3; i++) await page.locator('#redoBtn').click();
+    await page.locator('#undoBtn').click();
+    expect((await capture(page)).selection.identities).toHaveLength(0);
+    compareGeometry((await checkMeasurement(page)).geometry, measured.geometry);
+    await snap('measurement-kept-through-deletion');
+    for (let i = 0; i < 2; i++) await page.locator('#redoBtn').click();
     expect((await capture(page)).atomCount).toBe(measured.atomCount - 1);
     await page.locator('#undoBtn').click();
-    // Start a fresh measurement branch after restoring the deleted atom.
+    // Start a fresh measurement after restoring the deleted atom.
     await setMode(page, 'measure');
+    await page.locator('#clearMeasurementBtn').click();
     for (const n of [1, 2, 3]) { await page.locator('#atomJumpInput').fill(String(n)); await page.locator('#atomJumpInput').press('Enter'); }
     await checkMeasurement(page);
     await setMode(page, 'edit'); await checkMeasurement(page);

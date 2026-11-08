@@ -11,9 +11,12 @@ test('crowded edit checkmarks and measurement numbers stay on their atoms withou
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
   await page.waitForTimeout(250);
  };
- const markers=()=>page.evaluate(()=>selectionRings.map((s,i)=>({index:i,color:s.userData.annotationColor,
-  offset:s.getWorldPosition(new THREE.Vector3()).distanceTo(selectedAtoms[i].mesh.getWorldPosition(new THREE.Vector3())),
-  leaders:measurementGroup.children.filter(o=>o.userData.isAnnotationLeader&&o.visible).length})));
+ const markers=kind=>page.evaluate(kind=>{
+  const [sprites,atoms]=kind==='edit'?[selectionRings,selectedAtoms]:[measurementMarkers,measuredAtoms()];
+  return sprites.map((s,i)=>({index:i,color:s.userData.annotationColor,
+   offset:s.getWorldPosition(new THREE.Vector3()).distanceTo(atoms[i].mesh.getWorldPosition(new THREE.Vector3())),
+   leaders:measurementGroup.children.filter(o=>o.userData.isAnnotationLeader&&o.visible).length}));
+ },kind);
  await setMode(page, 'edit');await page.locator('#atomJumpInput').fill('2');await page.locator('#atomJumpInput').press('Enter');await crowd();
  // Along the body diagonal several atoms stack; shift-click a real atom whose centre is actually the nearest hit.
  const point=await page.evaluate(()=>{const r=renderer.domElement.getBoundingClientRect();
@@ -22,13 +25,13 @@ test('crowded edit checkmarks and measurement numbers stay on their atoms withou
   throw Error('No exposed atom');});
  await page.keyboard.down('Shift');try{await page.mouse.click(point.x,point.y);}finally{await page.keyboard.up('Shift');}await page.waitForTimeout(250);
  expect(await page.evaluate(()=>selectedAtoms.map(a=>a.index))).toEqual([1,point.index]);
- const edit=await markers();expect(edit).toHaveLength(2);
+ const edit=await markers('edit');expect(edit).toHaveLength(2);
  for(const m of edit){expect(m.offset).toBeLessThan(1e-6);expect(m.leaders).toBe(0);expect(m.color).toBe(0x00f5d4);}
  await page.screenshot({path:info.outputPath('edit-markers.png')});
- await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();await setMode(page, 'measure');
+ await page.locator('#selectNoneBtn:enabled').click();await setMode(page, 'measure');
  for(const n of [1,2,3]){await page.locator('#atomJumpInput').fill(String(n));await page.locator('#atomJumpInput').press('Enter');}
  await page.locator('#resetView').click();await crowd();
- const measured=await markers();expect(measured).toHaveLength(3);
+ const measured=await markers('measure');expect(measured).toHaveLength(3);
  for(const m of measured){expect(m.offset).toBeLessThan(1e-6);expect(m.leaders).toBe(0);expect(m.color).toBe([0x00f5d4,0xf15bb5,0xfee440][m.index]);}
  expect(await page.evaluate(()=>generatePOSCAR())).toBe(source);
  await page.screenshot({path:info.outputPath('measurement-markers.png')});

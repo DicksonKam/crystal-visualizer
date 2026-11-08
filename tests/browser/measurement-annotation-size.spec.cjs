@@ -14,7 +14,7 @@ async function annotationSizes(page) {
         };
         return {
             labels: measurementGroup.children.filter(object => object.userData.isMeasurementLabel).map(pixels),
-            markers: selectionRings.map(pixels)
+            markers: measurementMarkers.map(pixels)
         };
     });
 }
@@ -52,7 +52,7 @@ for (const deviceScaleFactor of [1, 2]) test.describe(`annotation CSS sizing at 
     await expect.poll(async () => Math.min(...(await annotationSizes(page)).labels)).toBeGreaterThanOrEqual(18 - .01);
     await expect.poll(async () => Math.min(...(await annotationSizes(page)).markers)).toBeGreaterThanOrEqual(14 - .01);
     expect(await geometry()).toEqual(original);
-    expect(await page.evaluate(() => selectedAtoms.map(atom => atom.index))).toEqual([0, 1, 2]);
+    expect(await page.evaluate(() => measuredAtoms().map(atom => atom.index))).toEqual([0, 1, 2]);
     await expect(page.locator('#measurementPanel')).toContainText('4.8000 Å');
     await expect(page.locator('#measurementPanel')).toContainText('90.00°');
 });

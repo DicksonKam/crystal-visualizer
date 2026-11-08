@@ -21,8 +21,8 @@ for (const width of [220, 280, 320]) {
             // Inspect the painted text fragments against their actual container.
             const clipped = await page.evaluate(() => {
                 const result = [];
-                for (const element of document.querySelectorAll('.meas-value, .delta-item')) {
-                    const container = element.closest('.meas-content, .meas-delta');
+                for (const element of document.querySelectorAll('.meas-value, .delta-item, .readout-item')) {
+                    const container = element.closest('.meas-content, .meas-delta, .readout-body');
                     const bounds = container.getBoundingClientRect();
                     const range = document.createRange();
                     range.selectNodeContents(element);
@@ -36,7 +36,9 @@ for (const width of [220, 280, 320]) {
             });
             expect(clipped).toEqual([]);
             await expect(page.locator('#measurementPanel')).toContainText('435611.7258');
-            await expect(page.locator('#measurementPanel')).toContainText('345678.90');
+            // Displacements belong to the Measurements panel; the Edit readout shows distances and the angle.
+            if (mode === 'measure') await expect(page.locator('#measurementPanel')).toContainText('345678.90');
+            else await expect(page.locator('.measurement-readout')).toContainText('°');
         }
     });
 }

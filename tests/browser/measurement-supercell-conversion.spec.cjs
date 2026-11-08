@@ -22,16 +22,19 @@ for (const axes of [['a'], ['b'], ['c'], ['a', 'b', 'c']]) test(`measured period
         throw Error('No visible periodic atom for this fixture');
     });
     await page.mouse.click(point.x, point.y);
-    const positions = () => page.evaluate(() => selectedAtoms.map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()).toArray()));
+    const positions = () => page.evaluate(() => measuredAtoms().map(atom => atom.mesh.getWorldPosition(new THREE.Vector3()).toArray()));
+    const anyGhost = () => page.evaluate(() => measuredAtoms().some(atom => atom.isGhost));
     const before = await positions(); expect(before).toHaveLength(3);
     await setMode(page, 'edit');
     await page.screenshot({ path: info.outputPath('measured-periodic-copy.png') });
     await page.locator('#makeSupercellBtn').click();
     await page.screenshot({ path: info.outputPath('converted-measurement.png') });
     expect(await positions()).toEqual(before);
-    await expect(page.locator('#measurementPanel')).toContainText('Angle');
-    expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(false);
-    // Edit the converted measured points, then return through both histories.
+    await expect(page.locator('.measurement-readout')).toContainText('°');
+    expect(await anyGhost()).toBe(false);
+    // Move every atom, converted measured points included, then return
+    // through both histories.
+    await page.locator('#selectAllBtn').click();
     await page.locator('#shiftA').fill('.1');
     await page.locator('#shiftB').fill('0');
     await page.locator('#shiftC').fill('0');
@@ -39,7 +42,7 @@ for (const axes of [['a'], ['b'], ['c'], ['a', 'b', 'c']]) test(`measured period
     const shifted = await positions();
     expect(shifted).toHaveLength(3);
     expect(shifted).not.toEqual(before);
-    await expect(page.locator('#measurementPanel')).toContainText('Angle');
+    await expect(page.locator('.measurement-readout')).toContainText('°');
     await page.screenshot({ path: info.outputPath('edited-converted-measurement.png') });
     await page.locator('#undoBtn').click();
     expect(await positions()).toEqual(before);
@@ -47,12 +50,13 @@ for (const axes of [['a'], ['b'], ['c'], ['a', 'b', 'c']]) test(`measured period
     expect(await positions()).toEqual(shifted);
     await page.locator('#undoBtn').click();
     expect(await positions()).toEqual(before);
+    await page.locator('#undoBtn').click(); // the Select All step
     await page.locator('#undoBtn').click();
     expect(await positions()).toEqual(before);
-    expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(true);
+    expect(await anyGhost()).toBe(true);
     await page.screenshot({ path: info.outputPath('undone-conversion.png') });
     await page.locator('#redoBtn').click();
     expect(await positions()).toEqual(before);
-    expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(false);
+    expect(await anyGhost()).toBe(false);
     await page.screenshot({ path: info.outputPath('redone-conversion.png') });
 });

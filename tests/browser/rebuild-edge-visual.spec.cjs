@@ -39,7 +39,7 @@ test('empty periodic documents retain duplicate species, constraints and editabl
   await page.locator('#undoBtn').click();await page.locator('#undoBtn').click();
   // The next loop deletes again, replacing the redo branch through real UI.
   await page.locator('#clearMeasurementBtn').count().then(async n=>{if(n&&await page.locator('#clearMeasurementBtn').isVisible())await page.locator('#clearMeasurementBtn').click();});
-  if(await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').isVisible())await page.locator('#clearSelectionBtn, #selectNoneBtn:enabled').click();
+  if(await page.locator('#selectNoneBtn:enabled').isVisible())await page.locator('#selectNoneBtn:enabled').click();
  }
  await observe({step:2,action:'history',stage:'settled'});
 });

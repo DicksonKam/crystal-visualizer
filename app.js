@@ -841,6 +841,9 @@ function initScene() {
         if (activeEditPointerId !== null) cancelEditDrag(event);
     }, { capture: true });
     renderer.domElement.addEventListener('click', onClickFallback);
+    document.getElementById('sidebar')?.addEventListener('pointerdown', event => {
+        lastPanelPointerTarget = event.target instanceof Element ? event.target.closest('button, input, select, label, a') : null;
+    }, { capture: true });
     window.addEventListener('blur', cancelEditDrag);
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
@@ -2286,7 +2289,7 @@ function createEditSelectionMarker(atomMesh, selectionNumber) {
 function restorePanelFocus(focusedId, fallbackId) {
     const restoreFocus = () => {
         const replacement = focusedId && document.getElementById(focusedId);
-        (replacement || document.getElementById(fallbackId))?.focus();
+        (replacement || document.getElementById(fallbackId))?.focus({ preventScroll: true });
     };
     restoreFocus();
     // A native select popup can clear focus after its change handler ends.
@@ -2295,11 +2298,27 @@ function restorePanelFocus(focusedId, fallbackId) {
     });
 }
 
+// The control the pointer last went down on inside the side panel. Chrome
+// focuses a clicked button, Safari does not, so focus alone cannot say which
+// control a rebuild should keep in place.
+let lastPanelPointerTarget = null;
+
 function replacePanelHTML(panel, html, fallbackId) {
     const active = document.activeElement;
     const hadFocus = Boolean(active && panel.contains(active));
     const focusedId = hadFocus ? active.id : null;
+    // Keep the control that caused this rebuild where it is on screen, so a
+    // selection card growing above it cannot push it out from under the
+    // pointer and break the user's flow.
+    const anchor = hadFocus && active.id ? active
+        : lastPanelPointerTarget?.id && panel.contains(lastPanelPointerTarget) ? lastPanelPointerTarget : null;
+    const scroller = typeof panel.closest === 'function' ? panel.closest('.sidebar') : null;
+    const anchorTop = anchor && scroller && typeof anchor.getBoundingClientRect === 'function' ? anchor.getBoundingClientRect().top : null;
     panel.innerHTML = html;
+    if (anchorTop !== null) {
+        const replacement = document.getElementById(anchor.id);
+        if (replacement) scroller.scrollTop += replacement.getBoundingClientRect().top - anchorTop;
+    }
     if (hadFocus) restorePanelFocus(focusedId, fallbackId);
 }
 
@@ -2348,8 +2367,11 @@ function updateEditUI() {
                 // Normal edit selection UI
                 html += `<div class="edit-warning">✓ ${selectedAtoms.length} atom${selectedAtoms.length > 1 ? 's' : ''} selected</div>`;
                 
+                // A long selection lists its first rows only; the count above
+                // and the status line carry the total.
+                const SELECTED_ROWS = 12;
                 html += '<div class="selected-atoms edit-mode">';
-                selectedAtoms.forEach((atom, i) => {
+                selectedAtoms.slice(0, SELECTED_ROWS).forEach((atom, i) => {
                     // Get selective dynamics status
                     const sd = currentStructure.atoms[atom.index]?.selectiveDynamics || [true, true, true];
                     const isFixed = sd.every(v => v === false);
@@ -2372,6 +2394,7 @@ function updateEditUI() {
                         </div>
                     `;
                 });
+                if (selectedAtoms.length > SELECTED_ROWS) html += `<div class="selected-atoms-more">… and ${selectedAtoms.length - SELECTED_ROWS} more</div>`;
                 html += '</div>';
 
                 if (selectedAtoms.length === 1 && !selectedAtoms[0].isGhost) {
@@ -2391,7 +2414,7 @@ function updateEditUI() {
                             </select>
                             <div class="coord-step-row" role="group" aria-label="Arrow step">
                                 <span class="coord-step-label">Step</span>
-                                ${coordinateStepOptions(fractional).map(option => `<button type="button" class="coord-step" data-step="${option}" aria-pressed="${option === step}">${option}${fractional ? '' : ' Å'}</button>`).join('')}
+                                ${coordinateStepOptions(fractional).map(option => `<button type="button" id="coordStep-${option}" class="coord-step" data-step="${option}" aria-pressed="${option === step}">${option}${fractional ? '' : ' Å'}</button>`).join('')}
                             </div>
                             <div class="add-atom-coords">
                                 ${values.map((value, axis) => `<div class="coord-input-group">
@@ -2628,8 +2651,8 @@ function updateEditUI() {
     if (selectNoneBtn) selectNoneBtn.addEventListener('click', () => { clearSelection(); updateEditUI(); });
     const selectInvertBtn = document.getElementById('selectInvertBtn');
     if (selectInvertBtn) selectInvertBtn.addEventListener('click', invertSelection);
-    const boxSelectBtn = document.getElementById('boxSelectBtn');
-    if (boxSelectBtn) boxSelectBtn.addEventListener('click', () => setBoxSelectMode(!boxSelectMode));
+    const boxSelectToggle = document.getElementById('boxSelectToggle');
+    if (boxSelectToggle) boxSelectToggle.addEventListener('change', event => setBoxSelectMode(event.target.checked));
     ['selectRangeAxis', 'selectRangeMin', 'selectRangeMax'].forEach(id => {
         const field = document.getElementById(id);
         if (field) field.addEventListener('input', rememberSelectRange);
@@ -3455,7 +3478,7 @@ function selectByRuleHTML() {
         const count = indices.filter(index => selected.has(index)).length;
         const state = count === 0 ? 'none' : count === indices.length ? 'all' : 'some';
         const verb = state === 'all' ? 'Deselect' : 'Select';
-        return `<button type="button" class="element-chip" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'} (Alt+click removes them)"><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
+        return `<button type="button" id="elementChip-${element}" class="element-chip" data-element="${element}" data-state="${state}" style="--chip-color: ${elementColorHex(element)}" aria-pressed="${state === 'all'}" title="${verb} all ${indices.length} ${element} atom${indices.length === 1 ? '' : 's'} (Alt+click removes them)"><span class="chip-element">${element}</span><span class="chip-count">${count && state !== 'all' ? `${count}/` : ''}${indices.length}</span></button>`;
     }).join('');
     const range = lastSelectRange || defaultSelectRange();
     const fractional = selectRangeUsesFractional(range);
@@ -3465,10 +3488,20 @@ function selectByRuleHTML() {
     return `
         <div class="sd-batch-section select-rule-section">
             <div class="sd-batch-title">Select Atoms</div>
-            <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
+            <div class="select-set-row">
+                <div class="element-chips" role="group" aria-label="Select by element">${chips}</div>
+                <div class="select-quick">
+                    <button id="selectAllBtn" class="btn btn-sm btn-quick">All</button>
+                    <button id="selectInvertBtn" class="btn btn-sm btn-quick">Invert</button>
+                    <button id="selectNoneBtn" class="btn btn-sm btn-quick"${selected.size ? '' : ' disabled'}>None</button>
+                </div>
+            </div>
             <div class="box-select-row">
-                <button type="button" id="boxSelectBtn" class="btn btn-sm btn-box" aria-pressed="${boxSelectMode}" title="Drag a rectangle on the canvas to select the atoms inside it; Alt+drag deselects them. Shift+drag and Alt+Shift+drag do the same at any time.">⬚ Box select</button>
-                <span class="box-select-hint">${boxSelectMode ? 'Drag on the canvas · Alt+drag deselects · Esc cancels' : 'or Shift+drag · Alt+Shift+drag deselects'}</span>
+                <label class="coord-type-label box-select-toggle" title="Every left-drag on the canvas selects the atoms inside the rectangle; Alt+drag deselects them. Shift+drag and Alt+Shift+drag do the same at any time.">
+                    <input type="checkbox" id="boxSelectToggle"${boxSelectMode ? ' checked' : ''}>
+                    <span>Box select</span>
+                </label>
+                <span class="box-select-hint">${boxSelectMode ? 'drag on the canvas · Alt+drag deselects · Esc cancels' : 'or Shift+drag · Alt+Shift+drag deselects'}</span>
             </div>
             <div class="select-range-head">
                 <label for="selectRangeAxis">Along</label>
@@ -3484,11 +3517,6 @@ function selectByRuleHTML() {
                 <button id="selectRangeBtn" class="btn btn-sm btn-select" title="Select the atoms in this range (Alt+click deselects them)">Select</button>
             </div>
             <div id="selectRangeError" class="add-atom-error"></div>
-            <div class="select-quick">
-                <button id="selectAllBtn" class="btn btn-sm btn-quick">All</button>
-                <button id="selectInvertBtn" class="btn btn-sm btn-quick">Invert</button>
-                <button id="selectNoneBtn" class="btn btn-sm btn-quick"${selected.size ? '' : ' disabled'}>None</button>
-            </div>
         </div>
     `;
 }

@@ -135,3 +135,36 @@ test('a molecule offers selection by rule without constraints and a chip replace
     await page.locator('#undoBtn').click();
     await expect(page.locator('.element-chip')).toHaveText(['C6', 'H6']);
 });
+
+test('panel controls stay put under the pointer while the selection card grows and shrinks', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await page.evaluate(() => loadExampleFile('examples/poscar/NaCl_rocksalt.poscar'));
+    await expect(page.locator('#statusText')).toContainText('Loaded');
+    await setMode(page, 'edit');
+    const allBtn = page.locator('#selectAllBtn');
+    await allBtn.scrollIntoViewIfNeeded();
+    const before = await allBtn.boundingBox();
+    await allBtn.click();
+    await expect(page.locator('.selected-atom.edit')).toHaveCount(8);
+    const after = await allBtn.boundingBox();
+    expect(Math.abs(after.y - before.y)).toBeLessThan(2);
+    // The chip and None rebuild the panel too; neither moves the row.
+    await page.locator('.element-chip', { hasText: 'Na' }).click();
+    expect(Math.abs((await allBtn.boundingBox()).y - before.y)).toBeLessThan(2);
+    await page.locator('#selectNoneBtn').click();
+    expect(Math.abs((await allBtn.boundingBox()).y - before.y)).toBeLessThan(2);
+    await expect(page.locator('.selected-atom.edit')).toHaveCount(0);
+});
+
+test('a large selection lists its first rows and says how many more there are', async ({ page }) => {
+    await page.evaluate(() => loadExampleFile('examples/poscar/Si_diamond.poscar'));
+    await expect(page.locator('#statusText')).toContainText('Loaded');
+    await page.getByRole('button', { name: 'Increase a periodic images', exact: true }).click();
+    await page.getByRole('button', { name: 'Increase b periodic images', exact: true }).click();
+    await setMode(page, 'edit');
+    await page.locator('#makeSupercellBtn').click();
+    await page.locator('#selectAllBtn').click();
+    await expect(page.locator('.selected-atom.edit')).toHaveCount(12);
+    await expect(page.locator('.selected-atoms-more')).toHaveText('… and 20 more');
+    await expect(page.locator('#deleteSelectedBtn')).toHaveText('🗑️ Delete 32 atoms');
+});

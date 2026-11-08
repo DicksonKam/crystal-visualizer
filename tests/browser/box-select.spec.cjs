@@ -29,11 +29,11 @@ async function openDiamond(page) {
 
 test('a dragged box selects the real atoms inside it at any depth, as one history step', async ({ page }, info) => {
     await openDiamond(page);
-    const box = page.locator('#boxSelectBtn');
-    await expect(box).toHaveAttribute('aria-pressed', 'false');
-    await box.click();
-    await expect(box).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('.box-select-hint')).toHaveText('Drag on the canvas · Alt+drag deselects · Esc cancels');
+    const box = page.locator('#boxSelectToggle');
+    await expect(box).not.toBeChecked();
+    await box.check();
+    await expect(box).toBeChecked();
+    await expect(page.locator('.box-select-hint')).toHaveText('drag on the canvas · Alt+drag deselects · Esc cancels');
     expect(await page.evaluate(() => renderer.domElement.style.cursor)).toBe('crosshair');
 
     // Box in the left half of the atoms' extent: whichever atoms project there.
@@ -84,7 +84,7 @@ test('a dragged box selects the real atoms inside it at any depth, as one histor
     // Leaving edit mode switches the box off.
     await setMode(page, 'measure');
     await setMode(page, 'edit');
-    await expect(page.locator('#boxSelectBtn')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('#boxSelectToggle')).not.toBeChecked();
     expect(await page.evaluate(() => renderer.domElement.style.cursor)).toBe('');
 });
 
@@ -103,7 +103,7 @@ test('Shift+drag boxes without the button, skips periodic copies and never rotat
     expect(await undoDepth(page)).toBe(1);
     expect(await page.evaluate(() => selectedAtoms.some(atom => atom.isGhost))).toBe(false);
     expect(await page.evaluate(() => camera.position.toArray())).toEqual(before);
-    await expect(page.locator('#boxSelectBtn')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('#boxSelectToggle')).not.toBeChecked();
 
     // The same box again adds nothing and records nothing.
     await page.keyboard.down('Shift');
@@ -158,7 +158,7 @@ test('Alt removes through the button, the chips and the range, and the bar shows
 
     await page.locator('#selectAllBtn').click();
     // With the button on, Alt+drag (no Shift) removes.
-    await page.locator('#boxSelectBtn').click();
+    await page.locator('#boxSelectToggle').check();
     const points = await screenPoints(page);
     const ys = points.map(p => p.y).sort((a, b) => a - b);
     const cut = (ys[3] + ys[4]) / 2;
@@ -169,7 +169,7 @@ test('Alt removes through the button, the chips and the range, and the bar shows
     await page.mouse.up();
     await page.keyboard.up('Alt');
     expect(await selectedNumbers(page)).toEqual([1, 2, 3, 4, 5, 6, 7, 8].filter(n => !upper.includes(n)));
-    await page.locator('#boxSelectBtn').click();
+    await page.locator('#boxSelectToggle').uncheck();
 
     // Alt+click on the chip removes the rest; Alt+click on Select removes a range.
     await page.locator('.element-chip').click({ modifiers: ['Alt'] });

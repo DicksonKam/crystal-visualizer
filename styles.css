@@ -1804,7 +1804,6 @@ body.edit-mode-active .viewport {
 
 .select-range-btn {
     width: 100%;
-    margin-top: 0.1rem;
 }
 
 .btn-select {
@@ -1866,8 +1865,8 @@ body.edit-mode-active .controls-hint .edit-hint {
     border-color: var(--accent-cyan);
 }
 
-/* The range error takes no room until there is one */
-#selectRangeError:empty {
+/* Error lines take no room until there is something to say */
+.add-atom-error:empty {
     min-height: 0;
     margin: 0;
 }
@@ -2027,7 +2026,7 @@ body.edit-mode-active .controls-hint .edit-hint {
 .add-atom-coords {
     display: flex;
     gap: 0.5rem;
-    margin: 0.6rem 0 0.75rem;
+    margin: 0.6rem 0;
 }
 
 .coord-input-group {
@@ -2109,7 +2108,7 @@ body.edit-mode-active .controls-hint .edit-hint {
 .shift-coords {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
 }
 
 .shift-input-group {
@@ -2152,7 +2151,6 @@ body.edit-mode-active .controls-hint .edit-hint {
     border: 1px solid rgba(0, 245, 212, 0.4);
     color: var(--accent-cyan);
     font-weight: 500;
-    margin-bottom: 0.5rem;
 }
 
 .btn-shift:hover {

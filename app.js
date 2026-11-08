@@ -3293,7 +3293,7 @@ function setSelectedAtomsFixed(isFixed) {
 // A Cartesian / fractional choice as a pill pair; the radios keep their
 // names so the handlers and tests see ordinary radio buttons.
 function coordinateChoiceHTML(name, current) {
-    const options = [['cartesian', 'Å'], ...(hasLattice(currentStructure) ? [['fractional', 'Fractional']] : [])];
+    const options = [['cartesian', 'Å · xyz'], ...(hasLattice(currentStructure) ? [['fractional', 'Fractional · abc']] : [])];
     return `<div class="choice-pills" role="radiogroup" aria-label="Coordinate system">${options.map(([value, label]) =>
         `<label class="pill"><input type="radio" name="${name}" id="${name}${value === 'cartesian' ? 'Cartesian' : 'Fractional'}" value="${value}"${current === value ? ' checked' : ''}><span>${label}</span></label>`).join('')}</div>`;
 }
